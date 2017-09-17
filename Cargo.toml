@@ -1,0 +1,9 @@
+[package]
+name = "voodoo"
+version = "0.1.0"
+authors = ["nsan1129 <nsan1129@gmail.com>"]
+
+[dependencies]
+# vkc = "0.0.1"
+# vkc = { git = "https://github.com/cogciprocate/vlc" }
+# vkc = { path = "../vkc" }
