@@ -2,16 +2,23 @@
 name = "voodoo"
 version = "0.0.1"
 authors = ["Nick Sanders <cogciprocate@gmail.com>"]
-description = "A high-level Vulkan API"
-# documentation = "https://doc.cogciprocate.com/vkc"
+description = "A high-level Vulkan compute-specialized API"
+# documentation = "https://doc.cogciprocate.com/voodoo"
 homepage = "https://github.com/cogciprocate/voodoo"
 repository = "https://github.com/cogciprocate/voodoo"
 readme = "README.md"
-# keywords = ["vulkan", "gpu", "gpgpu", "async"]
 license = "MIT/Apache-2.0"
 exclude = ["target/*", "*.png", "bak/*"]
+# keywords = ["vulkan", "gpu", "gpgpu", "async"]
+# categories = ["asynchronous", "concurrency", "science", "api-bindings"]
 
 [dependencies]
-# vkc = "0.0.1"
-# vkc = { git = "https://github.com/cogciprocate/vlc" }
-# vkc = { path = "../vkc" }
+winit = "*"
+libloading = "*"
+smallvec = "*"
+vks = { path = "../vks", features = ["proc_addr_loader_glob_functions"] }
+libc = "*"
+cgmath = "*"
+image = "*"
+tobj = "*"
+ordered-float = "*"
