@@ -16,6 +16,7 @@ mod error;
 mod version;
 mod loader;
 pub mod instance; // temporarily public
+mod physical_device;
 mod swapchain;
 mod image_view;
 mod pipeline_layout;
@@ -24,7 +25,7 @@ mod render_pass;
 mod graphics_pipeline;
 mod framebuffer;
 mod surface;
-mod queue;
+pub mod queue;
 mod command_pool;
 mod command_buffers;
 mod semaphore;
@@ -155,6 +156,7 @@ pub use loader::Loader;
 pub use error::{Error, Result};
 pub use version::Version;
 pub use instance::Instance;
+pub use physical_device::{PhysicalDevice, PhysicalDeviceFeatures};
 pub use device::Device;
 pub use surface::Surface;
 pub use queue::{queue_families, Queue};
@@ -198,8 +200,8 @@ pub fn find_memory_type(device: &Device, type_filter: u32, properties: vks::VkMe
     let mut mem_properties: vks::VkPhysicalDeviceMemoryProperties;
     unsafe {
         mem_properties = mem::uninitialized();
-        device.instance().proc_addr_loader().core.vkGetPhysicalDeviceMemoryProperties(device.physical_device(),
-            &mut mem_properties);
+        device.instance().proc_addr_loader().core.vkGetPhysicalDeviceMemoryProperties(
+            device.physical_device().handle(), &mut mem_properties);
     }
 
     for i in 0..mem_properties.memoryTypeCount {

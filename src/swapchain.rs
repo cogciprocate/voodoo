@@ -5,53 +5,56 @@ use std::cmp;
 use std::fmt;
 use smallvec::SmallVec;
 use vks;
-use ::{queue, VooResult, Instance, Surface, Device};
+use ::{queue, VooResult, Instance, Surface, Device, PhysicalDevice};
 
 
 pub struct SwapchainSupportDetails {
     pub capabilities: vks::khr_surface::VkSurfaceCapabilitiesKHR,
-    pub formats: Vec<vks::khr_surface::VkSurfaceFormatKHR>,
-    pub present_modes: Vec<vks::khr_surface::VkPresentModeKHR>,
+    pub formats: SmallVec<[vks::khr_surface::VkSurfaceFormatKHR; 64]>,
+    pub present_modes: SmallVec<[vks::khr_surface::VkPresentModeKHR; 16]>,
 }
 
 impl SwapchainSupportDetails {
-    pub fn new(instance: &Instance, surface: &Surface, physical_device: vks::VkPhysicalDevice)
+    pub fn new(instance: &Instance, surface: &Surface, physical_device: &PhysicalDevice)
             -> SwapchainSupportDetails
     {
-        unsafe {
-            // Capabilities:
-            let mut capabilities: vks::khr_surface::VkSurfaceCapabilitiesKHR = mem::uninitialized();
-            instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-                physical_device, surface.handle(), &mut capabilities);
 
-            // Formats:
-            let mut format_count = 0u32;
-            instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device,
-                surface.handle(), &mut format_count, ptr::null_mut());
-            let mut formats: Vec<vks::khr_surface::VkSurfaceFormatKHR> = Vec::with_capacity(format_count as usize);
-            formats.set_len(format_count as usize);
-            if format_count != 0 {
-                instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device,
-                    surface.handle(), &mut format_count, formats.as_mut_ptr());
-            }
+        // // Capabilities:
+        // let mut capabilities: vks::khr_surface::VkSurfaceCapabilitiesKHR = mem::uninitialized();
+        // instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+        //     physical_device, surface.handle(), &mut capabilities);
+        let capabilities = physical_device.capabilities(surface);
 
-            // Present Modes:
-            let mut present_mode_count = 0u32;
-            instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device,
-                surface.handle(), &mut present_mode_count, ptr::null_mut());
-            let mut present_modes: Vec<vks::khr_surface::VkPresentModeKHR> = Vec::with_capacity(present_mode_count as usize);
-            present_modes.set_len(present_mode_count as usize);
-            if present_mode_count != 0 {
-                instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device,
-                    surface.handle(), &mut present_mode_count, present_modes.as_mut_ptr());
-            }
+        // Formats:
+        // let mut format_count = 0u32;
+        // instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device,
+        //     surface.handle(), &mut format_count, ptr::null_mut());
+        // let mut formats: Vec<vks::khr_surface::VkSurfaceFormatKHR> = Vec::with_capacity(format_count as usize);
+        // formats.set_len(format_count as usize);
+        // if format_count != 0 {
+        //     instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device,
+        //         surface.handle(), &mut format_count, formats.as_mut_ptr());
+        // }
+        let formats = physical_device.formats(surface);
 
-            SwapchainSupportDetails {
-                capabilities,
-                formats,
-                present_modes,
-            }
+        // Present Modes:
+        // let mut present_mode_count = 0u32;
+        // instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device,
+        //     surface.handle(), &mut present_mode_count, ptr::null_mut());
+        // let mut present_modes: Vec<vks::khr_surface::VkPresentModeKHR> = Vec::with_capacity(present_mode_count as usize);
+        // present_modes.set_len(present_mode_count as usize);
+        // if present_mode_count != 0 {
+        //     instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device,
+        //         surface.handle(), &mut present_mode_count, present_modes.as_mut_ptr());
+        // }
+        let present_modes = physical_device.present_modes(surface);
+
+        SwapchainSupportDetails {
+            capabilities,
+            formats,
+            present_modes,
         }
+
     }
 }
 
@@ -146,7 +149,8 @@ impl Swapchain {
             image_count = swapchain_details.capabilities.maxImageCount;
         }
 
-        let indices = queue::queue_families(device.instance(), &surface, device.physical_device(), queue_flags);
+        let indices = queue::queue_families(device.instance(), &surface,
+            device.physical_device(), queue_flags);
         let queue_family_indices = [indices.flag_idxs[0] as u32, indices.presentation_support_idxs[0] as u32];
 
         let (image_sharing_mode, queue_family_index_count, p_queue_family_indices);

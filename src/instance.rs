@@ -6,7 +6,7 @@ use std::marker::PhantomData;
 use smallvec::SmallVec;
 use libc::{c_char, c_void};
 use vks;
-use ::{VooResult, Loader, ApplicationInfo, ENABLE_VALIDATION_LAYERS};
+use ::{VooResult, Loader, ApplicationInfo, PhysicalDevice, ENABLE_VALIDATION_LAYERS};
 
 
 
@@ -27,15 +27,19 @@ pub unsafe fn extension_names<'en>(extensions: &'en [vks::VkExtensionProperties]
     }).collect()
 }
 
-unsafe fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::InstanceProcAddrLoader) -> Vec<vks::VkPhysicalDevice> {
+fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::InstanceProcAddrLoader)
+        -> SmallVec<[vks::VkPhysicalDevice; 16]> {
     let mut device_count = 0;
-    ::check(loader.core.vkEnumeratePhysicalDevices(instance, &mut device_count, ptr::null_mut()));
-    if device_count == 0 { panic!("No physical devices found."); }
-    let mut devices = Vec::with_capacity(device_count as usize);
-    devices.set_len(device_count as usize);
-    ::check(loader.core.vkEnumeratePhysicalDevices(instance, &mut device_count, devices.as_mut_ptr()));
-    println!("Available devices: {:?}", devices);
-    devices
+    let mut devices_raw = SmallVec::new();
+    unsafe {
+        ::check(loader.core.vkEnumeratePhysicalDevices(instance, &mut device_count, ptr::null_mut()));
+        if device_count == 0 { panic!("No physical devices found."); }
+        assert!(device_count as usize <= devices_raw.inline_size());
+        devices_raw.set_len(device_count as usize);
+        ::check(loader.core.vkEnumeratePhysicalDevices(instance, &mut device_count, devices_raw.as_mut_ptr()));
+    }
+    println!("Available devices: {:?}", devices_raw);
+    devices_raw
 }
 
 
@@ -169,15 +173,15 @@ impl<'ib> InstanceBuilder<'ib> {
             None
         };
 
-        // Device:
-        let physical_devices = unsafe { enumerate_physical_devices(handle, loader.loader()) };
+        // // Device:
+        // let physical_devices = unsafe { enumerate_physical_devices(handle, loader.loader()) };
 
         Ok(Instance {
             inner: Arc::new(Inner {
                 handle,
                 loader,
                 debug_callback,
-                physical_devices,
+                // physical_devices,
             }),
         })
     }
@@ -189,7 +193,7 @@ struct Inner {
     handle: vks::VkInstance,
     loader: Loader,
     debug_callback: Option<vks::VkDebugReportCallbackEXT>,
-    physical_devices: Vec<vks::VkPhysicalDevice>,
+    // physical_devices: SmallVec<[PhysicalDevice; 16]>,
 }
 
 #[derive(Debug, Clone)]
@@ -227,8 +231,9 @@ impl Instance {
     // }
 
     #[inline]
-    pub fn physical_devices(&self) -> &[vks::VkPhysicalDevice] {
-        self.inner.physical_devices.as_slice()
+    pub fn physical_devices(&self) -> SmallVec<[PhysicalDevice; 16]> {
+        enumerate_physical_devices(self.inner.handle, self.inner.loader.loader())
+            .iter().map(|&pdr| PhysicalDevice::new(self.clone(), pdr)).collect()
     }
 
     #[inline]
