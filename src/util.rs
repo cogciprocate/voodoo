@@ -6,7 +6,7 @@ use std::fs::File;
 use std::io::{Read, BufReader};
 use std::ops::Deref;
 use libc::c_char;
-// use smallvec::SmallVec;
+use smallvec::SmallVec;
 use vks;
 use ::{VooResult, Device};
 
@@ -76,7 +76,9 @@ impl<'cp> From<String> for CharStr<'cp> {
 pub enum CharStrs<'cs> {
     Ptr { ptr: *const *const c_char, len: usize },
     RefPtr { ptrs: &'cs [*const c_char] },
-    OwnedPtr { ptrs: Vec<*const c_char> },
+    OwnedPtr { ptrs: SmallVec<[*const c_char; 8]> },
+    // OwnedOwned { strings: SmallVec<[CString; 8]>, ptrs: SmallVec<[*const c_char; 8]> },
+    // OwnedPtr { ptrs: Vec<*const c_char> },
     OwnedOwned { strings: Vec<CString>, ptrs: Vec<*const c_char> },
 }
 
@@ -127,9 +129,19 @@ impl <'cs, 'p, 'q> From<&'p [&'q [u8]]> for CharStrs<'cs> where 'q: 'p, 'p: 'cs,
     }
 }
 
+impl <'cs, 'p, 'q> From<&'p [&'q CStr]> for CharStrs<'cs> where 'q: 'p, 'p: 'cs, {
+    fn from(slices: &'p [&'q CStr]) -> CharStrs<'cs> {
+        // The pointers to the `CStr` will be == pointers to the byte slices.
+        // Running through a `CStr` verifies the contents.
+        let ptrs = slices.iter().map(|cstr| cstr.as_ptr()).collect();
+        CharStrs::OwnedPtr { ptrs }
+    }
+}
+
 impl <'cs, 'p, 'q> From<&'p [&'q str]> for CharStrs<'cs> where 'q: 'p, 'p: 'cs, {
     fn from(slices: &'p [&'q str]) -> CharStrs<'cs> {
-        let strings: Vec<_> = slices.iter().map(|&s| {
+        // let strings: SmallVec<[CString; 8]> = slices.iter().map(|&s| {
+        let strings: Vec<CString> = slices.iter().map(|&s| {
             CString::new(s)
                 .expect(&format!("unable to convert '{:?}' to a valid C string", s))
         }).collect();

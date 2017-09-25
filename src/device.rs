@@ -35,74 +35,6 @@ impl Device {
         DeviceBuilder::new()
     }
 
-
-    // // pub fn new(instance: Instance, surface: &Surface, physical_device: vks::VkPhysicalDevice,
-    // //         queue_familiy_flags: vks::VkQueueFlags) -> VooResult<Device>
-    // pub fn new(instance: Instance, physical_device: PhysicalDevice,
-    //         create_info: vks::VkDeviceCreateInfo, queue_family_idx: u32) -> VooResult<Device> {
-
-    //     // let create_info = vks::VkDeviceCreateInfo {
-    //     //     sType: vks::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-    //     //     pNext: ptr::null(),
-    //     //     flags: 0,
-    //     //     queueCreateInfoCount: 1,
-    //     //     pQueueCreateInfos: &queue_create_info,
-    //     //     enabledLayerCount: enabled_layer_name_ptrs.len() as u32,
-    //     //     ppEnabledLayerNames: enabled_layer_name_ptrs.as_ptr(),
-    //     //     enabledExtensionCount: enabled_extension_name_ptrs.len() as u32,
-    //     //     ppEnabledExtensionNames: enabled_extension_name_ptrs.as_ptr(),
-    //     //     pEnabledFeatures: &features,
-    //     // };
-
-    //     // Device:
-    //     let mut handle = ptr::null_mut();
-    //     unsafe {
-    //         ::check(instance.proc_addr_loader().core.vkCreateDevice(physical_device.handle(),
-    //             &create_info, ptr::null(), &mut handle));
-    //     }
-
-    //     let mut loader = vks::DeviceProcAddrLoader::from_get_device_proc_addr(
-    //         instance.proc_addr_loader().core.pfn_vkGetDeviceProcAddr);
-
-    //     unsafe {
-    //         loader.load_core(handle);
-    //         // create_info.enabled_extensions.load_device(&mut loader, handle);
-    //         // instance.loader().get_enabled_extensions().load_device(&mut loader, handle);
-    //         // loader.load_khr_sampler_mirror_clamp_to_edge(handle);
-    //         // loader.load_khr_draw_parameters(handle);
-    //         loader.load_khr_swapchain(handle);
-    //         // loader.load_khr_maintenance1(handle);
-    //         // loader.load_amd_rasterization_order(handle);
-    //         // loader.load_amd_draw_indirect_count(handle);
-    //         // loader.load_amd_shader_ballot(handle);
-    //         // loader.load_amd_shader_trinary_minmax(handle);
-    //         // loader.load_amd_shader_explicit_vertex_parameter(handle);
-    //         // loader.load_amd_gcn_shader(handle);
-    //         // loader.load_amd_draw_indirect_count(handle);
-    //         // loader.load_amd_negative_viewport_height(handle);
-    //         // loader.load_amd_shader_info(handle);
-    //         // loader.load_amd_wave_limits(handle);
-    //         // loader.load_amd_texture_gather_bias_lod(handle);
-    //         // loader.load_amd_programmable_sample_locations(handle);
-    //         // loader.load_amd_mixed_attachment_samples(handle);
-    //         // loader.load_ext_shader_subgroup_vote(handle);
-    //         // loader.load_amd_gpa_interface(handle);
-    //         // loader.load_ext_shader_subgroup_ballot(handle);
-    //     }
-
-
-    //     Ok(Device {
-    //         inner: Arc::new(Inner {
-    //             handle,
-    //             physical_device,
-    //             // features,
-    //             queue_family_indexes,
-    //             instance,
-    //             loader,
-    //         }),
-    //     })
-    // }
-
     #[inline]
     pub fn queue(&self, queue_idx: u32) -> vks::VkQueue {
         let mut queue_handle = ptr::null_mut();
@@ -198,10 +130,14 @@ impl<'db> DeviceBuilder<'db> {
     pub fn enabled_layer_names<'s, 'cs, Cs>(&'s mut self, enabled_layer_names: Cs)
             -> &'s mut DeviceBuilder<'db>
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
-        let enabled_layer_names = enabled_layer_names.into();
-        self.create_info.enabledLayerCount = enabled_layer_names.len() as u32;
-        self.create_info.ppEnabledLayerNames = enabled_layer_names.as_ptr() as *const _;
-        self.enabled_layer_names = Some(enabled_layer_names);
+        // let enabled_layer_names = enabled_layer_names.into();
+        self.enabled_layer_names = Some(enabled_layer_names.into());
+        {
+            let elns = self.enabled_layer_names.as_ref().unwrap();
+            self.create_info.enabledLayerCount = elns.len() as u32;
+            self.create_info.ppEnabledLayerNames = elns.as_ptr() as *const _;
+        }
+        // self.enabled_layer_names = Some(enabled_layer_names);
         self
     }
 
@@ -209,10 +145,14 @@ impl<'db> DeviceBuilder<'db> {
     pub fn enabled_extension_names<'s, 'cs, Cs>(&'s mut self, enabled_extension_names: Cs)
             -> &'s mut DeviceBuilder<'db>
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
-        let enabled_extension_names = enabled_extension_names.into();
-        self.create_info.enabledExtensionCount = enabled_extension_names.len() as u32;
-        self.create_info.ppEnabledExtensionNames = enabled_extension_names.as_ptr() as *const _;
-        self.enabled_extension_names = Some(enabled_extension_names);
+        // let enabled_extension_names = enabled_extension_names.into();
+        self.enabled_extension_names = Some(enabled_extension_names.into());
+        {
+            let eens = self.enabled_extension_names.as_ref().unwrap();
+            self.create_info.enabledExtensionCount = eens.len() as u32;
+            self.create_info.ppEnabledExtensionNames = eens.as_ptr() as *const _;
+        }
+        // self.enabled_extension_names = Some(enabled_extension_names);
         self
     }
 

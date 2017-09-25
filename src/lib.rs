@@ -350,7 +350,7 @@ pub struct UniformBufferObject {
 
 
 pub fn check(code: i32) {
-    if code != vks::VK_SUCCESS { panic!("Error code: {}", code); }
+    if code != vks::VK_SUCCESS { panic!("VkResult error code: {}", code); }
 }
 
 

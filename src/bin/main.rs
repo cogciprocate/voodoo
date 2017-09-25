@@ -30,8 +30,8 @@ pub const ENABLE_VALIDATION_LAYERS: bool = true;
 pub const ENABLE_VALIDATION_LAYERS: bool = false;
 
 static REQUIRED_INSTANCE_EXTENSIONS: &[&[u8]] = &[
-    b"VK_KHR_surface",
-    b"VK_KHR_win32_surface",
+    b"VK_KHR_surface\0",
+    b"VK_KHR_win32_surface\0",
 ];
 
 static REQUIRED_DEVICE_EXTENSIONS: &[&[u8]] = &[
@@ -80,14 +80,17 @@ fn init_window() -> (Window, EventsLoop) {
 /// Returns the list of layer names to be enabled.
 fn enabled_layer_names<'ln>(loader: &Loader, enable_validation_layers: bool)
         -> SmallVec<[&'ln CStr; 16]> {
+        // -> &'static [&'static [u8]] {
     if enable_validation_layers && !loader.check_validation_layer_support() {
         panic!("Unable to enable validation layers.");
     }
     if enable_validation_layers {
          (loader.validation_layer_names()).iter().map(|lyr_name|
             unsafe { CStr::from_ptr(lyr_name.as_ptr() as *const c_char) }).collect()
+         // loader.validation_layer_names()
     } else {
         SmallVec::new()
+        // &[]
     }
 }
 
@@ -104,9 +107,11 @@ fn init_instance() -> VooResult<Instance> {
     let enabled_layer_names = enabled_layer_names(&loader, ENABLE_VALIDATION_LAYERS);
     let enabled_extensions = loader.instance_extensions();
 
+    println!("#### Enabled layer names: {:?}", enabled_layer_names);
+
     Instance::builder()
         .application_info(&app_info)
-        .enabled_layer_names(&enabled_layer_names)
+        .enabled_layer_names(enabled_layer_names.as_ref())
         .enabled_extensions(&enabled_extensions)
         .build(loader, ENABLE_VALIDATION_LAYERS)
 }
@@ -180,30 +185,18 @@ fn create_device(instance: Instance, surface: &Surface, physical_device: Physica
     //     enabled_layer_name_ptrs.push(layer_name.as_ptr());
     // }
 
-    let enabled_layer_names: SmallVec<[_; 32]> = enabled_layer_names(instance.loader(),
-        ENABLE_VALIDATION_LAYERS).iter().map(|layer_name| layer_name.as_ptr()).collect();
+    let enabled_layer_names: SmallVec<[_; 16]> = enabled_layer_names(instance.loader(),
+            ENABLE_VALIDATION_LAYERS).iter().map(|layer_name| {
+        layer_name.as_ptr() as *const c_char
+    }) .collect();
 
-    let enabled_extension_names: SmallVec<[_; 32]> = (&REQUIRED_DEVICE_EXTENSIONS[..])
+    let enabled_extension_names: SmallVec<[_; 16]> = (&REQUIRED_DEVICE_EXTENSIONS[..])
         .iter().map(|ext_name| ext_name.as_ptr() as *const c_char).collect();
     // let mut enabled_extension_name_ptrs = Vec::with_capacity(enabled_extension_names.len());
     // for en in enabled_extension_names {
     //     enabled_extension_name_ptrs.push(en);
     // }
 
-    // let create_info = vks::VkDeviceCreateInfo {
-    //     sType: vks::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-    //     pNext: ptr::null(),
-    //     flags: 0,
-    //     queueCreateInfoCount: 1,
-    //     pQueueCreateInfos: queue_create_info.raw(),
-    //     enabledLayerCount: enabled_layer_names.len() as u32,
-    //     ppEnabledLayerNames: enabled_layer_names.as_ptr(),
-    //     enabledExtensionCount: enabled_extension_names.len() as u32,
-    //     ppEnabledExtensionNames: enabled_extension_names.as_ptr(),
-    //     pEnabledFeatures: features.raw(),
-    // };
-
-    // Device::new(instance, physical_device, create_info, queue_family_idx)
     let queue_create_infos = &[queue_create_info.clone()];
 
     Device::builder()

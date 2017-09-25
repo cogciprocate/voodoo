@@ -134,7 +134,7 @@ impl Loader {
         true
     }
 
-    pub fn validation_layer_names(&self) -> &[&[u8]] {
+    pub fn validation_layer_names(&self) -> &'static [&'static [u8]] {
         ::VALIDATION_LAYER_NAMES
     }
 }

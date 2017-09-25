@@ -6,7 +6,7 @@ use std::marker::PhantomData;
 use smallvec::SmallVec;
 use libc::{c_char, c_void};
 use vks;
-use ::{VooResult, Loader, ApplicationInfo, PhysicalDevice};
+use ::{VooResult, Loader, ApplicationInfo, PhysicalDevice, CharStrs};
 
 
 unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,
@@ -120,8 +120,10 @@ impl Drop for Inner {
 #[derive(Debug, Clone)]
 pub struct InstanceBuilder<'ib> {
     create_info: vks::VkInstanceCreateInfo,
-    enabled_layer_name_ptrs: SmallVec<[*const c_char; 128]>,
-    enabled_extension_name_ptrs: SmallVec<[*const c_char; 128]>,
+    // enabled_layer_name_ptrs: SmallVec<[*const c_char; 128]>,
+    // enabled_extension_name_ptrs: SmallVec<[*const c_char; 128]>,
+    enabled_layer_names: Option<CharStrs<'ib>>,
+    enabled_extension_names: Option<CharStrs<'ib>>,
     _p: PhantomData<&'ib ()>,
 }
 
@@ -130,8 +132,8 @@ impl<'ib> InstanceBuilder<'ib> {
     pub fn new() -> InstanceBuilder<'ib> {
         InstanceBuilder {
             create_info: vks::VkInstanceCreateInfo::default(),
-            enabled_layer_name_ptrs: SmallVec::new(),
-            enabled_extension_name_ptrs: SmallVec::new(),
+            enabled_layer_names: None,
+            enabled_extension_names: None,
             _p: PhantomData,
         }
     }
@@ -145,31 +147,51 @@ impl<'ib> InstanceBuilder<'ib> {
     }
 
     /// Sets the enabled layer names.
-    pub fn enabled_layer_names<'eln, 's>(&'s mut self, enabled_layer_names: &'eln [&'eln CStr])
+    // pub fn enabled_layer_names<'eln, 's>(&'s mut self, enabled_layer_names: &'eln [&'eln CStr])
+    pub fn enabled_layer_names<'s, 'cs, Cs>(&'s mut self, enabled_layer_names: Cs)
             -> &'s mut InstanceBuilder<'ib>
-            where 'eln: 'ib {
-        for ln in enabled_layer_names {
-            self.enabled_layer_name_ptrs.push(ln.as_ptr());
+            where 'cs: 'ib, Cs: 'cs + Into<CharStrs<'cs>> {
+        // let enabled_layer_names = enabled_layer_names.into();
+        self.enabled_layer_names = Some(enabled_layer_names.into());
+        {
+            let elns = self.enabled_layer_names.as_ref().unwrap();
+            // match enabled_layer_names {
+            //     CharStrs::OwnedPtr { ref ptrs } => {
+            //         println!("#### Enabled layer names: {:?}", ptrs);
+            //     }
+            //     _ => unreachable!(),
+            // }
+            self.create_info.ppEnabledLayerNames = elns.as_ptr();
+            self.create_info.enabledLayerCount = elns.len() as u32;
         }
-        self.create_info.ppEnabledLayerNames = self.enabled_layer_name_ptrs.as_ptr();
-        self.create_info.enabledLayerCount = self.enabled_layer_name_ptrs.len() as u32;
+        // self.enabled_layer_names = Some(enabled_layer_names);
         self
     }
 
     /// Sets the enabled extension names.
     ///
     /// May not be used with `::enabled_extensions`.
-    pub fn enabled_extension_names<'een, 's>(&'s mut self, enabled_extension_names: &'een [&'een CStr])
+    // pub fn enabled_extension_names<'een, 's>(&'s mut self, enabled_extension_names: &'een [&'een CStr])
+    //         -> &'s mut InstanceBuilder<'ib>
+    //         where 'een: 'ib {
+    pub fn enabled_extension_names<'s, 'cs, Cs>(&'s mut self, enabled_extension_names: Cs)
             -> &'s mut InstanceBuilder<'ib>
-            where 'een: 'ib {
+            // where 'een: 'ib {
+            where 'cs: 'ib, Cs: 'cs + Into<CharStrs<'cs>> {
         if !self.create_info.ppEnabledExtensionNames.is_null() {
             panic!("Enabled extension names have already been set.");
         }
-        for en in enabled_extension_names {
-            self.enabled_extension_name_ptrs.push(en.as_ptr());
+        // let enabled_extension_names = enabled_extension_names.into();
+        // for en in enabled_extension_names.into() {
+        //     self.enabled_extension_name_ptrs.push(en.as_ptr());
+        // }
+        self.enabled_extension_names = Some(enabled_extension_names.into());
+        {
+            let eens = self.enabled_extension_names.as_ref().unwrap();
+            self.create_info.ppEnabledExtensionNames = eens.as_ptr();
+            self.create_info.enabledExtensionCount = eens.len() as u32;
         }
-        self.create_info.ppEnabledExtensionNames = self.enabled_extension_name_ptrs.as_ptr();
-        self.create_info.enabledExtensionCount = self.enabled_extension_name_ptrs.len() as u32;
+        // self.enabled_extension_names = Some(enabled_extension_names);
         self
     }
 
@@ -182,14 +204,30 @@ impl<'ib> InstanceBuilder<'ib> {
         if !self.create_info.ppEnabledExtensionNames.is_null() {
             panic!("Enabled extension names have already been set.");
         }
-        for eext in enabled_extensions {
+        // let mut enabled_extension_name_ptrs: SmallVec<[*const c_char; 8]> = SmallVec::new();
+        // // let mut enabled_extension_name_ptrs: Vec<*const c_char> = Vec::new();
+        // for eext in enabled_extensions {
+        //     println!("Enabling instance extension: '{}' (version: {})",
+        //         unsafe { CStr::from_ptr(&eext.extensionName as *const c_char).to_str().unwrap() },
+        //             eext.specVersion);
+        //     enabled_extension_name_ptrs.push(eext.extensionName.as_ptr());
+        // }
+
+        let enabled_extension_name_ptrs: SmallVec<[_; 8]> = enabled_extensions.iter().map(|eext| {
+        // let enabled_extension_name_ptrs: Vec<_> = enabled_extensions.iter().map(|eext| {
             println!("Enabling instance extension: '{}' (version: {})",
                 unsafe { CStr::from_ptr(&eext.extensionName as *const c_char).to_str().unwrap() },
                     eext.specVersion);
-            self.enabled_extension_name_ptrs.push(eext.extensionName.as_ptr());
+            eext.extensionName.as_ptr()
+        }).collect();
+
+        self.enabled_extension_names = Some(CharStrs::OwnedPtr { ptrs: enabled_extension_name_ptrs });
+        {
+            let eens = self.enabled_extension_names.as_ref().unwrap();
+            self.create_info.ppEnabledExtensionNames = eens.as_ptr();
+            self.create_info.enabledExtensionCount = eens.len() as u32;
         }
-        self.create_info.ppEnabledExtensionNames = self.enabled_extension_name_ptrs.as_ptr();
-        self.create_info.enabledExtensionCount = self.enabled_extension_name_ptrs.len() as u32;
+        // self.enabled_extension_names = Some(CharStrs::OwnedPtr { ptrs: enabled_extension_name_ptrs });
         self
     }
 
