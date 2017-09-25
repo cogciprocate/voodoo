@@ -1,13 +1,145 @@
 use std::sync::Arc;
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 use std::ptr;
 use std::path::Path;
 use std::fs::File;
 use std::io::{Read, BufReader};
+use std::ops::Deref;
+use libc::c_char;
+// use smallvec::SmallVec;
 use vks;
 use ::{VooResult, Device};
 
 
+/// An owned or borrowed C string representable as a pointer.
+#[derive(Debug, Clone)]
+pub enum CharStr<'cp> {
+    CString(CString),
+    CStr(&'cp CStr),
+}
+
+impl<'cp> Deref for CharStr<'cp> {
+    type Target = CStr;
+
+    fn deref(&self) -> &CStr {
+        match *self {
+            CharStr::CString(ref cs) => cs.as_c_str(),
+            CharStr::CStr(ref cs) => cs,
+        }
+    }
+}
+
+impl<'cp, 's> From<&'s CStr> for CharStr<'cp> where 's: 'cp {
+    fn from(s: &'s CStr) -> CharStr<'cp> {
+        CharStr::CStr(s)
+    }
+}
+
+impl<'cp, 's> From<&'s [u8]> for CharStr<'cp> where 's: 'cp {
+    fn from(s: &'s [u8]) -> CharStr<'cp> {
+        CharStr::CStr(
+            CStr::from_bytes_with_nul(s)
+                .expect(&format!("unable to convert '{:?}' to a valid C string", s))
+        )
+    }
+}
+
+impl<'cp> From<CString> for CharStr<'cp> {
+    fn from(s: CString) -> CharStr<'cp> {
+        CharStr::CString(s)
+    }
+}
+
+impl<'cp, 's> From<&'s str> for CharStr<'cp> where 's: 'cp {
+    fn from(s: &'s str) -> CharStr<'cp> {
+        CharStr::CString(
+            CString::new(s)
+                .expect(&format!("unable to convert '{:?}' to a valid C string", s))
+        )
+    }
+}
+
+impl<'cp> From<String> for CharStr<'cp> {
+    fn from(s: String) -> CharStr<'cp> {
+        CharStr::CString(
+            CString::new(s)
+                .expect(&format!("unable to convert to a valid C string"))
+        )
+    }
+}
+
+
+/// Either a borrowed list of borrowed char pointers, an owned list of
+/// borrowed char pointers, or owned lists of both `CString`s and pointers to
+/// their internal arrays.
+#[derive(Debug, Clone)]
+pub enum CharStrs<'cs> {
+    Ptr { ptr: *const *const c_char, len: usize },
+    RefPtr { ptrs: &'cs [*const c_char] },
+    OwnedPtr { ptrs: Vec<*const c_char> },
+    OwnedOwned { strings: Vec<CString>, ptrs: Vec<*const c_char> },
+}
+
+impl<'cs> CharStrs<'cs> {
+    pub fn len(&self) -> usize {
+        match *self {
+            CharStrs::Ptr { len, .. } => len,
+            CharStrs::RefPtr { ref ptrs } => ptrs.len(),
+            CharStrs::OwnedPtr { ref ptrs } => ptrs.len(),
+            CharStrs::OwnedOwned {ref ptrs, .. } => ptrs.len(),
+        }
+    }
+
+    pub fn as_ptr(&self) -> *const *const c_char {
+        match *self {
+            CharStrs::Ptr { ptr, .. } => ptr,
+            CharStrs::RefPtr { ref ptrs } => ptrs.as_ptr(),
+            CharStrs::OwnedPtr { ref ptrs } => ptrs.as_ptr(),
+            CharStrs::OwnedOwned {ref ptrs, .. } => ptrs.as_ptr(),
+        }
+    }
+}
+
+// impl <'cs, 'p> From<(*const *const c_char, usize)> for CharStrs<'cs> where 'p: 'cs {
+//     fn from(ptrs: &'p [*const c_char]) -> CharStrs<'cs> {
+//         CharStrs::RefPtr { ptrs }
+//     }
+// }
+
+impl <'cs, 'p> From<&'p [*const c_char]> for CharStrs<'cs> where 'p: 'cs {
+    fn from(ptrs: &'p [*const c_char]) -> CharStrs<'cs> {
+        CharStrs::RefPtr { ptrs }
+    }
+}
+
+impl <'cs, 'p, 'q> From<&'p [&'q [u8]]> for CharStrs<'cs> where 'q: 'p, 'p: 'cs, {
+    fn from(slices: &'p [&'q [u8]]) -> CharStrs<'cs> {
+        // The pointers to the `CStr` will be == pointers to the byte slices.
+        // Running through a `CStr` verifies the contents.
+        let ptrs = slices.iter().map(|slice| {
+            let ptr = CStr::from_bytes_with_nul(slice)
+                .expect(&format!("unable to convert '{:?}' to a valid C string", slice))
+                .as_ptr();
+            debug_assert_eq!(ptr, slice.as_ptr() as *const i8);
+            ptr
+        }).collect();
+        CharStrs::OwnedPtr { ptrs }
+    }
+}
+
+impl <'cs, 'p, 'q> From<&'p [&'q str]> for CharStrs<'cs> where 'q: 'p, 'p: 'cs, {
+    fn from(slices: &'p [&'q str]) -> CharStrs<'cs> {
+        let strings: Vec<_> = slices.iter().map(|&s| {
+            CString::new(s)
+                .expect(&format!("unable to convert '{:?}' to a valid C string", s))
+        }).collect();
+        let ptrs = strings.iter().map(|cstring| cstring.as_ptr()).collect();
+        CharStrs::OwnedOwned { strings, ptrs }
+    }
+}
+
+
+/// Reads a file into a byte Vec.
 pub fn read_file<P: AsRef<Path>>(file: P) -> VooResult<Vec<u8>> {
     let file_name = file.as_ref().display().to_string();
     let f = File::open(file).expect("shader file not found");

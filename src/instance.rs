@@ -6,8 +6,7 @@ use std::marker::PhantomData;
 use smallvec::SmallVec;
 use libc::{c_char, c_void};
 use vks;
-use ::{VooResult, Loader, ApplicationInfo, PhysicalDevice, ENABLE_VALIDATION_LAYERS};
-
+use ::{VooResult, Loader, ApplicationInfo, PhysicalDevice};
 
 
 unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,
@@ -18,14 +17,14 @@ unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,
     vks::VK_FALSE
 }
 
-pub unsafe fn extension_names<'en>(extensions: &'en [vks::VkExtensionProperties]) -> Vec<&'en CStr> {
-    extensions.iter().map(|ext| {
-        let name = CStr::from_ptr(&ext.extensionName as *const c_char);
-        println!("Enabling instance extension: '{}' (version: {})",
-            name.to_str().unwrap(), ext.specVersion);
-        name
-    }).collect()
-}
+// pub unsafe fn extension_names<'en>(extensions: &'en [vks::VkExtensionProperties]) -> Vec<&'en CStr> {
+//     extensions.iter().map(|ext| {
+//         let name = CStr::from_ptr(&ext.extensionName as *const c_char);
+//         println!("Enabling instance extension: '{}' (version: {})",
+//             name.to_str().unwrap(), ext.specVersion);
+//         name
+//     }).collect()
+// }
 
 fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::InstanceProcAddrLoader)
         -> SmallVec<[vks::VkPhysicalDevice; 16]> {
@@ -43,6 +42,68 @@ fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::InstanceP
 }
 
 
+#[derive(Debug)]
+struct Inner {
+    handle: vks::VkInstance,
+    loader: Loader,
+    debug_callback: Option<vks::VkDebugReportCallbackEXT>,
+    // physical_devices: SmallVec<[PhysicalDevice; 16]>,
+}
+
+#[derive(Debug, Clone)]
+pub struct Instance {
+    inner: Arc<Inner>,
+}
+
+impl Instance {
+    #[inline]
+    pub fn builder<'ib>() -> InstanceBuilder<'ib> {
+        InstanceBuilder::new()
+    }
+
+    // #[inline]
+    // pub fn vk(&self) -> &vks::InstanceProcAddrLoader {
+    //     self.inner.loader.loader()
+    // }
+
+    #[inline]
+    pub fn proc_addr_loader(&self) -> &vks::InstanceProcAddrLoader {
+        self.inner.loader.loader()
+    }
+
+    #[inline]
+    pub fn handle(&self) -> vks::VkInstance {
+        self.inner.handle
+    }
+
+    #[inline]
+    pub fn physical_devices(&self) -> SmallVec<[PhysicalDevice; 16]> {
+        enumerate_physical_devices(self.inner.handle, self.inner.loader.loader())
+            .iter().map(|&pdr| PhysicalDevice::new(self.clone(), pdr)).collect()
+    }
+
+    #[inline]
+    pub fn loader(&self) -> &Loader {
+        &self.inner.loader
+    }
+}
+
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            println!("Destroying debug callback...");
+            if let Some(callback) = self.debug_callback {
+                self.loader.loader().ext_debug_report.vkDestroyDebugReportCallbackEXT(self.handle, callback, ptr::null());
+            }
+
+            println!("Destroying instance...");
+            self.loader.loader().core.vkDestroyInstance(self.handle, ptr::null());
+        }
+    }
+}
+
+
+
 /// A builder used to create an `Instance`.
 //
 // typedef struct VkInstanceCreateInfo {
@@ -56,6 +117,7 @@ fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::InstanceP
 //     const char* const*          ppEnabledExtensionNames;
 // } VkInstanceCreateInfo;
 //
+#[derive(Debug, Clone)]
 pub struct InstanceBuilder<'ib> {
     create_info: vks::VkInstanceCreateInfo,
     enabled_layer_name_ptrs: SmallVec<[*const c_char; 128]>,
@@ -132,7 +194,7 @@ impl<'ib> InstanceBuilder<'ib> {
     }
 
     /// Builds and returns a new `Instance`.
-    pub fn build(&self, mut loader: Loader) -> VooResult<Instance> {
+    pub fn build(&self, mut loader: Loader, enable_debug_callback: bool) -> VooResult<Instance> {
         let mut handle = ptr::null_mut();
 
         unsafe {
@@ -147,11 +209,11 @@ impl<'ib> InstanceBuilder<'ib> {
 
         // TODO: Ensure that the debug extension is enabled by consulting the
         // enabled extension list instead.
-        if ENABLE_VALIDATION_LAYERS { unsafe { loader.loader_mut().load_ext_debug_report(handle); } }
+        if enable_debug_callback { unsafe { loader.loader_mut().load_ext_debug_report(handle); } }
 
         // TODO: Ensure that the debug extension is enabled by consulting the
         // enabled extension list instead.
-        let debug_callback = if ENABLE_VALIDATION_LAYERS {
+        let debug_callback = if enable_debug_callback {
             let create_info = vks::VkDebugReportCallbackCreateInfoEXT {
                 sType:  vks::VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
                 pNext: ptr::null(),
@@ -184,74 +246,5 @@ impl<'ib> InstanceBuilder<'ib> {
                 // physical_devices,
             }),
         })
-    }
-}
-
-
-#[derive(Debug)]
-struct Inner {
-    handle: vks::VkInstance,
-    loader: Loader,
-    debug_callback: Option<vks::VkDebugReportCallbackEXT>,
-    // physical_devices: SmallVec<[PhysicalDevice; 16]>,
-}
-
-#[derive(Debug, Clone)]
-pub struct Instance {
-    inner: Arc<Inner>,
-}
-
-impl Instance {
-    #[inline]
-    pub fn builder<'ib>() -> InstanceBuilder<'ib> {
-        InstanceBuilder::new()
-    }
-
-    #[inline]
-    pub fn vk(&self) -> &vks::InstanceProcAddrLoader {
-        self.inner.loader.loader()
-    }
-
-    #[inline]
-    pub fn proc_addr_loader(&self) -> &vks::InstanceProcAddrLoader {
-        self.inner.loader.loader()
-    }
-
-    #[inline]
-    pub fn handle(&self) -> vks::VkInstance {
-        self.inner.handle
-    }
-
-    // #[inline]
-    // pub fn get_instance_proc_addr(&self, name: *const i8)
-    //         -> Option<unsafe extern "system" fn(*mut vks::VkInstance_T, *const i8)
-    //             -> Option<unsafe extern "system" fn()>>
-    // {
-    //     self.inner.loader.get_instance_proc_addr(self.inner.handle, name)
-    // }
-
-    #[inline]
-    pub fn physical_devices(&self) -> SmallVec<[PhysicalDevice; 16]> {
-        enumerate_physical_devices(self.inner.handle, self.inner.loader.loader())
-            .iter().map(|&pdr| PhysicalDevice::new(self.clone(), pdr)).collect()
-    }
-
-    #[inline]
-    pub fn loader(&self) -> &Loader {
-        &self.inner.loader
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            println!("Destroying debug callback...");
-            if let Some(callback) = self.debug_callback {
-                self.loader.loader().ext_debug_report.vkDestroyDebugReportCallbackEXT(self.handle, callback, ptr::null());
-            }
-
-            println!("Destroying instance...");
-            self.loader.loader().core.vkDestroyInstance(self.handle, ptr::null());
-        }
     }
 }

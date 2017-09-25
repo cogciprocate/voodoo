@@ -2,7 +2,7 @@ use std::ptr;
 use std::ffi::{CString, CStr};
 use std::ops::Deref;
 use std::marker::PhantomData;
-use ::Version;
+use ::{Version, CharStr};
 use vks;
 
 /// Application information.
@@ -20,10 +20,13 @@ use vks;
 ///        .api_version((1, 0, 51));
 /// ```
 //
+#[derive(Debug, Clone)]
 pub struct ApplicationInfo<'a> {
     raw: vks::VkApplicationInfo,
-    application_name: Option<CString>,
-    engine_name: Option<CString>,
+    // application_name: Option<CString>,
+    application_name: Option<CharStr<'a>>,
+    // engine_name: Option<CString>,
+    engine_name: Option<CharStr<'a>>,
     _names: PhantomData<&'a CStr>
 }
 
@@ -45,28 +48,44 @@ impl<'a> ApplicationInfo<'a> {
     // pub fn application_name_bytes<'cs, Cs>(mut self, application_name: Cs)
     //         -> ApplicationInfo<'a>
     //         where Cs: 'cs + AsRef<[u8]>, 'cs: 'a {
-
     //     self.raw.pApplicationName = CStr::from_bytes_with_nul(application_name.as_ref())
     //         .expect("application name provided is not a valid C string").as_ptr();
     //     self
     // }
 
-    /// Specifies the application name without any allocation.
-    pub fn application_name_c_str<'cs, Cs>(mut self, application_name: Cs)
-            -> ApplicationInfo<'a>
-            where Cs: 'cs + AsRef<CStr>, 'cs: 'a {
-        if !self.raw.pApplicationName.is_null() { panic!("application name already set") }
-        self.raw.pApplicationName = application_name.as_ref().as_ptr();
-        self
-    }
+    // /// Specifies the application name without any allocation.
+    // ///
+    // /// Use `CStr::from_bytes_with_nul` to avoid any extra allocation. (e.g.:
+    // /// `.application_name_c_str(CStr::from_bytes_with_nul(b"Application
+    // /// Name\0").unwrap())`).
+    // pub fn application_name_c_str<'cs, Cs>(mut self, application_name: Cs)
+    //         -> ApplicationInfo<'a>
+    //         where Cs: 'cs + AsRef<CStr>, 'cs: 'a {
+    //     if !self.raw.pApplicationName.is_null() { panic!("application name already set") }
+    //     self.raw.pApplicationName = application_name.as_ref().as_ptr();
+    //     self
+    // }
+
+    // /// Specifies the application name.
+    // pub fn application_name<S>(mut self, application_name: S)
+    //         -> ApplicationInfo<'a>
+    //         where S: AsRef<str> {
+    //     if !self.raw.pApplicationName.is_null() { panic!("application name already set") }
+    //     self.application_name = Some(CString::new(application_name.as_ref())
+    //         .expect("application name contains an interior null byte"));
+    //     self.raw.pApplicationName = self.application_name.as_ref().unwrap().as_ptr();
+    //     self
+    // }
 
     /// Specifies the application name.
-    pub fn application_name<S>(mut self, application_name: S)
+    ///
+    /// Use `CStr::from_bytes_with_nul` to avoid any extra allocation. (e.g.:
+    /// `.application_name(CStr::from_bytes_with_nul(b"Application
+    /// Name\0").unwrap())`).
+    pub fn application_name<'c, S>(mut self, application_name: S)
             -> ApplicationInfo<'a>
-            where S: AsRef<str> {
-        if !self.raw.pApplicationName.is_null() { panic!("application name already set") }
-        self.application_name = Some(CString::new(application_name.as_ref())
-            .expect("application name contains an interior null byte"));
+            where 'c: 'a, S: Into<CharStr<'c>> {
+        self.application_name = Some(application_name.into());
         self.raw.pApplicationName = self.application_name.as_ref().unwrap().as_ptr();
         self
     }
@@ -90,22 +109,38 @@ impl<'a> ApplicationInfo<'a> {
     //     self
     // }
 
-    /// Specifies the engine name without any allocation.
-    pub fn engine_name_c_str<'cs, Cs>(mut self, engine_name: Cs)
-            -> ApplicationInfo<'a>
-            where Cs: 'cs + AsRef<CStr>, 'cs: 'a {
-        if !self.raw.pEngineName.is_null() { panic!("engine name already set") }
-        self.raw.pEngineName = engine_name.as_ref().as_ptr();
-        self
-    }
+    // /// Specifies the engine name without any allocation.
+    // ///
+    // /// Use `CStr::from_bytes_with_nul` to avoid any extra allocation. (e.g.:
+    // /// `.engine_name_c_str(CStr::from_bytes_with_nul(b"Engine
+    // /// Name\0").unwrap())`).
+    // pub fn engine_name_c_str<'cs, Cs>(mut self, engine_name: Cs)
+    //         -> ApplicationInfo<'a>
+    //         where Cs: 'cs + AsRef<CStr>, 'cs: 'a {
+    //     if !self.raw.pEngineName.is_null() { panic!("engine name already set") }
+    //     self.raw.pEngineName = engine_name.as_ref().as_ptr();
+    //     self
+    // }
+
+    // /// Specifies the engine name.
+    // pub fn engine_name<S>(mut self, engine_name: S)
+    //         -> ApplicationInfo<'a>
+    //         where S: AsRef<str> {
+    //     if !self.raw.pEngineName.is_null() { panic!("engine name already set") }
+    //     self.engine_name = Some(CString::new(engine_name.as_ref())
+    //         .expect("engine name contains an interior null byte"));
+    //     self.raw.pApplicationName = self.engine_name.as_ref().unwrap().as_ptr();
+    //     self
+    // }
 
     /// Specifies the engine name.
-    pub fn engine_name<S>(mut self, engine_name: S)
+    ///
+    /// Use `CStr::from_bytes_with_nul` to avoid any extra allocation. (e.g.:
+    /// `.engine_name(CStr::from_bytes_with_nul(b"Engine Name\0").unwrap())`).
+    pub fn engine_name<'c, S>(mut self, engine_name: S)
             -> ApplicationInfo<'a>
-            where S: AsRef<str> {
-        if !self.raw.pEngineName.is_null() { panic!("engine name already set") }
-        self.engine_name = Some(CString::new(engine_name.as_ref())
-            .expect("engine name contains an interior null byte"));
+            where 'c: 'a, S: Into<CharStr<'c>> {
+        self.engine_name = Some(engine_name.into());
         self.raw.pApplicationName = self.engine_name.as_ref().unwrap().as_ptr();
         self
     }
@@ -151,6 +186,64 @@ impl<'a> ApplicationInfo<'a> {
 
     /// Returns a reference to the internal `vks::VkApplicationInfo` struct.
     pub fn raw(&self) -> &vks::VkApplicationInfo {
+        &self.raw
+    }
+}
+
+
+/// Device queue creation information.
+///
+// #[repr(C)]
+// #[derive(Debug, Copy, Clone)]
+// pub struct VkDeviceQueueCreateInfo {
+//     pub sType: VkStructureType,
+//     pub pNext: *const c_void,
+//     pub flags: VkDeviceQueueCreateFlags,
+//     pub queueFamilyIndex: u32,
+//     pub queueCount: u32,
+//     pub pQueuePriorities: *const f32,
+// }
+#[derive(Debug, Clone)]
+#[repr(C)]
+pub struct DeviceQueueCreateInfo<'ci> {
+    raw: vks::VkDeviceQueueCreateInfo,
+    _qp: PhantomData<&'ci [f32]>,
+}
+
+impl<'ci> DeviceQueueCreateInfo<'ci> {
+    /// Returns a new `DeviceQueueCreateInfo`.
+    pub fn new() -> DeviceQueueCreateInfo<'ci> {
+        DeviceQueueCreateInfo {
+            raw: vks::VkDeviceQueueCreateInfo::default(),
+            _qp: PhantomData,
+        }
+    }
+
+    /// Specifies the queue family index to use.
+    pub fn queue_family_index(mut self, queue_family_index: u32) -> DeviceQueueCreateInfo<'ci> {
+        self.raw.queueFamilyIndex = queue_family_index;
+        self
+    }
+
+    /// Specifies a list of priority ranking from `0.0` to `1.0` for each
+    /// queue.
+    ///
+    /// Passing `&[1.0]` will create a single queue.
+    pub fn queue_priorities<'qp>(mut self, queue_priorities: &'qp [f32])
+            -> DeviceQueueCreateInfo<'ci>
+            where 'qp: 'ci {
+        self.raw.queueCount = queue_priorities.len() as u32;
+        self.raw.pQueuePriorities = queue_priorities.as_ptr();
+        self
+    }
+
+    pub fn get_queue_family_index(&self) -> u32 {
+        self.raw.queueFamilyIndex
+    }
+
+    /// Returns a reference to the internal `vks::VkDeviceQueueCreateInfo`
+    /// struct.
+    pub fn raw(&self) -> &vks::VkDeviceQueueCreateInfo {
         &self.raw
     }
 }

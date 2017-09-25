@@ -3,7 +3,7 @@
 extern crate voodoo as voo;
 extern crate cgmath;
 extern crate image;
-// extern crate winit;
+extern crate smallvec;
 extern crate libc;
 extern crate tobj;
 
@@ -12,7 +12,9 @@ use std::ptr;
 use std::time;
 use std::path::Path;
 use std::collections::HashMap;
+use std::ffi::CStr;
 use libc::c_char;
+use smallvec::SmallVec;
 use image::{ImageFormat, DynamicImage};
 use cgmath::{SquareMatrix, One, Rotation, Rotation3, Basis3, Matrix3, Matrix4, Vector3};
 use voo::winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
@@ -22,9 +24,20 @@ use voo::{voodoo_winit, vks, util, device, queue, Result as VooResult, Version, 
     Buffer, DeviceMemory, Vertex, DescriptorSetLayout, UniformBufferObject, DescriptorPool,
     Image, Sampler, Loader, SwapchainSupportDetails, PhysicalDevice, PhysicalDeviceFeatures};
 
-static REQUIRED_DEVICE_EXTENSIONS: [&[u8]; 1] = [
+#[cfg(debug_assertions)]
+pub const ENABLE_VALIDATION_LAYERS: bool = true;
+#[cfg(not(debug_assertions))]
+pub const ENABLE_VALIDATION_LAYERS: bool = false;
+
+static REQUIRED_INSTANCE_EXTENSIONS: &[&[u8]] = &[
+    b"VK_KHR_surface",
+    b"VK_KHR_win32_surface",
+];
+
+static REQUIRED_DEVICE_EXTENSIONS: &[&[u8]] = &[
     b"VK_KHR_swapchain\0",
 ];
+
 
 static MODEL_PATH: &str = "/src/shared_assets/models/chalet.obj";
 // static TEXTURE_PATH: &str = "/src/shared_assets/textures/chalet.jpg";
@@ -55,6 +68,7 @@ fn main() {
     println!("Goodbye.");
 }
 
+/// Initializes the window and event loop.
 fn init_window() -> (Window, EventsLoop) {
     let events_loop = EventsLoop::new();
     let window = WindowBuilder::new()
@@ -63,10 +77,23 @@ fn init_window() -> (Window, EventsLoop) {
     (window, events_loop)
 }
 
+/// Returns the list of layer names to be enabled.
+fn enabled_layer_names<'ln>(loader: &Loader, enable_validation_layers: bool)
+        -> SmallVec<[&'ln CStr; 16]> {
+    if enable_validation_layers && !loader.check_validation_layer_support() {
+        panic!("Unable to enable validation layers.");
+    }
+    if enable_validation_layers {
+         (loader.validation_layer_names()).iter().map(|lyr_name|
+            unsafe { CStr::from_ptr(lyr_name.as_ptr() as *const c_char) }).collect()
+    } else {
+        SmallVec::new()
+    }
+}
+
+/// Initializes a loader and returns a new instance.
 fn init_instance() -> VooResult<Instance> {
     let app_info = voo::ApplicationInfo::new()
-        // Use `.application_name_c_str(CStr::from_bytes_with_nul(b"Hello
-        // Triangle\0").unwrap())` to avoid any extra allocation.
         .application_name("Hello Triangle")
         .application_version((1, 0, 0))
         .engine_name("No Engine")
@@ -74,27 +101,29 @@ fn init_instance() -> VooResult<Instance> {
         .api_version((1, 0, 51));
 
     let loader = Loader::new()?;
-    let enabled_layer_names = loader.enabled_layer_names(true);
-    let enabled_extensions = loader.enumerate_instance_extension_properties();
+    let enabled_layer_names = enabled_layer_names(&loader, ENABLE_VALIDATION_LAYERS);
+    let enabled_extensions = loader.instance_extensions();
 
     Instance::builder()
         .application_info(&app_info)
         .enabled_layer_names(&enabled_layer_names)
         .enabled_extensions(&enabled_extensions)
-        .build(loader)
+        .build(loader, ENABLE_VALIDATION_LAYERS)
 }
 
-unsafe fn device_is_suitable(instance: &Instance, surface: &Surface,
+/// Returns true if the specified physical device has the required features,
+/// extensions, queue families and if the supported swap chain has the correct
+/// presentation modes.
+fn device_is_suitable(instance: &Instance, surface: &Surface,
         physical_device: &PhysicalDevice, queue_flags: vks::VkQueueFlags) -> bool {
-    // let mut device_properties: vks::VkPhysicalDeviceProperties = mem::uninitialized();
-    // let mut device_features: vks::VkPhysicalDeviceFeatures = mem::uninitialized();
-    // instance.proc_addr_loader().core.vkGetPhysicalDeviceProperties(device, &mut device_properties);
-    // instance.proc_addr_loader().core.vkGetPhysicalDeviceFeatures(device, &mut device_features);
-    let device_properties = physical_device.properties();
+    // let device_properties = physical_device.properties();
     let device_features = physical_device.features();
 
+    let reqd_exts: SmallVec<[_; 16]> = (&REQUIRED_DEVICE_EXTENSIONS[..]).iter().map(|ext_name| {
+        CStr::from_bytes_with_nul(ext_name).expect("invalid required extension name")
+    }).collect();
 
-    let extensions_supported = physical_device.check_device_extension_support(&REQUIRED_DEVICE_EXTENSIONS);
+    let extensions_supported = physical_device.verify_extensions_support(&reqd_exts[..]);
 
     let mut swap_chain_adequate = false;
     if extensions_supported {
@@ -110,12 +139,14 @@ unsafe fn device_is_suitable(instance: &Instance, surface: &Surface,
         device_features.samplerAnisotropy != 0
 }
 
+/// Returns a physical device from the list of available physical devices if
+/// it meets the criteria specified in the above function.
 fn choose_physical_device(instance: &Instance, surface: &Surface, queue_flags: vks::VkQueueFlags)
         -> VooResult<PhysicalDevice> {
     let mut preferred_device = None;
 
     for device in instance.physical_devices() {
-        if unsafe { device_is_suitable(instance, surface, &device, queue_flags) } {
+        if device_is_suitable(instance, surface, &device, queue_flags) {
             preferred_device = Some(device);
             break;
         }
@@ -136,50 +167,51 @@ fn create_device(instance: Instance, surface: &Surface, physical_device: Physica
     let queue_family_idx = queue::queue_families(&instance, surface,
         &physical_device, queue_familiy_flags).family_idxs()[0] as u32;
 
-    let queue_create_info = vks::VkDeviceQueueCreateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-        pNext: ptr::null(),
-        flags: 0,
-        queueFamilyIndex: queue_family_idx,
-        queueCount: 1,
-        pQueuePriorities: &1.0,
-    };
+    let queue_create_info = voo::DeviceQueueCreateInfo::new()
+        .queue_family_index(queue_family_idx)
+        .queue_priorities(&[1.0]);
 
-    // let features = device_features_none();
     let features = PhysicalDeviceFeatures::new()
         .sampler_anisotropy(true);
 
-    // createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
-    // createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+    // let enabled_layer_names = enabled_layer_names(instance.loader(), ENABLE_VALIDATION_LAYERS);
+    // let mut enabled_layer_name_ptrs = Vec::with_capacity(enabled_layer_names.len());
+    // for layer_name in enabled_layer_names {
+    //     enabled_layer_name_ptrs.push(layer_name.as_ptr());
+    // }
 
+    let enabled_layer_names: SmallVec<[_; 32]> = enabled_layer_names(instance.loader(),
+        ENABLE_VALIDATION_LAYERS).iter().map(|layer_name| layer_name.as_ptr()).collect();
 
-    let enabled_layer_names = instance.loader().enabled_layer_names(false);
-    let mut enabled_layer_name_ptrs = Vec::with_capacity(enabled_layer_names.len());
-    for ln in enabled_layer_names {
-        enabled_layer_name_ptrs.push(ln.as_ptr());
-    }
+    let enabled_extension_names: SmallVec<[_; 32]> = (&REQUIRED_DEVICE_EXTENSIONS[..])
+        .iter().map(|ext_name| ext_name.as_ptr() as *const c_char).collect();
+    // let mut enabled_extension_name_ptrs = Vec::with_capacity(enabled_extension_names.len());
+    // for en in enabled_extension_names {
+    //     enabled_extension_name_ptrs.push(en);
+    // }
 
-    let enabled_extension_names: Vec<_> = (&REQUIRED_DEVICE_EXTENSIONS[..]).iter().map(|ext_name|
-        ext_name.as_ptr() as *const c_char).collect();
-    let mut enabled_extension_name_ptrs = Vec::with_capacity(enabled_extension_names.len());
-    for en in enabled_extension_names {
-        enabled_extension_name_ptrs.push(en);
-    }
+    // let create_info = vks::VkDeviceCreateInfo {
+    //     sType: vks::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+    //     pNext: ptr::null(),
+    //     flags: 0,
+    //     queueCreateInfoCount: 1,
+    //     pQueueCreateInfos: queue_create_info.raw(),
+    //     enabledLayerCount: enabled_layer_names.len() as u32,
+    //     ppEnabledLayerNames: enabled_layer_names.as_ptr(),
+    //     enabledExtensionCount: enabled_extension_names.len() as u32,
+    //     ppEnabledExtensionNames: enabled_extension_names.as_ptr(),
+    //     pEnabledFeatures: features.raw(),
+    // };
 
-    let create_info = vks::VkDeviceCreateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-        pNext: ptr::null(),
-        flags: 0,
-        queueCreateInfoCount: 1,
-        pQueueCreateInfos: &queue_create_info,
-        enabledLayerCount: enabled_layer_name_ptrs.len() as u32,
-        ppEnabledLayerNames: enabled_layer_name_ptrs.as_ptr(),
-        enabledExtensionCount: enabled_extension_name_ptrs.len() as u32,
-        ppEnabledExtensionNames: enabled_extension_name_ptrs.as_ptr(),
-        pEnabledFeatures: features.raw(),
-    };
+    // Device::new(instance, physical_device, create_info, queue_family_idx)
+    let queue_create_infos = &[queue_create_info.clone()];
 
-    Device::new(instance, physical_device, create_info, queue_family_idx)
+    Device::builder()
+        .queue_create_infos(queue_create_infos)
+        .enabled_layer_names(enabled_layer_names.as_ref())
+        .enabled_extension_names(enabled_extension_names.as_ref())
+        .enabled_features(&features)
+        .build(physical_device)
 }
 
 fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
@@ -701,6 +733,7 @@ impl App {
         let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
 
         let queue_family_flags = vks::VK_QUEUE_GRAPHICS_BIT;
+
         let physical_device = choose_physical_device(&instance, &surface,
             queue_family_flags)?;
 

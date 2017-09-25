@@ -4,7 +4,6 @@ use vks;
 use ::{VooResult, Instance, PhysicalDevice, Device, Surface};
 
 pub struct QueueFamilyIndices {
-    // family_idx: i32,
     physical_device: PhysicalDevice,
     flags: vks::VkQueueFlags,
     pub flag_idxs: SmallVec<[i32; 64]>,
@@ -22,7 +21,6 @@ impl QueueFamilyIndices {
     }
 
     pub fn is_complete(&self) -> bool {
-        // self.family_idx >= 0
         self.flag_idxs.len() > 0
     }
 
@@ -44,20 +42,9 @@ impl QueueFamilyIndices {
 }
 
 pub fn queue_families(instance: &Instance, surface: &Surface, physical_device: &PhysicalDevice,
-        queue_flags: vks::VkQueueFlags) -> QueueFamilyIndices
-{
+        queue_flags: vks::VkQueueFlags) -> QueueFamilyIndices {
     let mut indices = QueueFamilyIndices::new(physical_device.clone(), queue_flags);
-    // let mut queue_family_count = 0u32;
-    // let mut queue_families: Vec<vks::VkQueueFamilyProperties>;
-
-    // unsafe {
-    //     instance.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(device, &mut queue_family_count, ptr::null_mut());
-    //     queue_families = Vec::with_capacity(queue_family_count as usize);
-    //     queue_families.set_len(queue_family_count as usize);
-    //     instance.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(device, &mut queue_family_count, queue_families.as_mut_ptr());
-    // }
-
-    let queue_families = physical_device.queue_family_properties();
+    let queue_families = physical_device.queue_families();
 
     let mut i = 0i32;
     for queue_family in &queue_families {
@@ -65,11 +52,6 @@ pub fn queue_families(instance: &Instance, surface: &Surface, physical_device: &
             indices.flag_idxs.push(i);
         }
 
-        // let mut presentation_support: vks::VkBool32 = vks::VK_FALSE;
-        // unsafe {
-        //     ::check(instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceSupportKHR(
-        //         physical_device.handle, i as u32, surface.handle(), &mut presentation_support));
-        // }
         let presentation_support = physical_device.surface_support_khr(i as u32, surface);
         if queue_family.queueCount > 0 && presentation_support {
             indices.presentation_support_idxs.push(i);

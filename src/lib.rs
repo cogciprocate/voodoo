@@ -152,6 +152,7 @@ use std::ptr;
 use winit::{EventsLoop, WindowBuilder, Window, CreationError, ControlFlow, Event, WindowEvent};
 use ordered_float::OrderedFloat;
 use error::Result as VooResult;
+pub use util::{CharStr, CharStrs};
 pub use loader::Loader;
 pub use error::{Error, Result};
 pub use version::Version;
@@ -179,11 +180,9 @@ pub use descriptor_pool::DescriptorPool;
 pub use structs::*;
 
 
-
-#[cfg(debug_assertions)]
-pub const ENABLE_VALIDATION_LAYERS: bool = true;
-#[cfg(not(debug_assertions))]
-pub const ENABLE_VALIDATION_LAYERS: bool = false;
+pub static VALIDATION_LAYER_NAMES: &[&[u8]] = &[
+    b"VK_LAYER_LUNARG_standard_validation\0"
+];
 
 
 #[macro_export]
@@ -192,8 +191,6 @@ macro_rules! offset_of {
         unsafe { &(*(0 as *const $ty)).$field as *const _ as usize } as u32
     }
 }
-
-
 
 pub fn find_memory_type(device: &Device, type_filter: u32, properties: vks::VkMemoryPropertyFlags)
         -> u32 {
