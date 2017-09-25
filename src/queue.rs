@@ -51,10 +51,10 @@ pub fn queue_families(instance: &Instance, surface: &Surface, device: vks::VkPhy
     let mut queue_families: Vec<vks::VkQueueFamilyProperties>;
 
     unsafe {
-        instance.vk().core.vkGetPhysicalDeviceQueueFamilyProperties(device, &mut queue_family_count, ptr::null_mut());
+        instance.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(device, &mut queue_family_count, ptr::null_mut());
         queue_families = Vec::with_capacity(queue_family_count as usize);
         queue_families.set_len(queue_family_count as usize);
-        instance.vk().core.vkGetPhysicalDeviceQueueFamilyProperties(device, &mut queue_family_count, queue_families.as_mut_ptr());
+        instance.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(device, &mut queue_family_count, queue_families.as_mut_ptr());
     }
 
     let mut i = 0i32;
@@ -65,7 +65,7 @@ pub fn queue_families(instance: &Instance, surface: &Surface, device: vks::VkPhy
 
         let mut presentation_support: vks::VkBool32 = vks::VK_FALSE;
         unsafe {
-            ::check(instance.vk().khr_surface.vkGetPhysicalDeviceSurfaceSupportKHR(device, i as u32, surface.handle(),
+            ::check(instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceSupportKHR(device, i as u32, surface.handle(),
                 &mut presentation_support));
         }
         if queue_family.queueCount > 0 && presentation_support != 0 {
@@ -97,7 +97,7 @@ impl Queue {
     // QUEUE_TRANSFER_BIT
     pub unsafe fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VooResult<Queue> {
         let mut handle = ptr::null_mut();
-        device.vk().core.vkGetDeviceQueue(device.handle(), queue_family_index, queue_index, &mut handle);
+        device.proc_addr_loader().core.vkGetDeviceQueue(device.handle(), queue_family_index, queue_index, &mut handle);
 
         Ok(Queue {
             handle,

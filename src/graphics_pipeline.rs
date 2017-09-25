@@ -236,7 +236,7 @@ impl GraphicsPipeline {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().core.vkCreateGraphicsPipelines(device.handle(), 0, 1, &create_info,
+            ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle(), 0, 1, &create_info,
                 ptr::null(), &mut handle));
         }
 
@@ -260,7 +260,7 @@ impl GraphicsPipeline {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().core.vkDestroyPipeline(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyPipeline(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

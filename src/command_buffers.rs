@@ -17,7 +17,7 @@ use ::{util, VooResult, Device, Framebuffer, CommandPool, RenderPass, GraphicsPi
 
 //         let mut handle = 0;
 //         unsafe {
-//             ::check(device.vk().CreateCommandBuffer(device.handle(), &create_info,
+//             ::check(device.proc_addr_loader().CreateCommandBuffer(device.handle(), &create_info,
 //                 ptr::null(), &mut handle));
 //         }
 
@@ -61,7 +61,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
     };
 
     unsafe {
-        ::check(device.vk().vkAllocateCommandBuffers(device.handle(), &alloc_info,
+        ::check(device.proc_addr_loader().vkAllocateCommandBuffers(device.handle(), &alloc_info,
             command_buffers.as_mut_ptr()));
     }
 
@@ -84,7 +84,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
         };
 
         unsafe {
-            ::check(device.vk().core.vkBeginCommandBuffer(command_buffer, &begin_info));
+            ::check(device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer, &begin_info));
         }
 
         // let clear_color = vks::VkClearValue {
@@ -110,21 +110,21 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
         };
 
         unsafe {
-            device.vk().core.vkCmdBeginRenderPass(command_buffer, &render_pass_info,
+            device.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer, &render_pass_info,
                 vks::VK_SUBPASS_CONTENTS_INLINE);
-            device.vk().core.vkCmdBindPipeline(command_buffer, vks::VK_PIPELINE_BIND_POINT_GRAPHICS,
+            device.proc_addr_loader().core.vkCmdBindPipeline(command_buffer, vks::VK_PIPELINE_BIND_POINT_GRAPHICS,
                 graphics_pipeline.handle());
 
             let vertex_buffers = [vertex_buffer.handle()];
             let offsets = [0];
-            device.vk().core.vkCmdBindVertexBuffers(command_buffer, 0, 1, vertex_buffers.as_ptr(),
+            device.proc_addr_loader().core.vkCmdBindVertexBuffers(command_buffer, 0, 1, vertex_buffers.as_ptr(),
                 offsets.as_ptr());
-            // device.vk().core.vkCmdBindIndexBuffer(command_buffer, index_buffer.handle(), 0,
+            // device.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer, index_buffer.handle(), 0,
             //     vks::VK_INDEX_TYPE_UINT16);
-            device.vk().core.vkCmdBindIndexBuffer(command_buffer, index_buffer.handle(), 0,
+            device.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer, index_buffer.handle(), 0,
                 vks::VK_INDEX_TYPE_UINT32);
 
-            device.vk().core.vkCmdBindDescriptorSets(command_buffer,
+            device.proc_addr_loader().core.vkCmdBindDescriptorSets(command_buffer,
                 vks::VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout.handle(), 0, 1,
                 &descriptor_set, 0, ptr::null());
 
@@ -136,11 +136,11 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             // //   defines the lowest value of gl_VertexIndex.
             // // * firstInstance: Used as an offset for instanced rendering,
             // //   defines the lowest value of gl_InstanceIndex.
-            // device.vk().core.vkCmdDraw(command_buffer, vertex_count, 1, 0, 0);
-            device.vk().core.vkCmdDrawIndexed(command_buffer, index_count, 1, 0, 0, 0);
+            // device.proc_addr_loader().core.vkCmdDraw(command_buffer, vertex_count, 1, 0, 0);
+            device.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer, index_count, 1, 0, 0, 0);
 
-            device.vk().core.vkCmdEndRenderPass(command_buffer);
-            device.vk().core.vkEndCommandBuffer(command_buffer);
+            device.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer);
+            device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer);
         }
     }
     Ok(command_buffers)
@@ -167,7 +167,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
 
 //         let mut handle = 0;
 //         unsafe {
-//             ::check(device.vk().CreateCommandBuffer(device.handle(), &create_info,
+//             ::check(device.proc_addr_loader().CreateCommandBuffer(device.handle(), &create_info,
 //                 ptr::null(), &mut handle));
 //         }
 
@@ -191,7 +191,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
 // impl Drop for Inner {
 //     fn drop(&mut self) {
 //         unsafe {
-//             self.device.vk().DestroyCommandBuffer(self.device.handle(), self.handle, ptr::null());
+//             self.device.proc_addr_loader().DestroyCommandBuffer(self.device.handle(), self.handle, ptr::null());
 //         }
 //     }
 // }

@@ -18,14 +18,6 @@ unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,
     vks::VK_FALSE
 }
 
-// fn create_debug_report_callback_ext(instance: &Instance,
-//         create_info: &vks::VkDebugReportCallbackCreateInfoEXT, allocator: vks::VkDebugReportCallbackEXT)
-// {
-//     let create_drcb = instance.get_instance_proc_addr(b"vkCreateDebugReportCallbackEXT".as_ptr() as *const i8);
-// }
-
-
-
 pub unsafe fn extension_names<'en>(extensions: &'en [vks::VkExtensionProperties]) -> Vec<&'en CStr> {
     extensions.iter().map(|ext| {
         let name = CStr::from_ptr(&ext.extensionName as *const c_char);
@@ -47,6 +39,8 @@ unsafe fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::In
 }
 
 
+/// A builder used to create an `Instance`.
+//
 // typedef struct VkInstanceCreateInfo {
 //     VkStructureType             sType;
 //     const void*                 pNext;
@@ -57,9 +51,7 @@ unsafe fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::In
 //     uint32_t                    enabledExtensionCount;
 //     const char* const*          ppEnabledExtensionNames;
 // } VkInstanceCreateInfo;
-
-
-/// A builder used to create an `Instance`.
+//
 pub struct InstanceBuilder<'ib> {
     create_info: vks::VkInstanceCreateInfo,
     enabled_layer_name_ptrs: SmallVec<[*const c_char; 128]>,
@@ -135,8 +127,8 @@ impl<'ib> InstanceBuilder<'ib> {
         self
     }
 
-    /// Builds and returns an `Instance`.
-    pub fn build<'s>(&'s mut self, mut loader: Loader) -> VooResult<Instance> {
+    /// Builds and returns a new `Instance`.
+    pub fn build(&self, mut loader: Loader) -> VooResult<Instance> {
         let mut handle = ptr::null_mut();
 
         unsafe {
@@ -206,76 +198,6 @@ pub struct Instance {
 }
 
 impl Instance {
-    // // pub unsafe fn new(app_info: &vks::VkApplicationInfo) -> VooResult<Instance> {
-    // pub unsafe fn new(app_info: &ApplicationInfo) -> VooResult<Instance> {
-    //     let mut loader = Loader::new()?;
-
-    //     // Layers:
-    //     let enabled_layer_names = enabled_layer_names(&loader, true);
-
-    //     // Extensions:
-    //     let extensions = enumerate_instance_extension_properties(&loader);
-    //     let extension_names = extension_names(extensions.as_slice());
-
-    //     // Instance:
-    //     let create_info = vks::VkInstanceCreateInfo {
-    //         sType: vks::VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-    //         pNext: ptr::null(),
-    //         flags: 0,
-    //         pApplicationInfo: app_info.raw(),
-    //         enabledLayerCount: enabled_layer_names.len() as u32,
-    //         ppEnabledLayerNames: enabled_layer_names.as_ptr(),
-    //         enabledExtensionCount: extension_names.len() as u32,
-    //         ppEnabledExtensionNames:extension_names.as_ptr(),
-    //     };
-
-    //     let mut handle = ptr::null_mut();
-    //     ::check(loader.core_global().vkCreateInstance(&create_info, ptr::null(), &mut handle));
-    //     // create_info.enabled_extensions.load_instance(&mut loader, handle); // DACITE WAY
-
-    //     // [FIXME: do this properly] Load extension function pointers:
-    //     loader.loader_mut().load_core(handle);
-    //     loader.loader_mut().load_khr_surface(handle);
-    //     loader.loader_mut().load_khr_win32_surface(handle);
-    //     loader.loader_mut().load_khr_get_physical_device_properties2(handle);
-    //     loader.loader_mut().load_khr_external_memory_capabilities(handle);
-    //     if ENABLE_VALIDATION_LAYERS { loader.loader_mut().load_ext_debug_report(handle); }
-
-    //     let debug_callback = if ENABLE_VALIDATION_LAYERS {
-    //         let create_info = vks::VkDebugReportCallbackCreateInfoEXT {
-    //             sType:  vks::VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
-    //             pNext: ptr::null(),
-    //             flags: vks::VK_DEBUG_REPORT_ERROR_BIT_EXT | vks::VK_DEBUG_REPORT_WARNING_BIT_EXT,
-    //             pfnCallback: Some(__debug_callback),
-    //             pUserData: ptr::null_mut(),
-    //         };
-
-    //         let mut callback: vks::VkDebugReportCallbackEXT = 0;
-    //         if loader.loader().ext_debug_report.vkCreateDebugReportCallbackEXT(handle,
-    //                 &create_info, ptr::null(), &mut callback) != vks::VK_SUCCESS
-    //         {
-    //             panic!("failed to set up debug callback");
-    //         } else {
-    //             println!("Debug report callback initialized.");
-    //         }
-    //         Some(callback)
-    //     } else {
-    //         None
-    //     };
-
-    //     // Device:
-    //     let physical_devices = enumerate_physical_devices(handle, loader.loader());
-
-    //     Ok(Instance {
-    //         inner: Arc::new(Inner {
-    //             handle,
-    //             loader,
-    //             debug_callback,
-    //             physical_devices,
-    //         }),
-    //     })
-    // }
-
     #[inline]
     pub fn builder<'ib>() -> InstanceBuilder<'ib> {
         InstanceBuilder::new()
@@ -287,17 +209,22 @@ impl Instance {
     }
 
     #[inline]
+    pub fn proc_addr_loader(&self) -> &vks::InstanceProcAddrLoader {
+        self.inner.loader.loader()
+    }
+
+    #[inline]
     pub fn handle(&self) -> vks::VkInstance {
         self.inner.handle
     }
 
-    #[inline]
-    pub fn get_instance_proc_addr(&self, name: *const i8)
-            -> Option<unsafe extern "system" fn(*mut vks::VkInstance_T, *const i8)
-                -> Option<unsafe extern "system" fn()>>
-    {
-        self.inner.loader.get_instance_proc_addr(self.inner.handle, name)
-    }
+    // #[inline]
+    // pub fn get_instance_proc_addr(&self, name: *const i8)
+    //         -> Option<unsafe extern "system" fn(*mut vks::VkInstance_T, *const i8)
+    //             -> Option<unsafe extern "system" fn()>>
+    // {
+    //     self.inner.loader.get_instance_proc_addr(self.inner.handle, name)
+    // }
 
     #[inline]
     pub fn physical_devices(&self) -> &[vks::VkPhysicalDevice] {

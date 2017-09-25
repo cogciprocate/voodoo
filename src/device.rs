@@ -33,11 +33,11 @@ fn check_device_extension_support(instance: &Instance, device: vks::VkPhysicalDe
     let mut avail_ext_count = 0u32;
     let mut avail_exts: Vec<vks::VkExtensionProperties>;
     unsafe {
-        ::check(instance.vk().core.vkEnumerateDeviceExtensionProperties(device, ptr::null(),
+        ::check(instance.proc_addr_loader().core.vkEnumerateDeviceExtensionProperties(device, ptr::null(),
             &mut avail_ext_count, ptr::null_mut()));
         avail_exts = Vec::with_capacity(avail_ext_count as usize);
         avail_exts.set_len(avail_ext_count as usize);
-        ::check(instance.vk().core.vkEnumerateDeviceExtensionProperties(device, ptr::null(),
+        ::check(instance.proc_addr_loader().core.vkEnumerateDeviceExtensionProperties(device, ptr::null(),
             &mut avail_ext_count, avail_exts.as_mut_ptr()));
 
         // Print available:
@@ -70,8 +70,8 @@ unsafe fn device_is_suitable(instance: &Instance, surface: &Surface, device: vks
 {
     let mut device_properties: vks::VkPhysicalDeviceProperties = mem::uninitialized();
     let mut device_features: vks::VkPhysicalDeviceFeatures = mem::uninitialized();
-    instance.vk().core.vkGetPhysicalDeviceProperties(device, &mut device_properties);
-    instance.vk().core.vkGetPhysicalDeviceFeatures(device, &mut device_features);
+    instance.proc_addr_loader().core.vkGetPhysicalDeviceProperties(device, &mut device_properties);
+    instance.proc_addr_loader().core.vkGetPhysicalDeviceFeatures(device, &mut device_features);
 
     let extensions_supported = check_device_extension_support(instance, device);
 
@@ -239,10 +239,10 @@ impl Device {
         // Device:
         let mut handle = ptr::null_mut();
         unsafe {
-            ::check(instance.vk().core.vkCreateDevice(physical_device, &create_info, ptr::null(), &mut handle));
+            ::check(instance.proc_addr_loader().core.vkCreateDevice(physical_device, &create_info, ptr::null(), &mut handle));
         }
 
-        let mut loader = vks::DeviceProcAddrLoader::from_get_device_proc_addr(instance.vk().core.pfn_vkGetDeviceProcAddr);
+        let mut loader = vks::DeviceProcAddrLoader::from_get_device_proc_addr(instance.proc_addr_loader().core.pfn_vkGetDeviceProcAddr);
 
         unsafe {
             loader.load_core(handle);
@@ -287,14 +287,14 @@ impl Device {
     pub fn queue(&self, queue_idx: u32) -> vks::VkQueue {
         let mut queue_handle = ptr::null_mut();
         unsafe {
-            self.vk().core.vkGetDeviceQueue(self.inner.handle, self.inner.queue_family_idx, queue_idx,
+            self.proc_addr_loader().core.vkGetDeviceQueue(self.inner.handle, self.inner.queue_family_idx, queue_idx,
                 &mut queue_handle);
         }
         queue_handle
     }
 
     #[inline]
-    pub fn vk(&self) -> &vks::DeviceProcAddrLoader {
+    pub fn proc_addr_loader(&self) -> &vks::DeviceProcAddrLoader {
         // &self.inner.vk
         &self.inner.loader
     }
@@ -319,7 +319,7 @@ impl Drop for Inner {
     fn drop(&mut self) {
         println!("Destroying device...");
         unsafe {
-            self.instance.vk().core.vkDestroyDevice(self.handle, ptr::null());
+            self.instance.proc_addr_loader().core.vkDestroyDevice(self.handle, ptr::null());
         }
     }
 }

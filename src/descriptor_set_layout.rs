@@ -45,7 +45,7 @@ impl DescriptorSetLayout {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().vkCreateDescriptorSetLayout(device.handle(), &create_info,
+            ::check(device.proc_addr_loader().vkCreateDescriptorSetLayout(device.handle(), &create_info,
                 ptr::null(), &mut handle));
         }
 
@@ -69,7 +69,7 @@ impl DescriptorSetLayout {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().vkDestroyDescriptorSetLayout(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().vkDestroyDescriptorSetLayout(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

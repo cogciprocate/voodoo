@@ -48,7 +48,7 @@ impl ImageView {
         let mut handle = 0;
 
         unsafe {
-            ::check(device.vk().core.vkCreateImageView(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreateImageView(device.handle(),
                 &create_info, ptr::null(), &mut handle));
         }
 
@@ -73,7 +73,7 @@ impl ImageView {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().core.vkDestroyImageView(self.device.handle(),
+            self.device.proc_addr_loader().core.vkDestroyImageView(self.device.handle(),
                 self.handle, ptr::null());
         }
     }

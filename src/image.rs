@@ -46,7 +46,7 @@ impl Image {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().vkCreateImage(device.handle(), &create_info,
+            ::check(device.proc_addr_loader().vkCreateImage(device.handle(), &create_info,
                 ptr::null(), &mut handle));
         }
 
@@ -54,7 +54,7 @@ impl Image {
         let mut mem_requirements: vks::VkMemoryRequirements;
         unsafe {
             mem_requirements = mem::uninitialized();
-            device.vk().core.vkGetImageMemoryRequirements(device.handle(), handle,
+            device.proc_addr_loader().core.vkGetImageMemoryRequirements(device.handle(), handle,
                 &mut mem_requirements);
         }
 
@@ -74,7 +74,7 @@ impl Image {
             memory_type_index)?;
 
         unsafe {
-            ::check(device.vk().vkBindImageMemory(device.handle(), handle,
+            ::check(device.proc_addr_loader().vkBindImageMemory(device.handle(), handle,
                 device_memory.handle(), 0));
         }
 
@@ -103,7 +103,7 @@ impl Image {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().vkDestroyImage(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().vkDestroyImage(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

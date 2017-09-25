@@ -42,7 +42,7 @@ impl Sampler {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().vkCreateSampler(device.handle(), &create_info,
+            ::check(device.proc_addr_loader().vkCreateSampler(device.handle(), &create_info,
                 ptr::null(), &mut handle));
         }
 
@@ -66,7 +66,7 @@ impl Sampler {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().vkDestroySampler(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().vkDestroySampler(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

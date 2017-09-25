@@ -44,7 +44,7 @@ impl Framebuffer {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().core.vkCreateFramebuffer(device.handle(), &create_info, ptr::null(),
+            ::check(device.proc_addr_loader().core.vkCreateFramebuffer(device.handle(), &create_info, ptr::null(),
                 &mut handle));
         }
 
@@ -70,7 +70,7 @@ impl Framebuffer {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().core.vkDestroyFramebuffer(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyFramebuffer(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

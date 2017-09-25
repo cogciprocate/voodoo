@@ -31,7 +31,7 @@ impl ShaderModule {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().core.vkCreateShaderModule(device.handle(), &create_info,
+            ::check(device.proc_addr_loader().core.vkCreateShaderModule(device.handle(), &create_info,
                 ptr::null(), &mut handle));
         }
 
@@ -55,7 +55,7 @@ impl ShaderModule {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().core.vkDestroyShaderModule(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyShaderModule(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

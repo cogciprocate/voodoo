@@ -34,7 +34,7 @@ impl CommandPool {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().core.vkCreateCommandPool(device.handle(), &create_info,
+            ::check(device.proc_addr_loader().core.vkCreateCommandPool(device.handle(), &create_info,
                 ptr::null(), &mut handle));
         }
 
@@ -58,7 +58,7 @@ impl CommandPool {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().core.vkDestroyCommandPool(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyCommandPool(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

@@ -38,7 +38,7 @@ impl PipelineLayout {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().core.vkCreatePipelineLayout(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreatePipelineLayout(device.handle(),
                 &pipeline_layout_info, ptr::null(), &mut handle));
         }
 
@@ -63,7 +63,7 @@ impl PipelineLayout {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().core.vkDestroyPipelineLayout(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyPipelineLayout(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

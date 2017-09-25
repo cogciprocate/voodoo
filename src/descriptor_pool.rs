@@ -42,7 +42,7 @@ impl DescriptorPool {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().vkCreateDescriptorPool(device.handle(), &create_info,
+            ::check(device.proc_addr_loader().vkCreateDescriptorPool(device.handle(), &create_info,
                 ptr::null(), &mut handle));
         }
 
@@ -66,7 +66,7 @@ impl DescriptorPool {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().vkDestroyDescriptorPool(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().vkDestroyDescriptorPool(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

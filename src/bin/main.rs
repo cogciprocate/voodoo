@@ -14,7 +14,8 @@ use std::collections::HashMap;
 use image::{ImageFormat, DynamicImage};
 use cgmath::{SquareMatrix, One, Rotation, Rotation3, Basis3, Matrix3, Matrix4, Vector3};
 use voo::winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
-use voo::{vks, util, device, Result as VooResult, Version, Instance, Device, Surface, Swapchain,
+use voo::{voodoo_winit, vks, util, device, Result as VooResult, Version, Instance, Device,
+    Surface, Swapchain,
     ImageView, PipelineLayout, RenderPass, GraphicsPipeline, Framebuffer, CommandPool, Semaphore,
     Buffer, DeviceMemory, Vertex, DescriptorSetLayout, UniformBufferObject, DescriptorPool,
     Image, Sampler, Loader};
@@ -57,20 +58,14 @@ fn init_window() -> (Window, EventsLoop) {
 }
 
 fn init_instance() -> VooResult<Instance> {
-    use std::ffi::{CStr, CString};
-    use voo::instance;
-
-    let app_name = CStr::from_bytes_with_nul(b"Hello Triangle\0").unwrap();
-    let engine_name = CStr::from_bytes_with_nul(b"No Engine\0").unwrap();
-    let app_name = CString::new("Hello Triangle").unwrap();
-    let engine_name = CString::new("No Engine").unwrap();
-
     let app_info = voo::ApplicationInfo::new()
-        .application_name(app_name)
-        .application_version(Version::new(1, 0, 0))
-        .engine_name(engine_name)
-        .engine_version(Version::new(1, 0, 0))
-        .api_version(Version::new(1, 0, 51));
+        // Use `.application_name_c_str(CStr::from_bytes_with_nul(b"Hello
+        // Triangle\0").unwrap())` to avoid any extra allocation.
+        .application_name("Hello Triangle")
+        .application_version((1, 0, 0))
+        .engine_name("No Engine")
+        .engine_version((1, 0, 0))
+        .api_version((1, 0, 51));
 
     let loader = Loader::new()?;
     let enabled_layer_names = loader.enabled_layer_names(true);
@@ -95,7 +90,7 @@ fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
 
     let mut command_buffer = ptr::null_mut();
     unsafe {
-        voo::check(device.vk().core.vkAllocateCommandBuffers(device.handle(), &alloc_info,
+        voo::check(device.proc_addr_loader().core.vkAllocateCommandBuffers(device.handle(), &alloc_info,
             &mut command_buffer));
     }
 
@@ -106,13 +101,13 @@ fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
         pInheritanceInfo: ptr::null(),
     };
 
-    unsafe { device.vk().core.vkBeginCommandBuffer(command_buffer, &begin_info); }
+    unsafe { device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer, &begin_info); }
     Ok(command_buffer)
 }
 
 fn end_single_time_commands(device: &Device, command_pool: &CommandPool,
         command_buffer: vks::VkCommandBuffer) -> VooResult<()> {
-    unsafe { voo::check(device.vk().core.vkEndCommandBuffer(command_buffer)); }
+    unsafe { voo::check(device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer)); }
 
     let submit_info = vks::VkSubmitInfo {
         sType: vks::VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -127,10 +122,10 @@ fn end_single_time_commands(device: &Device, command_pool: &CommandPool,
     };
 
     unsafe {
-        voo::check(device.vk().core.vkQueueSubmit(device.queue(0), 1,
+        voo::check(device.proc_addr_loader().core.vkQueueSubmit(device.queue(0), 1,
             &submit_info, 0));
-        voo::check(device.vk().core.vkQueueWaitIdle(device.queue(0)));
-        device.vk().core.vkFreeCommandBuffers(device.handle(),
+        voo::check(device.proc_addr_loader().core.vkQueueWaitIdle(device.queue(0)));
+        device.proc_addr_loader().core.vkFreeCommandBuffers(device.handle(),
             command_pool.handle(), 1, &command_buffer);
     }
 
@@ -205,7 +200,7 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
     }
 
     unsafe {
-        device.vk().vkCmdPipelineBarrier(
+        device.proc_addr_loader().vkCmdPipelineBarrier(
             command_buffer,
             source_stage, destination_stage,
             0,
@@ -239,7 +234,7 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
     };
 
     unsafe {
-        device.vk().vkCmdCopyBufferToImage(
+        device.proc_addr_loader().vkCmdCopyBufferToImage(
             command_buffer,
             buffer.handle(),
             image.handle(),
@@ -265,7 +260,7 @@ fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
         size: size,
     };
 
-    unsafe { device.vk().core.vkCmdCopyBuffer(command_buffer, src_buffer.handle(),
+    unsafe { device.proc_addr_loader().core.vkCmdCopyBuffer(command_buffer, src_buffer.handle(),
         dst_buffer.handle(), 1, &copy_region); }
 
     end_single_time_commands(device, command_pool, command_buffer)
@@ -329,10 +324,10 @@ fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &
 
     let mut data = ptr::null_mut();
     unsafe {
-        voo::check(device.vk().core.vkMapMemory(device.handle(),
+        voo::check(device.proc_addr_loader().core.vkMapMemory(device.handle(),
             staging_buffer.device_memory().handle(), 0, buffer_bytes, 0, &mut data));
         ptr::copy_nonoverlapping(vertices.as_ptr(), data as *mut _, vertices.len());
-        device.vk().core.vkUnmapMemory(device.handle(), staging_buffer.device_memory().handle());
+        device.proc_addr_loader().core.vkUnmapMemory(device.handle(), staging_buffer.device_memory().handle());
     }
 
     // HOST-RW:
@@ -358,10 +353,10 @@ fn create_index_buffer<T>(device: &Device, command_pool: &CommandPool, indices: 
 
     unsafe {
         let mut data = ptr::null_mut();
-        voo::check(device.vk().core.vkMapMemory(device.handle(),
+        voo::check(device.proc_addr_loader().core.vkMapMemory(device.handle(),
             staging_buffer.device_memory().handle(), 0, buffer_bytes, 0, &mut data));
         ptr::copy_nonoverlapping(indices.as_ptr(), data as *mut _, indices.len());
-        device.vk().core.vkUnmapMemory(device.handle(), staging_buffer.device_memory().handle());
+        device.proc_addr_loader().core.vkUnmapMemory(device.handle(), staging_buffer.device_memory().handle());
     }
 
     let index_buffer = Buffer::new(device.clone(), buffer_bytes,
@@ -389,7 +384,7 @@ fn find_supported_format(device: &Device, candidates: &[vks::VkFormat], tiling: 
         let mut props: vks::VkFormatProperties;
         unsafe {
             props = mem::uninitialized();
-            device.instance().vk().vkGetPhysicalDeviceFormatProperties(device.physical_device(),
+            device.instance().proc_addr_loader().vkGetPhysicalDeviceFormatProperties(device.physical_device(),
             format, &mut props);
         }
 
@@ -443,10 +438,10 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool) -> VooResul
 
     unsafe {
         let mut data = ptr::null_mut();
-        voo::check(device.vk().vkMapMemory(device.handle(),
+        voo::check(device.proc_addr_loader().vkMapMemory(device.handle(),
             staging_buffer.device_memory().handle(), 0, image_bytes, 0, &mut data));
         ptr::copy_nonoverlapping(pixels.as_ptr(), data as *mut _, pixels.len());
-        device.vk().vkUnmapMemory(device.handle(), staging_buffer.device_memory().handle());
+        device.proc_addr_loader().vkUnmapMemory(device.handle(), staging_buffer.device_memory().handle());
     }
 
     let extent = vks::VkExtent3D { width: tex_width, height: tex_height, depth: 1 };
@@ -504,7 +499,7 @@ fn create_descriptor_set(device: &Device, layout: &DescriptorSetLayout,
 
     let mut descriptor_set = 0;
     unsafe {
-        voo::check(device.vk().vkAllocateDescriptorSets(device.handle(), &alloc_info,
+        voo::check(device.proc_addr_loader().vkAllocateDescriptorSets(device.handle(), &alloc_info,
             &mut descriptor_set));
     }
 
@@ -548,7 +543,7 @@ fn create_descriptor_set(device: &Device, layout: &DescriptorSetLayout,
     ];
 
     unsafe {
-        device.vk().vkUpdateDescriptorSets(device.handle(), descriptor_writes.len() as u32,
+        device.proc_addr_loader().vkUpdateDescriptorSets(device.handle(), descriptor_writes.len() as u32,
             descriptor_writes.as_ptr(), 0, ptr::null());
     }
 
@@ -599,7 +594,7 @@ impl App {
     pub unsafe fn new() -> VooResult<App> {
         let instance = init_instance()?;
         let (window, events_loop) = init_window();
-        let surface = Surface::new(instance.clone(), &window)?;
+        let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
         let queue_family_flags = vks::VK_QUEUE_GRAPHICS_BIT;
         let physical_device = device::choose_physical_device(&instance, &surface,
             queue_family_flags)?;
@@ -689,7 +684,7 @@ impl App {
         self.swapchain = None;
         self.swapchain_components = None;
         unsafe {
-            self.device.vk().core.vkFreeCommandBuffers(self.device.handle(),
+            self.device.proc_addr_loader().core.vkFreeCommandBuffers(self.device.handle(),
                 self.command_pool.handle(),
                 self.command_buffers.as_ref().unwrap().len() as u32,
                 self.command_buffers.as_mut().unwrap().as_mut_ptr());
@@ -698,7 +693,7 @@ impl App {
     }
 
     fn recreate_swapchain(&mut self, current_extent: vks::VkExtent2D) -> VooResult<()> {
-        unsafe { voo::check(self.device.vk().core.vkDeviceWaitIdle(self.device.handle())); }
+        unsafe { voo::check(self.device.proc_addr_loader().core.vkDeviceWaitIdle(self.device.handle())); }
 
         let swapchain = Swapchain::new(self.surface.clone(), self.device.clone(),
             self.queue_family_flags, Some(current_extent), self.swapchain.take())?;
@@ -760,11 +755,11 @@ impl App {
 
         let mut data = ptr::null_mut();
         unsafe {
-            voo::check(self.device.vk().core.vkMapMemory(self.device.handle(),
+            voo::check(self.device.proc_addr_loader().core.vkMapMemory(self.device.handle(),
                 self.uniform_buffer.device_memory().handle(), 0,
                 mem::size_of::<UniformBufferObject>() as u64, 0, &mut data));
             ptr::copy_nonoverlapping(&ubo, data as *mut _, 1);
-            self.device.vk().core.vkUnmapMemory(self.device.handle(),
+            self.device.proc_addr_loader().core.vkUnmapMemory(self.device.handle(),
                 self.uniform_buffer.device_memory().handle());
         }
 
@@ -774,7 +769,7 @@ impl App {
     fn draw_frame(&mut self) -> VooResult<()> {
         let mut image_index = 0u32;
         let acq_res = unsafe {
-            self.device.vk().khr_swapchain.vkAcquireNextImageKHR(self.device.handle(),
+            self.device.proc_addr_loader().khr_swapchain.vkAcquireNextImageKHR(self.device.handle(),
                 self.swapchain.as_ref().unwrap().handle(),
                 u64::max_value(), self.image_available_semaphore.handle(), 0, &mut image_index)
         };
@@ -804,7 +799,7 @@ impl App {
             pSignalSemaphores: signal_semaphores.as_ptr(),
         };
 
-        unsafe { voo::check(self.device.vk().core.vkQueueSubmit(self.device.queue(0), 1,
+        unsafe { voo::check(self.device.proc_addr_loader().core.vkQueueSubmit(self.device.queue(0), 1,
             &submit_info, 0)); }
 
         let swapchains = [self.swapchain.as_ref().unwrap().handle()];
@@ -821,8 +816,8 @@ impl App {
         };
 
         unsafe {
-            voo::check(self.device.vk().khr_swapchain.vkQueuePresentKHR(self.device.queue(0), &present_info));
-            voo::check(self.device.vk().core.vkQueueWaitIdle(self.device.queue(0)));
+            voo::check(self.device.proc_addr_loader().khr_swapchain.vkQueuePresentKHR(self.device.queue(0), &present_info));
+            voo::check(self.device.proc_addr_loader().core.vkQueueWaitIdle(self.device.queue(0)));
         }
 
         Ok(())
@@ -859,7 +854,7 @@ impl App {
             self.draw_frame()?;
         }
 
-        unsafe { voo::check(self.device.vk().core.vkDeviceWaitIdle(self.device.handle())); }
+        unsafe { voo::check(self.device.proc_addr_loader().core.vkDeviceWaitIdle(self.device.handle())); }
         Ok(())
     }
 }

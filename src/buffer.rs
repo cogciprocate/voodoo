@@ -37,7 +37,7 @@ impl Buffer {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().core.vkCreateBuffer(device.handle(), &create_info,
+            ::check(device.proc_addr_loader().core.vkCreateBuffer(device.handle(), &create_info,
                 ptr::null(), &mut handle));
         }
 
@@ -45,7 +45,7 @@ impl Buffer {
         let mut mem_requirements: vks::VkMemoryRequirements;
         unsafe {
             mem_requirements = mem::uninitialized();
-            device.vk().core.vkGetBufferMemoryRequirements(device.handle(), handle,
+            device.proc_addr_loader().core.vkGetBufferMemoryRequirements(device.handle(), handle,
                 &mut mem_requirements);
         }
 
@@ -99,7 +99,7 @@ impl Buffer {
             memory_type_index)?;
 
         unsafe {
-            ::check(device.vk().core.vkBindBufferMemory(device.handle(), handle,
+            ::check(device.proc_addr_loader().core.vkBindBufferMemory(device.handle(), handle,
                 device_memory.handle(), 0));
         }
 
@@ -128,7 +128,7 @@ impl Buffer {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().core.vkDestroyBuffer(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyBuffer(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

@@ -93,7 +93,7 @@ impl RenderPass {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().core.vkCreateRenderPass(device.handle(), &create_info, ptr::null(), &mut handle));
+            ::check(device.proc_addr_loader().core.vkCreateRenderPass(device.handle(), &create_info, ptr::null(), &mut handle));
         }
 
         Ok(RenderPass {
@@ -116,7 +116,7 @@ impl RenderPass {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().core.vkDestroyRenderPass(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyRenderPass(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

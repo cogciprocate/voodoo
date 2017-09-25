@@ -39,31 +39,109 @@ mod structs;
 pub mod vks {
     pub use vks_::*;
     pub use vks_::core::*;
+    pub use vks_::amd_draw_indirect_count::*;
+    pub use vks_::amd_gcn_shader::*;
+    pub use vks_::amd_gpu_shader_half_float::*;
+    pub use vks_::amd_gpu_shader_int16::*;
+    pub use vks_::amd_mixed_attachment_samples::*;
+    pub use vks_::amd_negative_viewport_height::*;
     pub use vks_::amd_rasterization_order::*;
+    pub use vks_::amd_shader_ballot::*;
+    pub use vks_::amd_shader_explicit_vertex_parameter::*;
+    pub use vks_::amd_shader_trinary_minmax::*;
+    pub use vks_::amd_texture_gather_bias_lod::*;
+    pub use vks_::ext_acquire_xlib_display::*;
+    pub use vks_::ext_blend_operation_advanced::*;
     pub use vks_::ext_debug_marker::*;
     pub use vks_::ext_debug_report::*;
+    pub use vks_::ext_depth_range_unrestricted::*;
+    pub use vks_::ext_direct_mode_display::*;
+    pub use vks_::ext_discard_rectangles::*;
+    pub use vks_::ext_display_control::*;
+    pub use vks_::ext_display_surface_counter::*;
+    pub use vks_::ext_hdr_metadata::*;
+    pub use vks_::ext_post_depth_coverage::*;
+    pub use vks_::ext_sampler_filter_minmax::*;
+    pub use vks_::ext_shader_stencil_export::*;
+    pub use vks_::ext_shader_subgroup_ballot::*;
+    pub use vks_::ext_shader_subgroup_vote::*;
+    pub use vks_::ext_shader_viewport_index_layer::*;
+    pub use vks_::ext_swapchain_colorspace::*;
     pub use vks_::ext_validation_flags::*;
+    pub use vks_::google_display_timing::*;
+    pub use vks_::img_filter_cubic::*;
+    pub use vks_::img_format_pvrtc::*;
+    pub use vks_::khr_16bit_storage::*;
     pub use vks_::khr_android_surface::*;
+    pub use vks_::khr_dedicated_allocation::*;
+    pub use vks_::khr_descriptor_update_template::*;
     pub use vks_::khr_display::*;
     pub use vks_::khr_display_swapchain::*;
+    pub use vks_::khr_external_fence::*;
+    pub use vks_::khr_external_fence_capabilities::*;
+    pub use vks_::khr_external_fence_fd::*;
+    pub use vks_::khr_external_fence_win32::*;
+    pub use vks_::khr_external_memory::*;
+    pub use vks_::khr_external_memory_capabilities::*;
+    pub use vks_::khr_external_memory_fd::*;
+    pub use vks_::khr_external_memory_win32::*;
+    pub use vks_::khr_external_semaphore::*;
+    pub use vks_::khr_external_semaphore_capabilities::*;
+    pub use vks_::khr_external_semaphore_fd::*;
+    pub use vks_::khr_external_semaphore_win32::*;
+    pub use vks_::khr_get_memory_requirements2::*;
     pub use vks_::khr_get_physical_device_properties2::*;
+    pub use vks_::khr_get_surface_capabilities2::*;
+    pub use vks_::khr_incremental_present::*;
+    pub use vks_::khr_maintenance1::*;
     pub use vks_::khr_mir_surface::*;
+    pub use vks_::khr_push_descriptor::*;
+    pub use vks_::khr_relaxed_block_layout::*;
+    pub use vks_::khr_sampler_mirror_clamp_to_edge::*;
+    pub use vks_::khr_shader_draw_parameters::*;
+    pub use vks_::khr_shared_presentable_image::*;
+    pub use vks_::khr_storage_buffer_storage_class::*;
     pub use vks_::khr_surface::*;
     pub use vks_::khr_swapchain::*;
+    pub use vks_::khr_variable_pointers::*;
     pub use vks_::khr_wayland_surface::*;
+    pub use vks_::khr_win32_keyed_mutex::*;
     pub use vks_::khr_win32_surface::*;
     pub use vks_::khr_xcb_surface::*;
     pub use vks_::khr_xlib_surface::*;
+    pub use vks_::mvk_ios_surface::*;
+    pub use vks_::mvk_macos_surface::*;
+    pub use vks_::nn_vi_surface::*;
+    pub use vks_::nv_clip_space_w_scaling::*;
     pub use vks_::nv_dedicated_allocation::*;
     pub use vks_::nv_external_memory::*;
     pub use vks_::nv_external_memory_capabilities::*;
     pub use vks_::nv_external_memory_win32::*;
+    pub use vks_::nv_fill_rectangle::*;
+    pub use vks_::nv_fragment_coverage_to_color::*;
+    pub use vks_::nv_framebuffer_mixed_samples::*;
+    pub use vks_::nv_geometry_shader_passthrough::*;
+    pub use vks_::nv_glsl_shader::*;
+    pub use vks_::nv_sample_mask_override_coverage::*;
+    pub use vks_::nv_viewport_array2::*;
+    pub use vks_::nv_viewport_swizzle::*;
     pub use vks_::nv_win32_keyed_mutex::*;
+
+    pub use vks_::android_types::*;
+    pub use vks_::mir_types::*;
+    pub use vks_::wayland_types::*;
+    pub use vks_::win32_types::*;
+    pub use vks_::xcb_types::*;
+    pub use vks_::xlib_types::*;
+
+    #[cfg(feature = "experimental")]
+    pub use vks_::experimental::*;
 }
 
 // pub mod vulkan_h;
 pub mod device;
 pub mod util;
+pub mod voodoo_winit;
 
 use std::ffi::OsStr;
 use std::hash::{Hash, Hasher};
@@ -120,7 +198,7 @@ pub fn find_memory_type(device: &Device, type_filter: u32, properties: vks::VkMe
     let mut mem_properties: vks::VkPhysicalDeviceMemoryProperties;
     unsafe {
         mem_properties = mem::uninitialized();
-        device.instance().vk().core.vkGetPhysicalDeviceMemoryProperties(device.physical_device(),
+        device.instance().proc_addr_loader().core.vkGetPhysicalDeviceMemoryProperties(device.physical_device(),
             &mut mem_properties);
     }
 
@@ -238,7 +316,7 @@ pub struct UniformBufferObject {
 
 //         let mut handle = 0;
 //         unsafe {
-//             ::check(device.vk().vkCreateAbstractTemplate(device.handle(), &create_info,
+//             ::check(device.proc_addr_loader().vkCreateAbstractTemplate(device.handle(), &create_info,
 //                 ptr::null(), &mut handle));
 //         }
 
@@ -262,7 +340,7 @@ pub struct UniformBufferObject {
 // impl Drop for Inner {
 //     fn drop(&mut self) {
 //         unsafe {
-//             self.device.vk().vkDestroyAbstractTemplate(self.device.handle(), self.handle, ptr::null());
+//             self.device.proc_addr_loader().vkDestroyAbstractTemplate(self.device.handle(), self.handle, ptr::null());
 //         }
 //     }
 // }

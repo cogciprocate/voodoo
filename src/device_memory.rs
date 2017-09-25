@@ -26,7 +26,7 @@ impl DeviceMemory {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().core.vkAllocateMemory(device.handle(), &create_info,
+            ::check(device.proc_addr_loader().core.vkAllocateMemory(device.handle(), &create_info,
                 ptr::null(), &mut handle));
         }
 
@@ -50,7 +50,7 @@ impl DeviceMemory {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().core.vkFreeMemory(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkFreeMemory(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

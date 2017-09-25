@@ -27,7 +27,7 @@ impl Semaphore {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.vk().core.vkCreateSemaphore(device.handle(), &create_info,
+            ::check(device.proc_addr_loader().core.vkCreateSemaphore(device.handle(), &create_info,
                 ptr::null(), &mut handle));
         }
 
@@ -51,7 +51,7 @@ impl Semaphore {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().core.vkDestroySemaphore(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroySemaphore(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

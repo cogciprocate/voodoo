@@ -21,28 +21,28 @@ impl SwapchainSupportDetails {
         unsafe {
             // Capabilities:
             let mut capabilities: vks::khr_surface::VkSurfaceCapabilitiesKHR = mem::uninitialized();
-            instance.vk().khr_surface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+            instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
                 physical_device, surface.handle(), &mut capabilities);
 
             // Formats:
             let mut format_count = 0u32;
-            instance.vk().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device,
+            instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device,
                 surface.handle(), &mut format_count, ptr::null_mut());
             let mut formats: Vec<vks::khr_surface::VkSurfaceFormatKHR> = Vec::with_capacity(format_count as usize);
             formats.set_len(format_count as usize);
             if format_count != 0 {
-                instance.vk().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device,
+                instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device,
                     surface.handle(), &mut format_count, formats.as_mut_ptr());
             }
 
             // Present Modes:
             let mut present_mode_count = 0u32;
-            instance.vk().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device,
+            instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device,
                 surface.handle(), &mut present_mode_count, ptr::null_mut());
             let mut present_modes: Vec<vks::khr_surface::VkPresentModeKHR> = Vec::with_capacity(present_mode_count as usize);
             present_modes.set_len(present_mode_count as usize);
             if present_mode_count != 0 {
-                instance.vk().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device,
+                instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device,
                     surface.handle(), &mut present_mode_count, present_modes.as_mut_ptr());
             }
 
@@ -184,7 +184,7 @@ impl Swapchain {
         };
 
         let mut handle = 0;
-        let res = unsafe { device.vk().vkCreateSwapchainKHR(device.handle(), &create_info, ptr::null(), &mut handle) };
+        let res = unsafe { device.proc_addr_loader().vkCreateSwapchainKHR(device.handle(), &create_info, ptr::null(), &mut handle) };
         if res != vks::VK_SUCCESS {
             panic!("failed to create swap chain!");
         }
@@ -192,9 +192,9 @@ impl Swapchain {
         let mut image_count = 0;
         let mut images = SmallVec::new();
         unsafe {
-            ::check(device.vk().vkGetSwapchainImagesKHR(device.handle(), handle, &mut image_count, ptr::null_mut()));
+            ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle(), handle, &mut image_count, ptr::null_mut()));
             images.set_len(image_count as usize);
-            ::check(device.vk().vkGetSwapchainImagesKHR(device.handle(), handle, &mut image_count, images.as_mut_ptr()));
+            ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle(), handle, &mut image_count, images.as_mut_ptr()));
         }
 
         Ok(Swapchain {
@@ -234,7 +234,7 @@ impl Swapchain {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.vk().vkDestroySwapchainKHR(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().vkDestroySwapchainKHR(self.device.handle(), self.handle, ptr::null());
         }
     }
 }

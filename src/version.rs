@@ -22,6 +22,19 @@ impl From<u32> for Version {
     }
 }
 
+impl From<[u16; 3]> for Version {
+    fn from(ver: [u16; 3]) -> Version {
+        // (ver.0[0] as u32) << 22 | (ver.0[1] as u32) << 12 | (ver.0[2] as u32)
+        Version([ver[0], ver[1], ver[2]])
+    }
+}
+
+impl From<(u16, u16, u16)> for Version {
+    fn from(ver: (u16, u16, u16)) -> Version {
+        Version([ver.0, ver.1, ver.2])
+    }
+}
+
 impl From<Version> for u32 {
     fn from(ver: Version) -> u32 {
         (ver.0[0] as u32) << 22 | (ver.0[1] as u32) << 12 | (ver.0[2] as u32)
