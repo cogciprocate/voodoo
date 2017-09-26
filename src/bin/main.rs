@@ -171,7 +171,6 @@ fn create_device(instance: Instance, surface: &Surface, physical_device: Physica
 
     Device::builder()
         .queue_create_infos(&[queue_create_info.clone()])
-        .enabled_layer_names(enabled_layer_names(instance.loader()).as_slice())
         .enabled_extension_names(REQUIRED_DEVICE_EXTENSIONS)
         .enabled_features(&features)
         .build(physical_device)
@@ -250,45 +249,14 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: vks::VkQueueF
         device.physical_device(), queue_flags);
     let queue_family_indices_0 = [indices.flag_idxs[0] as u32, indices.presentation_support_idxs[0] as u32];
 
-    // let (image_sharing_mode, queue_family_index_count, p_queue_family_indices);
     let (image_sharing_mode, queue_family_indices);
     if queue_family_indices_0[0] != queue_family_indices_0[1] {
         image_sharing_mode = vks::VK_SHARING_MODE_CONCURRENT;
-        // queue_family_index_count = 2;
-        // p_queue_family_indices = queue_family_indices.as_ptr();
         queue_family_indices = Some(&queue_family_indices_0[..]);
     } else {
         image_sharing_mode = vks::VK_SHARING_MODE_EXCLUSIVE;
-        // queue_family_index_count = 0; // Optional
-        // p_queue_family_indices = ptr::null(); // Optional
         queue_family_indices = None;
     }
-
-    // let image_extent = vks::VkExtent2D { width: extent.width, height: extent.height };
-
-    // let create_info = vks::khr_swapchain::VkSwapchainCreateInfoKHR {
-    //     sType: vks::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-    //     pNext: ptr::null(),
-    //     flags: 0,
-    //     surface: surface.handle(),
-    //     minImageCount: image_count,
-    //     imageFormat: surface_format.format,
-    //     imageColorSpace: surface_format.colorSpace,
-    //     imageExtent: extent.clone(),
-    //     imageArrayLayers: 1,
-    //     imageUsage: vks::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-    //     imageSharingMode: image_sharing_mode,
-    //     queueFamilyIndexCount: queue_family_index_count,
-    //     pQueueFamilyIndices: p_queue_family_indices,
-    //     preTransform: swapchain_details.capabilities.currentTransform,
-    //     compositeAlpha: vks::khr_surface::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-    //     presentMode: present_mode,
-    //     clipped: vks::VK_TRUE,
-    //     oldSwapchain: old_swapchain.map(|sc| sc.handle()).unwrap_or(0),
-    // };
-
-    // Swapchain::new(surface.clone(), device.clone(), queue_flags, None, None)
-    // Swapchain::new(device, surface, create_info)
 
     Swapchain::builder()
         .surface(surface)
@@ -301,7 +269,7 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: vks::VkQueueF
         .image_sharing_mode(image_sharing_mode)
         .queue_family_indices(queue_family_indices)
         .pre_transform(swapchain_details.capabilities.currentTransform)
-        .composite_alpha(vks::khr_surface::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
+        .composite_alpha(vks::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
         .present_mode(present_mode)
         .clipped(true)
         .old_swapchain(old_swapchain.map(|sc| sc.handle()).unwrap_or(0))
@@ -648,8 +616,22 @@ fn create_depth_resources(device: &Device, command_pool: &CommandPool,
     let depth_image = Image::new(device.clone(), extent, depth_format, vks::VK_IMAGE_TILING_OPTIMAL,
         vks::VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)?;
 
-    let depth_image_view = ImageView::new(device.clone(), None, depth_image.handle(), depth_format,
-        vks::VK_IMAGE_ASPECT_DEPTH_BIT)?;
+    // let depth_image_view = ImageView::new(device.clone(), None, depth_image.handle(), depth_format,
+    //     vks::VK_IMAGE_ASPECT_DEPTH_BIT)?;
+
+    let depth_image_view = ImageView::builder()
+        .image(depth_image.handle())
+        .view_type(vks::VK_IMAGE_VIEW_TYPE_2D)
+        .format(depth_format)
+        .components(vks::VkComponentMapping::default())
+        .subresource_range(vks::VkImageSubresourceRange {
+            aspectMask: vks::VK_IMAGE_ASPECT_DEPTH_BIT,
+            baseMipLevel: 0,
+            levelCount: 1,
+            baseArrayLayer: 0,
+            layerCount: 1,
+        })
+        .build(device.clone(), None)?;
 
     transition_image_layout(device, command_pool, &depth_image, depth_format,
         vks::VK_IMAGE_LAYOUT_UNDEFINED, vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)?;
@@ -692,8 +674,22 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool) -> VooResul
 }
 
 fn create_texture_image_view(device: Device, image: &Image) -> VooResult<ImageView> {
-    ImageView::new(device, None, image.handle(), vks::VK_FORMAT_R8G8B8A8_UNORM,
-        vks::VK_IMAGE_ASPECT_COLOR_BIT)
+    // ImageView::new(device, None, image.handle(), vks::VK_FORMAT_R8G8B8A8_UNORM,
+    //     vks::VK_IMAGE_ASPECT_COLOR_BIT)
+
+    ImageView::builder()
+        .image(image.handle())
+        .view_type(vks::VK_IMAGE_VIEW_TYPE_2D)
+        .format(vks::VK_FORMAT_R8G8B8A8_UNORM)
+        .components(vks::VkComponentMapping::default())
+        .subresource_range(vks::VkImageSubresourceRange {
+            aspectMask: vks::VK_IMAGE_ASPECT_COLOR_BIT,
+            baseMipLevel: 0,
+            levelCount: 1,
+            baseArrayLayer: 0,
+            layerCount: 1,
+        })
+        .build(device, None)
 }
 
 fn create_texture_sampler(device: Device) -> VooResult<Sampler> {
@@ -830,14 +826,13 @@ impl App {
             queue_family_flags)?;
         let device = create_device(instance.clone(), &surface, physical_device,
             queue_family_flags)?;
-
-        // let swapchain = Swapchain::new(surface.clone(), device.clone(), queue_family_flags,
-        //     None, None)?;
         let swapchain = create_swapchain(surface.clone(), device.clone(), queue_family_flags,
             None, None)?;
 
         let image_views = voo::create_image_views(&swapchain)?;
+
         let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;
+
         let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
         let pipeline_layout = PipelineLayout::new(device.clone(), Some(&descriptor_set_layout))?;
         let vert_shader_code = util::read_file("/src/voodoo/shaders/vert.spv")?;

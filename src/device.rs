@@ -115,7 +115,9 @@ impl<'db> DeviceBuilder<'db> {
         }
     }
 
-    /// Specifies the queue_creation info.
+    /// Specifies the list of VkDeviceQueueCreateInfo structures describing
+    /// the queues that are requested to be created along with the logical
+    /// device.
     pub fn queue_create_infos<'s, 'ci>(&'s mut self,
             queue_create_infos: &'ci [DeviceQueueCreateInfo])
             -> &'s mut DeviceBuilder<'db>
@@ -130,6 +132,9 @@ impl<'db> DeviceBuilder<'db> {
     }
 
     /// Specifies the layer names to enable.
+    ///
+    /// Ignored.
+    #[deprecated(note = "No longer used")]
     pub fn enabled_layer_names<'s, 'cs, Cs>(&'s mut self, enabled_layer_names: Cs)
             -> &'s mut DeviceBuilder<'db>
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
@@ -141,7 +146,8 @@ impl<'db> DeviceBuilder<'db> {
         self
     }
 
-    /// Specifies the extension names to enable.
+    /// Specifies the list of names of extensions to enable for the created
+    /// device.
     pub fn enabled_extension_names<'s, 'cs, Cs>(&'s mut self, enabled_extension_names: Cs)
             -> &'s mut DeviceBuilder<'db>
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
@@ -153,6 +159,8 @@ impl<'db> DeviceBuilder<'db> {
         self
     }
 
+    /// Specifies the structure that contains boolean indicators of all the
+    /// features to be enabled.
     pub fn enabled_features<'s, 'f>(&'s mut self, enabled_features: &'f PhysicalDeviceFeatures)
             -> &'s mut DeviceBuilder<'db>
             where 'f: 'db {
@@ -160,6 +168,7 @@ impl<'db> DeviceBuilder<'db> {
         self
     }
 
+    /// Builds and returns a new `Device`.
     pub fn build(&self, physical_device: PhysicalDevice) -> VooResult<Device> {
                 // Device:
         let mut handle = ptr::null_mut();

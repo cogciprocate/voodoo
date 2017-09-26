@@ -51,90 +51,6 @@ impl Swapchain {
         SwapchainBuilder::new()
     }
 
-    // // pub fn new(surface: Surface, device: Device, queue_flags: vks::VkQueueFlags,
-    // //         window_size: Option<vks::VkExtent2D>, old_swapchain: Option<Swapchain>) -> VooResult<Swapchain>
-    // pub fn new(device: Device, surface: Surface, create_info: vks::VkSwapchainCreateInfoKHR)
-    //         -> VooResult<Swapchain> {
-    //     // let swapchain_details: SwapchainSupportDetails = SwapchainSupportDetails::new(device.instance(),
-    //     //     &surface, device.physical_device());
-    //     // let surface_format = choose_swap_surface_format(&swapchain_details.formats);
-    //     // let present_mode = choose_swap_present_mode(&swapchain_details.present_modes);
-    //     // let extent = choose_swap_extent(&swapchain_details.capabilities, window_size);
-
-    //     // // TODO: REVISIT THIS: https://vulkan-tutorial.com/Drawing_a_triangle/Presentation/Swap_chain
-    //     // let mut image_count = swapchain_details.capabilities.minImageCount + 1;
-    //     // if swapchain_details.capabilities.maxImageCount > 0 &&
-    //     //         image_count > swapchain_details.capabilities.maxImageCount
-    //     // {
-    //     //     image_count = swapchain_details.capabilities.maxImageCount;
-    //     // }
-
-    //     // let indices = queue::queue_families(device.instance(), &surface,
-    //     //     device.physical_device(), queue_flags);
-    //     // let queue_family_indices = [indices.flag_idxs[0] as u32, indices.presentation_support_idxs[0] as u32];
-
-    //     // let (image_sharing_mode, queue_family_index_count, p_queue_family_indices);
-    //     // if queue_family_indices[0] != queue_family_indices[1] {
-    //     //     image_sharing_mode = vks::VK_SHARING_MODE_CONCURRENT;
-    //     //     queue_family_index_count = 2;
-    //     //     p_queue_family_indices = queue_family_indices.as_ptr();
-    //     // } else {
-    //     //     image_sharing_mode = vks::VK_SHARING_MODE_EXCLUSIVE;
-    //     //     queue_family_index_count = 0; // Optional
-    //     //     p_queue_family_indices = ptr::null(); // Optional
-    //     // }
-
-    //     // // let image_extent = vks::VkExtent2D { width: extent.width, height: extent.height };
-
-    //     // let create_info = vks::khr_swapchain::VkSwapchainCreateInfoKHR {
-    //     //     sType: vks::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-    //     //     pNext: ptr::null(),
-    //     //     flags: 0,
-    //     //     surface: surface.handle(),
-    //     //     minImageCount: image_count,
-    //     //     imageFormat: surface_format.format,
-    //     //     imageColorSpace: surface_format.colorSpace,
-    //     //     imageExtent: extent.clone(),
-    //     //     imageArrayLayers: 1,
-    //     //     imageUsage: vks::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-    //     //     imageSharingMode: image_sharing_mode,
-    //     //     queueFamilyIndexCount: queue_family_index_count,
-    //     //     pQueueFamilyIndices: p_queue_family_indices,
-    //     //     preTransform: swapchain_details.capabilities.currentTransform,
-    //     //     compositeAlpha: vks::khr_surface::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-    //     //     presentMode: present_mode,
-    //     //     clipped: vks::VK_TRUE,
-    //     //     oldSwapchain: old_swapchain.map(|sc| sc.handle()).unwrap_or(0),
-    //     // };
-    //     let image_format = create_info.imageFormat.clone();
-    //     let extent = create_info.imageExtent.clone();
-
-    //     let mut handle = 0;
-    //     let res = unsafe { device.proc_addr_loader().vkCreateSwapchainKHR(device.handle(), &create_info, ptr::null(), &mut handle) };
-    //     if res != vks::VK_SUCCESS {
-    //         panic!("failed to create swap chain!");
-    //     }
-
-    //     let mut image_count = 0;
-    //     let mut images = SmallVec::new();
-    //     unsafe {
-    //         ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle(), handle, &mut image_count, ptr::null_mut()));
-    //         images.set_len(image_count as usize);
-    //         ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle(), handle, &mut image_count, images.as_mut_ptr()));
-    //     }
-
-    //     Ok(Swapchain {
-    //         inner: Arc::new(Inner {
-    //             handle,
-    //             device,
-    //             // surface,
-    //             images,
-    //             image_format: image_format,
-    //             extent,
-    //         })
-    //     })
-    // }
-
     pub fn images(&self) -> &[vks::VkImage] {
         &self.inner.images
     }
@@ -144,7 +60,6 @@ impl Swapchain {
     }
 
     pub fn extent(&self) -> &vks::VkExtent2D {
-        // vks::VkExtent2D { width: self.inner.extent.width, height: self.inner.extent.height }
         &self.inner.extent
     }
 
@@ -209,13 +124,14 @@ impl<'sc> SwapchainBuilder<'sc> {
         }
     }
 
-    /// Specifies the create flags.
+    /// Specifies the parameters of swapchain creation.
     pub fn flags<'s>(&'s mut self, flags: vks::VkSwapchainCreateFlagsKHR)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.flags = flags;
         self
     }
 
+    /// Specifies the surface that the swapchain will present images to.
     pub fn surface<'s>(&'s mut self, surface: Surface)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.surface = surface.handle();
@@ -223,48 +139,65 @@ impl<'sc> SwapchainBuilder<'sc> {
         self
     }
 
+    /// Specifies the minimum number of presentable images that the
+    /// application needs. The platform will either create the swapchain with
+    /// at least that many images, or will fail to create the swapchain.
     pub fn min_image_count<'s>(&'s mut self, min_image_count: u32)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.minImageCount = min_image_count;
         self
     }
 
+    /// Specifies the format that is valid for swapchains on the specified
+    /// surface.
     pub fn image_format<'s>(&'s mut self, image_format: vks::VkFormat)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.imageFormat = image_format;
         self
     }
 
+    /// Specifies the color space that is valid for swapchains on the
+    /// specified surface.
     pub fn image_color_space<'s>(&'s mut self, image_color_space: vks::VkColorSpaceKHR)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.imageColorSpace = image_color_space;
         self
     }
 
+    /// Specifies the size (in pixels) of the swapchain. Behavior is
+    /// platform-dependent when the image extent does not match the surface’s
+    /// current extent as returned by `vkGetPhysicalDeviceSurfaceCapabilitiesKHR`.
     pub fn image_extent<'s>(&'s mut self, image_extent: vks::VkExtent2D)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.imageExtent = image_extent;
         self
     }
 
+    /// Specifies the number of views in a multiview/stereo surface. For
+    /// non-stereoscopic-3D applications, this value is 1.
     pub fn image_array_layers<'s>(&'s mut self, image_array_layers: u32)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.imageArrayLayers = image_array_layers;
         self
     }
 
+    /// Specifies the bitmask of `ImageUsageFlagBits`, indicating how the
+    /// application will use the swapchain’s presentable images
     pub fn image_usage<'s>(&'s mut self, image_usage: vks::VkImageUsageFlags)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.imageUsage = image_usage;
         self
     }
 
+    /// Specifies the sharing mode used for the images of the swapchain.
     pub fn image_sharing_mode<'s>(&'s mut self, image_sharing_mode: vks::VkSharingMode)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.imageSharingMode = image_sharing_mode;
         self
     }
 
+    /// Specifies the queue family indices having access to the images of the
+    /// swapchain in case imageSharingMode is VK_SHARING_MODE_CONCURRENT.
     pub fn queue_family_indices<'s, 'qfi>(&'s mut self, queue_family_indices: Option<&'qfi [u32]>)
             -> &'s mut SwapchainBuilder<'sc>
             where 'qfi: 'sc {
@@ -278,36 +211,93 @@ impl<'sc> SwapchainBuilder<'sc> {
         self
     }
 
+    /// Specifies the bitmask of VkSurfaceTransformFlagBitsKHR, describing the
+    /// transform, relative to the presentation engine’s natural orientation,
+    /// applied to the image content prior to presentation. If it does not
+    /// match the currentTransform value returned by
+    /// vkGetPhysicalDeviceSurfaceCapabilitiesKHR, the presentation engine
+    /// will transform the image content as part of the presentation operation.
     pub fn pre_transform<'s>(&'s mut self, pre_transform: vks::VkSurfaceTransformFlagBitsKHR)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.preTransform = pre_transform;
         self
     }
 
+    /// Specifies the bitmask of VkCompositeAlphaFlagBitsKHR indicating the
+    /// alpha compositing mode to use when this surface is composited together
+    /// with other surfaces on certain window systems.
     pub fn composite_alpha<'s>(&'s mut self, composite_alpha: vks::VkCompositeAlphaFlagBitsKHR)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.compositeAlpha = composite_alpha;
         self
     }
 
+    /// Specifies the presentation mode the swapchain will use. A swapchain’s
+    /// present mode determines how incoming present requests will be
+    /// processed and queued internally.
     pub fn present_mode<'s>(&'s mut self, present_mode: vks::VkPresentModeKHR)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.presentMode = present_mode;
         self
     }
 
+    /// Specifies the whether the Vulkan implementation is allowed to discard
+    /// rendering operations that affect regions of the surface which are not
+    /// visible.
+    ///
+    /// * If set to `true`, the presentable images associated with the
+    ///   swapchain may not own all of their pixels. Pixels in the presentable
+    ///   images that correspond to regions of the target surface obscured by
+    ///   another window on the desktop or subject to some other clipping
+    ///   mechanism will have undefined content when read back. Pixel shaders
+    ///   may not execute for these pixels, and thus any side affects they
+    ///   would have had will not occur.
+    ///
+    /// * If set to `false`, presentable images associated with the swapchain
+    ///   will own all the pixels they contain. Setting this value to VK_TRUE
+    ///   does not guarantee any clipping will occur, but allows more optimal
+    ///   presentation methods to be used on some platforms.
+    ///
+    ///
+    /// Note: Applications should set this value to VK_TRUE if they do not
+    /// expect to read back the content of presentable images before
+    /// presenting them or after reacquiring them and if their pixel shaders
+    /// do not have any side effects that require them to run for all pixels
+    /// in the presentable image.
+    ///
     pub fn clipped<'s>(&'s mut self, clipped: bool)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.clipped = if clipped { vks::VK_TRUE } else { vks::VK_FALSE };
         self
     }
 
+    /// If not VK_NULL_HANDLE, specifies the swapchain that will be replaced
+    /// by the new swapchain being created. The new swapchain will be a
+    /// descendant of oldSwapchain. Further, any descendants of the new
+    /// swapchain will also be descendants of oldSwapchain. Upon calling
+    /// vkCreateSwapchainKHR with a oldSwapchain that is not VK_NULL_HANDLE,
+    /// any images not acquired by the application may be freed by the
+    /// implementation, which may occur even if creation of the new swapchain
+    /// fails. The application must destroy the old swapchain to free all
+    /// memory associated with the old swapchain. The application must wait
+    /// for the completion of any outstanding rendering to images it currently
+    /// has acquired at the time the swapchain is destroyed. The application
+    /// can continue to present any images it acquired and has not yet
+    /// presented using the old swapchain, as long as it has not entered a
+    /// state that causes it to return VK_ERROR_OUT_OF_DATE_KHR. However, the
+    /// application cannot acquire any more images from the old swapchain
+    /// regardless of whether or not creation of the new swapchain succeeds.
+    /// The application can continue to use a shared presentable image
+    /// obtained from oldSwapchain until a presentable image is acquired from
+    /// the new swapchain, as long as it has not entered a state that causes
+    /// it to return VK_ERROR_OUT_OF_DATE_KHR.
     pub fn old_swapchain<'s>(&'s mut self, old_swapchain: vks::VkSwapchainKHR)
             -> &'s mut SwapchainBuilder<'sc> {
         self.create_info.oldSwapchain = old_swapchain;
         self
     }
 
+    /// Builds and returns a new `Swapchain`.
     pub fn build(&mut self, device: Device) -> VooResult<Swapchain> {
         let image_format = self.create_info.imageFormat.clone();
         let extent = self.create_info.imageExtent.clone();
