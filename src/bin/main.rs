@@ -616,9 +616,6 @@ fn create_depth_resources(device: &Device, command_pool: &CommandPool,
     let depth_image = Image::new(device.clone(), extent, depth_format, vks::VK_IMAGE_TILING_OPTIMAL,
         vks::VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)?;
 
-    // let depth_image_view = ImageView::new(device.clone(), None, depth_image.handle(), depth_format,
-    //     vks::VK_IMAGE_ASPECT_DEPTH_BIT)?;
-
     let depth_image_view = ImageView::builder()
         .image(depth_image.handle())
         .view_type(vks::VK_IMAGE_VIEW_TYPE_2D)
@@ -674,9 +671,6 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool) -> VooResul
 }
 
 fn create_texture_image_view(device: Device, image: &Image) -> VooResult<ImageView> {
-    // ImageView::new(device, None, image.handle(), vks::VK_FORMAT_R8G8B8A8_UNORM,
-    //     vks::VK_IMAGE_ASPECT_COLOR_BIT)
-
     ImageView::builder()
         .image(image.handle())
         .view_type(vks::VK_IMAGE_VIEW_TYPE_2D)
@@ -699,7 +693,84 @@ fn create_texture_sampler(device: Device) -> VooResult<Sampler> {
 fn create_render_pass(device: Device, swapchain_image_format: vks::VkFormat)
         -> VooResult<RenderPass> {
     let depth_image_format = find_depth_format(&device)?;
-    RenderPass::new(device.clone(), swapchain_image_format, depth_image_format)
+    // RenderPass::new(device.clone(), swapchain_image_format, depth_image_format)
+
+    let color_attachment = vks::VkAttachmentDescription {
+        flags: 0,
+        format: swapchain_image_format,
+        samples: vks::VK_SAMPLE_COUNT_1_BIT,
+        loadOp: vks::VK_ATTACHMENT_LOAD_OP_CLEAR,
+        storeOp: vks::VK_ATTACHMENT_STORE_OP_STORE,
+        stencilLoadOp: vks::VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        stencilStoreOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        initialLayout: vks::VK_IMAGE_LAYOUT_UNDEFINED,
+        finalLayout: vks::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+    };
+
+    let depth_attachment = vks::VkAttachmentDescription {
+        flags: 0,
+        format: depth_image_format,
+        samples: vks::VK_SAMPLE_COUNT_1_BIT,
+        loadOp: vks::VK_ATTACHMENT_LOAD_OP_CLEAR,
+        storeOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        stencilLoadOp: vks::VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        stencilStoreOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        initialLayout: vks::VK_IMAGE_LAYOUT_UNDEFINED,
+        finalLayout: vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+    };
+
+    let color_attachment_ref = vks::VkAttachmentReference {
+        attachment: 0,
+        layout: vks::VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+    };
+
+    let depth_attachment_ref = vks::VkAttachmentReference {
+        attachment: 1,
+        layout: vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+    };
+
+    let subpass = vks::VkSubpassDescription {
+        flags: 0,
+        pipelineBindPoint: vks::VK_PIPELINE_BIND_POINT_GRAPHICS,
+        inputAttachmentCount: 0,
+        pInputAttachments: ptr::null(),
+        colorAttachmentCount: 1,
+        pColorAttachments: &color_attachment_ref,
+        pResolveAttachments: ptr::null(),
+        pDepthStencilAttachment: &depth_attachment_ref,
+        preserveAttachmentCount: 0,
+        pPreserveAttachments: ptr::null(),
+    };
+
+    let dependency = vks::VkSubpassDependency {
+        dependencyFlags: 0,
+        srcSubpass: vks::VK_SUBPASS_EXTERNAL,
+        dstSubpass: 0,
+        srcStageMask: vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        srcAccessMask: 0,
+        dstStageMask: vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        dstAccessMask: vks::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | vks::VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+    };
+
+    // let attachments = [color_attachment, depth_attachment];
+
+    // let create_info = vks::VkRenderPassCreateInfo {
+    //     sType: vks::VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+    //     pNext: ptr::null(),
+    //     flags: 0,
+    //     attachmentCount: attachments.len() as u32,
+    //     pAttachments: attachments.as_ptr(),
+    //     subpassCount: 1,
+    //     pSubpasses: &subpass,
+    //     dependencyCount: 1,
+    //     pDependencies: &dependency,
+    // };
+
+    RenderPass::builder()
+        .attachments(&[color_attachment, depth_attachment])
+        .subpasses(&[subpass])
+        .dependencies(&[dependency])
+        .build(device)
 }
 
 fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
@@ -828,7 +899,6 @@ impl App {
             queue_family_flags)?;
         let swapchain = create_swapchain(surface.clone(), device.clone(), queue_family_flags,
             None, None)?;
-
         let image_views = voo::create_image_views(&swapchain)?;
 
         let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;

@@ -74,6 +74,7 @@ pub fn create_image_views(swapchain: &Swapchain) -> VooResult<Vec<ImageView>> {
 //     VkImageSubresourceRange    subresourceRange;
 // } VkImageViewCreateInfo;
 //
+#[derive(Debug, Clone)]
 pub struct ImageViewBuilder {
     create_info: vks::VkImageViewCreateInfo,
 }
