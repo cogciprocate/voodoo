@@ -291,72 +291,15 @@ pub struct UniformBufferObject {
 }
 
 
-
-// use std::marker::PhantomData;
-
-    // /// Returns a new `AbstractTemplateBuilder`.
-    // pub fn builder<'b>() -> AbstractTemplateBuilder<'b> {
-    //     AbstractTemplateBuilder::new()
-    // }
-
-// #[derive(Debug, Clone)]
-// pub struct AbstractTemplateBuilder<'b> {
-//     create_info: vks::VkAbstractTemplateCreateInfo,
-//     _p: PhantomData<&'b ()>,
-// }
-
-// impl<'b> AbstractTemplateBuilder<'b> {
-//     /// Returns a new render pass builder.
-//     pub fn new() -> AbstractTemplateBuilder<'b> {
-//         AbstractTemplateBuilder {
-//             create_info: vks::VkAbstractTemplateCreateInfo::default(),
-//             _p: PhantomData,
-//         }
-//     }
-
-//     pub fn ooooooooooooo<'s>(&'s mut self, ooooooooooooo: vks::VkAbstractTemplateCreateFlags)
-//             -> &'s mut AbstractTemplateBuilder<'b> {
-//         self.create_info.ooooooooooooo = ooooooooooooo;
-//         self
-//     }
-
-//     pub fn eeeeeeeeeee<'s, 'p>(&'s mut self, eeeeeeeeeee: &'p [DeviceQueueCreateInfo])
-//             -> &'s mut AbstractTemplateBuilder<'b>
-//             where 'p: 'b {
-//         self.create_info.EeeeeEeeeee = eeeeeeeeeee;
-//         self
-//     }
-
-//     pub fn aaaaaaaaaaaaaa<'s, 'p>(&'s mut self,
-//             aaaaaaaaaaaaaa: &'p [vks::VkAttachmentDescription])
-//             -> &'s mut AbstractTemplateBuilder<'b>
-//             where 'p: 'b {
-//         self.create_info.aaaaaaaaaaaaaaCount = aaaaaaaaaaaaaa.len() as u32;
-//         self.create_info.pAaaaaaaaaa = aaaaaaaaaaaaaa.as_ptr();
-//         self
-//     }
-
-//     pub fn build(&self, device: Device) -> VooResult<AbstractTemplate> {
-//         let mut handle = 0;
-//         unsafe {
-//             ::check(device.proc_addr_loader().core.vkCreateAbstractTemplate(device.handle(),
-//                 &self.create_info, ptr::null(), &mut handle));
-//         }
-
-//         Ok(AbstractTemplate {
-//             inner: Arc::new(Inner {
-//                 handle,
-//                 device,
-//             })
-//         })
-//     }
-// }
-
+pub fn check(code: i32) {
+    if code != vks::VK_SUCCESS { panic!("VkResult error code: {}", code); }
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////// TEMPLATE /////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
 // use std::sync::Arc;
 // use std::ptr;
 // use vks;
@@ -374,8 +317,12 @@ pub struct UniformBufferObject {
 // }
 
 // impl AbstractTemplate {
-//     pub fn new() -> VooResult<AbstractTemplate> {
+//     /// Returns a new `AbstractTemplateBuilder`.
+//     pub fn builder<'b>() -> AbstractTemplateBuilder<'b> {
+//         AbstractTemplateBuilder::new()
+//     }
 
+//     pub fn new() -> VooResult<AbstractTemplate> {
 //         let mut handle = 0;
 //         unsafe {
 //             ::check(device.proc_addr_loader().vkCreateAbstractTemplate(device.handle(), &create_info,
@@ -406,15 +353,76 @@ pub struct UniformBufferObject {
 //         }
 //     }
 // }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////// BUILDER TEMPLATE ///////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+// use std::marker::PhantomData;
+
+    // /// Returns a new `AbstractTemplateBuilder`.
+    // pub fn builder<'b>() -> AbstractTemplateBuilder<'b> {
+    //     AbstractTemplateBuilder::new()
+    // }
+
+// /// A builder for `AbstractTemplate`.
+// #[derive(Debug, Clone)]
+// pub struct AbstractTemplateBuilder<'b> {
+//     create_info: vks::VkAbstractTemplateCreateInfo,
+//     _p: PhantomData<&'b ()>,
+// }
+
+// impl<'b> AbstractTemplateBuilder<'b> {
+//     /// Returns a new render pass builder.
+//     pub fn new() -> AbstractTemplateBuilder<'b> {
+//         AbstractTemplateBuilder {
+//             create_info: vks::VkAbstractTemplateCreateInfo::default(),
+//             _p: PhantomData,
+//         }
+//     }
+
+//     pub fn ooooooooooooo<'s>(&'s mut self, ooooooooooooo: vks::VkAbstractTemplateCreateFlags)
+//             -> &'s mut AbstractTemplateBuilder<'b> {
+//         self.create_info.ooooooooooooo = ooooooooooooo;
+//         self
+//     }
+
+//     pub fn eeeeeeeeeee<'s, 'p>(&'s mut self, eeeeeeeeeee: &'p [DeviceQueueCreateInfo])
+//             -> &'s mut AbstractTemplateBuilder<'b>
+//             where 'p: 'b {
+//         self.create_info.EeeeeEeeeee = eeeeeeeeeee;
+//         self
+//     }
+
+//     pub fn pppppppppppppp<'s, 'p>(&'s mut self,
+//             pppppppppppppp: &'p [vks::VkAttachmentDescription])
+//             -> &'s mut AbstractTemplateBuilder<'b>
+//             where 'p: 'b {
+//         self.create_info.ppppppppppppppCount = pppppppppppppp.len() as u32;
+//         self.create_info.pApppppppp = pppppppppppppp.as_ptr();
+//         self
+//     }
+
+//     /// Creates and returns a new `AbstractTemplate`
+//     pub fn build(&self, device: Device) -> VooResult<AbstractTemplate> {
+//         let mut handle = 0;
+//         unsafe {
+//             ::check(device.proc_addr_loader().core.vkCreateAbstractTemplate(device.handle(),
+//                 &self.create_info, ptr::null(), &mut handle));
+//         }
+
+//         Ok(AbstractTemplate {
+//             inner: Arc::new(Inner {
+//                 handle,
+//                 device,
+//             })
+//         })
+//     }
+// }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-pub fn check(code: i32) {
-    if code != vks::VK_SUCCESS { panic!("VkResult error code: {}", code); }
-}
 
 
 #[cfg(test)]

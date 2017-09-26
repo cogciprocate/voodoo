@@ -81,7 +81,8 @@ impl Drop for Inner {
 }
 
 
-
+/// A builder for `DescriptorSetLayout`.
+//
 // typedef struct VkDescriptorSetLayoutCreateInfo {
 //     VkStructureType                        sType;
 //     const void*                            pNext;
@@ -89,7 +90,7 @@ impl Drop for Inner {
 //     uint32_t                               bindingCount;
 //     const VkDescriptorSetLayoutBinding*    pBindings;
 // } VkDescriptorSetLayoutCreateInfo;
-
+//
 #[derive(Debug, Clone)]
 pub struct DescriptorSetLayoutBuilder<'b> {
     create_info: vks::VkDescriptorSetLayoutCreateInfo,
@@ -122,6 +123,7 @@ impl<'b> DescriptorSetLayoutBuilder<'b> {
         self
     }
 
+    /// Creates and returns a new `DescriptorSetLayout`
     pub fn build(&self, device: Device) -> VooResult<DescriptorSetLayout> {
         let mut handle = 0;
         unsafe {

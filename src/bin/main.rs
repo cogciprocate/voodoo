@@ -292,6 +292,189 @@ pub fn create_image_views(swapchain: &Swapchain) -> VooResult<Vec<ImageView>> {
     }).collect::<Result<Vec<_>, _>>()
 }
 
+fn find_depth_format(device: &Device) -> VooResult<vks::VkFormat> {
+    find_supported_format(device, &[vks::VK_FORMAT_D32_SFLOAT, vks::VK_FORMAT_D32_SFLOAT_S8_UINT,
+        vks::VK_FORMAT_D24_UNORM_S8_UINT], vks::VK_IMAGE_TILING_OPTIMAL,
+        vks::VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+}
+
+fn create_render_pass(device: Device, swapchain_image_format: vks::VkFormat)
+        -> VooResult<RenderPass> {
+    let depth_image_format = find_depth_format(&device)?;
+    // RenderPass::new(device.clone(), swapchain_image_format, depth_image_format)
+
+    let color_attachment = vks::VkAttachmentDescription {
+        flags: 0,
+        format: swapchain_image_format,
+        samples: vks::VK_SAMPLE_COUNT_1_BIT,
+        loadOp: vks::VK_ATTACHMENT_LOAD_OP_CLEAR,
+        storeOp: vks::VK_ATTACHMENT_STORE_OP_STORE,
+        stencilLoadOp: vks::VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        stencilStoreOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        initialLayout: vks::VK_IMAGE_LAYOUT_UNDEFINED,
+        finalLayout: vks::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+    };
+
+    let depth_attachment = vks::VkAttachmentDescription {
+        flags: 0,
+        format: depth_image_format,
+        samples: vks::VK_SAMPLE_COUNT_1_BIT,
+        loadOp: vks::VK_ATTACHMENT_LOAD_OP_CLEAR,
+        storeOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        stencilLoadOp: vks::VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        stencilStoreOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        initialLayout: vks::VK_IMAGE_LAYOUT_UNDEFINED,
+        finalLayout: vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+    };
+
+    let color_attachment_ref = vks::VkAttachmentReference {
+        attachment: 0,
+        layout: vks::VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+    };
+
+    let depth_attachment_ref = vks::VkAttachmentReference {
+        attachment: 1,
+        layout: vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+    };
+
+    let subpass = vks::VkSubpassDescription {
+        flags: 0,
+        pipelineBindPoint: vks::VK_PIPELINE_BIND_POINT_GRAPHICS,
+        inputAttachmentCount: 0,
+        pInputAttachments: ptr::null(),
+        colorAttachmentCount: 1,
+        pColorAttachments: &color_attachment_ref,
+        pResolveAttachments: ptr::null(),
+        pDepthStencilAttachment: &depth_attachment_ref,
+        preserveAttachmentCount: 0,
+        pPreserveAttachments: ptr::null(),
+    };
+
+    let dependency = vks::VkSubpassDependency {
+        dependencyFlags: 0,
+        srcSubpass: vks::VK_SUBPASS_EXTERNAL,
+        dstSubpass: 0,
+        srcStageMask: vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        srcAccessMask: 0,
+        dstStageMask: vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        dstAccessMask: vks::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | vks::VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+    };
+
+    RenderPass::builder()
+        .attachments(&[color_attachment, depth_attachment])
+        .subpasses(&[subpass])
+        .dependencies(&[dependency])
+        .build(device)
+}
+
+fn create_descriptor_set_layout(device: Device) -> VooResult<DescriptorSetLayout> {
+    let ubo_layout_binding = vks::VkDescriptorSetLayoutBinding {
+        binding: 0,
+        descriptorType: vks::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        descriptorCount: 1,
+        stageFlags: vks::VK_SHADER_STAGE_VERTEX_BIT,
+        pImmutableSamplers: ptr::null(),
+    };
+
+    let sampler_layout_binding = vks::VkDescriptorSetLayoutBinding {
+        binding: 1,
+        descriptorType: vks::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+        descriptorCount: 1,
+        stageFlags: vks::VK_SHADER_STAGE_FRAGMENT_BIT,
+        pImmutableSamplers: ptr::null(),
+    };
+
+    let bindings = [ubo_layout_binding, sampler_layout_binding];
+
+    // DescriptorSetLayout::new(device)
+    DescriptorSetLayout::builder()
+        .bindings(&bindings)
+        .build(device)
+}
+
+fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
+    DescriptorPool::new(device)
+}
+
+fn create_descriptor_set(device: &Device, layout: &DescriptorSetLayout,
+        pool: &DescriptorPool, uniform_buffer: &Buffer, texture_image_view: &ImageView,
+        texture_sampler: &Sampler) -> VooResult<vks::VkDescriptorSet> {
+    let layouts = [layout.handle()];
+
+    let alloc_info = vks::VkDescriptorSetAllocateInfo {
+        sType: vks::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+        pNext: ptr::null(),
+        descriptorPool: pool.handle(),
+        descriptorSetCount: layouts.len() as u32,
+        pSetLayouts: layouts.as_ptr(),
+    };
+
+    let mut descriptor_set = 0;
+    unsafe {
+        voo::check(device.proc_addr_loader().vkAllocateDescriptorSets(device.handle(), &alloc_info,
+            &mut descriptor_set));
+    }
+
+    let buffer_info = vks::VkDescriptorBufferInfo {
+        buffer: uniform_buffer.handle(),
+        offset: 0,
+        range: mem::size_of::<UniformBufferObject>() as u64,
+    };
+
+    let image_info = vks::VkDescriptorImageInfo {
+        sampler: texture_sampler.handle(),
+        imageView: texture_image_view.handle(),
+        imageLayout: vks::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+    };
+
+    let descriptor_writes = [
+        vks::VkWriteDescriptorSet {
+            sType: vks::VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            pNext: ptr::null(),
+            dstSet: descriptor_set,
+            dstBinding: 0,
+            dstArrayElement: 0,
+            descriptorCount: 1,
+            descriptorType: vks::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            pImageInfo: ptr::null(),
+            pBufferInfo: &buffer_info,
+            pTexelBufferView: ptr::null(),
+        },
+        vks::VkWriteDescriptorSet {
+            sType: vks::VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+            pNext: ptr::null(),
+            dstSet: descriptor_set,
+            dstBinding: 1,
+            dstArrayElement: 0,
+            descriptorCount: 1,
+            descriptorType: vks::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            pImageInfo: &image_info,
+            pBufferInfo: ptr::null(),
+            pTexelBufferView: ptr::null(),
+        },
+    ];
+
+    unsafe {
+        device.proc_addr_loader().vkUpdateDescriptorSets(device.handle(), descriptor_writes.len() as u32,
+            descriptor_writes.as_ptr(), 0, ptr::null());
+    }
+
+    Ok(descriptor_set)
+}
+
+fn create_pipeline_layout(device: Device, descriptor_set_layout: Option<&DescriptorSetLayout>)
+        -> VooResult<PipelineLayout> {
+    let mut layouts = SmallVec::<[_; 8]>::new();
+    if let Some(dsl) = descriptor_set_layout {
+        layouts.push(dsl.handle());
+    }
+
+    PipelineLayout::builder()
+        .set_layouts(&layouts)
+        .build(device)
+}
+
+
 fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
         -> VooResult<vks::VkCommandBuffer> {
     let alloc_info = vks::VkCommandBufferAllocateInfo {
@@ -616,13 +799,6 @@ fn find_supported_format(device: &Device, candidates: &[vks::VkFormat], tiling: 
     panic!("Failed to find supported format.")
 }
 
-
-fn find_depth_format(device: &Device) -> VooResult<vks::VkFormat> {
-    find_supported_format(device, &[vks::VK_FORMAT_D32_SFLOAT, vks::VK_FORMAT_D32_SFLOAT_S8_UINT,
-        vks::VK_FORMAT_D24_UNORM_S8_UINT], vks::VK_IMAGE_TILING_OPTIMAL,
-        vks::VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
-}
-
 fn create_depth_resources(device: &Device, command_pool: &CommandPool,
         swapchain_extent: vks::VkExtent2D) -> VooResult<(Image, ImageView)> {
     let depth_format = find_depth_format(device)?;
@@ -706,183 +882,6 @@ fn create_texture_sampler(device: Device) -> VooResult<Sampler> {
     Sampler::new(device)
 }
 
-fn create_render_pass(device: Device, swapchain_image_format: vks::VkFormat)
-        -> VooResult<RenderPass> {
-    let depth_image_format = find_depth_format(&device)?;
-    // RenderPass::new(device.clone(), swapchain_image_format, depth_image_format)
-
-    let color_attachment = vks::VkAttachmentDescription {
-        flags: 0,
-        format: swapchain_image_format,
-        samples: vks::VK_SAMPLE_COUNT_1_BIT,
-        loadOp: vks::VK_ATTACHMENT_LOAD_OP_CLEAR,
-        storeOp: vks::VK_ATTACHMENT_STORE_OP_STORE,
-        stencilLoadOp: vks::VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-        stencilStoreOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        initialLayout: vks::VK_IMAGE_LAYOUT_UNDEFINED,
-        finalLayout: vks::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-    };
-
-    let depth_attachment = vks::VkAttachmentDescription {
-        flags: 0,
-        format: depth_image_format,
-        samples: vks::VK_SAMPLE_COUNT_1_BIT,
-        loadOp: vks::VK_ATTACHMENT_LOAD_OP_CLEAR,
-        storeOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        stencilLoadOp: vks::VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-        stencilStoreOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        initialLayout: vks::VK_IMAGE_LAYOUT_UNDEFINED,
-        finalLayout: vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-    };
-
-    let color_attachment_ref = vks::VkAttachmentReference {
-        attachment: 0,
-        layout: vks::VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-    };
-
-    let depth_attachment_ref = vks::VkAttachmentReference {
-        attachment: 1,
-        layout: vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-    };
-
-    let subpass = vks::VkSubpassDescription {
-        flags: 0,
-        pipelineBindPoint: vks::VK_PIPELINE_BIND_POINT_GRAPHICS,
-        inputAttachmentCount: 0,
-        pInputAttachments: ptr::null(),
-        colorAttachmentCount: 1,
-        pColorAttachments: &color_attachment_ref,
-        pResolveAttachments: ptr::null(),
-        pDepthStencilAttachment: &depth_attachment_ref,
-        preserveAttachmentCount: 0,
-        pPreserveAttachments: ptr::null(),
-    };
-
-    let dependency = vks::VkSubpassDependency {
-        dependencyFlags: 0,
-        srcSubpass: vks::VK_SUBPASS_EXTERNAL,
-        dstSubpass: 0,
-        srcStageMask: vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-        srcAccessMask: 0,
-        dstStageMask: vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-        dstAccessMask: vks::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | vks::VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-    };
-
-    // let attachments = [color_attachment, depth_attachment];
-
-    // let create_info = vks::VkRenderPassCreateInfo {
-    //     sType: vks::VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-    //     pNext: ptr::null(),
-    //     flags: 0,
-    //     attachmentCount: attachments.len() as u32,
-    //     pAttachments: attachments.as_ptr(),
-    //     subpassCount: 1,
-    //     pSubpasses: &subpass,
-    //     dependencyCount: 1,
-    //     pDependencies: &dependency,
-    // };
-
-    RenderPass::builder()
-        .attachments(&[color_attachment, depth_attachment])
-        .subpasses(&[subpass])
-        .dependencies(&[dependency])
-        .build(device)
-}
-
-fn create_descriptor_set_layout(device: Device) -> VooResult<DescriptorSetLayout> {
-    let ubo_layout_binding = vks::VkDescriptorSetLayoutBinding {
-        binding: 0,
-        descriptorType: vks::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-        descriptorCount: 1,
-        stageFlags: vks::VK_SHADER_STAGE_VERTEX_BIT,
-        pImmutableSamplers: ptr::null(),
-    };
-
-    let sampler_layout_binding = vks::VkDescriptorSetLayoutBinding {
-        binding: 1,
-        descriptorType: vks::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-        descriptorCount: 1,
-        stageFlags: vks::VK_SHADER_STAGE_FRAGMENT_BIT,
-        pImmutableSamplers: ptr::null(),
-    };
-
-    let bindings = [ubo_layout_binding, sampler_layout_binding];
-
-    // DescriptorSetLayout::new(device)
-    DescriptorSetLayout::builder()
-        .bindings(&bindings)
-        .build(device)
-}
-
-fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
-    DescriptorPool::new(device)
-}
-
-fn create_descriptor_set(device: &Device, layout: &DescriptorSetLayout,
-        pool: &DescriptorPool, uniform_buffer: &Buffer, texture_image_view: &ImageView,
-        texture_sampler: &Sampler) -> VooResult<vks::VkDescriptorSet> {
-    let layouts = [layout.handle()];
-
-    let alloc_info = vks::VkDescriptorSetAllocateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-        pNext: ptr::null(),
-        descriptorPool: pool.handle(),
-        descriptorSetCount: layouts.len() as u32,
-        pSetLayouts: layouts.as_ptr(),
-    };
-
-    let mut descriptor_set = 0;
-    unsafe {
-        voo::check(device.proc_addr_loader().vkAllocateDescriptorSets(device.handle(), &alloc_info,
-            &mut descriptor_set));
-    }
-
-    let buffer_info = vks::VkDescriptorBufferInfo {
-        buffer: uniform_buffer.handle(),
-        offset: 0,
-        range: mem::size_of::<UniformBufferObject>() as u64,
-    };
-
-    let image_info = vks::VkDescriptorImageInfo {
-        sampler: texture_sampler.handle(),
-        imageView: texture_image_view.handle(),
-        imageLayout: vks::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-    };
-
-    let descriptor_writes = [
-        vks::VkWriteDescriptorSet {
-            sType: vks::VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            pNext: ptr::null(),
-            dstSet: descriptor_set,
-            dstBinding: 0,
-            dstArrayElement: 0,
-            descriptorCount: 1,
-            descriptorType: vks::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            pImageInfo: ptr::null(),
-            pBufferInfo: &buffer_info,
-            pTexelBufferView: ptr::null(),
-        },
-        vks::VkWriteDescriptorSet {
-            sType: vks::VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            pNext: ptr::null(),
-            dstSet: descriptor_set,
-            dstBinding: 1,
-            dstArrayElement: 0,
-            descriptorCount: 1,
-            descriptorType: vks::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            pImageInfo: &image_info,
-            pBufferInfo: ptr::null(),
-            pTexelBufferView: ptr::null(),
-        },
-    ];
-
-    unsafe {
-        device.proc_addr_loader().vkUpdateDescriptorSets(device.handle(), descriptor_writes.len() as u32,
-            descriptor_writes.as_ptr(), 0, ptr::null());
-    }
-
-    Ok(descriptor_set)
-}
 
 struct SwapchainComponents {
     image_views: Vec<ImageView>,
@@ -938,11 +937,12 @@ impl App {
             None, None)?;
         let image_views = create_image_views(&swapchain)?;
         let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;
-
         let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
+        let pipeline_layout = create_pipeline_layout(device.clone(),
+            Some(&descriptor_set_layout))?;
 
-        let pipeline_layout = PipelineLayout::new(device.clone(), Some(&descriptor_set_layout))?;
         let vert_shader_code = util::read_file("/src/voodoo/shaders/vert.spv")?;
+
         let frag_shader_code = util::read_file("/src/voodoo/shaders/frag.spv")?;
         let graphics_pipeline = GraphicsPipeline::new(device.clone(), &pipeline_layout,
             &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
