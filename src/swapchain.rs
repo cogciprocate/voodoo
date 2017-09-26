@@ -198,16 +198,11 @@ impl<'sc> SwapchainBuilder<'sc> {
 
     /// Specifies the queue family indices having access to the images of the
     /// swapchain in case imageSharingMode is VK_SHARING_MODE_CONCURRENT.
-    pub fn queue_family_indices<'s, 'qfi>(&'s mut self, queue_family_indices: Option<&'qfi [u32]>)
+    pub fn queue_family_indices<'s, 'qfi>(&'s mut self, queue_family_indices: &'qfi [u32])
             -> &'s mut SwapchainBuilder<'sc>
             where 'qfi: 'sc {
-        if let Some(qfis) = queue_family_indices {
-            self.create_info.queueFamilyIndexCount = qfis.len() as u32;
-            self.create_info.pQueueFamilyIndices = qfis.as_ptr();
-        } else {
-            self.create_info.queueFamilyIndexCount = 0;
-            self.create_info.pQueueFamilyIndices = ptr::null();
-        }
+        self.create_info.queueFamilyIndexCount = queue_family_indices.len() as u32;
+        self.create_info.pQueueFamilyIndices = queue_family_indices.as_ptr();
         self
     }
 

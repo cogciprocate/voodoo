@@ -244,36 +244,33 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: vks::VkQueueF
             image_count > swapchain_details.capabilities.maxImageCount {
         image_count = swapchain_details.capabilities.maxImageCount;
     }
-
     let indices = queue::queue_families(device.instance(), &surface,
         device.physical_device(), queue_flags);
-    let queue_family_indices_0 = [indices.flag_idxs[0] as u32, indices.presentation_support_idxs[0] as u32];
+    let queue_family_indices = [indices.flag_idxs[0] as u32,
+        indices.presentation_support_idxs[0] as u32];
 
-    let (image_sharing_mode, queue_family_indices);
-    if queue_family_indices_0[0] != queue_family_indices_0[1] {
-        image_sharing_mode = vks::VK_SHARING_MODE_CONCURRENT;
-        queue_family_indices = Some(&queue_family_indices_0[..]);
-    } else {
-        image_sharing_mode = vks::VK_SHARING_MODE_EXCLUSIVE;
-        queue_family_indices = None;
-    }
-
-    Swapchain::builder()
-        .surface(surface)
+    let mut bldr = Swapchain::builder();
+    bldr.surface(surface)
         .min_image_count(image_count)
         .image_format(surface_format.format)
         .image_color_space(surface_format.colorSpace)
         .image_extent(extent.clone())
         .image_array_layers(1)
         .image_usage(vks::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
-        .image_sharing_mode(image_sharing_mode)
-        .queue_family_indices(queue_family_indices)
         .pre_transform(swapchain_details.capabilities.currentTransform)
         .composite_alpha(vks::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
         .present_mode(present_mode)
         .clipped(true)
-        .old_swapchain(old_swapchain.map(|sc| sc.handle()).unwrap_or(0))
-        .build(device)
+        .old_swapchain(old_swapchain.map(|sc| sc.handle()).unwrap_or(0));
+
+    if queue_family_indices[0] != queue_family_indices[1] {
+        bldr.image_sharing_mode(vks::VK_SHARING_MODE_CONCURRENT);
+        bldr.queue_family_indices(&queue_family_indices[..]);
+    } else {
+        bldr.image_sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE);
+    }
+
+    bldr.build(device)
 }
 
 fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
