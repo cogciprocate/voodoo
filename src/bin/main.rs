@@ -687,8 +687,6 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
 
 fn create_command_pool(device: Device, surface: &Surface, queue_family_flags: vks::VkQueueFlags)
         -> VooResult<CommandPool> {
-    // CommandPool::new(device.clone(), &surface, queue_family_flags)
-
     let queue_family_idx = voo::queue_families(device.instance(), surface,
         device.physical_device(), queue_family_flags).family_idxs()[0] as u32;
 
@@ -1023,13 +1021,38 @@ fn find_supported_format(device: &Device, candidates: &[vks::VkFormat], tiling: 
 }
 
 fn create_depth_resources(device: &Device, command_pool: &CommandPool,
-        swapchain_extent: vks::VkExtent2D) -> VooResult<(Image, ImageView)> {
+        swapchain_extent: vks::VkExtent2D) -> VooResult<(Image, DeviceMemory, ImageView)> {
     let depth_format = find_depth_format(device)?;
     let extent = vks::VkExtent3D { width: swapchain_extent.width,
         height: swapchain_extent.height, depth: 1 };
 
-    let depth_image = Image::new(device.clone(), extent, depth_format, vks::VK_IMAGE_TILING_OPTIMAL,
-        vks::VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)?;
+    // let depth_image = Image::new(device.clone(), extent, depth_format,
+        // vks::VK_IMAGE_TILING_OPTIMAL, vks::VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+        // vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)?;
+
+    let depth_image = Image::builder()
+        .image_type(vks::VK_IMAGE_TYPE_2D)
+        .format(depth_format)
+        .extent(extent)
+        .mip_levels(1)
+        .array_layers(1)
+        .samples(vks::VK_SAMPLE_COUNT_1_BIT)
+        .tiling(vks::VK_IMAGE_TILING_OPTIMAL)
+        .usage(vks::VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)
+        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        .initial_layout(vks::VK_IMAGE_LAYOUT_UNDEFINED)
+        .build(device.clone())?;
+
+    let memory_properties = vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+    let memory_requirements = depth_image.memory_requirements().clone();
+
+    let memory_type_index = voo::find_memory_type(&device,
+        memory_requirements.memoryTypeBits, memory_properties);
+
+    let depth_image_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
+        memory_type_index)?;
+
+    depth_image.bind_memory(&depth_image_memory, 0)?;
 
     let depth_image_view = ImageView::builder()
         .image(depth_image.handle())
@@ -1048,10 +1071,11 @@ fn create_depth_resources(device: &Device, command_pool: &CommandPool,
     transition_image_layout(device, command_pool, &depth_image, depth_format,
         vks::VK_IMAGE_LAYOUT_UNDEFINED, vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)?;
 
-    Ok((depth_image, depth_image_view))
+    Ok((depth_image, depth_image_memory, depth_image_view))
 }
 
-fn create_texture_image(device: &Device, command_pool: &CommandPool) -> VooResult<Image> {
+fn create_texture_image(device: &Device, command_pool: &CommandPool)
+        -> VooResult<(Image, DeviceMemory)> {
     let pixels = image::open(TEXTURE_PATH).unwrap().to_rgba();
     let (tex_width, tex_height) = pixels.dimensions();
     let image_bytes = (tex_width * tex_height * 4) as u64;
@@ -1069,9 +1093,35 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool) -> VooResul
     }
 
     let extent = vks::VkExtent3D { width: tex_width, height: tex_height, depth: 1 };
-    let texture_image = Image::new(device.clone(), extent, vks::VK_FORMAT_R8G8B8A8_UNORM,
-        vks::VK_IMAGE_TILING_OPTIMAL, vks::VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-        vks::VK_IMAGE_USAGE_SAMPLED_BIT, vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)?;
+
+
+    // let texture_image = Image::new(device.clone(), extent, vks::VK_FORMAT_R8G8B8A8_UNORM,
+    //     vks::VK_IMAGE_TILING_OPTIMAL, vks::VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+    //     vks::VK_IMAGE_USAGE_SAMPLED_BIT, vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)?;
+
+    let texture_image = Image::builder()
+        .image_type(vks::VK_IMAGE_TYPE_2D)
+        .format(vks::VK_FORMAT_R8G8B8A8_UNORM)
+        .extent(extent)
+        .mip_levels(1)
+        .array_layers(1)
+        .samples(vks::VK_SAMPLE_COUNT_1_BIT)
+        .tiling(vks::VK_IMAGE_TILING_OPTIMAL)
+        .usage(vks::VK_IMAGE_USAGE_TRANSFER_DST_BIT | vks::VK_IMAGE_USAGE_SAMPLED_BIT)
+        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        .initial_layout(vks::VK_IMAGE_LAYOUT_UNDEFINED)
+        .build(device.clone())?;
+
+    let memory_properties = vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+    let memory_requirements = texture_image.memory_requirements().clone();
+
+    let memory_type_index = voo::find_memory_type(&device,
+        memory_requirements.memoryTypeBits, memory_properties);
+
+    let texture_image_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
+        memory_type_index)?;
+
+    texture_image.bind_memory(&texture_image_memory, 0)?;
 
     transition_image_layout(device, command_pool, &texture_image, vks::VK_FORMAT_R8G8B8A8_UNORM,
         vks::VK_IMAGE_LAYOUT_UNDEFINED, vks::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)?;
@@ -1082,7 +1132,7 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool) -> VooResul
     transition_image_layout(device, command_pool, &texture_image, vks::VK_FORMAT_R8G8B8A8_UNORM,
         vks::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, vks::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)?;
 
-    Ok(texture_image)
+    Ok((texture_image, texture_image_memory))
 }
 
 fn create_texture_image_view(device: Device, image: &Image) -> VooResult<ImageView> {
@@ -1111,6 +1161,7 @@ struct SwapchainComponents {
     render_pass: RenderPass,
     graphics_pipeline: GraphicsPipeline,
     depth_image: Image,
+    depth_image_memory: DeviceMemory,
     depth_image_view: ImageView,
     framebuffers: Vec<Framebuffer>,
 }
@@ -1128,6 +1179,7 @@ struct App {
     frag_shader_code: Vec<u8>,
     command_pool: CommandPool,
     texture_image: Image,
+    texture_image_memory: DeviceMemory,
     texture_image_view: ImageView,
     texture_sampler: Sampler,
     vertices: Vec<Vertex>,
@@ -1167,14 +1219,15 @@ impl App {
         let frag_shader_code = util::read_file("/src/voodoo/shaders/frag.spv")?;
         let graphics_pipeline = create_graphics_pipeline(device.clone(), &pipeline_layout,
             &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
-
         let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;
 
-        let (depth_image, depth_image_view) = create_depth_resources(&device, &command_pool,
-            swapchain.extent().clone())?;
+        let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(&device,
+            &command_pool, swapchain.extent().clone())?;
+
         let framebuffers = voo::create_framebuffers(&device, &render_pass,
             &image_views, &depth_image_view, swapchain.extent().clone())?;
-        let texture_image = create_texture_image(&device, &command_pool)?;
+        let (texture_image, texture_image_memory) = create_texture_image(&device,
+            &command_pool)?;
         let texture_image_view = create_texture_image_view(device.clone(),
             &texture_image)?;
         let texture_sampler = create_texture_sampler(device.clone())?;
@@ -1203,6 +1256,7 @@ impl App {
             render_pass: render_pass,
             graphics_pipeline: graphics_pipeline,
             depth_image,
+            depth_image_memory,
             depth_image_view,
             framebuffers: framebuffers,
         };
@@ -1220,6 +1274,7 @@ impl App {
             frag_shader_code,
             command_pool,
             texture_image,
+            texture_image_memory,
             texture_image_view,
             texture_sampler,
             vertices: vertices,
@@ -1265,8 +1320,8 @@ impl App {
         let graphics_pipeline = create_graphics_pipeline(self.device.clone(),
             &self.pipeline_layout, &render_pass,
             swapchain.extent().clone(), &self.vert_shader_code, &self.frag_shader_code)?;
-        let (depth_image, depth_image_view) = create_depth_resources(&self.device,
-            &self.command_pool, swapchain.extent().clone())?;
+        let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(
+            &self.device, &self.command_pool, swapchain.extent().clone())?;
         let framebuffers = voo::create_framebuffers(&self.device,
             &render_pass, &image_views,
             &depth_image_view, swapchain.extent().clone())?;
@@ -1282,6 +1337,7 @@ impl App {
             render_pass: render_pass,
             graphics_pipeline: graphics_pipeline,
             depth_image,
+            depth_image_memory,
             depth_image_view,
             framebuffers: framebuffers,
         });

@@ -193,6 +193,8 @@ macro_rules! offset_of {
     }
 }
 
+
+// TODO: MOVE TO `PhysicalDevice`.
 pub fn find_memory_type(device: &Device, type_filter: u32, properties: vks::VkMemoryPropertyFlags)
         -> u32 {
     let mut mem_properties: vks::VkPhysicalDeviceMemoryProperties;
