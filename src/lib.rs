@@ -381,16 +381,16 @@ pub fn check(code: i32) {
 //         }
 //     }
 
-//     pub fn ooooooooooooo<'s>(&'s mut self, ooooooooooooo: vks::VkAbstractTemplateCreateFlags)
+//     pub fn fffffffffffff<'s>(&'s mut self, fffffffffffff: vks::VkAbstractTemplateCreateFlags)
 //             -> &'s mut AbstractTemplateBuilder<'b> {
-//         self.create_info.ooooooooooooo = ooooooooooooo;
+//         self.create_info.fffffffffffff = fffffffffffff;
 //         self
 //     }
 
-//     pub fn eeeeeeeeeee<'s, 'p>(&'s mut self, eeeeeeeeeee: &'p [DeviceQueueCreateInfo])
+//     pub fn sssssssssssss<'s, 'p>(&'s mut self, sssssssssssss: &'p [DeviceQueueCreateInfo])
 //             -> &'s mut AbstractTemplateBuilder<'b>
 //             where 'p: 'b {
-//         self.create_info.EeeeeEeeeee = eeeeeeeeeee;
+//         self.create_info.SeeSsssee = sssssssssssss;
 //         self
 //     }
 
@@ -432,3 +432,9 @@ mod tests {
 
     }
 }
+
+
+// camelCase to snake_case:
+// ([a-z])([A-Z]+)
+// --->
+// $1_\l$2

@@ -43,9 +43,6 @@ impl Drop for Inner {
 }
 
 
-
-
-
 /// A builder for `PipelineLayout`.
 //
 // typedef struct VkPipelineLayoutCreateInfo {

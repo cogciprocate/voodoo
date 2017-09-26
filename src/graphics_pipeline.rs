@@ -2,6 +2,8 @@
 use std::sync::Arc;
 use std::ptr;
 use std::ffi::CStr;
+use std::marker::PhantomData;
+use smallvec::SmallVec;
 use vks;
 use ::{util, VooResult, Device, ShaderModule, PipelineLayout, RenderPass, Vertex};
 
@@ -19,233 +21,45 @@ pub struct GraphicsPipeline {
 }
 
 impl GraphicsPipeline {
-    pub fn new(device: Device, pipeline_layout: &PipelineLayout,
-            render_pass: &RenderPass, swap_chain_extent: vks::VkExtent2D, vert_shader_code: &[u8],
-            frag_shader_code: &[u8]) -> VooResult<GraphicsPipeline>
-    {
-        let vert_shader_module = ShaderModule::new(device.clone(), vert_shader_code)?;
-        let frag_shader_module = ShaderModule::new(device.clone(), frag_shader_code)?;
+    /// Returns a new `GraphicsPipelineBuilder`.
+    pub fn builder<'b>() -> GraphicsPipelineBuilder<'b> {
+        GraphicsPipelineBuilder::new()
+    }
 
-        let fn_name = unsafe { CStr::from_bytes_with_nul_unchecked(b"main\0") };
+    /// Creates several graphics pipelines at once.
+    pub fn create<'b, Gpb>(device: &Device, builders: &[Gpb])
+            -> VooResult<SmallVec<[GraphicsPipeline; 8]>>
+            where Gpb: AsRef<GraphicsPipelineBuilder<'b>> {
+        let mut create_infos = SmallVec::<[vks::VkGraphicsPipelineCreateInfo; 8]>::new();
+        let mut pipeline_handles = SmallVec::<[vks::VkPipeline; 8]>::new();
+        let mut pipelines = SmallVec::<[GraphicsPipeline; 8]>::new();
+        create_infos.reserve_exact(builders.len());
+        pipeline_handles.reserve_exact(builders.len());
+        pipelines.reserve_exact(builders.len());
 
-        let vert_shader_stage_info = vks::VkPipelineShaderStageCreateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-            pNext: ptr::null(),
-            flags: 0,
-            stage: vks::VK_SHADER_STAGE_VERTEX_BIT,
-            module: vert_shader_module.handle(),
-            pName: fn_name.as_ptr(),
-            pSpecializationInfo: ptr::null(),
-        };
-
-        let frag_shader_stage_info = vks::VkPipelineShaderStageCreateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-            pNext: ptr::null(),
-            flags: 0,
-            stage: vks::VK_SHADER_STAGE_FRAGMENT_BIT,
-            module: frag_shader_module.handle(),
-            pName: fn_name.as_ptr(),
-            pSpecializationInfo: ptr::null(),
-        };
-
-        let shader_stages = [vert_shader_stage_info, frag_shader_stage_info];
-
-        let binding_description = Vertex::binding_description();
-        let attribute_descriptions = Vertex::attribute_descriptions();
-
-        let vertex_input_info = vks::VkPipelineVertexInputStateCreateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-            pNext: ptr::null(),
-            flags: 0,
-            vertexBindingDescriptionCount: 1,
-            pVertexBindingDescriptions: &binding_description,
-            vertexAttributeDescriptionCount: attribute_descriptions.len() as u32,
-            pVertexAttributeDescriptions: attribute_descriptions.as_ptr(),
-        };
-
-        let input_assembly = vks::VkPipelineInputAssemblyStateCreateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-            pNext: ptr::null(),
-            flags: 0,
-            // * VK_PRIMITIVE_TOPOLOGY_POINT_LIST: points from vertices
-            // * VK_PRIMITIVE_TOPOLOGY_LINE_LIST: line from every 2 vertices
-            //   without reuse
-            // * VK_PRIMITIVE_TOPOLOGY_LINE_STRIP: the end vertex of every
-            //   line is used as start vertex for the next line
-            // * VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST: triangle from every 3
-            //   vertices without reuse
-            // * VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP: the second and third
-            //   vertex of every triangle are used as first two vertices of
-            //   the next triangle
-            topology: vks::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-            primitiveRestartEnable: vks::VK_FALSE,
-        };
-
-        let viewport = vks::VkViewport {
-            x: 0.0f32,
-            y: 0.0f32,
-            width: swap_chain_extent.width as f32,
-            height: swap_chain_extent.height as f32,
-            minDepth: 0.0f32,
-            maxDepth: 1.0f32,
-        };
-
-        let scissor = vks::VkRect2D {
-            offset: vks::VkOffset2D {
-                x: 0,
-                y: 0,
-            },
-            extent: swap_chain_extent,
-        };
-
-        let viewport_state = vks::VkPipelineViewportStateCreateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-            pNext: ptr::null(),
-            flags: 0,
-            viewportCount: 1,
-            pViewports: &viewport,
-            scissorCount: 1,
-            pScissors: &scissor,
-        };
-
-        let rasterizer = vks::VkPipelineRasterizationStateCreateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-            pNext: ptr::null(),
-            flags: 0,
-            depthClampEnable: vks::VK_FALSE,
-            rasterizerDiscardEnable: vks::VK_FALSE,
-            polygonMode: vks::VK_POLYGON_MODE_FILL,
-            cullMode: vks::VK_CULL_MODE_BACK_BIT,
-            // frontFace: vks::VK_FRONT_FACE_CLOCKWISE,
-            frontFace: vks::VK_FRONT_FACE_COUNTER_CLOCKWISE,
-            depthBiasEnable: vks::VK_FALSE,
-            depthBiasConstantFactor: 0.0f32,
-            depthBiasClamp: 0.0f32,
-            depthBiasSlopeFactor: 0.0f32,
-            lineWidth: 1.0f32,
-        };
-
-        let multisampling = vks::VkPipelineMultisampleStateCreateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-            pNext: ptr::null(),
-            flags: 0,
-            rasterizationSamples: vks::VK_SAMPLE_COUNT_1_BIT,
-            sampleShadingEnable: vks::VK_FALSE,
-            minSampleShading: 1.0f32,
-            pSampleMask: ptr::null(),
-            alphaToCoverageEnable: vks::VK_FALSE,
-            alphaToOneEnable: vks::VK_FALSE,
-        };
-
-        let stencil_op_state = vks::VkStencilOpState {
-            failOp: 0,
-            passOp: 0,
-            depthFailOp: 0,
-            compareOp: 0,
-            compareMask: 0,
-            writeMask: 0,
-            reference: 0,
-        };
-
-        let depth_stencil = vks::VkPipelineDepthStencilStateCreateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-            pNext: ptr::null(),
-            flags: 0,
-            depthTestEnable: vks::VK_TRUE,
-            depthWriteEnable: vks::VK_TRUE,
-            depthCompareOp: vks::VK_COMPARE_OP_LESS,
-            depthBoundsTestEnable: vks::VK_FALSE,
-            stencilTestEnable: vks::VK_FALSE,
-            front: stencil_op_state.clone(),
-            back: stencil_op_state,
-            minDepthBounds: 0.0,
-            maxDepthBounds: 1.0,
-        };
-
-        let color_blend_attachment = vks::VkPipelineColorBlendAttachmentState {
-            blendEnable: vks::VK_FALSE,
-            srcColorBlendFactor: vks::VK_BLEND_FACTOR_ONE,
-            dstColorBlendFactor: vks::VK_BLEND_FACTOR_ZERO,
-            colorBlendOp: vks::VK_BLEND_OP_ADD,
-            srcAlphaBlendFactor: vks::VK_BLEND_FACTOR_ONE,
-            dstAlphaBlendFactor: vks::VK_BLEND_FACTOR_ZERO,
-            alphaBlendOp: vks::VK_BLEND_OP_ADD,
-            colorWriteMask: vks::VK_COLOR_COMPONENT_R_BIT | vks::VK_COLOR_COMPONENT_G_BIT |
-                vks::VK_COLOR_COMPONENT_B_BIT | vks::VK_COLOR_COMPONENT_A_BIT,
-        };
-
-        // ///////////////////////////////////////////////
-        // /////////// KEEPME (ALPHA BLENDING) ///////////
-        // let color_blend_attachment = vks::VkPipelineColorBlendAttachmentState {
-        //     blendEnable: vks::VK_FALSE,
-        //     srcColorBlendFactor: vks::VK_BLEND_FACTOR_SRC_ALPHA,
-        //     dstColorBlendFactor: vks::VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-        //     colorBlendOp: vks::VK_BLEND_OP_ADD,
-        //     srcAlphaBlendFactor: vks::VK_BLEND_FACTOR_ONE,
-        //     dstAlphaBlendFactor: vks::VK_BLEND_FACTOR_ZERO,
-        //     alphaBlendOp: vks::VK_BLEND_OP_ADD,
-        //     colorWriteMask: vks::VK_COLOR_COMPONENT_R_BIT | vks::VK_COLOR_COMPONENT_G_BIT | vks::VK_COLOR_COMPONENT_B_BIT | vks::VK_COLOR_COMPONENT_A_BIT,
-        // }; ////////////////////////////////////////////
-        // ///////////////////////////////////////////////
-
-        let color_blending = vks::VkPipelineColorBlendStateCreateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-            pNext: ptr::null(),
-            flags: 0,
-            logicOpEnable: vks::VK_FALSE,
-            logicOp: vks::VK_LOGIC_OP_COPY,
-            attachmentCount: 1,
-            pAttachments: &color_blend_attachment,
-            blendConstants: [0.0f32; 4],
-        };
-
-        // ///////////////////////////////////////////////
-        // /////////// KEEPME (DYNAMIC STATES) ///////////
-        // let dynamic_states = [vks::VK_DYNAMIC_STATE_VIEWPORT, vks::VK_DYNAMIC_STATE_LINE_WIDTH];
-        // let dynamic_state = vks::VkPipelineDynamicStateCreateInfo {
-        //     sType: vks::VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-        //     pNext: ptr::null(),
-        //     flags: 0,
-        //     dynamicStateCount: 2,
-        //     pDynamicStates: dynamic_states.as_ptr(),
-        // }; ////////////////////////////////////////////
-        // ///////////////////////////////////////////////
-
-        let create_info = vks::VkGraphicsPipelineCreateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-            pNext: ptr::null(),
-            flags: 0,
-            stageCount: 2,
-            pStages: shader_stages.as_ptr(),
-            pVertexInputState: &vertex_input_info,
-            pInputAssemblyState: &input_assembly,
-            pTessellationState: ptr::null(),
-            pViewportState: &viewport_state,
-            pRasterizationState: &rasterizer,
-            pMultisampleState: &multisampling,
-            pDepthStencilState: &depth_stencil,
-            pColorBlendState: &color_blending,
-            // pDynamicState: &dynamic_state,
-            pDynamicState: ptr::null(),
-            layout: pipeline_layout.handle(),
-            renderPass: render_pass.handle(),
-            subpass: 0,
-            basePipelineHandle: 0,
-            basePipelineIndex: -1,
-        };
-
-        let mut handle = 0;
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle(), 0, 1, &create_info,
-                ptr::null(), &mut handle));
+        for builder in builders {
+            create_infos.push(builder.as_ref().create_info.clone());
         }
 
-        Ok(GraphicsPipeline {
-            inner: Arc::new(Inner {
-                handle,
-                device,
-            })
-        })
+        unsafe {
+            pipeline_handles.set_len(builders.len());
+            ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle(),
+                0, create_infos.len() as u32, create_infos.as_ptr(), ptr::null(),
+                pipeline_handles.as_mut_ptr()));
+        }
+
+        for handle in pipeline_handles {
+            pipelines.push(
+                GraphicsPipeline {
+                    inner: Arc::new(Inner {
+                        handle,
+                        device: device.clone(),
+                    })
+                }
+            );
+        }
+
+        Ok(pipelines)
     }
 
     pub fn handle(&self) -> vks::VkPipeline {
@@ -262,5 +76,219 @@ impl Drop for Inner {
         unsafe {
             self.device.proc_addr_loader().core.vkDestroyPipeline(self.device.handle(), self.handle, ptr::null());
         }
+    }
+}
+
+/// A builder for `GraphicsPipeline`.
+//
+// typedef struct VkGraphicsPipelineCreateInfo {
+//     VkStructureType                                  sType;
+//     const void*                                      pNext;
+//     VkPipelineCreateFlags                            flags;
+//     uint32_t                                         stageCount;
+//     const VkPipelineShaderStageCreateInfo*           pStages;
+//     const VkPipelineVertexInputStateCreateInfo*      pVertexInputState;
+//     const VkPipelineInputAssemblyStateCreateInfo*    pInputAssemblyState;
+//     const VkPipelineTessellationStateCreateInfo*     pTessellationState;
+//     const VkPipelineViewportStateCreateInfo*         pViewportState;
+//     const VkPipelineRasterizationStateCreateInfo*    pRasterizationState;
+//     const VkPipelineMultisampleStateCreateInfo*      pMultisampleState;
+//     const VkPipelineDepthStencilStateCreateInfo*     pDepthStencilState;
+//     const VkPipelineColorBlendStateCreateInfo*       pColorBlendState;
+//     const VkPipelineDynamicStateCreateInfo*          pDynamicState;
+//     VkPipelineLayout                                 layout;
+//     VkRenderPass                                     renderPass;
+//     uint32_t                                         subpass;
+//     VkPipeline                                       basePipelineHandle;
+//     int32_t                                          basePipelineIndex;
+// } VkGraphicsPipelineCreateInfo;
+//
+#[derive(Debug, Clone)]
+pub struct GraphicsPipelineBuilder<'b> {
+    create_info: vks::VkGraphicsPipelineCreateInfo,
+    _p: PhantomData<&'b ()>,
+}
+
+impl<'b> GraphicsPipelineBuilder<'b> {
+    /// Returns a new render pass builder.
+    pub fn new() -> GraphicsPipelineBuilder<'b> {
+        GraphicsPipelineBuilder {
+            create_info: vks::VkGraphicsPipelineCreateInfo::default(),
+            _p: PhantomData,
+        }
+    }
+
+    /// Specifies how the pipeline will be generated.
+    pub fn flags<'s>(&'s mut self, flags: vks::VkPipelineCreateFlags)
+            -> &'s mut GraphicsPipelineBuilder<'b> {
+        self.create_info.flags = flags;
+        self
+    }
+
+    /// Specifies the number of entries in the pStages array. `stages` is a
+    /// list of  structures describing the set of the shader stages to be
+    /// included in the graphics pipeline.
+    pub fn stages<'s, 'p>(&'s mut self,
+            stages: &'p [vks::VkPipelineShaderStageCreateInfo])
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where 'p: 'b {
+        self.create_info.stageCount = stages.len() as u32;
+        self.create_info.pStages = stages.as_ptr();
+        self
+    }
+
+    /// Specifies the vertex input state details.
+    pub fn vertex_input_state<'s, 'p>(&'s mut self,
+            vertex_input_state: &'p vks::VkPipelineVertexInputStateCreateInfo)
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where 'p: 'b {
+        self.create_info.pVertexInputState = vertex_input_state;
+        self
+    }
+
+    /// Specifies the input assembly behavior, as described in Drawing
+    /// Commands.
+    pub fn input_assembly_state<'s, 'p>(&'s mut self, input_assembly_state:
+            &'p vks::VkPipelineInputAssemblyStateCreateInfo)
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where 'p: 'b {
+        self.create_info.pInputAssemblyState = input_assembly_state;
+        self
+    }
+
+    /// Specifies the tessellation state and is ignored if the pipeline does
+    /// not include a tessellation control shader stage and tessellation
+    /// evaluation shader stage.
+    pub fn tessellation_state<'s, 'p>(&'s mut self,
+            tessellation_state: &'p vks::VkPipelineTessellationStateCreateInfo)
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where 'p: 'b {
+        self.create_info.pTessellationState = tessellation_state;
+        self
+    }
+
+    /// Specifies the viewport state and is ignored if the pipeline has
+    /// rasterization disabled.
+    pub fn viewport_state<'s, 'p>(&'s mut self,
+            viewport_state: &'p vks::VkPipelineViewportStateCreateInfo)
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where 'p: 'b {
+        self.create_info.pViewportState = viewport_state;
+        self
+    }
+
+    /// Specifies the rasterization state.
+    pub fn rasterization_state<'s, 'p>(&'s mut self,
+            rasterization_state: &'p vks::VkPipelineRasterizationStateCreateInfo)
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where 'p: 'b {
+        self.create_info.pRasterizationState = rasterization_state;
+        self
+    }
+
+    /// Specifies the multisample state and is ignored if the pipeline has
+    /// rasterization disabled.
+    pub fn multisample_state<'s, 'p>(&'s mut self,
+            multisample_state: &'p vks::VkPipelineMultisampleStateCreateInfo)
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where 'p: 'b {
+        self.create_info.pMultisampleState = multisample_state;
+        self
+    }
+
+    /// Specifies the depth stencil state and is ignored if the pipeline has
+    /// rasterization disabled or if the subpass of the render pass the
+    /// pipeline is created against does not use a depth/stencil attachment.
+    pub fn depth_stencil_state<'s, 'p>(&'s mut self,
+            depth_stencil_state: &'p vks::VkPipelineDepthStencilStateCreateInfo)
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where 'p: 'b {
+        self.create_info.pDepthStencilState = depth_stencil_state;
+        self
+    }
+
+    /// Specifies the color blend state and is ignored if the pipeline has
+    /// rasterization disabled or if the subpass of the render pass the
+    /// pipeline is created against does not use any color attachments.
+    pub fn color_blend_state<'s, 'p>(&'s mut self,
+            color_blend_state: &'p vks::VkPipelineColorBlendStateCreateInfo)
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where 'p: 'b {
+        self.create_info.pColorBlendState = color_blend_state;
+        self
+    }
+
+    /// Specifies which properties of the pipeline state object are dynamic
+    /// and can be changed independently of the pipeline state. If not
+    /// specified, no state in the pipeline is considered dynamic.
+    pub fn dynamic_state<'s, 'p>(&'s mut self,
+            dynamic_state: &'p vks::VkPipelineDynamicStateCreateInfo)
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where 'p: 'b {
+        self.create_info.pDynamicState = dynamic_state;
+        self
+    }
+
+    /// Specifies the binding locations used by both the pipeline and
+    /// descriptor sets used with the pipeline.
+    pub fn layout<'s>(&'s mut self, layout: vks::VkPipelineLayout)
+            -> &'s mut GraphicsPipelineBuilder<'b> {
+        self.create_info.layout = layout;
+        self
+    }
+
+    /// Specifies the environment in which the pipeline will be used; the
+    /// pipeline must only be used with an instance of any render pass
+    /// compatible with the one provided.
+    pub fn render_pass<'s>(&'s mut self, render_pass: vks::VkRenderPass)
+            -> &'s mut GraphicsPipelineBuilder<'b> {
+        self.create_info.renderPass = render_pass;
+        self
+    }
+
+    /// Specifies the index of the subpass in the render pass where this
+    /// pipeline will be used.
+    pub fn subpass<'s>(&'s mut self, subpass: u32)
+            -> &'s mut GraphicsPipelineBuilder<'b> {
+        self.create_info.subpass = subpass;
+        self
+    }
+
+    /// Specifies the pipeline to derive from.
+    pub fn base_pipeline_handle<'s>(&'s mut self, base_pipeline_handle: vks::VkPipeline)
+            -> &'s mut GraphicsPipelineBuilder<'b> {
+        self.create_info.basePipelineHandle = base_pipeline_handle;
+        self
+    }
+
+    /// Specifies the index into the pCreateInfos parameter to use as a
+    /// pipeline to derive from.
+    pub fn base_pipeline_index<'s>(&'s mut self, base_pipeline_index: i32)
+            -> &'s mut GraphicsPipelineBuilder<'b> {
+        self.create_info.basePipelineIndex = base_pipeline_index;
+        self
+    }
+
+    /// Creates and returns a new `GraphicsPipeline`. Use
+    /// `GraphicsPipeline::create` to create multiple pipelines in one call.
+    pub fn build(&self, device: Device) -> VooResult<GraphicsPipeline> {
+        let mut handle = 0;
+        unsafe {
+            ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle(),
+                0, 1, &self.create_info, ptr::null(), &mut handle));
+        }
+
+        Ok(GraphicsPipeline {
+            inner: Arc::new(Inner {
+                handle,
+                device,
+            })
+        })
+    }
+}
+
+impl<'b> AsRef<GraphicsPipelineBuilder<'b>> for GraphicsPipelineBuilder<'b> {
+    fn as_ref(&self) -> &GraphicsPipelineBuilder<'b> {
+        self
     }
 }
