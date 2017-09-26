@@ -273,6 +273,25 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: vks::VkQueueF
     bldr.build(device)
 }
 
+pub fn create_image_views(swapchain: &Swapchain) -> VooResult<Vec<ImageView>> {
+    swapchain.images().iter().map(|&image| {
+        ImageView::builder()
+            .image(image)
+            .view_type(vks::VK_IMAGE_VIEW_TYPE_2D)
+            .format(swapchain.image_format())
+            .components(vks::VkComponentMapping::default())
+            .subresource_range(vks::VkImageSubresourceRange {
+                aspectMask: vks::VK_IMAGE_ASPECT_COLOR_BIT,
+                baseMipLevel: 0,
+                levelCount: 1,
+                baseArrayLayer: 0,
+                layerCount: 1,
+            })
+            .build(swapchain.device().clone(), Some(swapchain.clone()))
+
+    }).collect::<Result<Vec<_>, _>>()
+}
+
 fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
         -> VooResult<vks::VkCommandBuffer> {
     let alloc_info = vks::VkCommandBufferAllocateInfo {
@@ -770,12 +789,33 @@ fn create_render_pass(device: Device, swapchain_image_format: vks::VkFormat)
         .build(device)
 }
 
-fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
-    DescriptorPool::new(device)
+fn create_descriptor_set_layout(device: Device) -> VooResult<DescriptorSetLayout> {
+    let ubo_layout_binding = vks::VkDescriptorSetLayoutBinding {
+        binding: 0,
+        descriptorType: vks::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        descriptorCount: 1,
+        stageFlags: vks::VK_SHADER_STAGE_VERTEX_BIT,
+        pImmutableSamplers: ptr::null(),
+    };
+
+    let sampler_layout_binding = vks::VkDescriptorSetLayoutBinding {
+        binding: 1,
+        descriptorType: vks::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+        descriptorCount: 1,
+        stageFlags: vks::VK_SHADER_STAGE_FRAGMENT_BIT,
+        pImmutableSamplers: ptr::null(),
+    };
+
+    let bindings = [ubo_layout_binding, sampler_layout_binding];
+
+    // DescriptorSetLayout::new(device)
+    DescriptorSetLayout::builder()
+        .bindings(&bindings)
+        .build(device)
 }
 
-fn create_descriptor_set_layout(device: Device) -> VooResult<DescriptorSetLayout> {
-    DescriptorSetLayout::new(device)
+fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
+    DescriptorPool::new(device)
 }
 
 fn create_descriptor_set(device: &Device, layout: &DescriptorSetLayout,
@@ -896,11 +936,11 @@ impl App {
             queue_family_flags)?;
         let swapchain = create_swapchain(surface.clone(), device.clone(), queue_family_flags,
             None, None)?;
-        let image_views = voo::create_image_views(&swapchain)?;
-
+        let image_views = create_image_views(&swapchain)?;
         let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;
 
         let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
+
         let pipeline_layout = PipelineLayout::new(device.clone(), Some(&descriptor_set_layout))?;
         let vert_shader_code = util::read_file("/src/voodoo/shaders/vert.spv")?;
         let frag_shader_code = util::read_file("/src/voodoo/shaders/frag.spv")?;
@@ -996,7 +1036,7 @@ impl App {
 
         self.cleanup_swapchain();
 
-        let image_views = voo::create_image_views(&swapchain)?;
+        let image_views = create_image_views(&swapchain)?;
         let render_pass = create_render_pass(self.device.clone(),
             swapchain.image_format())?;
         let graphics_pipeline = GraphicsPipeline::new(self.device.clone(),

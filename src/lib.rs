@@ -162,7 +162,7 @@ pub use device::Device;
 pub use surface::Surface;
 pub use queue::{queue_families, Queue};
 pub use swapchain::{Swapchain, SwapchainSupportDetails};
-pub use image_view::{create_image_views, ImageView};
+pub use image_view::{ImageView};
 pub use shader_module::ShaderModule;
 pub use pipeline_layout::PipelineLayout;
 pub use render_pass::RenderPass;
@@ -289,6 +289,68 @@ pub struct UniformBufferObject {
     pub view: [[f32; 4]; 4],
     pub proj: [[f32; 4]; 4],
 }
+
+
+
+// use std::marker::PhantomData;
+
+    // /// Returns a new `AbstractTemplateBuilder`.
+    // pub fn builder<'b>() -> AbstractTemplateBuilder<'b> {
+    //     AbstractTemplateBuilder::new()
+    // }
+
+// #[derive(Debug, Clone)]
+// pub struct AbstractTemplateBuilder<'b> {
+//     create_info: vks::VkAbstractTemplateCreateInfo,
+//     _p: PhantomData<&'b ()>,
+// }
+
+// impl<'b> AbstractTemplateBuilder<'b> {
+//     /// Returns a new render pass builder.
+//     pub fn new() -> AbstractTemplateBuilder<'b> {
+//         AbstractTemplateBuilder {
+//             create_info: vks::VkAbstractTemplateCreateInfo::default(),
+//             _p: PhantomData,
+//         }
+//     }
+
+//     pub fn ooooooooooooo<'s>(&'s mut self, ooooooooooooo: vks::VkAbstractTemplateCreateFlags)
+//             -> &'s mut AbstractTemplateBuilder<'b> {
+//         self.create_info.ooooooooooooo = ooooooooooooo;
+//         self
+//     }
+
+//     pub fn eeeeeeeeeee<'s, 'p>(&'s mut self, eeeeeeeeeee: &'p [DeviceQueueCreateInfo])
+//             -> &'s mut AbstractTemplateBuilder<'b>
+//             where 'p: 'b {
+//         self.create_info.EeeeeEeeeee = eeeeeeeeeee;
+//         self
+//     }
+
+//     pub fn aaaaaaaaaaaaaa<'s, 'p>(&'s mut self,
+//             aaaaaaaaaaaaaa: &'p [vks::VkAttachmentDescription])
+//             -> &'s mut AbstractTemplateBuilder<'b>
+//             where 'p: 'b {
+//         self.create_info.aaaaaaaaaaaaaaCount = aaaaaaaaaaaaaa.len() as u32;
+//         self.create_info.pAaaaaaaaaa = aaaaaaaaaaaaaa.as_ptr();
+//         self
+//     }
+
+//     pub fn build(&self, device: Device) -> VooResult<AbstractTemplate> {
+//         let mut handle = 0;
+//         unsafe {
+//             ::check(device.proc_addr_loader().core.vkCreateAbstractTemplate(device.handle(),
+//                 &self.create_info, ptr::null(), &mut handle));
+//         }
+
+//         Ok(AbstractTemplate {
+//             inner: Arc::new(Inner {
+//                 handle,
+//                 device,
+//             })
+//         })
+//     }
+// }
 
 
 

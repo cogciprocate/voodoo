@@ -1,6 +1,7 @@
 
 use std::sync::Arc;
 use std::ptr;
+use std::marker::PhantomData;
 use vks;
 use ::{util, VooResult, Device};
 
@@ -16,6 +17,11 @@ pub struct DescriptorSetLayout {
 }
 
 impl DescriptorSetLayout {
+    /// Returns a new `DescriptorSetLayoutBuilder`.
+    pub fn builder<'b>() -> DescriptorSetLayoutBuilder<'b> {
+        DescriptorSetLayoutBuilder::new()
+    }
+
     pub fn new(device: Device) -> VooResult<DescriptorSetLayout> {
         let ubo_layout_binding = vks::VkDescriptorSetLayoutBinding {
             binding: 0,
@@ -72,4 +78,63 @@ impl Drop for Inner {
             self.device.proc_addr_loader().vkDestroyDescriptorSetLayout(self.device.handle(), self.handle, ptr::null());
         }
     }
+}
+
+
+
+// typedef struct VkDescriptorSetLayoutCreateInfo {
+//     VkStructureType                        sType;
+//     const void*                            pNext;
+//     VkDescriptorSetLayoutCreateFlags       flags;
+//     uint32_t                               bindingCount;
+//     const VkDescriptorSetLayoutBinding*    pBindings;
+// } VkDescriptorSetLayoutCreateInfo;
+
+#[derive(Debug, Clone)]
+pub struct DescriptorSetLayoutBuilder<'b> {
+    create_info: vks::VkDescriptorSetLayoutCreateInfo,
+    _p: PhantomData<&'b ()>,
+}
+
+impl<'b> DescriptorSetLayoutBuilder<'b> {
+    /// Returns a new render pass builder.
+    pub fn new() -> DescriptorSetLayoutBuilder<'b> {
+        DescriptorSetLayoutBuilder {
+            create_info: vks::VkDescriptorSetLayoutCreateInfo::default(),
+            _p: PhantomData,
+        }
+    }
+
+    /// Specifies options for descriptor set layout creation.
+    pub fn flags<'s>(&'s mut self, flags: vks::VkDescriptorSetLayoutCreateFlags)
+            -> &'s mut DescriptorSetLayoutBuilder<'b> {
+        self.create_info.flags = flags;
+        self
+    }
+
+    /// Specifies a list of binding configuration structures.
+    pub fn bindings<'s, 'p>(&'s mut self,
+            bindings: &'p [vks::VkDescriptorSetLayoutBinding])
+            -> &'s mut DescriptorSetLayoutBuilder<'b>
+            where 'p: 'b {
+        self.create_info.bindingCount = bindings.len() as u32;
+        self.create_info.pBindings = bindings.as_ptr();
+        self
+    }
+
+    pub fn build(&self, device: Device) -> VooResult<DescriptorSetLayout> {
+        let mut handle = 0;
+        unsafe {
+            ::check(device.proc_addr_loader().core.vkCreateDescriptorSetLayout(device.handle(),
+                &self.create_info, ptr::null(), &mut handle));
+        }
+
+        Ok(DescriptorSetLayout {
+            inner: Arc::new(Inner {
+                handle,
+                device,
+            })
+        })
+    }
+
 }

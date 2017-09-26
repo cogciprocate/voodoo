@@ -41,26 +41,6 @@ impl Drop for Inner {
     }
 }
 
-
-pub fn create_image_views(swapchain: &Swapchain) -> VooResult<Vec<ImageView>> {
-    swapchain.images().iter().map(|&image| {
-        ImageView::builder()
-            .image(image)
-            .view_type(vks::VK_IMAGE_VIEW_TYPE_2D)
-            .format(swapchain.image_format())
-            .components(vks::VkComponentMapping::default())
-            .subresource_range(vks::VkImageSubresourceRange {
-                aspectMask: vks::VK_IMAGE_ASPECT_COLOR_BIT,
-                baseMipLevel: 0,
-                levelCount: 1,
-                baseArrayLayer: 0,
-                layerCount: 1,
-            })
-            .build(swapchain.device().clone(), Some(swapchain.clone()))
-
-    }).collect::<Result<Vec<_>, _>>()
-}
-
 /// A builder for an `ImageView`.
 //
 // typedef struct VkImageViewCreateInfo {
