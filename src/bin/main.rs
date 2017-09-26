@@ -13,6 +13,7 @@ use std::time;
 use std::path::Path;
 use std::collections::HashMap;
 use std::ffi::CStr;
+use std::cmp;
 use libc::c_char;
 use smallvec::SmallVec;
 use image::{ImageFormat, DynamicImage};
@@ -65,7 +66,6 @@ fn main() {
         let mut app = App::new().unwrap();
         app.main_loop().unwrap();
     }
-    println!("Goodbye.");
 }
 
 /// Initializes the window and event loop.
@@ -78,19 +78,16 @@ fn init_window() -> (Window, EventsLoop) {
 }
 
 /// Returns the list of layer names to be enabled.
-fn enabled_layer_names<'ln>(loader: &Loader, enable_validation_layers: bool)
+fn enabled_layer_names<'ln>(loader: &Loader)
         -> SmallVec<[&'ln CStr; 16]> {
-        // -> &'static [&'static [u8]] {
-    if enable_validation_layers && !loader.check_validation_layer_support() {
+    if ENABLE_VALIDATION_LAYERS && !loader.check_validation_layer_support() {
         panic!("Unable to enable validation layers.");
     }
-    if enable_validation_layers {
+    if ENABLE_VALIDATION_LAYERS {
          (loader.validation_layer_names()).iter().map(|lyr_name|
             unsafe { CStr::from_ptr(lyr_name.as_ptr() as *const c_char) }).collect()
-         // loader.validation_layer_names()
     } else {
         SmallVec::new()
-        // &[]
     }
 }
 
@@ -104,15 +101,11 @@ fn init_instance() -> VooResult<Instance> {
         .api_version((1, 0, 51));
 
     let loader = Loader::new()?;
-    let enabled_layer_names = enabled_layer_names(&loader, ENABLE_VALIDATION_LAYERS);
-    let enabled_extensions = loader.instance_extensions();
-
-    println!("#### Enabled layer names: {:?}", enabled_layer_names);
 
     Instance::builder()
         .application_info(&app_info)
-        .enabled_layer_names(enabled_layer_names.as_ref())
-        .enabled_extensions(&enabled_extensions)
+        .enabled_layer_names(enabled_layer_names(&loader).as_slice())
+        .enabled_extensions(loader.instance_extensions().as_slice())
         .build(loader, ENABLE_VALIDATION_LAYERS)
 }
 
@@ -121,7 +114,6 @@ fn init_instance() -> VooResult<Instance> {
 /// presentation modes.
 fn device_is_suitable(instance: &Instance, surface: &Surface,
         physical_device: &PhysicalDevice, queue_flags: vks::VkQueueFlags) -> bool {
-    // let device_properties = physical_device.properties();
     let device_features = physical_device.features();
 
     let reqd_exts: SmallVec<[_; 16]> = (&REQUIRED_DEVICE_EXTENSIONS[..]).iter().map(|ext_name| {
@@ -158,7 +150,6 @@ fn choose_physical_device(instance: &Instance, surface: &Surface, queue_flags: v
     }
 
     if let Some(preferred_device) = preferred_device {
-        println!("Preferred device: {:?}", preferred_device);
         Ok(preferred_device)
     } else {
         panic!("Failed to find a suitable device.");
@@ -168,7 +159,6 @@ fn choose_physical_device(instance: &Instance, surface: &Surface, queue_flags: v
 
 fn create_device(instance: Instance, surface: &Surface, physical_device: PhysicalDevice,
         queue_familiy_flags: vks::VkQueueFlags) -> VooResult<Device> {
-
     let queue_family_idx = queue::queue_families(&instance, surface,
         &physical_device, queue_familiy_flags).family_idxs()[0] as u32;
 
@@ -179,32 +169,143 @@ fn create_device(instance: Instance, surface: &Surface, physical_device: Physica
     let features = PhysicalDeviceFeatures::new()
         .sampler_anisotropy(true);
 
-    // let enabled_layer_names = enabled_layer_names(instance.loader(), ENABLE_VALIDATION_LAYERS);
-    // let mut enabled_layer_name_ptrs = Vec::with_capacity(enabled_layer_names.len());
-    // for layer_name in enabled_layer_names {
-    //     enabled_layer_name_ptrs.push(layer_name.as_ptr());
-    // }
-
-    let enabled_layer_names: SmallVec<[_; 16]> = enabled_layer_names(instance.loader(),
-            ENABLE_VALIDATION_LAYERS).iter().map(|layer_name| {
-        layer_name.as_ptr() as *const c_char
-    }) .collect();
-
-    let enabled_extension_names: SmallVec<[_; 16]> = (&REQUIRED_DEVICE_EXTENSIONS[..])
-        .iter().map(|ext_name| ext_name.as_ptr() as *const c_char).collect();
-    // let mut enabled_extension_name_ptrs = Vec::with_capacity(enabled_extension_names.len());
-    // for en in enabled_extension_names {
-    //     enabled_extension_name_ptrs.push(en);
-    // }
-
-    let queue_create_infos = &[queue_create_info.clone()];
-
     Device::builder()
-        .queue_create_infos(queue_create_infos)
-        .enabled_layer_names(enabled_layer_names.as_ref())
-        .enabled_extension_names(enabled_extension_names.as_ref())
+        .queue_create_infos(&[queue_create_info.clone()])
+        .enabled_layer_names(enabled_layer_names(instance.loader()).as_slice())
+        .enabled_extension_names(REQUIRED_DEVICE_EXTENSIONS)
         .enabled_features(&features)
         .build(physical_device)
+}
+
+fn choose_swap_surface_format(available_formats: &[vks::khr_surface::VkSurfaceFormatKHR])
+        -> vks::khr_surface::VkSurfaceFormatKHR {
+    if available_formats.len() == 1 && available_formats[0].format == vks::VK_FORMAT_UNDEFINED {
+        return vks::khr_surface::VkSurfaceFormatKHR {
+            format: vks::VK_FORMAT_B8G8R8A8_UNORM,
+            colorSpace: vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+        };
+    }
+    for available_format in available_formats {
+        if available_format.format == vks::VK_FORMAT_B8G8R8A8_UNORM &&
+                available_format.colorSpace == vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR
+        {
+            return vks::khr_surface::VkSurfaceFormatKHR {
+                format: vks::VK_FORMAT_B8G8R8A8_UNORM,
+                colorSpace: vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+            };
+        }
+    }
+    vks::khr_surface::VkSurfaceFormatKHR {
+        format: available_formats[0].format,
+        colorSpace: available_formats[0].colorSpace,
+    }
+}
+
+fn choose_swap_present_mode(available_present_modes: &[vks::khr_surface::VkPresentModeKHR])
+        -> vks::khr_surface::VkPresentModeKHR {
+    let mut best_mode = vks::khr_surface::VK_PRESENT_MODE_FIFO_KHR;
+    for &available_present_mode in available_present_modes {
+        // if available_present_mode == vks::khr_surface::VK_PRESENT_MODE_MAILBOX_KHR {
+        if available_present_mode == vks::khr_surface::VK_PRESENT_MODE_FIFO_KHR {
+            return available_present_mode;
+        } else if available_present_mode == vks::khr_surface::VK_PRESENT_MODE_IMMEDIATE_KHR {
+            best_mode = available_present_mode;
+        }
+    }
+    best_mode
+}
+
+fn choose_swap_extent(capabilities: &vks::khr_surface::VkSurfaceCapabilitiesKHR,
+        window_size: Option<vks::VkExtent2D>) -> vks::VkExtent2D {
+    if capabilities.currentExtent.width != u32::max_value() {
+        return capabilities.currentExtent.clone();
+    } else {
+        let mut actual_extent = window_size
+            .unwrap_or(vks::VkExtent2D { width: 1024, height: 768 });
+        actual_extent.width = cmp::max(capabilities.minImageExtent.width,
+            cmp::min(capabilities.maxImageExtent.width, actual_extent.width));
+        actual_extent.height = cmp::max(capabilities.minImageExtent.height,
+            cmp::min(capabilities.maxImageExtent.height, actual_extent.height));
+        return actual_extent
+    }
+}
+
+fn create_swapchain(surface: Surface, device: Device, queue_flags: vks::VkQueueFlags,
+        window_size: Option<vks::VkExtent2D>, old_swapchain: Option<Swapchain>)
+        -> VooResult<Swapchain> {
+    let swapchain_details: SwapchainSupportDetails = SwapchainSupportDetails::new(
+        device.instance(), &surface, device.physical_device());
+    let surface_format = choose_swap_surface_format(&swapchain_details.formats);
+    let present_mode = choose_swap_present_mode(&swapchain_details.present_modes);
+    let extent = choose_swap_extent(&swapchain_details.capabilities, window_size);
+
+    // TODO: REVISIT THIS: https://vulkan-tutorial.com/Drawing_a_triangle/Presentation/Swap_chain
+    let mut image_count = swapchain_details.capabilities.minImageCount + 1;
+    if swapchain_details.capabilities.maxImageCount > 0 &&
+            image_count > swapchain_details.capabilities.maxImageCount {
+        image_count = swapchain_details.capabilities.maxImageCount;
+    }
+
+    let indices = queue::queue_families(device.instance(), &surface,
+        device.physical_device(), queue_flags);
+    let queue_family_indices_0 = [indices.flag_idxs[0] as u32, indices.presentation_support_idxs[0] as u32];
+
+    // let (image_sharing_mode, queue_family_index_count, p_queue_family_indices);
+    let (image_sharing_mode, queue_family_indices);
+    if queue_family_indices_0[0] != queue_family_indices_0[1] {
+        image_sharing_mode = vks::VK_SHARING_MODE_CONCURRENT;
+        // queue_family_index_count = 2;
+        // p_queue_family_indices = queue_family_indices.as_ptr();
+        queue_family_indices = Some(&queue_family_indices_0[..]);
+    } else {
+        image_sharing_mode = vks::VK_SHARING_MODE_EXCLUSIVE;
+        // queue_family_index_count = 0; // Optional
+        // p_queue_family_indices = ptr::null(); // Optional
+        queue_family_indices = None;
+    }
+
+    // let image_extent = vks::VkExtent2D { width: extent.width, height: extent.height };
+
+    // let create_info = vks::khr_swapchain::VkSwapchainCreateInfoKHR {
+    //     sType: vks::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+    //     pNext: ptr::null(),
+    //     flags: 0,
+    //     surface: surface.handle(),
+    //     minImageCount: image_count,
+    //     imageFormat: surface_format.format,
+    //     imageColorSpace: surface_format.colorSpace,
+    //     imageExtent: extent.clone(),
+    //     imageArrayLayers: 1,
+    //     imageUsage: vks::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+    //     imageSharingMode: image_sharing_mode,
+    //     queueFamilyIndexCount: queue_family_index_count,
+    //     pQueueFamilyIndices: p_queue_family_indices,
+    //     preTransform: swapchain_details.capabilities.currentTransform,
+    //     compositeAlpha: vks::khr_surface::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+    //     presentMode: present_mode,
+    //     clipped: vks::VK_TRUE,
+    //     oldSwapchain: old_swapchain.map(|sc| sc.handle()).unwrap_or(0),
+    // };
+
+    // Swapchain::new(surface.clone(), device.clone(), queue_flags, None, None)
+    // Swapchain::new(device, surface, create_info)
+
+    Swapchain::builder()
+        .surface(surface)
+        .min_image_count(image_count)
+        .image_format(surface_format.format)
+        .image_color_space(surface_format.colorSpace)
+        .image_extent(extent.clone())
+        .image_array_layers(1)
+        .image_usage(vks::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
+        .image_sharing_mode(image_sharing_mode)
+        .queue_family_indices(queue_family_indices)
+        .pre_transform(swapchain_details.capabilities.currentTransform)
+        .composite_alpha(vks::khr_surface::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
+        .present_mode(present_mode)
+        .clipped(true)
+        .old_swapchain(old_swapchain.map(|sc| sc.handle()).unwrap_or(0))
+        .build(device)
 }
 
 fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
@@ -219,8 +320,8 @@ fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
 
     let mut command_buffer = ptr::null_mut();
     unsafe {
-        voo::check(device.proc_addr_loader().core.vkAllocateCommandBuffers(device.handle(), &alloc_info,
-            &mut command_buffer));
+        voo::check(device.proc_addr_loader().core.vkAllocateCommandBuffers(device.handle(),
+            &alloc_info, &mut command_buffer));
     }
 
     let begin_info = vks::VkCommandBufferBeginInfo {
@@ -724,16 +825,17 @@ impl App {
         let instance = init_instance()?;
         let (window, events_loop) = init_window();
         let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
-
         let queue_family_flags = vks::VK_QUEUE_GRAPHICS_BIT;
-
         let physical_device = choose_physical_device(&instance, &surface,
             queue_family_flags)?;
-
         let device = create_device(instance.clone(), &surface, physical_device,
             queue_family_flags)?;
-        let swapchain = Swapchain::new(surface.clone(), device.clone(), queue_family_flags,
+
+        // let swapchain = Swapchain::new(surface.clone(), device.clone(), queue_family_flags,
+        //     None, None)?;
+        let swapchain = create_swapchain(surface.clone(), device.clone(), queue_family_flags,
             None, None)?;
+
         let image_views = voo::create_image_views(&swapchain)?;
         let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;
         let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
@@ -752,11 +854,9 @@ impl App {
             &texture_image)?;
         let texture_sampler = create_texture_sampler(device.clone())?;
 
-
         let vertices = VERTICES[..].to_owned();
         let indices = INDICES[..].to_owned();
         // let (vertices, indices) = load_model(&device)?;
-
 
         let vertex_buffer = create_vertex_buffer(&device, &command_pool, &vertices)?;
         let index_buffer = create_index_buffer(&device, &command_pool, &indices)?;
@@ -826,9 +926,10 @@ impl App {
     }
 
     fn recreate_swapchain(&mut self, current_extent: vks::VkExtent2D) -> VooResult<()> {
-        unsafe { voo::check(self.device.proc_addr_loader().core.vkDeviceWaitIdle(self.device.handle())); }
+        unsafe { voo::check(self.device.proc_addr_loader().vkDeviceWaitIdle(
+            self.device.handle())); }
 
-        let swapchain = Swapchain::new(self.surface.clone(), self.device.clone(),
+        let swapchain = create_swapchain(self.surface.clone(), self.device.clone(),
             self.queue_family_flags, Some(current_extent), self.swapchain.take())?;
 
         self.cleanup_swapchain();
@@ -967,10 +1068,8 @@ impl App {
                     Event::WindowEvent { event: WindowEvent::Resized(w, h), .. } => {
                         current_extent = vks::VkExtent2D { width: w, height: h };
                         recreate_swap = true;
-                        // println!("The window was resized to {}x{}", w, h);
                     },
                     Event::WindowEvent { event: WindowEvent::Closed, .. } => {
-                        println!("Vulkan window closing...");
                         exit = true;
                     },
                     _ => ()

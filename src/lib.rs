@@ -179,6 +179,7 @@ pub use descriptor_set_layout::DescriptorSetLayout;
 pub use descriptor_pool::DescriptorPool;
 pub use structs::*;
 
+const PRINT: bool = false;
 
 pub static VALIDATION_LAYER_NAMES: &[&[u8]] = &[
     b"VK_LAYER_LUNARG_standard_validation\0"

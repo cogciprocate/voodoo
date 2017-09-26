@@ -6,25 +6,15 @@ use std::marker::PhantomData;
 use smallvec::SmallVec;
 use libc::{c_char, c_void};
 use vks;
-use ::{VooResult, Loader, ApplicationInfo, PhysicalDevice, CharStrs};
+use ::{VooResult, Loader, ApplicationInfo, PhysicalDevice, CharStrs, PRINT};
 
 
 unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,
         _obj_type: vks::VkDebugReportObjectTypeEXT, _obj: u64, _location: usize, _code: i32,
-        _layer_prefix: *const c_char, msg: *const c_char, _user_data: *mut c_void) -> u32
-{
+        _layer_prefix: *const c_char, msg: *const c_char, _user_data: *mut c_void) -> u32 {
     println!("{}", CStr::from_ptr(msg).to_str().unwrap());
     vks::VK_FALSE
 }
-
-// pub unsafe fn extension_names<'en>(extensions: &'en [vks::VkExtensionProperties]) -> Vec<&'en CStr> {
-//     extensions.iter().map(|ext| {
-//         let name = CStr::from_ptr(&ext.extensionName as *const c_char);
-//         println!("Enabling instance extension: '{}' (version: {})",
-//             name.to_str().unwrap(), ext.specVersion);
-//         name
-//     }).collect()
-// }
 
 fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::InstanceProcAddrLoader)
         -> SmallVec<[vks::VkPhysicalDevice; 16]> {
@@ -37,7 +27,7 @@ fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::InstanceP
         devices_raw.set_len(device_count as usize);
         ::check(loader.core.vkEnumeratePhysicalDevices(instance, &mut device_count, devices_raw.as_mut_ptr()));
     }
-    println!("Available devices: {:?}", devices_raw);
+    if PRINT { println!("Available devices: {:?}", devices_raw); }
     devices_raw
 }
 
@@ -60,11 +50,6 @@ impl Instance {
     pub fn builder<'ib>() -> InstanceBuilder<'ib> {
         InstanceBuilder::new()
     }
-
-    // #[inline]
-    // pub fn vk(&self) -> &vks::InstanceProcAddrLoader {
-    //     self.inner.loader.loader()
-    // }
 
     #[inline]
     pub fn proc_addr_loader(&self) -> &vks::InstanceProcAddrLoader {
@@ -91,16 +76,19 @@ impl Instance {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            println!("Destroying debug callback...");
+            if PRINT { println!("Destroying debug callback..."); }
             if let Some(callback) = self.debug_callback {
                 self.loader.loader().ext_debug_report.vkDestroyDebugReportCallbackEXT(self.handle, callback, ptr::null());
             }
 
-            println!("Destroying instance...");
+            if PRINT { println!("Destroying instance..."); }
             self.loader.loader().core.vkDestroyInstance(self.handle, ptr::null());
         }
     }
 }
+
+unsafe impl Send for Instance {}
+unsafe impl Sync for Instance {}
 
 
 
@@ -120,8 +108,6 @@ impl Drop for Inner {
 #[derive(Debug, Clone)]
 pub struct InstanceBuilder<'ib> {
     create_info: vks::VkInstanceCreateInfo,
-    // enabled_layer_name_ptrs: SmallVec<[*const c_char; 128]>,
-    // enabled_extension_name_ptrs: SmallVec<[*const c_char; 128]>,
     enabled_layer_names: Option<CharStrs<'ib>>,
     enabled_extension_names: Option<CharStrs<'ib>>,
     _p: PhantomData<&'ib ()>,
@@ -151,20 +137,11 @@ impl<'ib> InstanceBuilder<'ib> {
     pub fn enabled_layer_names<'s, 'cs, Cs>(&'s mut self, enabled_layer_names: Cs)
             -> &'s mut InstanceBuilder<'ib>
             where 'cs: 'ib, Cs: 'cs + Into<CharStrs<'cs>> {
-        // let enabled_layer_names = enabled_layer_names.into();
         self.enabled_layer_names = Some(enabled_layer_names.into());
-        {
-            let elns = self.enabled_layer_names.as_ref().unwrap();
-            // match enabled_layer_names {
-            //     CharStrs::OwnedPtr { ref ptrs } => {
-            //         println!("#### Enabled layer names: {:?}", ptrs);
-            //     }
-            //     _ => unreachable!(),
-            // }
+        if let Some(ref elns) = self.enabled_layer_names {
             self.create_info.ppEnabledLayerNames = elns.as_ptr();
             self.create_info.enabledLayerCount = elns.len() as u32;
         }
-        // self.enabled_layer_names = Some(enabled_layer_names);
         self
     }
 
@@ -176,22 +153,15 @@ impl<'ib> InstanceBuilder<'ib> {
     //         where 'een: 'ib {
     pub fn enabled_extension_names<'s, 'cs, Cs>(&'s mut self, enabled_extension_names: Cs)
             -> &'s mut InstanceBuilder<'ib>
-            // where 'een: 'ib {
             where 'cs: 'ib, Cs: 'cs + Into<CharStrs<'cs>> {
         if !self.create_info.ppEnabledExtensionNames.is_null() {
             panic!("Enabled extension names have already been set.");
         }
-        // let enabled_extension_names = enabled_extension_names.into();
-        // for en in enabled_extension_names.into() {
-        //     self.enabled_extension_name_ptrs.push(en.as_ptr());
-        // }
         self.enabled_extension_names = Some(enabled_extension_names.into());
-        {
-            let eens = self.enabled_extension_names.as_ref().unwrap();
+        if let Some(ref eens) = self.enabled_extension_names {
             self.create_info.ppEnabledExtensionNames = eens.as_ptr();
             self.create_info.enabledExtensionCount = eens.len() as u32;
         }
-        // self.enabled_extension_names = Some(enabled_extension_names);
         self
     }
 
@@ -204,30 +174,18 @@ impl<'ib> InstanceBuilder<'ib> {
         if !self.create_info.ppEnabledExtensionNames.is_null() {
             panic!("Enabled extension names have already been set.");
         }
-        // let mut enabled_extension_name_ptrs: SmallVec<[*const c_char; 8]> = SmallVec::new();
-        // // let mut enabled_extension_name_ptrs: Vec<*const c_char> = Vec::new();
-        // for eext in enabled_extensions {
-        //     println!("Enabling instance extension: '{}' (version: {})",
-        //         unsafe { CStr::from_ptr(&eext.extensionName as *const c_char).to_str().unwrap() },
-        //             eext.specVersion);
-        //     enabled_extension_name_ptrs.push(eext.extensionName.as_ptr());
-        // }
-
         let enabled_extension_name_ptrs: SmallVec<[_; 8]> = enabled_extensions.iter().map(|eext| {
-        // let enabled_extension_name_ptrs: Vec<_> = enabled_extensions.iter().map(|eext| {
-            println!("Enabling instance extension: '{}' (version: {})",
+            if PRINT { println!("Enabling instance extension: '{}' (version: {})",
                 unsafe { CStr::from_ptr(&eext.extensionName as *const c_char).to_str().unwrap() },
-                    eext.specVersion);
+                    eext.specVersion); }
             eext.extensionName.as_ptr()
         }).collect();
 
         self.enabled_extension_names = Some(CharStrs::OwnedPtr { ptrs: enabled_extension_name_ptrs });
-        {
-            let eens = self.enabled_extension_names.as_ref().unwrap();
+        if let Some(ref eens) = self.enabled_extension_names {
             self.create_info.ppEnabledExtensionNames = eens.as_ptr();
             self.create_info.enabledExtensionCount = eens.len() as u32;
         }
-        // self.enabled_extension_names = Some(CharStrs::OwnedPtr { ptrs: enabled_extension_name_ptrs });
         self
     }
 
@@ -266,7 +224,7 @@ impl<'ib> InstanceBuilder<'ib> {
             {
                 panic!("failed to set up debug callback");
             } else {
-                println!("Debug report callback initialized.");
+                if PRINT { println!("Debug report callback initialized."); }
             }
             Some(callback)
         } else {

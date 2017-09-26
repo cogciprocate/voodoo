@@ -5,10 +5,9 @@ use std::ffi::CStr;
 use libc::c_char;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, Surface, SwapchainSupportDetails};
+use ::{VooResult, Instance, Surface, SwapchainSupportDetails, PRINT};
 use queue::{self, Queue};
 use instance;
-
 
 #[derive(Debug, Clone)]
 pub struct PhysicalDevice {
@@ -86,7 +85,7 @@ impl PhysicalDevice {
                     surface.handle(), &mut format_count, formats.as_mut_ptr());
             }
         }
-        println!("Physical device format count: {:?}", formats.len());
+        if PRINT { println!("Physical device format count: {:?}", formats.len()); }
         formats
     }
 
@@ -103,7 +102,7 @@ impl PhysicalDevice {
                     surface.handle(), &mut present_mode_count, present_modes.as_mut_ptr());
             }
         }
-        println!("Physical device present mode count: {:?}", present_modes.len());
+        if PRINT { println!("Physical device present mode count: {:?}", present_modes.len()); }
         present_modes
     }
 
@@ -118,7 +117,7 @@ impl PhysicalDevice {
             self.instance.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(
                 self.handle, &mut queue_family_count, queue_families.as_mut_ptr());
         }
-        println!("Physical device queue family count: {:?}", queue_families.len());
+        if PRINT {  println!("Physical device queue family count: {:?}", queue_families.len()); }
         queue_families
     }
 
@@ -138,8 +137,8 @@ impl PhysicalDevice {
             // Print available:
             for ext in &avail_exts {
                     let name = (&ext.extensionName) as *const c_char;
-                    println!("Available device extension: '{}' (version: {})",
-                        CStr::from_ptr(name).to_str().unwrap(), ext.specVersion);
+                    if PRINT { println!("Available device extension: '{}' (version: {})",
+                        CStr::from_ptr(name).to_str().unwrap(), ext.specVersion); }
             };
 
             for reqd_ext_name in extension_names {
@@ -148,8 +147,8 @@ impl PhysicalDevice {
                     if CStr::from_ptr(reqd_ext_name.as_ptr() as *const c_char) ==
                         CStr::from_ptr(avail_ext.extensionName.as_ptr())
                     {
-                        println!("Required device extension available: '{}'",
-                            CStr::from_ptr(reqd_ext_name.as_ptr() as *const c_char).to_str().unwrap());
+                        if PRINT { println!("Required device extension available: '{}'",
+                            CStr::from_ptr(reqd_ext_name.as_ptr() as *const c_char).to_str().unwrap()); }
                         ext_avail = true;
                         break;
                     }

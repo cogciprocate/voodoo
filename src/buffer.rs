@@ -3,9 +3,7 @@ use std::sync::Arc;
 use std::ptr;
 use std::mem;
 use vks;
-use ::{util, VooResult, Device, DeviceMemory};
-
-
+use ::{util, VooResult, Device, DeviceMemory, PRINT};
 
 #[derive(Debug)]
 struct Inner {
@@ -93,7 +91,7 @@ impl Buffer {
             memoryTypeIndex: memory_type_index,
         };
 
-        println!("Buffer: {:?}", mem_requirements);
+        if PRINT { println!("Buffer: {:?}", mem_requirements); }
 
         let device_memory = DeviceMemory::new(device.clone(), mem_requirements.size,
             memory_type_index)?;

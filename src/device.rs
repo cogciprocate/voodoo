@@ -7,7 +7,7 @@ use libc::c_char;
 use smallvec::SmallVec;
 use vks;
 use ::{VooResult, Instance, Surface, PhysicalDevice, SwapchainSupportDetails,
-    DeviceQueueCreateInfo, CharStrs, PhysicalDeviceFeatures};
+    DeviceQueueCreateInfo, CharStrs, PhysicalDeviceFeatures, PRINT};
 use queue::{self, Queue};
 use instance;
 
@@ -72,12 +72,15 @@ impl Device {
 
 impl Drop for Inner {
     fn drop(&mut self) {
-        println!("Destroying device...");
+        if PRINT { println!("Destroying device..."); }
         unsafe {
             self.instance.proc_addr_loader().core.vkDestroyDevice(self.handle, ptr::null());
         }
     }
 }
+
+unsafe impl Send for Device {}
+unsafe impl Sync for Device {}
 
 
 // typedef struct VkDeviceCreateInfo {
@@ -130,14 +133,11 @@ impl<'db> DeviceBuilder<'db> {
     pub fn enabled_layer_names<'s, 'cs, Cs>(&'s mut self, enabled_layer_names: Cs)
             -> &'s mut DeviceBuilder<'db>
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
-        // let enabled_layer_names = enabled_layer_names.into();
         self.enabled_layer_names = Some(enabled_layer_names.into());
-        {
-            let elns = self.enabled_layer_names.as_ref().unwrap();
+        if let Some(ref elns) = self.enabled_layer_names {
             self.create_info.enabledLayerCount = elns.len() as u32;
             self.create_info.ppEnabledLayerNames = elns.as_ptr() as *const _;
         }
-        // self.enabled_layer_names = Some(enabled_layer_names);
         self
     }
 
@@ -145,14 +145,11 @@ impl<'db> DeviceBuilder<'db> {
     pub fn enabled_extension_names<'s, 'cs, Cs>(&'s mut self, enabled_extension_names: Cs)
             -> &'s mut DeviceBuilder<'db>
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
-        // let enabled_extension_names = enabled_extension_names.into();
         self.enabled_extension_names = Some(enabled_extension_names.into());
-        {
-            let eens = self.enabled_extension_names.as_ref().unwrap();
+        if let Some(ref eens) = self.enabled_extension_names {
             self.create_info.enabledExtensionCount = eens.len() as u32;
             self.create_info.ppEnabledExtensionNames = eens.as_ptr() as *const _;
         }
-        // self.enabled_extension_names = Some(enabled_extension_names);
         self
     }
 

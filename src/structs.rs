@@ -41,42 +41,6 @@ impl<'a> ApplicationInfo<'a> {
         }
     }
 
-    // /// Specifies the application name as a null-terminated byte slice.
-    // ///
-    // /// Panics if the provided string contains interior null bytes or is not
-    // /// null-terminated.
-    // pub fn application_name_bytes<'cs, Cs>(mut self, application_name: Cs)
-    //         -> ApplicationInfo<'a>
-    //         where Cs: 'cs + AsRef<[u8]>, 'cs: 'a {
-    //     self.raw.pApplicationName = CStr::from_bytes_with_nul(application_name.as_ref())
-    //         .expect("application name provided is not a valid C string").as_ptr();
-    //     self
-    // }
-
-    // /// Specifies the application name without any allocation.
-    // ///
-    // /// Use `CStr::from_bytes_with_nul` to avoid any extra allocation. (e.g.:
-    // /// `.application_name_c_str(CStr::from_bytes_with_nul(b"Application
-    // /// Name\0").unwrap())`).
-    // pub fn application_name_c_str<'cs, Cs>(mut self, application_name: Cs)
-    //         -> ApplicationInfo<'a>
-    //         where Cs: 'cs + AsRef<CStr>, 'cs: 'a {
-    //     if !self.raw.pApplicationName.is_null() { panic!("application name already set") }
-    //     self.raw.pApplicationName = application_name.as_ref().as_ptr();
-    //     self
-    // }
-
-    // /// Specifies the application name.
-    // pub fn application_name<S>(mut self, application_name: S)
-    //         -> ApplicationInfo<'a>
-    //         where S: AsRef<str> {
-    //     if !self.raw.pApplicationName.is_null() { panic!("application name already set") }
-    //     self.application_name = Some(CString::new(application_name.as_ref())
-    //         .expect("application name contains an interior null byte"));
-    //     self.raw.pApplicationName = self.application_name.as_ref().unwrap().as_ptr();
-    //     self
-    // }
-
     /// Specifies the application name.
     ///
     /// Use `CStr::from_bytes_with_nul` to avoid any extra allocation. (e.g.:
@@ -96,42 +60,6 @@ impl<'a> ApplicationInfo<'a> {
         self.raw.applicationVersion = application_version.into().into();
         self
     }
-
-    // /// Specifies the engine name.
-    // ///
-    // /// Panics if the provided string contains interior null bytes or is not
-    // /// null-terminated.
-    // pub fn engine_name_bytes<'cs, Cs>(mut self, engine_name: Cs)
-    //         -> ApplicationInfo<'a>
-    //         where Cs: 'cs + AsRef<[u8]>, 'cs: 'a {
-    //     self.raw.pEngineName = CStr::from_bytes_with_nul(engine_name.as_ref())
-    //         .expect("engine name provided is not a valid C string").as_ptr();
-    //     self
-    // }
-
-    // /// Specifies the engine name without any allocation.
-    // ///
-    // /// Use `CStr::from_bytes_with_nul` to avoid any extra allocation. (e.g.:
-    // /// `.engine_name_c_str(CStr::from_bytes_with_nul(b"Engine
-    // /// Name\0").unwrap())`).
-    // pub fn engine_name_c_str<'cs, Cs>(mut self, engine_name: Cs)
-    //         -> ApplicationInfo<'a>
-    //         where Cs: 'cs + AsRef<CStr>, 'cs: 'a {
-    //     if !self.raw.pEngineName.is_null() { panic!("engine name already set") }
-    //     self.raw.pEngineName = engine_name.as_ref().as_ptr();
-    //     self
-    // }
-
-    // /// Specifies the engine name.
-    // pub fn engine_name<S>(mut self, engine_name: S)
-    //         -> ApplicationInfo<'a>
-    //         where S: AsRef<str> {
-    //     if !self.raw.pEngineName.is_null() { panic!("engine name already set") }
-    //     self.engine_name = Some(CString::new(engine_name.as_ref())
-    //         .expect("engine name contains an interior null byte"));
-    //     self.raw.pApplicationName = self.engine_name.as_ref().unwrap().as_ptr();
-    //     self
-    // }
 
     /// Specifies the engine name.
     ///

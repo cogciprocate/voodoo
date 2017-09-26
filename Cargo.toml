@@ -15,7 +15,8 @@ exclude = ["target/*", "*.png", "bak/*"]
 [dependencies]
 winit = "*"
 libloading = "*"
-smallvec = "*"
+# smallvec = "*"
+smallvec = { git = "https://github.com/servo/rust-smallvec" }
 vks = { path = "../vks", features = ["proc_addr_loader_glob_functions"] }
 libc = "*"
 cgmath = "*"

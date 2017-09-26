@@ -7,7 +7,7 @@ dependencies = [
  "libc 0.2.31 (registry+https://github.com/rust-lang/crates.io-index)",
  "libloading 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "ordered-float 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "smallvec 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "smallvec 0.4.3 (git+https://github.com/servo/rust-smallvec)",
  "tobj 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "vks 0.20.0",
  "winit 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -504,7 +504,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "smallvec"
 version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+source = "git+https://github.com/servo/rust-smallvec#a90765c5ed683d274265f332352567dd426b59f1"
 
 [[package]]
 name = "target_build_utils"
@@ -740,7 +740,7 @@ dependencies = [
 "checksum serde_json 0.9.10 (registry+https://github.com/rust-lang/crates.io-index)" = "ad8bcf487be7d2e15d3d543f04312de991d631cfe1b43ea0ade69e6a8a5b16a1"
 "checksum shell32-sys 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "72f20b8f3c060374edb8046591ba28f62448c369ccbdc7b02075103fb3a9e38d"
 "checksum siphasher 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "0df90a788073e8d0235a67e50441d47db7c8ad9debd91cbf43736a2a92d36537"
-"checksum smallvec 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)" = "8fcd03faf178110ab0334d74ca9631d77f94c8c11cc77fcb59538abf0025695d"
+"checksum smallvec 0.4.3 (git+https://github.com/servo/rust-smallvec)" = "<none>"
 "checksum target_build_utils 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "013d134ae4a25ee744ad6129db589018558f620ddfa44043887cdd45fa08e75c"
 "checksum tempfile 2.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "5b92290d7f1ce2d221405d5c78b9c568c9f1debb314aa92a513cd99db709f931"
 "checksum tobj 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "c5eb0cdeabef6fcefb92c6dcb8571ba1880d36eb608da4f9cf62673765eadc31"

@@ -197,7 +197,6 @@ impl Surface {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            println!("Destroying surface...");
             self.instance.proc_addr_loader().khr_surface.vkDestroySurfaceKHR(self.instance.handle(), self.handle, ptr::null());
         }
     }

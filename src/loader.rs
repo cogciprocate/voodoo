@@ -9,6 +9,7 @@ use smallvec::SmallVec;
 use vks::{self, PFN_vkGetInstanceProcAddr};
 use ::{VooResult};
 
+const PRINT: bool = false;
 
 pub struct Loader {
     vk_lib: lib::Library,
@@ -82,8 +83,8 @@ impl Loader {
             // Print available:
             for ext in avail_exts.iter() {
                 let name = (&ext.extensionName) as *const c_char;
-                println!("Available instance extension: '{}' (version: {})",
-                    CStr::from_ptr(name).to_str().unwrap(), ext.specVersion);
+                if PRINT { println!("Available instance extension: '{}' (version: {})",
+                    CStr::from_ptr(name).to_str().unwrap(), ext.specVersion); }
             }
         }
         avail_exts
@@ -109,8 +110,8 @@ impl Loader {
         // Print available layers:
         for layer_props in &available_layers {
             unsafe {
-                println!("Available layer: '{}'",
-                    CStr::from_ptr(layer_props.layerName.as_ptr()).to_str().unwrap());
+                if PRINT { println!("Available layer: '{}'",
+                    CStr::from_ptr(layer_props.layerName.as_ptr()).to_str().unwrap()); }
             }
         }
 
@@ -122,8 +123,8 @@ impl Loader {
                     if CStr::from_ptr(layer_name.as_ptr() as *const c_char) ==
                         CStr::from_ptr(layer_props.layerName.as_ptr())
                     {
-                        println!("Layer validated: '{}'", CStr::from_ptr(
-                            layer_name.as_ptr() as *const c_char).to_str().unwrap());
+                        if PRINT { println!("Layer validated: '{}'", CStr::from_ptr(
+                            layer_name.as_ptr() as *const c_char).to_str().unwrap()); }
                         layer_found = true;
                         break;
                     }
