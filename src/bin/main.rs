@@ -63,6 +63,7 @@ const INDICES: [u32; 12] = [
 
 
 fn main() {
+    println!("Hello triangle!");
     unsafe {
         let mut app = App::new().unwrap();
         app.main_loop().unwrap();
@@ -666,29 +667,8 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
     // }; ////////////////////////////////////////////
     // ///////////////////////////////////////////////
 
-    // GraphicsPipeline::builder()
-    //     .stages(&shader_stages)
-    //     .vertex_input_state(&vertex_input_info)
-    //     .input_assembly_state(&input_assembly)
-    //     .viewport_state(&viewport_state)
-    //     .rasterization_state(&rasterizer)
-    //     .multisample_state(&multisampling)
-    //     .depth_stencil_state(&depth_stencil)
-    //     .color_blend_state(&color_blending)
-    //     // .dynamic_state(&dynamic_state)
-    //     .layout(pipeline_layout.handle())
-    //     .render_pass(render_pass.handle())
-    //     .subpass(0)
-    //     .base_pipeline_handle(0)
-    //     .base_pipeline_index(-1)
-        // .build(device)
-
-    let mut builders = SmallVec::from([
-        GraphicsPipeline::builder(),
-        GraphicsPipeline::builder()
-    ]);
-
-    builders[0].stages(&shader_stages)
+    GraphicsPipeline::builder()
+        .stages(&shader_stages)
         .vertex_input_state(&vertex_input_info)
         .input_assembly_state(&input_assembly)
         .viewport_state(&viewport_state)
@@ -701,29 +681,20 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         .render_pass(render_pass.handle())
         .subpass(0)
         .base_pipeline_handle(0)
-        .base_pipeline_index(-1);
-    builders[1].stages(&shader_stages)
-        .vertex_input_state(&vertex_input_info)
-        .input_assembly_state(&input_assembly)
-        .viewport_state(&viewport_state)
-        .rasterization_state(&rasterizer)
-        .multisample_state(&multisampling)
-        .depth_stencil_state(&depth_stencil)
-        .color_blend_state(&color_blending)
-        // .dynamic_state(&dynamic_state)
-        .layout(pipeline_layout.handle())
-        .render_pass(render_pass.handle())
-        .subpass(0)
-        .base_pipeline_handle(0)
-        .base_pipeline_index(-1);
+        .base_pipeline_index(-1)
+        .build(device)
+}
 
-    let builder_refs = SmallVec::from([
-        &builders[0],
-        &builders[1]
-    ]);
+fn create_command_pool(device: Device, surface: &Surface, queue_family_flags: vks::VkQueueFlags)
+        -> VooResult<CommandPool> {
+    // CommandPool::new(device.clone(), &surface, queue_family_flags)
 
-    let mut pipelines = GraphicsPipeline::create(&device, &builder_refs)?;
-    Ok(pipelines.swap_remove(1))
+    let queue_family_idx = voo::queue_families(device.instance(), surface,
+        device.physical_device(), queue_family_flags).family_idxs()[0] as u32;
+
+    CommandPool::builder()
+        .queue_family_index(queue_family_idx)
+        .build(device)
 }
 
 
@@ -1194,14 +1165,11 @@ impl App {
             Some(&descriptor_set_layout))?;
         let vert_shader_code = util::read_file("/src/voodoo/shaders/vert.spv")?;
         let frag_shader_code = util::read_file("/src/voodoo/shaders/frag.spv")?;
-
-        // let graphics_pipeline = GraphicsPipeline::new(device.clone(), &pipeline_layout,
-        //     &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
-
         let graphics_pipeline = create_graphics_pipeline(device.clone(), &pipeline_layout,
             &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
 
-        let command_pool = CommandPool::new(device.clone(), &surface, queue_family_flags)?;
+        let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;
+
         let (depth_image, depth_image_view) = create_depth_resources(&device, &command_pool,
             swapchain.extent().clone())?;
         let framebuffers = voo::create_framebuffers(&device, &render_pass,
@@ -1450,7 +1418,7 @@ impl App {
 
 impl Drop for App {
     fn drop(&mut self) {
-        println!("Goodbye Triangle...");
+        println!("Goodbye triangle.");
     }
 }
 
