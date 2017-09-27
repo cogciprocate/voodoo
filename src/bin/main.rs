@@ -392,7 +392,21 @@ fn create_descriptor_set_layout(device: Device) -> VooResult<DescriptorSetLayout
 }
 
 fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
-    DescriptorPool::new(device)
+    let pool_sizes = [
+        vks::VkDescriptorPoolSize {
+            type_: vks::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            descriptorCount: 1,
+        },
+        vks::VkDescriptorPoolSize {
+            type_: vks::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            descriptorCount: 1,
+        },
+    ];
+
+    DescriptorPool::builder()
+        .max_sets(1)
+        .pool_sizes(&pool_sizes)
+        .build(device)
 }
 
 fn create_descriptor_set(device: &Device, layout: &DescriptorSetLayout,

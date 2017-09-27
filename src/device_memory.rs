@@ -73,8 +73,9 @@ impl DeviceMemory {
     ///
     /// Use `::unmap_ptr` to unmap this memory.
     ///
-    /// `flags` is reserved for future use.
-    pub unsafe fn map_to_ptr<T>(&self, offset_bytes: u64, size_bytes: u64, flags: vks::VkMemoryMapFlags)
+    /// The `flags` argument is reserved for future use and is ignored.
+    pub unsafe fn map_to_ptr<T>(&self, offset_bytes: u64, size_bytes: u64,
+            flags: vks::VkMemoryMapFlags)
             -> VooResult<*mut T> {
         let mut data = ptr::null_mut();
         ::check(self.inner.device.proc_addr_loader().vkMapMemory(self.inner.device.handle(),
@@ -94,7 +95,25 @@ impl DeviceMemory {
 
     /// Maps a region of memory and returns a mutable reference to it.
     ///
-    /// `flags` is reserved for future use.
+    /// Use `::unmap` to unmap.
+    ///
+    /// Use `::copy_from_slice` on the returned slice to easily copy data into
+    /// the mapped memory.
+    ///
+    /// ## Example
+    ///
+    /// ```text
+    /// let mut mem = self.uniform_buffer_memory.map(0, ubo_bytes, 0)?;
+    /// mem.copy_from_slice(&[ubo]);
+    /// self.uniform_buffer_memory.unmap(mem);
+    /// ```
+    ///
+    /// Note/Reminder: This example uses a dedicated buffer and memory
+    /// allocation for demonstration purposes. It is best practice to allocate
+    /// all memory from one large buffer and use offsets to specify particular
+    /// parts.
+    ///
+    /// The `flags` argument is reserved for future use and is ignored.
     pub fn map<'m, T>(&'m self, offset_bytes: u64, size_bytes: u64, flags: vks::VkMemoryMapFlags)
             -> VooResult<MemoryMapping<'m, T>> {
         let ptr = unsafe { self.map_to_ptr(offset_bytes, size_bytes, flags)? };
