@@ -81,7 +81,7 @@ impl Buffer {
         // * Call vkFlushMappedMemoryRanges to after writing to the mapped
         //   memory, and call vkInvalidateMappedMemoryRanges before reading from
         //   the mapped memory
-        let memory_type_index = ::find_memory_type(&device, mem_requirements.memoryTypeBits,
+        let memory_type_index = device.memory_type_index(mem_requirements.memoryTypeBits,
             memory_properties);
 
         let alloc_info = vks::VkMemoryAllocateInfo {

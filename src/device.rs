@@ -68,6 +68,25 @@ impl Device {
     pub fn instance(&self) -> &Instance {
         &self.inner.instance
     }
+
+    /// Returns the memory type index on this device matching the provided
+    /// type filter and properties.
+    //
+    // [HELPER]
+    pub fn memory_type_index(&self, type_filter: u32, properties: vks::VkMemoryPropertyFlags)
+            -> u32 {
+        let mem_props = self.physical_device().memory_properties();
+
+        for i in 0..mem_props.memoryTypeCount {
+            if (type_filter & (1 << i)) != 0 &&
+                (mem_props.memoryTypes[i as usize].propertyFlags & properties) == properties
+            {
+                return i;
+            }
+        }
+        panic!("failed to find suitable memory type index with: type_filter: '{}', properties: '{}'",
+            type_filter, properties);
+    }
 }
 
 impl Drop for Inner {

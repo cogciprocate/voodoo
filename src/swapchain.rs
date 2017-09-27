@@ -47,7 +47,7 @@ pub struct Swapchain {
 }
 
 impl Swapchain {
-    pub fn builder<'sc>() -> SwapchainBuilder<'sc> {
+    pub fn builder<'b>() -> SwapchainBuilder<'b> {
         SwapchainBuilder::new()
     }
 
@@ -107,16 +107,16 @@ unsafe impl Sync for Swapchain {}
 // } VkSwapchainCreateInfoKHR;
 //
 #[derive(Debug, Clone)]
-pub struct SwapchainBuilder<'sc> {
+pub struct SwapchainBuilder<'b> {
     create_info: vks::VkSwapchainCreateInfoKHR,
     // Must keep alive to maintain destruction order:
-    surface: Option<Surface>,
-    _p: PhantomData<&'sc ()>,
+    surface: Option<&'b Surface>,
+    _p: PhantomData<&'b ()>,
 }
 
-impl<'sc> SwapchainBuilder<'sc> {
+impl<'b> SwapchainBuilder<'b> {
     /// Returns a new swapchain builder.
-    pub fn new() -> SwapchainBuilder<'sc> {
+    pub fn new() -> SwapchainBuilder<'b> {
         SwapchainBuilder {
             create_info: vks::VkSwapchainCreateInfoKHR::default(),
             surface: None,
@@ -126,14 +126,15 @@ impl<'sc> SwapchainBuilder<'sc> {
 
     /// Specifies the parameters of swapchain creation.
     pub fn flags<'s>(&'s mut self, flags: vks::VkSwapchainCreateFlagsKHR)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.flags = flags;
         self
     }
 
     /// Specifies the surface that the swapchain will present images to.
-    pub fn surface<'s>(&'s mut self, surface: Surface)
-            -> &'s mut SwapchainBuilder<'sc> {
+    pub fn surface<'s, 'p>(&'s mut self, surface: &'p Surface)
+            -> &'s mut SwapchainBuilder<'b>
+            where 'p: 'b {
         self.create_info.surface = surface.handle();
         self.surface = Some(surface);
         self
@@ -143,7 +144,7 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// application needs. The platform will either create the swapchain with
     /// at least that many images, or will fail to create the swapchain.
     pub fn min_image_count<'s>(&'s mut self, min_image_count: u32)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.minImageCount = min_image_count;
         self
     }
@@ -151,7 +152,7 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// Specifies the format that is valid for swapchains on the specified
     /// surface.
     pub fn image_format<'s>(&'s mut self, image_format: vks::VkFormat)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.imageFormat = image_format;
         self
     }
@@ -159,7 +160,7 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// Specifies the color space that is valid for swapchains on the
     /// specified surface.
     pub fn image_color_space<'s>(&'s mut self, image_color_space: vks::VkColorSpaceKHR)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.imageColorSpace = image_color_space;
         self
     }
@@ -168,7 +169,7 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// platform-dependent when the image extent does not match the surface’s
     /// current extent as returned by `vkGetPhysicalDeviceSurfaceCapabilitiesKHR`.
     pub fn image_extent<'s>(&'s mut self, image_extent: vks::VkExtent2D)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.imageExtent = image_extent;
         self
     }
@@ -176,7 +177,7 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// Specifies the number of views in a multiview/stereo surface. For
     /// non-stereoscopic-3D applications, this value is 1.
     pub fn image_array_layers<'s>(&'s mut self, image_array_layers: u32)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.imageArrayLayers = image_array_layers;
         self
     }
@@ -184,14 +185,14 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// Specifies the bitmask of `ImageUsageFlagBits`, indicating how the
     /// application will use the swapchain’s presentable images
     pub fn image_usage<'s>(&'s mut self, image_usage: vks::VkImageUsageFlags)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.imageUsage = image_usage;
         self
     }
 
     /// Specifies the sharing mode used for the images of the swapchain.
     pub fn image_sharing_mode<'s>(&'s mut self, image_sharing_mode: vks::VkSharingMode)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.imageSharingMode = image_sharing_mode;
         self
     }
@@ -199,8 +200,8 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// Specifies the queue family indices having access to the images of the
     /// swapchain in case imageSharingMode is VK_SHARING_MODE_CONCURRENT.
     pub fn queue_family_indices<'s, 'qfi>(&'s mut self, queue_family_indices: &'qfi [u32])
-            -> &'s mut SwapchainBuilder<'sc>
-            where 'qfi: 'sc {
+            -> &'s mut SwapchainBuilder<'b>
+            where 'qfi: 'b {
         self.create_info.queueFamilyIndexCount = queue_family_indices.len() as u32;
         self.create_info.pQueueFamilyIndices = queue_family_indices.as_ptr();
         self
@@ -213,7 +214,7 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// vkGetPhysicalDeviceSurfaceCapabilitiesKHR, the presentation engine
     /// will transform the image content as part of the presentation operation.
     pub fn pre_transform<'s>(&'s mut self, pre_transform: vks::VkSurfaceTransformFlagBitsKHR)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.preTransform = pre_transform;
         self
     }
@@ -222,7 +223,7 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// alpha compositing mode to use when this surface is composited together
     /// with other surfaces on certain window systems.
     pub fn composite_alpha<'s>(&'s mut self, composite_alpha: vks::VkCompositeAlphaFlagBitsKHR)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.compositeAlpha = composite_alpha;
         self
     }
@@ -231,7 +232,7 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// present mode determines how incoming present requests will be
     /// processed and queued internally.
     pub fn present_mode<'s>(&'s mut self, present_mode: vks::VkPresentModeKHR)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.presentMode = present_mode;
         self
     }
@@ -261,7 +262,7 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// in the presentable image.
     ///
     pub fn clipped<'s>(&'s mut self, clipped: bool)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.clipped = if clipped { vks::VK_TRUE } else { vks::VK_FALSE };
         self
     }
@@ -287,7 +288,7 @@ impl<'sc> SwapchainBuilder<'sc> {
     /// the new swapchain, as long as it has not entered a state that causes
     /// it to return VK_ERROR_OUT_OF_DATE_KHR.
     pub fn old_swapchain<'s>(&'s mut self, old_swapchain: vks::VkSwapchainKHR)
-            -> &'s mut SwapchainBuilder<'sc> {
+            -> &'s mut SwapchainBuilder<'b> {
         self.create_info.oldSwapchain = old_swapchain;
         self
     }
@@ -318,7 +319,7 @@ impl<'sc> SwapchainBuilder<'sc> {
             inner: Arc::new(Inner {
                 handle,
                 device,
-                surface: self.surface.take()
+                surface: self.surface.cloned()
                     .expect("unable to create swapchain: no surface specified"),
                 images,
                 image_format: image_format,

@@ -167,7 +167,7 @@ pub use shader_module::ShaderModule;
 pub use pipeline_layout::PipelineLayout;
 pub use render_pass::RenderPass;
 pub use graphics_pipeline::GraphicsPipeline;
-pub use framebuffer::{create_framebuffers, Framebuffer};
+pub use framebuffer::{Framebuffer};
 pub use command_pool::CommandPool;
 pub use command_buffers::create_command_buffers;
 pub use semaphore::Semaphore;
@@ -195,24 +195,19 @@ macro_rules! offset_of {
 
 
 // TODO: MOVE TO `PhysicalDevice`.
-pub fn find_memory_type(device: &Device, type_filter: u32, properties: vks::VkMemoryPropertyFlags)
-        -> u32 {
-    let mut mem_properties: vks::VkPhysicalDeviceMemoryProperties;
-    unsafe {
-        mem_properties = mem::uninitialized();
-        device.instance().proc_addr_loader().core.vkGetPhysicalDeviceMemoryProperties(
-            device.physical_device().handle(), &mut mem_properties);
-    }
+// pub fn memory_type_index(device: &Device, type_filter: u32, properties: vks::VkMemoryPropertyFlags)
+//         -> u32 {
+//     let mut mem_props = device.physical_device().memory_properties();
 
-    for i in 0..mem_properties.memoryTypeCount {
-        if (type_filter & (1 << i)) != 0 &&
-            (mem_properties.memoryTypes[i as usize].propertyFlags & properties) == properties
-        {
-            return i;
-        }
-    }
-    panic!("Failed to find suitable memory type.");
-}
+//     for i in 0..mem_props.memoryTypeCount {
+//         if (type_filter & (1 << i)) != 0 &&
+//             (mem_props.memoryTypes[i as usize].propertyFlags & properties) == properties
+//         {
+//             return i;
+//         }
+//     }
+//     panic!("Failed to find suitable memory type.");
+// }
 
 
 

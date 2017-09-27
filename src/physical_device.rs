@@ -158,6 +158,17 @@ impl PhysicalDevice {
         }
         true
     }
+
+    /// Returns the memory properties for this device.
+    pub fn memory_properties(&self) -> vks::VkPhysicalDeviceMemoryProperties {
+        let mut mem_props: vks::VkPhysicalDeviceMemoryProperties;
+        unsafe {
+            mem_props = mem::uninitialized();
+            self.instance().proc_addr_loader().core.vkGetPhysicalDeviceMemoryProperties(
+                self.handle, &mut mem_props);
+        }
+        mem_props
+    }
 }
 
 

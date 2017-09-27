@@ -252,7 +252,7 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: vks::VkQueueF
         indices.presentation_support_idxs[0] as u32];
 
     let mut bldr = Swapchain::builder();
-    bldr.surface(surface)
+    bldr.surface(&surface)
         .min_image_count(image_count)
         .image_format(surface_format.format)
         .image_color_space(surface_format.colorSpace)
@@ -695,6 +695,38 @@ fn create_command_pool(device: Device, surface: &Surface, queue_family_flags: vk
         .build(device)
 }
 
+pub fn create_framebuffers(device: &Device, render_pass: &RenderPass,
+        swapchain_image_views: &[ImageView], depth_image_view: &ImageView,
+        swapchain_extent: vks::VkExtent2D) -> VooResult<Vec<Framebuffer>> {
+    swapchain_image_views.iter().map(|image_view| {
+        // Framebuffer::new(device.clone(), render_pass.clone(), image_view.clone(),
+        //     depth_image_view.clone(), swapchain_extent.clone())
+
+        // let create_info = vks::VkFramebufferCreateInfo {
+        //     sType: vks::VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+        //     pNext: ptr::null(),
+        //     flags: 0,
+        //     renderPass: render_pass.handle(),
+        //     attachmentCount: attachment_handles.len() as u32,
+        //     pAttachments: attachment_handles.as_ptr(),
+        //     width: swapchain_extent.width,
+        //     height: swapchain_extent.height,
+        //     layers: 1,
+        // };
+
+        let attachments = [image_view, depth_image_view];
+
+        Framebuffer::builder()
+            .render_pass(&render_pass)
+            .attachments(&attachments[..])
+            .width(swapchain_extent.width)
+            .height(swapchain_extent.height)
+            .layers(1)
+            .build(device.clone())
+
+    }).collect::<Result<Vec<_>, _>>()
+}
+
 
 fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
         -> VooResult<vks::VkCommandBuffer> {
@@ -1026,10 +1058,6 @@ fn create_depth_resources(device: &Device, command_pool: &CommandPool,
     let extent = vks::VkExtent3D { width: swapchain_extent.width,
         height: swapchain_extent.height, depth: 1 };
 
-    // let depth_image = Image::new(device.clone(), extent, depth_format,
-        // vks::VK_IMAGE_TILING_OPTIMAL, vks::VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-        // vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)?;
-
     let depth_image = Image::builder()
         .image_type(vks::VK_IMAGE_TYPE_2D)
         .format(depth_format)
@@ -1043,15 +1071,11 @@ fn create_depth_resources(device: &Device, command_pool: &CommandPool,
         .initial_layout(vks::VK_IMAGE_LAYOUT_UNDEFINED)
         .build(device.clone())?;
 
-    let memory_properties = vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
     let memory_requirements = depth_image.memory_requirements().clone();
-
-    let memory_type_index = voo::find_memory_type(&device,
-        memory_requirements.memoryTypeBits, memory_properties);
-
+    let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
+        vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     let depth_image_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
         memory_type_index)?;
-
     depth_image.bind_memory(&depth_image_memory, 0)?;
 
     let depth_image_view = ImageView::builder()
@@ -1094,11 +1118,6 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool)
 
     let extent = vks::VkExtent3D { width: tex_width, height: tex_height, depth: 1 };
 
-
-    // let texture_image = Image::new(device.clone(), extent, vks::VK_FORMAT_R8G8B8A8_UNORM,
-    //     vks::VK_IMAGE_TILING_OPTIMAL, vks::VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-    //     vks::VK_IMAGE_USAGE_SAMPLED_BIT, vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)?;
-
     let texture_image = Image::builder()
         .image_type(vks::VK_IMAGE_TYPE_2D)
         .format(vks::VK_FORMAT_R8G8B8A8_UNORM)
@@ -1112,15 +1131,11 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool)
         .initial_layout(vks::VK_IMAGE_LAYOUT_UNDEFINED)
         .build(device.clone())?;
 
-    let memory_properties = vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
     let memory_requirements = texture_image.memory_requirements().clone();
-
-    let memory_type_index = voo::find_memory_type(&device,
-        memory_requirements.memoryTypeBits, memory_properties);
-
+    let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
+        vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     let texture_image_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
         memory_type_index)?;
-
     texture_image.bind_memory(&texture_image_memory, 0)?;
 
     transition_image_layout(device, command_pool, &texture_image, vks::VK_FORMAT_R8G8B8A8_UNORM,
@@ -1220,22 +1235,20 @@ impl App {
         let graphics_pipeline = create_graphics_pipeline(device.clone(), &pipeline_layout,
             &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
         let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;
-
         let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(&device,
             &command_pool, swapchain.extent().clone())?;
 
-        let framebuffers = voo::create_framebuffers(&device, &render_pass,
+        let framebuffers = create_framebuffers(&device, &render_pass,
             &image_views, &depth_image_view, swapchain.extent().clone())?;
+
         let (texture_image, texture_image_memory) = create_texture_image(&device,
             &command_pool)?;
         let texture_image_view = create_texture_image_view(device.clone(),
             &texture_image)?;
         let texture_sampler = create_texture_sampler(device.clone())?;
-
+        // let (vertices, indices) = load_model(&device)?;
         let vertices = VERTICES[..].to_owned();
         let indices = INDICES[..].to_owned();
-        // let (vertices, indices) = load_model(&device)?;
-
         let vertex_buffer = create_vertex_buffer(&device, &command_pool, &vertices)?;
         let index_buffer = create_index_buffer(&device, &command_pool, &indices)?;
         let uniform_buffer = create_uniform_buffer(&device, &command_pool,
@@ -1322,7 +1335,7 @@ impl App {
             swapchain.extent().clone(), &self.vert_shader_code, &self.frag_shader_code)?;
         let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(
             &self.device, &self.command_pool, swapchain.extent().clone())?;
-        let framebuffers = voo::create_framebuffers(&self.device,
+        let framebuffers = create_framebuffers(&self.device,
             &render_pass, &image_views,
             &depth_image_view, swapchain.extent().clone())?;
         let command_buffers = voo::create_command_buffers(&self.device, &self.command_pool,

@@ -9,7 +9,6 @@ use ::{util, VooResult, Device, DeviceMemory, PRINT};
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkImage,
-    // device_memory: Option<DeviceMemory>,
     memory_requirements: vks::VkMemoryRequirements,
     device: Device,
 }
@@ -25,63 +24,9 @@ impl Image {
         ImageBuilder::new()
     }
 
-    // pub fn new(device: Device, extent: vks::VkExtent3D, format: vks::VkFormat,
-    //         tiling: vks::VkImageTiling, usage: vks::VkImageUsageFlags,
-    //         memory_properties: vks::VkMemoryPropertyFlags) -> VooResult<Image> {
-    //     let create_info = vks::VkImageCreateInfo {
-    //         sType: vks::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-    //         pNext: ptr::null(),
-    //         flags: 0,
-    //         imageType: vks::VK_IMAGE_TYPE_2D,
-    //         // format: vks::VK_FORMAT_R8G8B8A8_UNORM,
-    //         format,
-    //         extent: extent,
-    //         mipLevels: 1,
-    //         arrayLayers: 1,
-    //         samples: vks::VK_SAMPLE_COUNT_1_BIT,
-    //         // tiling: vks::VK_IMAGE_TILING_OPTIMAL,
-    //         tiling,
-    //         // usage: vks::VK_IMAGE_USAGE_TRANSFER_DST_BIT | vks::VK_IMAGE_USAGE_SAMPLED_BIT,
-    //         usage,
-    //         sharingMode: vks::VK_SHARING_MODE_EXCLUSIVE,
-    //         queueFamilyIndexCount: 0,
-    //         pQueueFamilyIndices: ptr::null(),
-    //         initialLayout: vks::VK_IMAGE_LAYOUT_UNDEFINED,
-    //     };
-
-    //     let mut handle = 0;
-    //     unsafe {
-    //         ::check(device.proc_addr_loader().vkCreateImage(device.handle(), &create_info,
-    //             ptr::null(), &mut handle));
-    //     }
-
-    //     // Memory Requirements:
-    //     let mut memory_requirements: vks::VkMemoryRequirements;
-    //     unsafe {
-    //         memory_requirements = mem::uninitialized();
-    //         device.proc_addr_loader().core.vkGetImageMemoryRequirements(device.handle(), handle,
-    //             &mut memory_requirements);
-    //     }
-
-    //     if PRINT { println!("Image: {:?}", memory_requirements); }
-
-    //     Ok(Image {
-    //         inner: Arc::new(Inner {
-    //             handle,
-    //             // device_memory,
-    //             memory_requirements,
-    //             device,
-    //         })
-    //     })
-    // }
-
     pub fn handle(&self) -> vks::VkImage {
         self.inner.handle
     }
-
-    // pub fn device_memory(&self) -> &DeviceMemory {
-    //     &self.inner.device_memory
-    // }
 
     pub fn memory_requirements(&self) -> &vks::VkMemoryRequirements {
         &self.inner.memory_requirements
@@ -91,7 +36,8 @@ impl Image {
     /// region of memory which is to be bound. The number of bytes returned in
     /// the VkMemoryRequirements::size member in memory, starting from
     /// memoryOffset bytes, will be bound to the specified image.
-    pub fn bind_memory(&self, device_memory: &DeviceMemory, offset: vks::VkDeviceSize) -> VooResult<()> {
+    pub fn bind_memory(&self, device_memory: &DeviceMemory, offset: vks::VkDeviceSize)
+            -> VooResult<()> {
         unsafe {
             ::check(self.inner.device.proc_addr_loader().vkBindImageMemory(
                 self.inner.device.handle(), self.inner.handle, device_memory.handle(), offset));
@@ -270,7 +216,6 @@ impl<'b> ImageBuilder<'b> {
         Ok(Image {
             inner: Arc::new(Inner {
                 handle,
-                // device_memory,
                 memory_requirements,
                 device,
             })

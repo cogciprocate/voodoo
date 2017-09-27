@@ -7,23 +7,45 @@ use vks;
 use ::{VooResult, Instance};
 
 
-// #![cfg(target_os = "android")]
-// get_native_window
+#[derive(Debug)]
+struct Inner {
+    handle: vks::khr_surface::VkSurfaceKHR,
+    instance: Instance,
+    active: AtomicBool,
+}
 
-// #![cfg(target_os = "macos")]
-// get_nswindow
-// get_nsview
+#[derive(Debug, Clone)]
+pub struct Surface {
+    inner: Arc<Inner>,
+}
 
-// #![cfg(any(target_os = "linux", target_os = "dragonfly", target_os = "freebsd", target_os = "openbsd"))]
-// get_xlib_window
-// get_xlib_display
-// get_xlib_xconnection
-// get_xcb_connection
-// get_wayland_surface
-// get_wayland_display
+impl Surface {
+    pub fn builder() -> SurfaceBuilder {
+        SurfaceBuilder::new()
+    }
 
-// #![cfg(target_os = "windows")]
-// get_hwnd
+    pub unsafe fn from_raw(instance: Instance, handle: vks::VkSurfaceKHR) -> VooResult<Surface> {
+        Ok(Surface {
+            inner: Arc::new(Inner {
+                handle: handle,
+                instance: instance,
+                active: AtomicBool::new(false),
+            })
+        })
+    }
+
+    pub fn handle(&self) -> vks::VkSurfaceKHR {
+        self.inner.handle
+    }
+}
+
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            self.instance.proc_addr_loader().khr_surface.vkDestroySurfaceKHR(self.instance.handle(), self.handle, ptr::null());
+        }
+    }
+}
 
 
 enum CreateInfo {
@@ -158,46 +180,5 @@ impl SurfaceBuilder {
                 active: AtomicBool::new(false),
             })
         })
-    }
-}
-
-
-#[derive(Debug)]
-struct Inner {
-    handle: vks::khr_surface::VkSurfaceKHR,
-    instance: Instance,
-    active: AtomicBool,
-}
-
-#[derive(Debug, Clone)]
-pub struct Surface {
-    inner: Arc<Inner>,
-}
-
-impl Surface {
-    pub fn builder() -> SurfaceBuilder {
-        SurfaceBuilder::new()
-    }
-
-    pub unsafe fn from_raw(instance: Instance, handle: vks::VkSurfaceKHR) -> VooResult<Surface> {
-        Ok(Surface {
-            inner: Arc::new(Inner {
-                handle: handle,
-                instance: instance,
-                active: AtomicBool::new(false),
-            })
-        })
-    }
-
-    pub fn handle(&self) -> vks::VkSurfaceKHR {
-        self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            self.instance.proc_addr_loader().khr_surface.vkDestroySurfaceKHR(self.instance.handle(), self.handle, ptr::null());
-        }
     }
 }
