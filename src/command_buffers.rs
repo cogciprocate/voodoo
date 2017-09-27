@@ -30,7 +30,7 @@ use ::{util, VooResult, Device, Framebuffer, CommandPool, RenderPass, GraphicsPi
 //     pub fn handle(&self) -> vks::VkCommandBuffer {
 //         self.inner.handle
 //     }
-
+        /// Returns a reference to the associated device.
 //     pub fn device(&self) -> &Device {
 //         &self.inner.device
 //     }
@@ -182,7 +182,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
 //     pub fn handle(&self) -> vks::VkCommandBuffer {
 //         self.inner.handle
 //     }
-
+// /// Returns a reference to the associated device.
 //     pub fn device(&self) -> &Device {
 //         &self.inner.device
 //     }

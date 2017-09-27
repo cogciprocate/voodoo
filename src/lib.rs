@@ -211,7 +211,7 @@ macro_rules! offset_of {
 
 
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct Vertex {
     pub pos: [f32; 3],
@@ -279,7 +279,7 @@ impl Eq for Vertex {}
 
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 #[repr(C)]
 pub struct UniformBufferObject {
     pub model: [[f32; 4]; 4],
@@ -338,6 +338,7 @@ pub fn check(code: i32) {
 //         self.inner.handle
 //     }
 
+    /// Returns a reference to the associated device.
 //     pub fn device(&self) -> &Device {
 //         &self.inner.device
 //     }

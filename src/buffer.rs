@@ -2,13 +2,15 @@
 use std::sync::Arc;
 use std::ptr;
 use std::mem;
+use std::marker::PhantomData;
 use vks;
 use ::{util, VooResult, Device, DeviceMemory, PRINT};
 
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkBuffer,
-    device_memory: DeviceMemory,
+    // device_memory: DeviceMemory,
+    memory_requirements: vks::VkMemoryRequirements,
     device: Device,
 }
 
@@ -18,8 +20,13 @@ pub struct Buffer {
 }
 
 impl Buffer {
+    /// Returns a new `BufferBuilder`.
+    pub fn builder<'b>() -> BufferBuilder<'b> {
+        BufferBuilder::new()
+    }
+
     pub fn new(device: Device, bytes: u64, usage: vks::VkBufferUsageFlags,
-            sharing_mode: vks::VkSharingMode, memory_properties: vks::VkMemoryPropertyFlags)
+            sharing_mode: vks::VkSharingMode, /*memory_properties: vks::VkMemoryPropertyFlags*/)
             -> VooResult<Buffer>
     {
         let create_info = vks::VkBufferCreateInfo {
@@ -39,73 +46,49 @@ impl Buffer {
                 ptr::null(), &mut handle));
         }
 
-        // Memory Requirements:
-        let mut mem_requirements: vks::VkMemoryRequirements;
+        // // Memory Requirements:
+        // let mut mem_requirements: vks::VkMemoryRequirements;
+        // unsafe {
+        //     mem_requirements = mem::uninitialized();
+        //     device.proc_addr_loader().core.vkGetBufferMemoryRequirements(device.handle(), handle,
+        //         &mut mem_requirements);
+        // }
+
+
+        // let memory_type_index = device.memory_type_index(mem_requirements.memoryTypeBits,
+        //     memory_properties);
+
+        // let alloc_info = vks::VkMemoryAllocateInfo {
+        //     sType: vks::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        //     pNext: ptr::null(),
+        //     allocationSize: mem_requirements.size,
+        //     memoryTypeIndex: memory_type_index,
+        // };
+
+        // if PRINT { println!("Buffer: {:?}", mem_requirements); }
+
+        // let device_memory = DeviceMemory::new(device.clone(), mem_requirements.size,
+        //     memory_type_index)?;
+
+        // unsafe {
+        //     ::check(device.proc_addr_loader().core.vkBindBufferMemory(device.handle(), handle,
+        //         device_memory.handle(), 0));
+        // }
+
+       // Memory Requirements:
+        let mut memory_requirements: vks::VkMemoryRequirements;
         unsafe {
-            mem_requirements = mem::uninitialized();
-            device.proc_addr_loader().core.vkGetBufferMemoryRequirements(device.handle(), handle,
-                &mut mem_requirements);
-        }
-
-        // It should be noted that in a real world application, you're not
-        // supposed to actually call vkAllocateMemory for every individual
-        // buffer. The maximum number of simultaneous memory allocations is
-        // limited by the maxMemoryAllocationCount physical device limit,
-        // which may be as low as 4096 even on high end hardware like an
-        // NVIDIA GTX 1080. The right way to allocate memory for a large
-        // number of objects at the same time is to create a custom allocator
-        // that splits up a single allocation among many different objects by
-        // using the offset parameters that we've seen in many functions.
-        //
-        // You can either implement such an allocator yourself, or use the
-        // VulkanMemoryAllocator library provided by the GPUOpen initiative. However,
-        // for this tutorial it's okay to use a separate allocation for every
-        // resource, because we won't come close to hitting any of these limits for
-        // now.
-        //
-        // The previous chapter already mentioned that you should allocate
-        // multiple resources like buffers from a single memory allocation,
-        // but in fact you should go a step further. Driver developers
-        // recommend that you also store multiple buffers, like the vertex and
-        // index buffer, into a single VkBuffer and use offsets in commands
-        // like vkCmdBindVertexBuffers. The advantage is that your data is
-        // more cache friendly in that case, because it's closer together. It
-        // is even possible to reuse the same chunk of memory for multiple
-        // resources if they are not used during the same render operations,
-        // provided that their data is refreshed, of course. This is known as
-        // aliasing and some Vulkan functions have explicit flags to specify
-        // that you want to do this.
-
-        // * Use a memory heap that is host coherent, indicated with
-        //   VK_MEMORY_PROPERTY_HOST_COHERENT_BIT (or)
-        // * Call vkFlushMappedMemoryRanges to after writing to the mapped
-        //   memory, and call vkInvalidateMappedMemoryRanges before reading from
-        //   the mapped memory
-        let memory_type_index = device.memory_type_index(mem_requirements.memoryTypeBits,
-            memory_properties);
-
-        let alloc_info = vks::VkMemoryAllocateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-            pNext: ptr::null(),
-            allocationSize: mem_requirements.size,
-            memoryTypeIndex: memory_type_index,
-        };
-
-        if PRINT { println!("Buffer: {:?}", mem_requirements); }
-
-        let device_memory = DeviceMemory::new(device.clone(), mem_requirements.size,
-            memory_type_index)?;
-
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkBindBufferMemory(device.handle(), handle,
-                device_memory.handle(), 0));
+            memory_requirements = mem::uninitialized();
+            device.proc_addr_loader().core.vkGetBufferMemoryRequirements(device.handle(),
+                handle, &mut memory_requirements);
         }
 
         Ok(Buffer {
             inner: Arc::new(Inner {
                 handle,
                 device,
-                device_memory,
+                // device_memory,
+                memory_requirements,
             })
         })
     }
@@ -114,10 +97,28 @@ impl Buffer {
         self.inner.handle
     }
 
-    pub fn device_memory(&self) -> &DeviceMemory {
-        &self.inner.device_memory
+    // pub fn device_memory(&self) -> &DeviceMemory {
+    //     &self.inner.device_memory
+    // }
+
+    pub fn memory_requirements(&self) -> &vks::VkMemoryRequirements {
+        &self.inner.memory_requirements
     }
 
+    /// Binds this buffer to device memory. `offset` is the start offset of the
+    /// region of memory which is to be bound. The number of bytes returned in
+    /// the VkMemoryRequirements::size member in memory, starting from
+    /// memoryOffset bytes, will be bound to the specified buffer.
+    pub fn bind_memory(&self, device_memory: &DeviceMemory, offset: vks::VkDeviceSize)
+            -> VooResult<()> {
+        unsafe {
+            ::check(self.inner.device.proc_addr_loader().vkBindBufferMemory(
+                self.inner.device.handle(), self.inner.handle, device_memory.handle(), offset));
+        }
+        Ok(())
+    }
+
+    /// Returns a reference to the associated device.
     pub fn device(&self) -> &Device {
         &self.inner.device
     }
@@ -128,5 +129,103 @@ impl Drop for Inner {
         unsafe {
             self.device.proc_addr_loader().core.vkDestroyBuffer(self.device.handle(), self.handle, ptr::null());
         }
+    }
+}
+
+
+/// A builder for `Buffer`.
+//
+// typedef struct VkBufferCreateInfo {
+//     VkStructureType        sType;
+//     const void*            pNext;
+//     VkBufferCreateFlags    flags;
+//     VkDeviceSize           size;
+//     VkBufferUsageFlags     usage;
+//     VkSharingMode          sharingMode;
+//     uint32_t               queueFamilyIndexCount;
+//     const uint32_t*        pQueueFamilyIndices;
+// } VkBufferCreateInfo;
+//
+#[derive(Debug, Clone)]
+pub struct BufferBuilder<'b> {
+    create_info: vks::VkBufferCreateInfo,
+    _p: PhantomData<&'b ()>,
+}
+
+impl<'b> BufferBuilder<'b> {
+    /// Returns a new render pass builder.
+    pub fn new() -> BufferBuilder<'b> {
+        BufferBuilder {
+            create_info: vks::VkBufferCreateInfo::default(),
+            _p: PhantomData,
+        }
+    }
+
+    /// flags is a bitmask of VkBufferCreateFlagBits specifying additional
+    /// parameters of the buffer.
+    pub fn flags<'s>(&'s mut self, flags: vks::VkBufferCreateFlags)
+            -> &'s mut BufferBuilder<'b> {
+        self.create_info.flags = flags;
+        self
+    }
+
+    /// size is the size in bytes of the buffer to be created.
+    pub fn size<'s>(&'s mut self, size: vks::VkDeviceSize)
+            -> &'s mut BufferBuilder<'b> {
+        self.create_info.size = size;
+        self
+    }
+
+    /// usage is a bitmask of VkBufferUsageFlagBits specifying allowed usages
+    /// of the buffer.
+    pub fn usage<'s>(&'s mut self, usage: vks::VkBufferUsageFlagBits)
+            -> &'s mut BufferBuilder<'b> {
+        self.create_info.usage = usage;
+        self
+    }
+
+    /// sharingMode is a VkSharingMode value specifying the sharing mode of
+    /// the buffer when it will be accessed by multiple queue families.
+    pub fn sharing_mode<'s>(&'s mut self, sharing_mode: vks::VkSharingMode)
+            -> &'s mut BufferBuilder<'b> {
+        self.create_info.sharingMode = sharing_mode;
+        self
+    }
+
+    /// queueFamilyIndexCount is the number of entries in the
+    /// pQueueFamilyIndices array.
+    /// pQueueFamilyIndices is a list of queue families that will access this
+    /// buffer (ignored if sharingMode is not VK_SHARING_MODE_CONCURRENT).
+    pub fn queue_family_indices<'s, 'p>(&'s mut self, queue_family_indices: &'p [u32])
+            -> &'s mut BufferBuilder<'b>
+            where 'p: 'b {
+        self.create_info.queueFamilyIndexCount = queue_family_indices.len() as u32;
+        self.create_info.pQueueFamilyIndices = queue_family_indices.as_ptr();
+        self
+    }
+
+    /// Creates and returns a new `Buffer`
+    pub fn build(&self, device: Device) -> VooResult<Buffer> {
+        let mut handle = 0;
+        unsafe {
+            ::check(device.proc_addr_loader().core.vkCreateBuffer(device.handle(),
+                &self.create_info, ptr::null(), &mut handle));
+        }
+
+        // Memory Requirements:
+        let mut memory_requirements: vks::VkMemoryRequirements;
+        unsafe {
+            memory_requirements = mem::uninitialized();
+            device.proc_addr_loader().core.vkGetBufferMemoryRequirements(device.handle(),
+                handle, &mut memory_requirements);
+        }
+
+        Ok(Buffer {
+            inner: Arc::new(Inner {
+                handle,
+                device,
+                memory_requirements,
+            })
+        })
     }
 }

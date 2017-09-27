@@ -28,6 +28,7 @@ impl PipelineLayout {
         self.inner.handle
     }
 
+    /// Returns a reference to the associated device.
     pub fn device(&self) -> &Device {
         &self.inner.device
     }
