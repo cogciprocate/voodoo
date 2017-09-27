@@ -14,10 +14,8 @@ use ::{util, VooResult, Device};
 ///
 /// Use `DeviceMemory::unmap` to unmap.
 pub struct MemoryMapping<'m, T> {
-    // mapping: Option<&'m mut [T]>,
     ptr: *mut T,
     len: usize,
-    // unmapped: bool,
     mem_handle: vks::VkDeviceMemory,
     _p: PhantomData<&'m ()>,
 }
@@ -25,7 +23,6 @@ pub struct MemoryMapping<'m, T> {
 impl<'m, T> MemoryMapping<'m, T> {
     /// Returns a new `MemoryMapping`
     fn new(ptr: *mut T, len: usize, mem_handle: vks::VkDeviceMemory) -> MemoryMapping<'m, T> {
-        // MemoryMapping {ptr, len, unmapped: false, _p: PhantomData}
         MemoryMapping {ptr, len, mem_handle, _p: PhantomData}
     }
 }
@@ -34,27 +31,13 @@ impl<'m, T> Deref for MemoryMapping<'m, T> {
     type Target = [T];
 
     fn deref(&self) -> &[T] {
-        // self.mapping.as_mut().expect("memory no longer mapped")
-        // if self.unmapped { panic!("memory no longer mapped"); }
-        // unsafe { slice::from_raw_parts(self.ptr, self.len) }
         unsafe { slice::from_raw_parts(self.ptr, self.len) }
     }
 }
 
 impl<'m, T> DerefMut for MemoryMapping<'m, T> {
     fn deref_mut(&mut self) -> &mut [T] {
-        // self.mapping.as_mut().expect("memory no longer mapped")
-        // if self.unmapped { panic!("memory no longer mapped"); }
-        // unsafe { slice::from_raw_parts(self.ptr, self.len) }
         unsafe { slice::from_raw_parts_mut(self.ptr, self.len) }
-    }
-}
-
-impl<'m, T> Drop for MemoryMapping<'m, T> {
-    fn drop(&mut self) {
-        // self.unmap()
-        // device.proc_addr_loader().core.vkUnmapMemory(device.handle(),
-        //         staging_buffer.device_memory().handle());
     }
 }
 
@@ -64,6 +47,8 @@ impl<'m, T> Drop for MemoryMapping<'m, T> {
 struct Inner {
     handle: vks::VkDeviceMemory,
     device: Device,
+    allocation_size: u64,
+    memory_type_index: u32,
 }
 
 #[derive(Debug, Clone)]
@@ -193,6 +178,8 @@ impl DeviceMemoryBuilder {
             inner: Arc::new(Inner {
                 handle,
                 device,
+                allocation_size: self.allocate_info.allocationSize,
+                memory_type_index: self.allocate_info.memoryTypeIndex,
             })
         })
     }

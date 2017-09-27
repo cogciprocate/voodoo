@@ -301,7 +301,6 @@ fn find_depth_format(device: &Device) -> VooResult<vks::VkFormat> {
 fn create_render_pass(device: Device, swapchain_image_format: vks::VkFormat)
         -> VooResult<RenderPass> {
     let depth_image_format = find_depth_format(&device)?;
-    // RenderPass::new(device.clone(), swapchain_image_format, depth_image_format)
 
     let color_attachment = vks::VkAttachmentDescription {
         flags: 0,
@@ -947,7 +946,6 @@ fn load_model(device: &Device) -> VooResult<(Vec<Vertex>, Vec<u32>)> {
 
 fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &[Vertex])
         -> VooResult<(Buffer, DeviceMemory)> {
-    // let buffer_bytes = (mem::size_of_val(&VERTICES[0]) * VERTICES.len()) as u64;
     let buffer_bytes = (mem::size_of::<Vertex>() * vertices.len()) as u64;
 
     // Either:
@@ -956,9 +954,12 @@ fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &
     // * Call vkFlushMappedMemoryRanges to after writing to the mapped
     //   memory, and call vkInvalidateMappedMemoryRanges before reading from
     //   the mapped memory
-    let staging_buffer = Buffer::new(device.clone(), buffer_bytes,
-        vks::VK_BUFFER_USAGE_TRANSFER_SRC_BIT, vks::VK_SHARING_MODE_EXCLUSIVE,
-        /*vks::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | vks::VK_MEMORY_PROPERTY_HOST_COHERENT_BIT*/)?;
+    let staging_buffer = Buffer::builder()
+        .size(buffer_bytes)
+        .usage(vks::VK_BUFFER_USAGE_TRANSFER_SRC_BIT)
+        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        .build(device.clone())?;
+
 
     let memory_requirements = staging_buffer.memory_requirements().clone();
     let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
@@ -967,25 +968,15 @@ fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &
         memory_type_index)?;
     staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
 
-    // let mut data = ptr::null_mut();
-    // unsafe {
-        // voo::check(device.proc_addr_loader().core.vkMapMemory(device.handle(),
-        //     staging_buffer.device_memory().handle(), 0, buffer_bytes, 0, &mut data));
-        let mut data = staging_buffer_memory.map(0, buffer_bytes, 0)?;
-        // ptr::copy_nonoverlapping(vertices.as_ptr(), data.as_mut_ptr(), vertices.len());
-        data.copy_from_slice(vertices);
-        // device.proc_addr_loader().core.vkUnmapMemory(device.handle(),
-        //     staging_buffer.device_memory().handle());
-        staging_buffer_memory.unmap(data);
-    // }
+    let mut data = staging_buffer_memory.map(0, buffer_bytes, 0)?;
+    data.copy_from_slice(vertices);
+    staging_buffer_memory.unmap(data);
 
-    // HOST-RW:
-    // let vertex_buffer = Buffer::new(device.clone(), buffer_bytes,
-    //     vks::VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vks::VK_SHARING_MODE_EXCLUSIVE,
-    //     vks::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | vks::VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)?;
-    let vertex_buffer = Buffer::new(device.clone(), buffer_bytes,
-        vks::VK_BUFFER_USAGE_TRANSFER_DST_BIT | vks::VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-        vks::VK_SHARING_MODE_EXCLUSIVE, /*vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT*/)?;
+    let vertex_buffer = Buffer::builder()
+        .size(buffer_bytes)
+        .usage(vks::VK_BUFFER_USAGE_TRANSFER_DST_BIT | vks::VK_BUFFER_USAGE_VERTEX_BUFFER_BIT)
+        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        .build(device.clone())?;
 
     let memory_requirements = vertex_buffer.memory_requirements().clone();
     let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
@@ -1003,9 +994,11 @@ fn create_index_buffer<T: Copy>(device: &Device, command_pool: &CommandPool, ind
         -> VooResult<(Buffer, DeviceMemory)> {
     let buffer_bytes = (mem::size_of::<T>() * indices.len()) as u64;
 
-    let staging_buffer = Buffer::new(device.clone(), buffer_bytes,
-        vks::VK_BUFFER_USAGE_TRANSFER_SRC_BIT, vks::VK_SHARING_MODE_EXCLUSIVE,
-        /*vks::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT*/)?;
+    let staging_buffer = Buffer::builder()
+        .size(buffer_bytes)
+        .usage(vks::VK_BUFFER_USAGE_TRANSFER_SRC_BIT)
+        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        .build(device.clone())?;
 
     let memory_requirements = staging_buffer.memory_requirements().clone();
     let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
@@ -1014,20 +1007,15 @@ fn create_index_buffer<T: Copy>(device: &Device, command_pool: &CommandPool, ind
         memory_type_index)?;
     staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
 
-    // unsafe {
-        // let mut data = ptr::null_mut();
-        let mut data = staging_buffer_memory.map(0, buffer_bytes, 0)?;
-        // voo::check(device.proc_addr_loader().core.vkMapMemory(device.handle(),
-        //     staging_buffer.device_memory().handle(), 0, buffer_bytes, 0, &mut data));
-        // ptr::copy_nonoverlapping(indices.as_ptr(), data.as_mut_ptr(), indices.len());
-        data.copy_from_slice(indices);
-        // device.proc_addr_loader().core.vkUnmapMemory(device.handle(), staging_buffer.device_memory().handle());
-        staging_buffer_memory.unmap(data);
-    // }
+    let mut data = staging_buffer_memory.map(0, buffer_bytes, 0)?;
+    data.copy_from_slice(indices);
+    staging_buffer_memory.unmap(data);
 
-    let index_buffer = Buffer::new(device.clone(), buffer_bytes,
-        vks::VK_BUFFER_USAGE_TRANSFER_DST_BIT | vks::VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-        vks::VK_SHARING_MODE_EXCLUSIVE, /*vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT*/)?;
+    let index_buffer = Buffer::builder()
+        .size(buffer_bytes)
+        .usage(vks::VK_BUFFER_USAGE_TRANSFER_DST_BIT | vks::VK_BUFFER_USAGE_INDEX_BUFFER_BIT)
+        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        .build(device.clone())?;
 
     let memory_requirements = index_buffer.memory_requirements().clone();
     let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
@@ -1044,15 +1032,15 @@ fn create_index_buffer<T: Copy>(device: &Device, command_pool: &CommandPool, ind
 fn create_uniform_buffer(device: &Device, command_pool: &CommandPool, _extent: vks::VkExtent2D)
         -> VooResult<(Buffer, DeviceMemory)> {
     let buffer_bytes = mem::size_of::<UniformBufferObject>() as u64;
-    let uniform_buffer = Buffer::new(device.clone(), buffer_bytes,
-        vks::VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-        vks::VK_SHARING_MODE_EXCLUSIVE, /*vks::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-        vks::VK_MEMORY_PROPERTY_HOST_COHERENT_BIT*/)?;
+    let uniform_buffer = Buffer::builder()
+        .size(buffer_bytes)
+        .usage(vks::VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
+        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        .build(device.clone())?;
 
     let memory_requirements = uniform_buffer.memory_requirements().clone();
     let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
-        vks::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-        vks::VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        vks::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | vks::VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
     let uniform_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
         memory_type_index)?;
     uniform_buffer.bind_memory(&uniform_buffer_memory, 0)?;
@@ -1136,9 +1124,11 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool)
     let (tex_width, tex_height) = pixels.dimensions();
     let image_bytes = (tex_width * tex_height * 4) as u64;
 
-    let staging_buffer = Buffer::new(device.clone(), image_bytes,
-        vks::VK_BUFFER_USAGE_TRANSFER_SRC_BIT, vks::VK_SHARING_MODE_EXCLUSIVE,
-        /*vks::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | vks::VK_MEMORY_PROPERTY_HOST_COHERENT_BIT*/)?;
+    let staging_buffer = Buffer::builder()
+        .size(image_bytes)
+        .usage(vks::VK_BUFFER_USAGE_TRANSFER_SRC_BIT)
+        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        .build(device.clone())?;
 
     let memory_requirements = staging_buffer.memory_requirements().clone();
     let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
@@ -1147,15 +1137,9 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool)
         memory_type_index)?;
     staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
 
-    unsafe {
-        // let mut data = ptr::null_mut();
-        // voo::check(device.proc_addr_loader().vkMapMemory(device.handle(),
-        //     staging_buffer.device_memory().handle(), 0, image_bytes, 0, &mut data));
-        let mut data = staging_buffer_memory.map(0, image_bytes, 0)?;
-        ptr::copy_nonoverlapping(pixels.as_ptr(), data.as_mut_ptr(), pixels.len());
-        // device.proc_addr_loader().vkUnmapMemory(device.handle(), staging_buffer.device_memory().handle());
-        staging_buffer_memory.unmap(data);
-    }
+    let mut data = staging_buffer_memory.map(0, image_bytes, 0)?;
+    data.copy_from_slice(&pixels);
+    staging_buffer_memory.unmap(data);
 
     let extent = vks::VkExtent3D { width: tex_width, height: tex_height, depth: 1 };
 
@@ -1308,7 +1292,6 @@ impl App {
         // let (vertices, indices) = load_model(&device)?;
         let vertices = VERTICES[..].to_owned();
         let indices = INDICES[..].to_owned();
-
         let (vertex_buffer, vertex_buffer_memory) = create_vertex_buffer(&device, &command_pool,
             &vertices)?;
         let (index_buffer, index_buffer_memory) = create_index_buffer(&device, &command_pool,
@@ -1317,6 +1300,7 @@ impl App {
             &command_pool, swapchain.extent().clone())?;
 
         let descriptor_pool = create_descriptor_pool(device.clone())?;
+
         let descriptor_set = create_descriptor_set(&device, &descriptor_set_layout,
             &descriptor_pool, &uniform_buffer, &texture_image_view, &texture_sampler)?;
         let command_buffers = voo::create_command_buffers(&device, &command_pool, &render_pass,
@@ -1447,20 +1431,10 @@ impl App {
             proj: proj.into(),
         };
 
-        // let mut data = ptr::null_mut();
-        // unsafe {
-            // voo::check(self.device.proc_addr_loader().core.vkMapMemory(self.device.handle(),
-            //     self.uniform_buffer.device_memory().handle(), 0,
-            //     mem::size_of::<UniformBufferObject>() as u64, 0, &mut data));
-            let mut data = self.uniform_buffer_memory.map(0,
-                mem::size_of::<UniformBufferObject>() as u64, 0)?;
-            // ptr::copy_nonoverlapping(&ubo, data.as_mut_ptr(), 1);
-            data.copy_from_slice(&[ubo]);
-            // self.device.proc_addr_loader().core.vkUnmapMemory(self.device.handle(),
-            //     self.uniform_buffer.device_memory().handle());
-            self.uniform_buffer_memory.unmap(data);
-
-        // }
+        let mut data = self.uniform_buffer_memory.map(0,
+            mem::size_of::<UniformBufferObject>() as u64, 0)?;
+        data.copy_from_slice(&[ubo]);
+        self.uniform_buffer_memory.unmap(data);
 
         Ok(())
     }
