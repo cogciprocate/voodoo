@@ -232,18 +232,18 @@ impl<'b> GraphicsPipelineBuilder<'b> {
 
     /// Specifies the binding locations used by both the pipeline and
     /// descriptor sets used with the pipeline.
-    pub fn layout<'s>(&'s mut self, layout: vks::VkPipelineLayout)
+    pub fn layout<'s>(&'s mut self, layout: &PipelineLayout)
             -> &'s mut GraphicsPipelineBuilder<'b> {
-        self.create_info.layout = layout;
+        self.create_info.layout = layout.handle();
         self
     }
 
     /// Specifies the environment in which the pipeline will be used; the
     /// pipeline must only be used with an instance of any render pass
     /// compatible with the one provided.
-    pub fn render_pass<'s>(&'s mut self, render_pass: vks::VkRenderPass)
+    pub fn render_pass<'s>(&'s mut self, render_pass: &RenderPass)
             -> &'s mut GraphicsPipelineBuilder<'b> {
-        self.create_info.renderPass = render_pass;
+        self.create_info.renderPass = render_pass.handle();
         self
     }
 

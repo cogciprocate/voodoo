@@ -18,7 +18,7 @@ libloading = "*"
 # smallvec = "*"
 # smallvec = { git = "https://github.com/servo/rust-smallvec" }
 smallvec = { git = "https://github.com/c0gent/rust-smallvec" }
-vks = { path = "../vks", features = ["proc_addr_loader_glob_functions"] }
+vks = { path = "../vks" }
 libc = "*"
 cgmath = "*"
 image = "*"

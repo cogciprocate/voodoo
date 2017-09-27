@@ -14,6 +14,15 @@ struct Inner {
     device: Device,
 }
 
+
+// The following object types are consumed when they are passed into a Vulkan
+// command and not further accessed by the objects they are used to create.
+// They must not be destroyed in the duration of any API command they are
+// passed into:
+//
+// * VkShaderModule
+// * VkPipelineCache
+//
 #[derive(Debug, Clone)]
 pub struct ShaderModule {
     inner: Arc<Inner>,

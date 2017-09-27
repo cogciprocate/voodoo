@@ -188,8 +188,8 @@ fn choose_swap_surface_format(available_formats: &[vks::khr_surface::VkSurfaceFo
     }
     for available_format in available_formats {
         if available_format.format == vks::VK_FORMAT_B8G8R8A8_UNORM &&
-                available_format.colorSpace == vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR
-        {
+                available_format.colorSpace ==
+                vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR {
             return vks::khr_surface::VkSurfaceFormatKHR {
                 format: vks::VK_FORMAT_B8G8R8A8_UNORM,
                 colorSpace: vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
@@ -204,9 +204,8 @@ fn choose_swap_surface_format(available_formats: &[vks::khr_surface::VkSurfaceFo
 
 fn choose_swap_present_mode(available_present_modes: &[vks::khr_surface::VkPresentModeKHR])
         -> vks::khr_surface::VkPresentModeKHR {
-    let mut best_mode = vks::khr_surface::VK_PRESENT_MODE_FIFO_KHR;
+    let mut best_mode = vks::khr_surface::VK_PRESENT_MODE_MAILBOX_KHR;
     for &available_present_mode in available_present_modes {
-        // if available_present_mode == vks::khr_surface::VK_PRESENT_MODE_MAILBOX_KHR {
         if available_present_mode == vks::khr_surface::VK_PRESENT_MODE_FIFO_KHR {
             return available_present_mode;
         } else if available_present_mode == vks::khr_surface::VK_PRESENT_MODE_IMMEDIATE_KHR {
@@ -271,7 +270,6 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: vks::VkQueueF
     } else {
         bldr.image_sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE);
     }
-
     bldr.build(device)
 }
 
@@ -571,7 +569,8 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         depthClampEnable: vks::VK_FALSE,
         rasterizerDiscardEnable: vks::VK_FALSE,
         polygonMode: vks::VK_POLYGON_MODE_FILL,
-        cullMode: vks::VK_CULL_MODE_BACK_BIT,
+        // cullMode: vks::VK_CULL_MODE_BACK_BIT,
+        cullMode: vks::VK_CULL_MODE_NONE,
         // frontFace: vks::VK_FRONT_FACE_CLOCKWISE,
         frontFace: vks::VK_FRONT_FACE_COUNTER_CLOCKWISE,
         depthBiasEnable: vks::VK_FALSE,
@@ -677,8 +676,8 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         .depth_stencil_state(&depth_stencil)
         .color_blend_state(&color_blending)
         // .dynamic_state(&dynamic_state)
-        .layout(pipeline_layout.handle())
-        .render_pass(render_pass.handle())
+        .layout(&pipeline_layout)
+        .render_pass(&render_pass)
         .subpass(0)
         .base_pipeline_handle(0)
         .base_pipeline_index(-1)
@@ -699,23 +698,7 @@ pub fn create_framebuffers(device: &Device, render_pass: &RenderPass,
         swapchain_image_views: &[ImageView], depth_image_view: &ImageView,
         swapchain_extent: vks::VkExtent2D) -> VooResult<Vec<Framebuffer>> {
     swapchain_image_views.iter().map(|image_view| {
-        // Framebuffer::new(device.clone(), render_pass.clone(), image_view.clone(),
-        //     depth_image_view.clone(), swapchain_extent.clone())
-
-        // let create_info = vks::VkFramebufferCreateInfo {
-        //     sType: vks::VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-        //     pNext: ptr::null(),
-        //     flags: 0,
-        //     renderPass: render_pass.handle(),
-        //     attachmentCount: attachment_handles.len() as u32,
-        //     pAttachments: attachment_handles.as_ptr(),
-        //     width: swapchain_extent.width,
-        //     height: swapchain_extent.height,
-        //     layers: 1,
-        // };
-
         let attachments = [image_view, depth_image_view];
-
         Framebuffer::builder()
             .render_pass(&render_pass)
             .attachments(&attachments[..])
@@ -723,7 +706,6 @@ pub fn create_framebuffers(device: &Device, render_pass: &RenderPass,
             .height(swapchain_extent.height)
             .layers(1)
             .build(device.clone())
-
     }).collect::<Result<Vec<_>, _>>()
 }
 
@@ -1167,7 +1149,23 @@ fn create_texture_image_view(device: Device, image: &Image) -> VooResult<ImageVi
 }
 
 fn create_texture_sampler(device: Device) -> VooResult<Sampler> {
-    Sampler::new(device)
+    Sampler::builder()
+        .mag_filter(vks::VK_FILTER_LINEAR)
+        .min_filter(vks::VK_FILTER_LINEAR)
+        .mipmap_mode(vks::VK_SAMPLER_MIPMAP_MODE_LINEAR)
+        .address_mode_u(vks::VK_SAMPLER_ADDRESS_MODE_REPEAT)
+        .address_mode_v(vks::VK_SAMPLER_ADDRESS_MODE_REPEAT)
+        .address_mode_w(vks::VK_SAMPLER_ADDRESS_MODE_REPEAT)
+        .mip_lod_bias(0.)
+        .anisotropy_enable(true)
+        .max_anisotropy(16.)
+        .compare_enable(false)
+        .compare_op(vks::VK_COMPARE_OP_ALWAYS)
+        .min_lod(0.)
+        .max_lod(0.)
+        .border_color(vks::VK_BORDER_COLOR_INT_OPAQUE_BLACK)
+        .unnormalized_coordinates(false)
+        .build(device)
 }
 
 
@@ -1180,6 +1178,7 @@ struct SwapchainComponents {
     depth_image_view: ImageView,
     framebuffers: Vec<Framebuffer>,
 }
+
 
 struct App {
     instance: Instance,
@@ -1237,15 +1236,14 @@ impl App {
         let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;
         let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(&device,
             &command_pool, swapchain.extent().clone())?;
-
         let framebuffers = create_framebuffers(&device, &render_pass,
             &image_views, &depth_image_view, swapchain.extent().clone())?;
-
         let (texture_image, texture_image_memory) = create_texture_image(&device,
             &command_pool)?;
         let texture_image_view = create_texture_image_view(device.clone(),
             &texture_image)?;
         let texture_sampler = create_texture_sampler(device.clone())?;
+
         // let (vertices, indices) = load_model(&device)?;
         let vertices = VERTICES[..].to_owned();
         let indices = INDICES[..].to_owned();
@@ -1369,10 +1367,10 @@ impl App {
             extent.width as f32 / extent.height as f32, 0.1, 10.0);
         let view = cgmath::Matrix4::look_at(cgmath::Point3::new(2.0, 2.0, 2.0),
             cgmath::Point3::new(0.0, 0.0, 0.0), cgmath::Vector3::new(0.0, 0.0, 1.0));
-        let scale = cgmath::Matrix4::from_scale(1.0);
+        let scale = cgmath::Matrix4::from_scale(1.5);
         proj[1][1] *= -1.0;
-
-        let rotation = Matrix3::from_angle_z(cgmath::Rad(time));
+        let rotation = Matrix3::from_angle_z(cgmath::Rad(time)) *
+            Matrix3::from_angle_x(cgmath::Rad(time / 2.0));
         let model = Matrix4::from(rotation).into();
 
         let ubo = UniformBufferObject {
@@ -1397,11 +1395,10 @@ impl App {
     fn draw_frame(&mut self) -> VooResult<()> {
         let mut image_index = 0u32;
         let acq_res = unsafe {
-            self.device.proc_addr_loader().khr_swapchain.vkAcquireNextImageKHR(self.device.handle(),
-                self.swapchain.as_ref().unwrap().handle(),
+            self.device.proc_addr_loader().khr_swapchain.vkAcquireNextImageKHR(
+                self.device.handle(), self.swapchain.as_ref().unwrap().handle(),
                 u64::max_value(), self.image_available_semaphore.handle(), 0, &mut image_index)
         };
-
         if acq_res == vks::VK_ERROR_OUT_OF_DATE_KHR {
             let dims = self.window.get_inner_size_pixels().unwrap();
             self.recreate_swapchain(vks::VkExtent2D { height: dims.0, width: dims.1 } )?;
@@ -1409,7 +1406,6 @@ impl App {
         } else if acq_res != vks::VK_SUCCESS && acq_res != vks::VK_SUBOPTIMAL_KHR {
             panic!("Unable to present swap chain image");
         }
-
         let wait_semaphores = [self.image_available_semaphore.handle()];
         let wait_stages = [vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT];
         let signal_semaphores = [self.render_finished_semaphore.handle()];
