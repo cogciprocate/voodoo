@@ -2,8 +2,9 @@
 use std::sync::Arc;
 use std::ptr;
 use std::marker::PhantomData;
+use smallvec::SmallVec;
 use vks;
-use ::{util, VooResult, Device};
+use ::{util, VooResult, Device, DescriptorSetLayout};
 
 #[derive(Debug)]
 struct Inner {
@@ -22,44 +23,6 @@ impl DescriptorPool {
         DescriptorPoolBuilder::new()
     }
 
-    // pub fn new(device: Device) -> VooResult<DescriptorPool> {
-    //     let pool_sizes = [
-    //         vks::VkDescriptorPoolSize {
-    //             type_: vks::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-    //             descriptorCount: 1,
-    //         },
-    //         vks::VkDescriptorPoolSize {
-    //             type_: vks::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-    //             descriptorCount: 1,
-    //         },
-    //     ];
-
-    //     let create_info = vks::VkDescriptorPoolCreateInfo {
-    //         sType: vks::VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-    //         pNext: ptr::null(),
-    //         // optional flag similar to command pools that determines if
-    //         // individual descriptor sets can be freed or not:
-    //         // `VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT`:
-    //         flags: 0,
-    //         maxSets: 1,
-    //         poolSizeCount: pool_sizes.len() as u32,
-    //         pPoolSizes: pool_sizes.as_ptr(),
-    //     };
-
-    //     let mut handle = 0;
-    //     unsafe {
-    //         ::check(device.proc_addr_loader().vkCreateDescriptorPool(device.handle(), &create_info,
-    //             ptr::null(), &mut handle));
-    //     }
-
-    //     Ok(DescriptorPool {
-    //         inner: Arc::new(Inner {
-    //             handle,
-    //             device,
-    //         })
-    //     })
-    // }
-
     pub fn handle(&self) -> vks::VkDescriptorPool {
         self.inner.handle
     }
@@ -68,18 +31,46 @@ impl DescriptorPool {
     pub fn device(&self) -> &Device {
         &self.inner.device
     }
+
+    /// Updates descriptor sets.
+    pub fn allocate_descriptor_sets(&self, descriptor_sets: &[&DescriptorSetLayout])
+            -> SmallVec<[vks::VkDescriptorSet; 8]> {
+        let descriptor_set_handles: SmallVec<[_; 8]> =
+            descriptor_sets.iter().map(|dsl| dsl.handle()).collect();
+
+        let alloc_info = vks::VkDescriptorSetAllocateInfo {
+            sType: vks::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+            pNext: ptr::null(),
+            descriptorPool: self.inner.handle,
+            descriptorSetCount: descriptor_set_handles.len() as u32,
+            pSetLayouts: descriptor_set_handles.as_ptr(),
+        };
+
+        let mut descriptor_sets = SmallVec::new();
+        descriptor_sets.reserve_exact(alloc_info.descriptorSetCount as usize);
+        unsafe {
+            descriptor_sets.set_len(alloc_info.descriptorSetCount as usize);
+            ::check(self.inner.device.proc_addr_loader().vkAllocateDescriptorSets(
+                self.inner.device.handle(), &alloc_info, descriptor_sets.as_mut_ptr()));
+        }
+        descriptor_sets
+    }
+
+    pub fn update_descriptor_sets(&self, descriptor_writes: Option<&[vks::VkWriteDescriptorSet]>,
+            descriptor_copies: Option<&[vks::VkCopyDescriptorSet]>) {
+        self.inner.device.update_descriptor_sets(descriptor_writes, descriptor_copies)
+    }
+
 }
 
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().vkDestroyDescriptorPool(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().vkDestroyDescriptorPool(self.device.handle(),
+                self.handle, ptr::null());
         }
     }
 }
-
-
-
 
 
 

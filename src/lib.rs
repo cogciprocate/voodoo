@@ -10,6 +10,11 @@ extern crate vks as vks_;
 extern crate libc;
 extern crate tobj;
 extern crate ordered_float;
+#[macro_use]
+extern crate bitflags as bitflags_;
+#[macro_use]
+extern crate enum_primitive_derive;
+extern crate num_traits;
 pub extern crate winit;
 
 mod error;
@@ -36,6 +41,8 @@ mod device_memory;
 mod descriptor_set_layout;
 mod descriptor_pool;
 mod structs;
+mod enums;
+mod bitflags;
 
 pub mod vks {
     pub use vks_::*;
@@ -169,7 +176,7 @@ pub use render_pass::RenderPass;
 pub use graphics_pipeline::GraphicsPipeline;
 pub use framebuffer::{Framebuffer};
 pub use command_pool::CommandPool;
-pub use command_buffers::create_command_buffers;
+// pub use command_buffers::create_command_buffers;
 pub use semaphore::Semaphore;
 pub use buffer::Buffer;
 pub use image::Image;
@@ -178,6 +185,8 @@ pub use device_memory::DeviceMemory;
 pub use descriptor_set_layout::DescriptorSetLayout;
 pub use descriptor_pool::DescriptorPool;
 pub use structs::*;
+pub use enums::*;
+pub use bitflags::*;
 
 const PRINT: bool = false;
 

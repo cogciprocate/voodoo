@@ -87,6 +87,25 @@ impl Device {
         panic!("failed to find suitable memory type index with: type_filter: '{}', properties: '{}'",
             type_filter, properties);
     }
+
+    /// Updates descriptor sets.
+    pub fn update_descriptor_sets(&self, descriptor_writes: Option<&[vks::VkWriteDescriptorSet]>,
+            descriptor_copies: Option<&[vks::VkCopyDescriptorSet]>) {
+        let (descriptor_writes_len, descriptor_writes_ptr) = match descriptor_writes {
+            Some(ref dws) => (dws.len() as u32, dws.as_ptr()),
+            None => (0, ptr::null()),
+        };
+
+        let (descriptor_copies_len, descriptor_copies_ptr) = match descriptor_copies {
+            Some(ref dcs) => (dcs.len() as u32, dcs.as_ptr()),
+            None => (0, ptr::null()),
+        };
+
+        unsafe {
+            self.proc_addr_loader().vkUpdateDescriptorSets(self.handle(), descriptor_writes_len,
+                descriptor_writes_ptr, descriptor_copies_len, descriptor_copies_ptr);
+        }
+    }
 }
 
 impl Drop for Inner {

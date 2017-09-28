@@ -24,7 +24,7 @@ use voo::{voodoo_winit, vks, util, device, queue, Result as VooResult, Version, 
     ImageView, PipelineLayout, RenderPass, GraphicsPipeline, Framebuffer, CommandPool, Semaphore,
     Buffer, DeviceMemory, Vertex, DescriptorSetLayout, UniformBufferObject, DescriptorPool,
     Image, Sampler, Loader, SwapchainSupportDetails, PhysicalDevice, PhysicalDeviceFeatures,
-    ShaderModule};
+    ShaderModule, QueueFlags, Format};
 
 #[cfg(debug_assertions)]
 pub const ENABLE_VALIDATION_LAYERS: bool = true;
@@ -100,7 +100,7 @@ fn init_instance() -> VooResult<Instance> {
         .application_version((1, 0, 0))
         .engine_name("No Engine")
         .engine_version((1, 0, 0))
-        .api_version((1, 0, 51));
+        .api_version((1, 0, 0));
 
     let loader = Loader::new()?;
 
@@ -115,7 +115,7 @@ fn init_instance() -> VooResult<Instance> {
 /// extensions, queue families and if the supported swap chain has the correct
 /// presentation modes.
 fn device_is_suitable(instance: &Instance, surface: &Surface,
-        physical_device: &PhysicalDevice, queue_flags: vks::VkQueueFlags) -> bool {
+        physical_device: &PhysicalDevice, queue_flags: QueueFlags) -> bool {
     let device_features = physical_device.features();
 
     let reqd_exts: SmallVec<[_; 16]> = (&REQUIRED_DEVICE_EXTENSIONS[..]).iter().map(|ext_name| {
@@ -140,7 +140,7 @@ fn device_is_suitable(instance: &Instance, surface: &Surface,
 
 /// Returns a physical device from the list of available physical devices if
 /// it meets the criteria specified in the above function.
-fn choose_physical_device(instance: &Instance, surface: &Surface, queue_flags: vks::VkQueueFlags)
+fn choose_physical_device(instance: &Instance, surface: &Surface, queue_flags: QueueFlags)
         -> VooResult<PhysicalDevice> {
     let mut preferred_device = None;
 
@@ -160,7 +160,7 @@ fn choose_physical_device(instance: &Instance, surface: &Surface, queue_flags: v
 }
 
 fn create_device(instance: Instance, surface: &Surface, physical_device: PhysicalDevice,
-        queue_familiy_flags: vks::VkQueueFlags) -> VooResult<Device> {
+        queue_familiy_flags: QueueFlags) -> VooResult<Device> {
     let queue_family_idx = queue::queue_families(&instance, surface,
         &physical_device, queue_familiy_flags).family_idxs()[0] as u32;
 
@@ -187,7 +187,7 @@ fn choose_swap_surface_format(available_formats: &[vks::khr_surface::VkSurfaceFo
         };
     }
     for available_format in available_formats {
-        if available_format.format == vks::VK_FORMAT_B8G8R8A8_UNORM &&
+        if available_format.format == Format::B8G8R8A8Unorm as u32 &&
                 available_format.colorSpace ==
                 vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR {
             return vks::khr_surface::VkSurfaceFormatKHR {
@@ -230,7 +230,7 @@ fn choose_swap_extent(capabilities: &vks::khr_surface::VkSurfaceCapabilitiesKHR,
     }
 }
 
-fn create_swapchain(surface: Surface, device: Device, queue_flags: vks::VkQueueFlags,
+fn create_swapchain(surface: Surface, device: Device, queue_flags: QueueFlags,
         window_size: Option<vks::VkExtent2D>, old_swapchain: Option<Swapchain>)
         -> VooResult<Swapchain> {
     let swapchain_details: SwapchainSupportDetails = SwapchainSupportDetails::new(
@@ -385,7 +385,6 @@ fn create_descriptor_set_layout(device: Device) -> VooResult<DescriptorSetLayout
 
     let bindings = [ubo_layout_binding, sampler_layout_binding];
 
-    // DescriptorSetLayout::new(device)
     DescriptorSetLayout::builder()
         .bindings(&bindings)
         .build(device)
@@ -409,24 +408,10 @@ fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
         .build(device)
 }
 
-fn create_descriptor_set(device: &Device, layout: &DescriptorSetLayout,
+fn create_descriptor_sets(device: &Device, layout: &DescriptorSetLayout,
         pool: &DescriptorPool, uniform_buffer: &Buffer, texture_image_view: &ImageView,
-        texture_sampler: &Sampler) -> VooResult<vks::VkDescriptorSet> {
-    let layouts = [layout.handle()];
-
-    let alloc_info = vks::VkDescriptorSetAllocateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-        pNext: ptr::null(),
-        descriptorPool: pool.handle(),
-        descriptorSetCount: layouts.len() as u32,
-        pSetLayouts: layouts.as_ptr(),
-    };
-
-    let mut descriptor_set = 0;
-    unsafe {
-        voo::check(device.proc_addr_loader().vkAllocateDescriptorSets(device.handle(), &alloc_info,
-            &mut descriptor_set));
-    }
+        texture_sampler: &Sampler) -> VooResult<SmallVec<[vks::VkDescriptorSet; 8]>> {
+    let descriptor_sets = pool.allocate_descriptor_sets(&[layout][..]);
 
     let buffer_info = vks::VkDescriptorBufferInfo {
         buffer: uniform_buffer.handle(),
@@ -444,7 +429,7 @@ fn create_descriptor_set(device: &Device, layout: &DescriptorSetLayout,
         vks::VkWriteDescriptorSet {
             sType: vks::VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
             pNext: ptr::null(),
-            dstSet: descriptor_set,
+            dstSet: descriptor_sets[0],
             dstBinding: 0,
             dstArrayElement: 0,
             descriptorCount: 1,
@@ -456,7 +441,7 @@ fn create_descriptor_set(device: &Device, layout: &DescriptorSetLayout,
         vks::VkWriteDescriptorSet {
             sType: vks::VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
             pNext: ptr::null(),
-            dstSet: descriptor_set,
+            dstSet: descriptor_sets[0],
             dstBinding: 1,
             dstArrayElement: 0,
             descriptorCount: 1,
@@ -467,12 +452,9 @@ fn create_descriptor_set(device: &Device, layout: &DescriptorSetLayout,
         },
     ];
 
-    unsafe {
-        device.proc_addr_loader().vkUpdateDescriptorSets(device.handle(), descriptor_writes.len() as u32,
-            descriptor_writes.as_ptr(), 0, ptr::null());
-    }
+    pool.update_descriptor_sets(Some(&descriptor_writes[..]), None);
 
-    Ok(descriptor_set)
+    Ok(descriptor_sets)
 }
 
 fn create_pipeline_layout(device: Device, descriptor_set_layout: Option<&DescriptorSetLayout>)
@@ -697,7 +679,7 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         .build(device)
 }
 
-fn create_command_pool(device: Device, surface: &Surface, queue_family_flags: vks::VkQueueFlags)
+fn create_command_pool(device: Device, surface: &Surface, queue_family_flags: QueueFlags)
         -> VooResult<CommandPool> {
     let queue_family_idx = voo::queue_families(device.instance(), surface,
         device.physical_device(), queue_family_flags).family_idxs()[0] as u32;
@@ -1225,6 +1207,117 @@ fn create_texture_sampler(device: Device) -> VooResult<Sampler> {
         .build(device)
 }
 
+pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
+        render_pass: &RenderPass, graphics_pipeline: &GraphicsPipeline,
+        swapchain_framebuffers: &[Framebuffer], swapchain_extent: &vks::VkExtent2D,
+        vertex_buffer: &Buffer, index_buffer: &Buffer, vertex_count: u32,
+        index_count: u32, pipeline_layout: &PipelineLayout,
+        descriptor_set: vks::VkDescriptorSet)
+        -> VooResult<Vec<vks::VkCommandBuffer>>
+{
+    let mut command_buffers = Vec::with_capacity(swapchain_framebuffers.len());
+    unsafe { command_buffers.set_len(swapchain_framebuffers.len()); }
+
+    let alloc_info = vks::VkCommandBufferAllocateInfo {
+        sType: vks::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        pNext: ptr::null(),
+        commandPool: command_pool.handle(),
+        // * COMMAND_BUFFER_LEVEL_PRIMARY: Can be submitted to a queue for
+        //   execution, but cannot be called from other command buffers.
+        // * COMMAND_BUFFER_LEVEL_SECONDARY: Cannot be submitted directly, but
+        //   can be called from primary command buffers.
+        level: vks::VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        commandBufferCount: command_buffers.len() as u32,
+    };
+
+    unsafe {
+        voo::check(device.proc_addr_loader().vkAllocateCommandBuffers(device.handle(),
+            &alloc_info, command_buffers.as_mut_ptr()));
+    }
+
+    for (&command_buffer, swapchain_framebuffer) in command_buffers.iter()
+            .zip(swapchain_framebuffers.iter())
+    {
+        let begin_info = vks::VkCommandBufferBeginInfo {
+            sType: vks::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+            pNext: ptr::null(),
+            // * COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer
+            //   will be rerecorded right after executing it once.
+            // * COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: This is a
+            //   secondary command buffer that will be entirely within a
+            //   single render pass.
+            // * COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: The command buffer
+            //   can be resubmitted while it is also already pending
+            //   execution.
+            flags: vks::VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
+            pInheritanceInfo: ptr::null(),
+        };
+
+        unsafe {
+            voo::check(device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer,
+                &begin_info));
+        }
+
+        // let clear_color = vks::VkClearValue {
+        //     color: vks::VkClearColorValue { float32: [0.0f32, 0.0f32, 0.0f32, 1.0f32] }
+        // };
+
+        let clear_values = [
+            vks::VkClearValue { color: vks::VkClearColorValue {
+                float32: [0.0f32, 0.0f32, 0.0f32, 1.0f32] } },
+            vks::VkClearValue { depthStencil: vks::VkClearDepthStencilValue {
+                depth: 1.0, stencil: 0, } },
+        ];
+
+        let render_pass_info = vks::VkRenderPassBeginInfo {
+            sType: vks::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            pNext: ptr::null(),
+            renderPass: render_pass.handle(),
+            framebuffer:swapchain_framebuffer.handle(),
+            renderArea: vks::VkRect2D {
+                offset: vks::VkOffset2D { x: 0, y: 0, },
+                extent: swapchain_extent.clone(),
+            },
+            clearValueCount: clear_values.len() as u32,
+            pClearValues: clear_values.as_ptr(),
+        };
+
+        unsafe {
+            device.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer,
+                &render_pass_info, vks::VK_SUBPASS_CONTENTS_INLINE);
+            device.proc_addr_loader().core.vkCmdBindPipeline(command_buffer,
+                vks::VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline.handle());
+
+            let vertex_buffers = [vertex_buffer.handle()];
+            let offsets = [0];
+            device.proc_addr_loader().core.vkCmdBindVertexBuffers(
+                command_buffer, 0, 1, vertex_buffers.as_ptr(), offsets.as_ptr());
+            device.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer,
+                index_buffer.handle(), 0, vks::VK_INDEX_TYPE_UINT32);
+
+            device.proc_addr_loader().core.vkCmdBindDescriptorSets(command_buffer,
+                vks::VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout.handle(), 0, 1,
+                &descriptor_set, 0, ptr::null());
+
+            // // * vertexCount: Even though we don't have a vertex buffer, we
+            // //   technically still have 3 vertices to draw.
+            // // * instanceCount: Used for instanced rendering, use 1 if you're
+            // //   not doing that.
+            // // * firstVertex: Used as an offset into the vertex buffer,
+            // //   defines the lowest value of gl_VertexIndex.
+            // // * firstInstance: Used as an offset for instanced rendering,
+            // //   defines the lowest value of gl_InstanceIndex.
+            // device.proc_addr_loader().core.vkCmdDraw(command_buffer, vertex_count, 1, 0, 0);
+            device.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer, index_count,
+                1, 0, 0, 0);
+
+            device.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer);
+            device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer);
+        }
+    }
+    Ok(command_buffers)
+}
+
 
 struct SwapchainComponents {
     image_views: Vec<ImageView>,
@@ -1241,7 +1334,7 @@ struct App {
     instance: Instance,
     window: Window,
     events_loop: EventsLoop,
-    queue_family_flags: vks::VkQueueFlags,
+    queue_family_flags: QueueFlags,
     device: Device,
     surface: Surface,
     descriptor_set_layout: DescriptorSetLayout,
@@ -1262,7 +1355,7 @@ struct App {
     uniform_buffer: Buffer,
     uniform_buffer_memory: DeviceMemory,
     descriptor_pool: DescriptorPool,
-    descriptor_set: vks::VkDescriptorSet,
+    descriptor_sets: SmallVec<[vks::VkDescriptorSet; 8]>,
     image_available_semaphore: Semaphore,
     render_finished_semaphore: Semaphore,
     start_time: time::Instant,
@@ -1277,7 +1370,8 @@ impl App {
         let instance = init_instance()?;
         let (window, events_loop) = init_window();
         let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
-        let queue_family_flags = vks::VK_QUEUE_GRAPHICS_BIT;
+        // let queue_family_flags = vks::VK_QUEUE_GRAPHICS_BIT;
+        let queue_family_flags = QueueFlags::GRAPHICS;
         let physical_device = choose_physical_device(&instance, &surface,
             queue_family_flags)?;
         let device = create_device(instance.clone(), &surface, physical_device,
@@ -1312,15 +1406,13 @@ impl App {
             &indices)?;
         let (uniform_buffer, uniform_buffer_memory) = create_uniform_buffer(&device,
             &command_pool, swapchain.extent().clone())?;
-
         let descriptor_pool = create_descriptor_pool(device.clone())?;
-
-        let descriptor_set = create_descriptor_set(&device, &descriptor_set_layout,
+        let descriptor_sets = create_descriptor_sets(&device, &descriptor_set_layout,
             &descriptor_pool, &uniform_buffer, &texture_image_view, &texture_sampler)?;
-        let command_buffers = voo::create_command_buffers(&device, &command_pool, &render_pass,
+        let command_buffers = create_command_buffers(&device, &command_pool, &render_pass,
             &graphics_pipeline, &framebuffers, swapchain.extent(),
             &vertex_buffer, &index_buffer,
-            vertices.len() as u32, vertices.len() as u32, &pipeline_layout, descriptor_set)?;
+            vertices.len() as u32, vertices.len() as u32, &pipeline_layout, descriptor_sets[0])?;
         let image_available_semaphore = Semaphore::new(device.clone())?;
         let render_finished_semaphore = Semaphore::new(device.clone())?;
         let start_time = time::Instant::now();
@@ -1360,7 +1452,7 @@ impl App {
             uniform_buffer,
             uniform_buffer_memory,
             descriptor_pool,
-            descriptor_set,
+            descriptor_sets,
             image_available_semaphore,
             render_finished_semaphore,
             start_time,
@@ -1402,11 +1494,11 @@ impl App {
         let framebuffers = create_framebuffers(&self.device,
             &render_pass, &image_views,
             &depth_image_view, swapchain.extent().clone())?;
-        let command_buffers = voo::create_command_buffers(&self.device, &self.command_pool,
+        let command_buffers = create_command_buffers(&self.device, &self.command_pool,
             &render_pass, &graphics_pipeline,
             &framebuffers, swapchain.extent(),
             &self.vertex_buffer, &self.index_buffer, self.vertices.len() as u32,
-            self.indices.len() as u32, &self.pipeline_layout, self.descriptor_set)?;
+            self.indices.len() as u32, &self.pipeline_layout, self.descriptor_sets[0])?;
 
         self.swapchain = Some(swapchain);
         self.swapchain_components = Some(SwapchainComponents {
@@ -1484,8 +1576,8 @@ impl App {
             pSignalSemaphores: signal_semaphores.as_ptr(),
         };
 
-        unsafe { voo::check(self.device.proc_addr_loader().core.vkQueueSubmit(self.device.queue(0), 1,
-            &submit_info, 0)); }
+        unsafe { voo::check(self.device.proc_addr_loader().core.vkQueueSubmit(
+            self.device.queue(0), 1, &submit_info, 0)); }
 
         let swapchains = [self.swapchain.as_ref().unwrap().handle()];
 
@@ -1501,8 +1593,10 @@ impl App {
         };
 
         unsafe {
-            voo::check(self.device.proc_addr_loader().khr_swapchain.vkQueuePresentKHR(self.device.queue(0), &present_info));
-            voo::check(self.device.proc_addr_loader().core.vkQueueWaitIdle(self.device.queue(0)));
+            voo::check(self.device.proc_addr_loader().khr_swapchain.vkQueuePresentKHR(
+                self.device.queue(0), &present_info));
+            voo::check(self.device.proc_addr_loader().core.vkQueueWaitIdle(
+                self.device.queue(0)));
         }
 
         Ok(())
@@ -1537,7 +1631,8 @@ impl App {
             self.draw_frame()?;
         }
 
-        unsafe { voo::check(self.device.proc_addr_loader().core.vkDeviceWaitIdle(self.device.handle())); }
+        unsafe { voo::check(self.device.proc_addr_loader().core.vkDeviceWaitIdle(
+            self.device.handle())); }
         Ok(())
     }
 }

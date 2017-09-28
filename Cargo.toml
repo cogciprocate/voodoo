@@ -12,6 +12,10 @@ exclude = ["target/*", "*.png", "bak/*"]
 # keywords = ["vulkan", "gpu", "gpgpu", "async"]
 # categories = ["asynchronous", "concurrency", "science", "api-bindings"]
 
+[features]
+# Experimental and unstable Vulkan stuff.
+experimental = ["vks/experimental"]
+
 [dependencies]
 winit = "*"
 libloading = "*"
@@ -24,3 +28,6 @@ cgmath = "*"
 image = "*"
 tobj = "*"
 ordered-float = "*"
+bitflags = "1"
+enum-primitive-derive = "*"
+num-traits = "*"

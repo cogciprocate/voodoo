@@ -1,7 +1,7 @@
 use std::ptr;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, PhysicalDevice, Device, Surface};
+use ::{VooResult, Instance, PhysicalDevice, Device, Surface, QueueFlags};
 
 pub struct QueueFamilyIndices {
     physical_device: PhysicalDevice,
@@ -42,13 +42,13 @@ impl QueueFamilyIndices {
 }
 
 pub fn queue_families(instance: &Instance, surface: &Surface, physical_device: &PhysicalDevice,
-        queue_flags: vks::VkQueueFlags) -> QueueFamilyIndices {
-    let mut indices = QueueFamilyIndices::new(physical_device.clone(), queue_flags);
+        queue_flags: QueueFlags) -> QueueFamilyIndices {
+    let mut indices = QueueFamilyIndices::new(physical_device.clone(), queue_flags.bits());
     let queue_families = physical_device.queue_families();
 
     let mut i = 0i32;
     for queue_family in &queue_families {
-        if queue_family.queueCount > 0 && queue_family.queueFlags & queue_flags != 0 {
+        if queue_family.queueCount > 0 && queue_family.queueFlags & queue_flags.bits() != 0 {
             indices.flag_idxs.push(i);
         }
 
@@ -80,9 +80,12 @@ impl Queue {
     // QUEUE_GRAPHICS_BIT
     // QUEUE_SPARSE_BINDING_BIT
     // QUEUE_TRANSFER_BIT
-    pub unsafe fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VooResult<Queue> {
+    pub fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VooResult<Queue> {
         let mut handle = ptr::null_mut();
-        device.proc_addr_loader().core.vkGetDeviceQueue(device.handle(), queue_family_index, queue_index, &mut handle);
+        unsafe {
+            device.proc_addr_loader().core.vkGetDeviceQueue(device.handle(), queue_family_index,
+                queue_index, &mut handle);
+        }
 
         Ok(Queue {
             handle,
