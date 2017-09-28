@@ -1,6 +1,5 @@
 
 
-
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
@@ -65,7 +64,7 @@ bitflags! {
         const CUBE_COMPATIBLE = 0x00000010;
 
         #[cfg(feature = "experimental")]
-        const IMAGE_CREATE_BIND_SFR_KHX = 0x00000040;
+        const IMAGE_CREATE_BIND_SFR = 0x00000040;
         const IMAGE_CREATE_2D_ARRAY_COMPATIBLE_KHR = 0x00000020;
     }
 }
@@ -122,7 +121,7 @@ bitflags! {
         const DEVICE_LOCAL = 0x00000001;
 
         #[cfg(feature = "experimental")]
-        const MULTI_INSTANCE_KHX = 0x00000002;
+        const MULTI_INSTANCE = 0x00000002;
     }
 }
 
@@ -169,7 +168,7 @@ bitflags! {
         const ALL_COMMANDS = 0x00010000;
 
         #[cfg(feature = "experimental")]
-        const COMMAND_PROCESS_NVX = 0x00020000;
+        const COMMAND_PROCESS = 0x00020000;
     }
 }
 
@@ -232,7 +231,7 @@ bitflags! {
     #[repr(C)]
     #[derive(Default)]
     pub struct SemaphoreCreateFlags: u32 {
-        const VK_SEMAPHORE_CREATE_FLAG_BITS_MAX_ENUM = 0x7fffffff;
+        const SEMAPHORE_CREATE_FLAG_BITS_MAX_ENUM = 0x7fffffff;
     }
 }
 
@@ -364,9 +363,9 @@ bitflags! {
         const DERIVATIVE = 0x00000004;
 
         #[cfg(feature = "experimental")]
-        const VIEW_INDEX_FROM_DEVICE_INDEX_KHX = 0x00000008;
+        const VIEW_INDEX_FROM_DEVICE_INDEX = 0x00000008;
         #[cfg(feature = "experimental")]
-        const DISPATCH_BASE_KHX = 0x00000010;
+        const DISPATCH_BASE = 0x00000010;
     }
 }
 
@@ -527,8 +526,6 @@ bitflags! {
     #[derive(Default)]
     pub struct DescriptorSetLayoutCreateFlags: u32 {
         const FLAG_BITS_MAX_ENUM = 0x7fffffff;
-
-
         const PUSH_DESCRIPTOR_KHR = 0x00000001;
     }
 }
@@ -588,9 +585,9 @@ bitflags! {
         const FLAG_BITS_MAX_ENUM = 0x7fffffff;
 
         #[cfg(feature = "experimental")]
-        const PER_VIEW_ATTRIBUTES_NVX = 0x00000001;
+        const PER_VIEW_ATTRIBUTES = 0x00000001;
         #[cfg(feature = "experimental")]
-        const PER_VIEW_POSITION_X_ONLY_NVX = 0x00000002;
+        const PER_VIEW_POSITION_X_ONLY = 0x00000002;
     }
 }
 
@@ -619,9 +616,9 @@ bitflags! {
         const MEMORY_WRITE = 0x00010000;
 
         #[cfg(feature = "experimental")]
-        const COMMAND_PROCESS_READ_NVX = 0x00020000;
+        const COMMAND_PROCESS_READ = 0x00020000;
         #[cfg(feature = "experimental")]
-        const COMMAND_PROCESS_WRITE_NVX = 0x00040000;
+        const COMMAND_PROCESS_WRITE = 0x00040000;
         const COLOR_ATTACHMENT_READ_NONCOHERENT_EXT = 0x00080000;
     }
 }
@@ -635,9 +632,9 @@ bitflags! {
         const BY_REGION = 0x00000001;
 
         #[cfg(feature = "experimental")]
-        const VIEW_LOCAL_KHX = 0x00000002;
+        const VIEW_LOCAL = 0x00000002;
         #[cfg(feature = "experimental")]
-        const DEVICE_GROUP_KHX = 0x00000004;
+        const DEVICE_GROUP = 0x00000004;
     }
 }
 
@@ -702,10 +699,251 @@ bitflags! {
         const FLAG_BITS_MAX_ENUM = 0x7fffffff;
         const FRONT = 0x00000001;
         const BACK = 0x00000002;
-        const VK_STENCIL_FRONT_AND_BACK = 0x00000003;
+        const STENCIL_FRONT_AND_BACK = 0x00000003;
     }
 }
 
 
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct SurfaceTransformFlagsKHR: u32 {
+        const IDENTITY = 1;
+        const ROTATE_90 = 2;
+        const ROTATE_180 = 4;
+        const ROTATE_270 = 8;
+        const HORIZONTAL_MIRROR = 16;
+        const HORIZONTAL_MIRROR_ROTATE_90 = 32;
+        const HORIZONTAL_MIRROR_ROTATE_180 = 64;
+        const HORIZONTAL_MIRROR_ROTATE_270 = 128;
+        const INHERIT = 256;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
+
+// pub type SurfaceTransformFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct CompositeAlphaFlagsKHR: u32 {
+        const OPAQUE = 1;
+        const PRE_MULTIPLIED = 2;
+        const POST_MULTIPLIED = 4;
+        const INHERIT = 8;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
+
+// pub type CompositeAlphaFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct SwapchainCreateFlagsKHR: u32 {
+        const BIND_SFR = 1;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct DisplayPlaneAlphaFlagsKHR: u32 {
+        const OPAQUE = 1;
+        const GLOBAL = 2;
+        const PER_PIXEL = 4;
+        const PER_PIXEL_PREMULTIPLIED = 8;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
 
 
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ExternalMemoryHandleTypeFlagsKHR: u32 {
+        const OPAQUE_FD = 1;
+        const OPAQUE_WIN32 = 2;
+        const OPAQUE_WIN32_KMT = 4;
+        const D3D11_TEXTURE = 8;
+        const D3D11_TEXTURE_KMT = 16;
+        const D3D12_HEAP = 32;
+        const D3D12_RESOURCE = 64;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ExternalMemoryFeatureFlagsKHR: u32 {
+        const DEDICATED_ONLY = 1;
+        const EXPORTABLE = 2;
+        const IMPORTABLE = 4;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ExternalSemaphoreHandleTypeFlagsKHR: u32 {
+        const OPAQUE_FD = 1;
+        const OPAQUE_WIN32 = 2;
+        const OPAQUE_WIN32_KMT = 4;
+        const D3D12_FENCE = 8;
+        const SYNC_FD = 16;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ExternalSemaphoreFeatureFlagsKHR: u32 {
+        const EXPORTABLE = 1;
+        const IMPORTABLE = 2;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct SemaphoreImportFlagsKHR: u32 {
+        const TEMPORARY = 1;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ExternalFenceHandleTypeFlagsKHR: u32 {
+        const OPAQUE_FD = 1;
+        const OPAQUE_WIN32 = 2;
+        const OPAQUE_WIN32_KMT = 4;
+        const SYNC_FD = 8;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ExternalFenceFeatureFlagsKHR: u32 {
+        const EXPORTABLE = 1;
+        const IMPORTABLE = 2;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct FenceImportFlagsKHR: u32 {
+        const TEMPORARY = 1;
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct DebugReportFlagsEXT: u32 {
+        const INFORMATION = 1;
+        const WARNING = 2;
+        const PERFORMANCE_WARNING = 4;
+        const ERROR = 8;
+        const DEBUG = 16;
+        const FLAG_BITS_MAX_ENUM_EXT = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ExternalMemoryHandleTypeFlagsNV: u32 {
+        const OPAQUE_WIN32 = 1;
+        const OPAQUE_WIN32_KMT = 2;
+        const D3D11_IMAGE = 4;
+        const D3D11_IMAGE_KMT = 8;
+        const FLAG_BITS_MAX_ENUM_NV = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ExternalMemoryFeatureFlagsNV: u32 {
+        const DEDICATED_ONLY = 1;
+        const EXPORTABLE = 2;
+        const IMPORTABLE = 4;
+        const FLAG_BITS_MAX_ENUM_NV = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct PeerMemoryFeatureFlagsKHX: u32 {
+        const COPY_SRC = 1;
+        const COPY_DST = 2;
+        const GENERIC_SRC = 4;
+        const GENERIC_DST = 8;
+        const FLAG_BITS_MAX_ENUM_KHX = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct MemoryAllocateFlagsKHX: u32 {
+        const DEVICE_MASK = 1;
+        const FLAG_BITS_MAX_ENUM_KHX = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct DeviceGroupPresentModeFlagsKHX: u32 {
+        const LOCAL = 1;
+        const REMOTE = 2;
+        const SUM = 4;
+        const LOCAL_MULTI_DEVICE = 8;
+        const FLAG_BITS_MAX_ENUM_KHX = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct IndirectCommandsLayoutUsageFlagsNVX: u32 {
+        const UNORDERED_SEQUENCES = 1;
+        const SPARSE_SEQUENCES = 2;
+        const EMPTY_EXECUTIONS = 4;
+        const INDEXED_SEQUENCES = 8;
+        const FLAG_BITS_MAX_ENUM_NVX = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ObjectEntryUsageFlagsNVX: u32 {
+        const GRAPHICS = 1;
+        const COMPUTE = 2;
+        const FLAG_BITS_MAX_ENUM_NVX = 2147483647;
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct SurfaceCounterFlagsEXT: u32 {
+        const VBLANK_EXT = 1;
+        const FLAG_BITS_MAX_ENUM_EXT = 2147483647;
+    }
+}

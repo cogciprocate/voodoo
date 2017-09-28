@@ -1,236 +1,300 @@
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkSurfaceTransformFlagBitsKHR {
-    VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR = 1,
-    VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR = 2,
-    VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR = 4,
-    VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR = 8,
-    VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR = 16,
-    VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR = 32,
-    VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR = 64,
-    VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR = 128,
-    VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR = 256,
-    VK_SURFACE_TRANSFORM_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkSurfaceTransformFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkCompositeAlphaFlagBitsKHR {
-    VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR = 1,
-    VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR = 2,
-    VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR = 4,
-    VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR = 8,
-    VK_COMPOSITE_ALPHA_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkCompositeAlphaFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkSwapchainCreateFlagBitsKHR {
-    VK_SWAPCHAIN_CREATE_BIND_SFR_BIT_KHX = 1,
-    VK_SWAPCHAIN_CREATE_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkSwapchainCreateFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkDisplayPlaneAlphaFlagBitsKHR {
-    VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR = 1,
-    VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR = 2,
-    VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR = 4,
-    VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR = 8,
-    VK_DISPLAY_PLANE_ALPHA_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkDisplayPlaneAlphaFlagsKHR = VkFlags;
-pub type VkDisplayModeCreateFlagsKHR = VkFlags;
-pub type VkDisplaySurfaceCreateFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkSwapchainCreateFlagBitsKHR {
-    VK_SWAPCHAIN_CREATE_BIND_SFR_BIT_KHX = 1,
-    VK_SWAPCHAIN_CREATE_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkSwapchainCreateFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkDisplayPlaneAlphaFlagBitsKHR {
-    VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR = 1,
-    VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR = 2,
-    VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR = 4,
-    VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR = 8,
-    VK_DISPLAY_PLANE_ALPHA_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkDisplayPlaneAlphaFlagsKHR = VkFlags;
-pub type VkDisplayModeCreateFlagsKHR = VkFlags;
-pub type VkDisplaySurfaceCreateFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkExternalMemoryHandleTypeFlagBitsKHR {
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR = 1,
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR = 2,
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR = 4,
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT_KHR = 8,
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT_KHR = 16,
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT_KHR = 32,
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT_KHR = 64,
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkExternalMemoryHandleTypeFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkExternalMemoryFeatureFlagBitsKHR {
-    VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_KHR = 1,
-    VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_KHR = 2,
-    VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_KHR = 4,
-    VK_EXTERNAL_MEMORY_FEATURE_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkExternalMemoryFeatureFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkExternalSemaphoreHandleTypeFlagBitsKHR {
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR = 1,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR = 2,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR = 4,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT_KHR = 8,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT_KHR = 16,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkExternalSemaphoreHandleTypeFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkExternalSemaphoreFeatureFlagBitsKHR {
-    VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT_KHR = 1,
-    VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT_KHR = 2,
-    VK_EXTERNAL_SEMAPHORE_FEATURE_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkExternalSemaphoreFeatureFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkSemaphoreImportFlagBitsKHR {
-    VK_SEMAPHORE_IMPORT_TEMPORARY_BIT_KHR = 1,
-    VK_SEMAPHORE_IMPORT_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkSemaphoreImportFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkExternalFenceHandleTypeFlagBitsKHR {
-    VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR = 1,
-    VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR = 2,
-    VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR = 4,
-    VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR = 8,
-    VK_EXTERNAL_FENCE_HANDLE_TYPE_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkExternalFenceHandleTypeFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkExternalFenceFeatureFlagBitsKHR {
-    VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT_KHR = 1,
-    VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT_KHR = 2,
-    VK_EXTERNAL_FENCE_FEATURE_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkExternalFenceFeatureFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkFenceImportFlagBitsKHR {
-    VK_FENCE_IMPORT_TEMPORARY_BIT_KHR = 1,
-    VK_FENCE_IMPORT_FLAG_BITS_MAX_ENUM_KHR = 2147483647,
-}
-pub type VkFenceImportFlagsKHR = VkFlags;
-
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkDebugReportFlagBitsEXT {
-    VK_DEBUG_REPORT_INFORMATION_BIT_EXT = 1,
-    VK_DEBUG_REPORT_WARNING_BIT_EXT = 2,
-    VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT = 4,
-    VK_DEBUG_REPORT_ERROR_BIT_EXT = 8,
-    VK_DEBUG_REPORT_DEBUG_BIT_EXT = 16,
-    VK_DEBUG_REPORT_FLAG_BITS_MAX_ENUM_EXT = 2147483647,
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkSurfaceTransformFlagBitsKHR: u32 {
+        const IDENTITY = 1,
+        const ROTATE_90 = 2,
+        const ROTATE_180 = 4,
+        const ROTATE_270 = 8,
+        const HORIZONTAL_MIRROR = 16,
+        const HORIZONTAL_MIRROR_ROTATE_90 = 32,
+        const HORIZONTAL_MIRROR_ROTATE_180 = 64,
+        const HORIZONTAL_MIRROR_ROTATE_270 = 128,
+        const INHERIT = 256,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
 }
 
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkExternalMemoryHandleTypeFlagBitsNV {
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_NV = 1,
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_NV = 2,
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_BIT_NV = 4,
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_KMT_BIT_NV = 8,
-    VK_EXTERNAL_MEMORY_HANDLE_TYPE_FLAG_BITS_MAX_ENUM_NV = 2147483647,
-}
-pub type VkExternalMemoryHandleTypeFlagsNV = VkFlags;
+pub type VkSurfaceTransformFlagsKHR = u32;
 
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkExternalMemoryFeatureFlagBitsNV {
-    VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_NV = 1,
-    VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_NV = 2,
-    VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_NV = 4,
-    VK_EXTERNAL_MEMORY_FEATURE_FLAG_BITS_MAX_ENUM_NV = 2147483647,
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkCompositeAlphaFlagBitsKHR: u32 {
+        const OPAQUE = 1,
+        const PRE_MULTIPLIED = 2,
+        const POST_MULTIPLIED = 4,
+        const INHERIT = 8,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
 }
-pub type VkExternalMemoryFeatureFlagsNV = VkFlags;
 
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkPeerMemoryFeatureFlagBitsKHX {
-    VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT_KHX = 1,
-    VK_PEER_MEMORY_FEATURE_COPY_DST_BIT_KHX = 2,
-    VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT_KHX = 4,
-    VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT_KHX = 8,
-    VK_PEER_MEMORY_FEATURE_FLAG_BITS_MAX_ENUM_KHX = 2147483647,
-}
-pub type VkPeerMemoryFeatureFlagsKHX = VkFlags;
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkMemoryAllocateFlagBitsKHX {
-    VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT_KHX = 1,
-    VK_MEMORY_ALLOCATE_FLAG_BITS_MAX_ENUM_KHX = 2147483647,
-}
-pub type VkMemoryAllocateFlagsKHX = VkFlags;
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkDeviceGroupPresentModeFlagBitsKHX {
-    VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHX = 1,
-    VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHX = 2,
-    VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHX = 4,
-    VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHX = 8,
-    VK_DEVICE_GROUP_PRESENT_MODE_FLAG_BITS_MAX_ENUM_KHX = 2147483647,
-}
-pub type VkDeviceGroupPresentModeFlagsKHX = VkFlags;
+pub type VkCompositeAlphaFlagsKHR = u32;
 
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkIndirectCommandsLayoutUsageFlagBitsNVX {
-    VK_INDIRECT_COMMANDS_LAYOUT_USAGE_UNORDERED_SEQUENCES_BIT_NVX = 1,
-    VK_INDIRECT_COMMANDS_LAYOUT_USAGE_SPARSE_SEQUENCES_BIT_NVX = 2,
-    VK_INDIRECT_COMMANDS_LAYOUT_USAGE_EMPTY_EXECUTIONS_BIT_NVX = 4,
-    VK_INDIRECT_COMMANDS_LAYOUT_USAGE_INDEXED_SEQUENCES_BIT_NVX = 8,
-    VK_INDIRECT_COMMANDS_LAYOUT_USAGE_FLAG_BITS_MAX_ENUM_NVX = 2147483647,
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkSwapchainCreateFlagBitsKHR: u32 {
+        const BIND_SFR = 1,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
 }
-pub type VkIndirectCommandsLayoutUsageFlagsNVX = VkFlags;
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkObjectEntryUsageFlagBitsNVX {
-    VK_OBJECT_ENTRY_USAGE_GRAPHICS_BIT_NVX = 1,
-    VK_OBJECT_ENTRY_USAGE_COMPUTE_BIT_NVX = 2,
-    VK_OBJECT_ENTRY_USAGE_FLAG_BITS_MAX_ENUM_NVX = 2147483647,
-}
-pub type VkObjectEntryUsageFlagsNVX = VkFlags;
 
-#[repr(i32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum VkSurfaceCounterFlagBitsEXT {
-    VK_SURFACE_COUNTER_VBLANK_EXT = 1,
-    VK_SURFACE_COUNTER_FLAG_BITS_MAX_ENUM_EXT = 2147483647,
+pub type VkSwapchainCreateFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkDisplayPlaneAlphaFlagBitsKHR: u32 {
+        const OPAQUE = 1,
+        const GLOBAL = 2,
+        const PER_PIXEL = 4,
+        const PER_PIXEL_PREMULTIPLIED = 8,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
 }
-pub type VkSurfaceCounterFlagsEXT = VkFlags;
+
+pub type VkDisplayPlaneAlphaFlagsKHR = u32;
+pub type VkDisplayModeCreateFlagsKHR = u32;
+pub type VkDisplaySurfaceCreateFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkSwapchainCreateFlagBitsKHR: u32 {
+        const BIND_SFR = 1,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
+    pub type VkSwapchainCreateFlagsKHR = u32;
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkDisplayPlaneAlphaFlagBitsKHR: u32 {
+        const OPAQUE = 1,
+        const GLOBAL = 2,
+        const PER_PIXEL = 4,
+        const PER_PIXEL_PREMULTIPLIED = 8,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
+}
+
+pub type VkDisplayPlaneAlphaFlagsKHR = u32;
+pub type VkDisplayModeCreateFlagsKHR = u32;
+pub type VkDisplaySurfaceCreateFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkExternalMemoryHandleTypeFlagBitsKHR: u32 {
+        const OPAQUE_FD = 1,
+        const OPAQUE_WIN32 = 2,
+        const OPAQUE_WIN32_KMT = 4,
+        const D3D11_TEXTURE = 8,
+        const D3D11_TEXTURE_KMT = 16,
+        const D3D12_HEAP = 32,
+        const D3D12_RESOURCE = 64,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
+}
+
+pub type VkExternalMemoryHandleTypeFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkExternalMemoryFeatureFlagBitsKHR: u32 {
+        const DEDICATED_ONLY = 1,
+        const EXPORTABLE = 2,
+        const IMPORTABLE = 4,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
+}
+
+pub type VkExternalMemoryFeatureFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkExternalSemaphoreHandleTypeFlagBitsKHR: u32 {
+        const OPAQUE_FD = 1,
+        const OPAQUE_WIN32 = 2,
+        const OPAQUE_WIN32_KMT = 4,
+        const D3D12_FENCE = 8,
+        const SYNC_FD = 16,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
+}
+
+pub type VkExternalSemaphoreHandleTypeFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkExternalSemaphoreFeatureFlagBitsKHR: u32 {
+        const EXPORTABLE = 1,
+        const IMPORTABLE = 2,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
+}
+
+pub type VkExternalSemaphoreFeatureFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkSemaphoreImportFlagBitsKHR: u32 {
+        const TEMPORARY = 1,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
+}
+
+pub type VkSemaphoreImportFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkExternalFenceHandleTypeFlagBitsKHR: u32 {
+        const OPAQUE_FD = 1,
+        const OPAQUE_WIN32 = 2,
+        const OPAQUE_WIN32_KMT = 4,
+        const SYNC_FD = 8,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
+}
+pub type VkExternalFenceHandleTypeFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkExternalFenceFeatureFlagBitsKHR: u32 {
+        const EXPORTABLE = 1,
+        const IMPORTABLE = 2,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
+}
+pub type VkExternalFenceFeatureFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkFenceImportFlagBitsKHR: u32 {
+        const TEMPORARY = 1,
+        const FLAG_BITS_MAX_ENUM_KHR = 2147483647,
+    }
+}
+pub type VkFenceImportFlagsKHR = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkDebugReportFlagBitsEXT: u32 {
+        const INFORMATION = 1,
+        const WARNING = 2,
+        const PERFORMANCE_WARNING = 4,
+        const ERROR = 8,
+        const DEBUG = 16,
+        const FLAG_BITS_MAX_ENUM_EXT = 2147483647,
+    }
+}
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkExternalMemoryHandleTypeFlagBitsNV: u32 {
+        const OPAQUE_WIN32 = 1,
+        const OPAQUE_WIN32_KMT = 2,
+        const D3D11_IMAGE = 4,
+        const D3D11_IMAGE_KMT = 8,
+        const FLAG_BITS_MAX_ENUM_NV = 2147483647,
+    }
+}
+pub type VkExternalMemoryHandleTypeFlagsNV = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkExternalMemoryFeatureFlagBitsNV: u32 {
+        const DEDICATED_ONLY = 1,
+        const EXPORTABLE = 2,
+        const IMPORTABLE = 4,
+        const FLAG_BITS_MAX_ENUM_NV = 2147483647,
+    }
+}
+pub type VkExternalMemoryFeatureFlagsNV = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkPeerMemoryFeatureFlagBitsKHX: u32 {
+        const COPY_SRC = 1,
+        const COPY_DST = 2,
+        const GENERIC_SRC = 4,
+        const GENERIC_DST = 8,
+        const FLAG_BITS_MAX_ENUM_KHX = 2147483647,
+    }
+}
+
+pub type VkPeerMemoryFeatureFlagsKHX = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkMemoryAllocateFlagBitsKHX: u32 {
+        const DEVICE_MASK = 1,
+        const FLAG_BITS_MAX_ENUM_KHX = 2147483647,
+    }
+}
+
+pub type VkMemoryAllocateFlagsKHX = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkDeviceGroupPresentModeFlagBitsKHX: u32 {
+        const LOCAL = 1,
+        const REMOTE = 2,
+        const SUM = 4,
+        const LOCAL_MULTI_DEVICE = 8,
+        const FLAG_BITS_MAX_ENUM_KHX = 2147483647,
+    }
+}
+pub type VkDeviceGroupPresentModeFlagsKHX = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkIndirectCommandsLayoutUsageFlagBitsNVX: u32 {
+        const UNORDERED_SEQUENCES = 1,
+        const SPARSE_SEQUENCES = 2,
+        const EMPTY_EXECUTIONS = 4,
+        const INDEXED_SEQUENCES = 8,
+        const FLAG_BITS_MAX_ENUM_NVX = 2147483647,
+    }
+}
+
+pub type VkIndirectCommandsLayoutUsageFlagsNVX = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkObjectEntryUsageFlagBitsNVX: u32 {
+        const GRAPHICS = 1,
+        const COMPUTE = 2,
+        const FLAG_BITS_MAX_ENUM_NVX = 2147483647,
+    }
+}
+
+pub type VkObjectEntryUsageFlagsNVX = u32;
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct VkSurfaceCounterFlagBitsEXT: u32 {
+        const VBLANK_EXT = 1,
+        const FLAG_BITS_MAX_ENUM_EXT = 2147483647,
+    }
+}
+
+pub type VkSurfaceCounterFlagsEXT = u32;
