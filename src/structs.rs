@@ -132,6 +132,7 @@ impl<'a> ApplicationInfo<'a> {
 //     uint32_t                    enabledExtensionCount;
 //     const char* const*          ppEnabledExtensionNames;
 // } VkInstanceCreateInfo;
+#[repr(C)]
 pub struct InstanceCreateInfo/*<'s>*/ {
     pub raw: vks::VkInstanceCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -146,6 +147,7 @@ pub struct InstanceCreateInfo/*<'s>*/ {
 //     PFN_vkInternalAllocationNotification    pfnInternalAllocation;
 //     PFN_vkInternalFreeNotification          pfnInternalFree;
 // } VkAllocationCallbacks;
+#[repr(C)]
 pub struct AllocationCallbacks/*<'s>*/ {
     pub raw: vks::VkAllocationCallbacks,
     // _p: PhantomData<&'s ()>,
@@ -209,6 +211,7 @@ pub struct AllocationCallbacks/*<'s>*/ {
 //     VkBool32    variableMultisampleRate;
 //     VkBool32    inheritedQueries;
 // } VkPhysicalDeviceFeatures;
+#[repr(C)]
 pub struct PhysicalDeviceFeatures/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceFeatures,
     // _p: PhantomData<&'s ()>,
@@ -220,6 +223,7 @@ pub struct PhysicalDeviceFeatures/*<'s>*/ {
 //     VkFormatFeatureFlags    optimalTilingFeatures;
 //     VkFormatFeatureFlags    bufferFeatures;
 // } VkFormatProperties;
+#[repr(C)]
 pub struct FormatProperties/*<'s>*/ {
     pub raw: vks::VkFormatProperties,
     // _p: PhantomData<&'s ()>,
@@ -231,6 +235,7 @@ pub struct FormatProperties/*<'s>*/ {
 //     uint32_t    height;
 //     uint32_t    depth;
 // } VkExtent3D;
+#[repr(C)]
 pub struct Extent3D/*<'s>*/ {
     pub raw: vks::VkExtent3D,
     // _p: PhantomData<&'s ()>,
@@ -244,6 +249,7 @@ pub struct Extent3D/*<'s>*/ {
 //     VkSampleCountFlags    sampleCounts;
 //     VkDeviceSize          maxResourceSize;
 // } VkImageFormatProperties;
+#[repr(C)]
 pub struct ImageFormatProperties/*<'s>*/ {
     pub raw: vks::VkImageFormatProperties,
     // _p: PhantomData<&'s ()>,
@@ -358,6 +364,7 @@ pub struct ImageFormatProperties/*<'s>*/ {
 //     VkDeviceSize          optimalBufferCopyRowPitchAlignment;
 //     VkDeviceSize          nonCoherentAtomSize;
 // } VkPhysicalDeviceLimits;
+#[repr(C)]
 pub struct PhysicalDeviceLimits/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceLimits,
     // _p: PhantomData<&'s ()>,
@@ -371,6 +378,7 @@ pub struct PhysicalDeviceLimits/*<'s>*/ {
 //     VkBool32    residencyAlignedMipSize;
 //     VkBool32    residencyNonResidentStrict;
 // } VkPhysicalDeviceSparseProperties;
+#[repr(C)]
 pub struct PhysicalDeviceSparseProperties/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceSparseProperties,
     // _p: PhantomData<&'s ()>,
@@ -388,6 +396,7 @@ pub struct PhysicalDeviceSparseProperties/*<'s>*/ {
 //     VkPhysicalDeviceLimits              limits;
 //     VkPhysicalDeviceSparseProperties    sparseProperties;
 // } VkPhysicalDeviceProperties;
+#[repr(C)]
 pub struct PhysicalDeviceProperties/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceProperties,
     // _p: PhantomData<&'s ()>,
@@ -400,6 +409,7 @@ pub struct PhysicalDeviceProperties/*<'s>*/ {
 //     uint32_t        timestampValidBits;
 //     VkExtent3D      minImageTransferGranularity;
 // } VkQueueFamilyProperties;
+#[repr(C)]
 pub struct QueueFamilyProperties/*<'s>*/ {
     pub raw: vks::VkQueueFamilyProperties,
     // _p: PhantomData<&'s ()>,
@@ -410,6 +420,7 @@ pub struct QueueFamilyProperties/*<'s>*/ {
 //     VkMemoryPropertyFlags    propertyFlags;
 //     uint32_t                 heapIndex;
 // } VkMemoryType;
+#[repr(C)]
 pub struct MemoryType/*<'s>*/ {
     pub raw: vks::VkMemoryType,
     // _p: PhantomData<&'s ()>,
@@ -420,6 +431,7 @@ pub struct MemoryType/*<'s>*/ {
 //     VkDeviceSize         size;
 //     VkMemoryHeapFlags    flags;
 // } VkMemoryHeap;
+#[repr(C)]
 pub struct MemoryHeap/*<'s>*/ {
     pub raw: vks::VkMemoryHeap,
     // _p: PhantomData<&'s ()>,
@@ -432,6 +444,7 @@ pub struct MemoryHeap/*<'s>*/ {
 //     uint32_t        memoryHeapCount;
 //     VkMemoryHeap    memoryHeaps[VK_MAX_MEMORY_HEAPS];
 // } VkPhysicalDeviceMemoryProperties;
+#[repr(C)]
 pub struct PhysicalDeviceMemoryProperties/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceMemoryProperties,
     // _p: PhantomData<&'s ()>,
@@ -442,6 +455,7 @@ pub struct PhysicalDeviceMemoryProperties/*<'s>*/ {
 ///
 // #[repr(C)]
 // #[derive(Debug, Copy, Clone)]
+// #[repr(C)]
 // pub struct VkDeviceQueueCreateInfo {
 //     pub sType: VkStructureType,
 //     pub pNext: *const c_void,
@@ -511,6 +525,7 @@ impl<'ci> DeviceQueueCreateInfo<'ci> {
 //     const char* const*                 ppEnabledExtensionNames;
 //     const VkPhysicalDeviceFeatures*    pEnabledFeatures;
 // } VkDeviceCreateInfo;
+#[repr(C)]
 pub struct DeviceCreateInfo/*<'s>*/ {
     pub raw: vks::VkDeviceCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -521,6 +536,7 @@ pub struct DeviceCreateInfo/*<'s>*/ {
 //     char        extensionName[VK_MAX_EXTENSION_NAME_SIZE];
 //     uint32_t    specVersion;
 // } VkExtensionProperties;
+#[repr(C)]
 pub struct ExtensionProperties/*<'s>*/ {
     pub raw: vks::VkExtensionProperties,
     // _p: PhantomData<&'s ()>,
@@ -533,6 +549,7 @@ pub struct ExtensionProperties/*<'s>*/ {
 //     uint32_t    implementationVersion;
 //     char        description[VK_MAX_DESCRIPTION_SIZE];
 // } VkLayerProperties;
+#[repr(C)]
 pub struct LayerProperties/*<'s>*/ {
     pub raw: vks::VkLayerProperties,
     // _p: PhantomData<&'s ()>,
@@ -550,6 +567,7 @@ pub struct LayerProperties/*<'s>*/ {
 //     uint32_t                       signalSemaphoreCount;
 //     const VkSemaphore*             pSignalSemaphores;
 // } VkSubmitInfo;
+#[repr(C)]
 pub struct SubmitInfo/*<'s>*/ {
     pub raw: vks::VkSubmitInfo,
     // _p: PhantomData<&'s ()>,
@@ -562,6 +580,7 @@ pub struct SubmitInfo/*<'s>*/ {
 //     VkDeviceSize       allocationSize;
 //     uint32_t           memoryTypeIndex;
 // } VkMemoryAllocateInfo;
+#[repr(C)]
 pub struct MemoryAllocateInfo/*<'s>*/ {
     pub raw: vks::VkMemoryAllocateInfo,
     // _p: PhantomData<&'s ()>,
@@ -575,6 +594,7 @@ pub struct MemoryAllocateInfo/*<'s>*/ {
 //     VkDeviceSize       offset;
 //     VkDeviceSize       size;
 // } VkMappedMemoryRange;
+#[repr(C)]
 pub struct MappedMemoryRange/*<'s>*/ {
     pub raw: vks::VkMappedMemoryRange,
     // _p: PhantomData<&'s ()>,
@@ -586,6 +606,7 @@ pub struct MappedMemoryRange/*<'s>*/ {
 //     VkDeviceSize    alignment;
 //     uint32_t        memoryTypeBits;
 // } VkMemoryRequirements;
+#[repr(C)]
 pub struct MemoryRequirements/*<'s>*/ {
     pub raw: vks::VkMemoryRequirements,
     // _p: PhantomData<&'s ()>,
@@ -597,6 +618,7 @@ pub struct MemoryRequirements/*<'s>*/ {
 //     VkExtent3D                  imageGranularity;
 //     VkSparseImageFormatFlags    flags;
 // } VkSparseImageFormatProperties;
+#[repr(C)]
 pub struct SparseImageFormatProperties/*<'s>*/ {
     pub raw: vks::VkSparseImageFormatProperties,
     // _p: PhantomData<&'s ()>,
@@ -610,6 +632,7 @@ pub struct SparseImageFormatProperties/*<'s>*/ {
 //     VkDeviceSize                     imageMipTailOffset;
 //     VkDeviceSize                     imageMipTailStride;
 // } VkSparseImageMemoryRequirements;
+#[repr(C)]
 pub struct SparseImageMemoryRequirements/*<'s>*/ {
     pub raw: vks::VkSparseImageMemoryRequirements,
     // _p: PhantomData<&'s ()>,
@@ -623,6 +646,7 @@ pub struct SparseImageMemoryRequirements/*<'s>*/ {
 //     VkDeviceSize               memoryOffset;
 //     VkSparseMemoryBindFlags    flags;
 // } VkSparseMemoryBind;
+#[repr(C)]
 pub struct SparseMemoryBind/*<'s>*/ {
     pub raw: vks::VkSparseMemoryBind,
     // _p: PhantomData<&'s ()>,
@@ -634,6 +658,7 @@ pub struct SparseMemoryBind/*<'s>*/ {
 //     uint32_t                     bindCount;
 //     const VkSparseMemoryBind*    pBinds;
 // } VkSparseBufferMemoryBindInfo;
+#[repr(C)]
 pub struct SparseBufferMemoryBindInfo/*<'s>*/ {
     pub raw: vks::VkSparseBufferMemoryBindInfo,
     // _p: PhantomData<&'s ()>,
@@ -645,6 +670,7 @@ pub struct SparseBufferMemoryBindInfo/*<'s>*/ {
 //     uint32_t                     bindCount;
 //     const VkSparseMemoryBind*    pBinds;
 // } VkSparseImageOpaqueMemoryBindInfo;
+#[repr(C)]
 pub struct SparseImageOpaqueMemoryBindInfo/*<'s>*/ {
     pub raw: vks::VkSparseImageOpaqueMemoryBindInfo,
     // _p: PhantomData<&'s ()>,
@@ -656,6 +682,7 @@ pub struct SparseImageOpaqueMemoryBindInfo/*<'s>*/ {
 //     uint32_t              mipLevel;
 //     uint32_t              arrayLayer;
 // } VkImageSubresource;
+#[repr(C)]
 pub struct ImageSubresource/*<'s>*/ {
     pub raw: vks::VkImageSubresource,
     // _p: PhantomData<&'s ()>,
@@ -667,6 +694,7 @@ pub struct ImageSubresource/*<'s>*/ {
 //     int32_t    y;
 //     int32_t    z;
 // } VkOffset3D;
+#[repr(C)]
 pub struct Offset3D/*<'s>*/ {
     pub raw: vks::VkOffset3D,
     // _p: PhantomData<&'s ()>,
@@ -681,6 +709,7 @@ pub struct Offset3D/*<'s>*/ {
 //     VkDeviceSize               memoryOffset;
 //     VkSparseMemoryBindFlags    flags;
 // } VkSparseImageMemoryBind;
+#[repr(C)]
 pub struct SparseImageMemoryBind/*<'s>*/ {
     pub raw: vks::VkSparseImageMemoryBind,
     // _p: PhantomData<&'s ()>,
@@ -692,6 +721,7 @@ pub struct SparseImageMemoryBind/*<'s>*/ {
 //     uint32_t                          bindCount;
 //     const VkSparseImageMemoryBind*    pBinds;
 // } VkSparseImageMemoryBindInfo;
+#[repr(C)]
 pub struct SparseImageMemoryBindInfo/*<'s>*/ {
     pub raw: vks::VkSparseImageMemoryBindInfo,
     // _p: PhantomData<&'s ()>,
@@ -712,6 +742,7 @@ pub struct SparseImageMemoryBindInfo/*<'s>*/ {
 //     uint32_t                                    signalSemaphoreCount;
 //     const VkSemaphore*                          pSignalSemaphores;
 // } VkBindSparseInfo;
+#[repr(C)]
 pub struct BindSparseInfo/*<'s>*/ {
     pub raw: vks::VkBindSparseInfo,
     // _p: PhantomData<&'s ()>,
@@ -723,6 +754,7 @@ pub struct BindSparseInfo/*<'s>*/ {
 //     const void*           pNext;
 //     VkFenceCreateFlags    flags;
 // } VkFenceCreateInfo;
+#[repr(C)]
 pub struct FenceCreateInfo/*<'s>*/ {
     pub raw: vks::VkFenceCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -734,6 +766,7 @@ pub struct FenceCreateInfo/*<'s>*/ {
 //     const void*               pNext;
 //     VkSemaphoreCreateFlags    flags;
 // } VkSemaphoreCreateInfo;
+#[repr(C)]
 pub struct SemaphoreCreateInfo/*<'s>*/ {
     pub raw: vks::VkSemaphoreCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -745,6 +778,7 @@ pub struct SemaphoreCreateInfo/*<'s>*/ {
 //     const void*           pNext;
 //     VkEventCreateFlags    flags;
 // } VkEventCreateInfo;
+#[repr(C)]
 pub struct EventCreateInfo/*<'s>*/ {
     pub raw: vks::VkEventCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -759,6 +793,7 @@ pub struct EventCreateInfo/*<'s>*/ {
 //     uint32_t                         queryCount;
 //     VkQueryPipelineStatisticFlags    pipelineStatistics;
 // } VkQueryPoolCreateInfo;
+#[repr(C)]
 pub struct QueryPoolCreateInfo/*<'s>*/ {
     pub raw: vks::VkQueryPoolCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -775,6 +810,7 @@ pub struct QueryPoolCreateInfo/*<'s>*/ {
 //     uint32_t               queueFamilyIndexCount;
 //     const uint32_t*        pQueueFamilyIndices;
 // } VkBufferCreateInfo;
+#[repr(C)]
 pub struct BufferCreateInfo/*<'s>*/ {
     pub raw: vks::VkBufferCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -790,6 +826,7 @@ pub struct BufferCreateInfo/*<'s>*/ {
 //     VkDeviceSize               offset;
 //     VkDeviceSize               range;
 // } VkBufferViewCreateInfo;
+#[repr(C)]
 pub struct BufferViewCreateInfo/*<'s>*/ {
     pub raw: vks::VkBufferViewCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -813,6 +850,7 @@ pub struct BufferViewCreateInfo/*<'s>*/ {
 //     const uint32_t*          pQueueFamilyIndices;
 //     VkImageLayout            initialLayout;
 // } VkImageCreateInfo;
+#[repr(C)]
 pub struct ImageCreateInfo/*<'s>*/ {
     pub raw: vks::VkImageCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -826,6 +864,7 @@ pub struct ImageCreateInfo/*<'s>*/ {
 //     VkDeviceSize    arrayPitch;
 //     VkDeviceSize    depthPitch;
 // } VkSubresourceLayout;
+#[repr(C)]
 pub struct SubresourceLayout/*<'s>*/ {
     pub raw: vks::VkSubresourceLayout,
     // _p: PhantomData<&'s ()>,
@@ -838,6 +877,7 @@ pub struct SubresourceLayout/*<'s>*/ {
 //     VkComponentSwizzle    b;
 //     VkComponentSwizzle    a;
 // } VkComponentMapping;
+#[repr(C)]
 pub struct ComponentMapping/*<'s>*/ {
     pub raw: vks::VkComponentMapping,
     // _p: PhantomData<&'s ()>,
@@ -851,6 +891,7 @@ pub struct ComponentMapping/*<'s>*/ {
 //     uint32_t              baseArrayLayer;
 //     uint32_t              layerCount;
 // } VkImageSubresourceRange;
+#[repr(C)]
 pub struct ImageSubresourceRange/*<'s>*/ {
     pub raw: vks::VkImageSubresourceRange,
     // _p: PhantomData<&'s ()>,
@@ -867,6 +908,7 @@ pub struct ImageSubresourceRange/*<'s>*/ {
 //     VkComponentMapping         components;
 //     VkImageSubresourceRange    subresourceRange;
 // } VkImageViewCreateInfo;
+#[repr(C)]
 pub struct ImageViewCreateInfo/*<'s>*/ {
     pub raw: vks::VkImageViewCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -880,6 +922,7 @@ pub struct ImageViewCreateInfo/*<'s>*/ {
 //     size_t                       codeSize;
 //     const uint32_t*              pCode;
 // } VkShaderModuleCreateInfo;
+#[repr(C)]
 pub struct ShaderModuleCreateInfo/*<'s>*/ {
     pub raw: vks::VkShaderModuleCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -893,6 +936,7 @@ pub struct ShaderModuleCreateInfo/*<'s>*/ {
 //     size_t                        initialDataSize;
 //     const void*                   pInitialData;
 // } VkPipelineCacheCreateInfo;
+#[repr(C)]
 pub struct PipelineCacheCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineCacheCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -904,6 +948,7 @@ pub struct PipelineCacheCreateInfo/*<'s>*/ {
 //     uint32_t    offset;
 //     size_t      size;
 // } VkSpecializationMapEntry;
+#[repr(C)]
 pub struct SpecializationMapEntry/*<'s>*/ {
     pub raw: vks::VkSpecializationMapEntry,
     // _p: PhantomData<&'s ()>,
@@ -916,6 +961,7 @@ pub struct SpecializationMapEntry/*<'s>*/ {
 //     size_t                             dataSize;
 //     const void*                        pData;
 // } VkSpecializationInfo;
+#[repr(C)]
 pub struct SpecializationInfo/*<'s>*/ {
     pub raw: vks::VkSpecializationInfo,
     // _p: PhantomData<&'s ()>,
@@ -931,6 +977,7 @@ pub struct SpecializationInfo/*<'s>*/ {
 //     const char*                         pName;
 //     const VkSpecializationInfo*         pSpecializationInfo;
 // } VkPipelineShaderStageCreateInfo;
+#[repr(C)]
 pub struct PipelineShaderStageCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineShaderStageCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -942,6 +989,7 @@ pub struct PipelineShaderStageCreateInfo/*<'s>*/ {
 //     uint32_t             stride;
 //     VkVertexInputRate    inputRate;
 // } VkVertexInputBindingDescription;
+#[repr(C)]
 pub struct VertexInputBindingDescription/*<'s>*/ {
     pub raw: vks::VkVertexInputBindingDescription,
     // _p: PhantomData<&'s ()>,
@@ -954,6 +1002,7 @@ pub struct VertexInputBindingDescription/*<'s>*/ {
 //     VkFormat    format;
 //     uint32_t    offset;
 // } VkVertexInputAttributeDescription;
+#[repr(C)]
 pub struct VertexInputAttributeDescription/*<'s>*/ {
     pub raw: vks::VkVertexInputAttributeDescription,
     // _p: PhantomData<&'s ()>,
@@ -969,6 +1018,7 @@ pub struct VertexInputAttributeDescription/*<'s>*/ {
 //     uint32_t                                    vertexAttributeDescriptionCount;
 //     const VkVertexInputAttributeDescription*    pVertexAttributeDescriptions;
 // } VkPipelineVertexInputStateCreateInfo;
+#[repr(C)]
 pub struct PipelineVertexInputStateCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineVertexInputStateCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -982,6 +1032,7 @@ pub struct PipelineVertexInputStateCreateInfo/*<'s>*/ {
 //     VkPrimitiveTopology                        topology;
 //     VkBool32                                   primitiveRestartEnable;
 // } VkPipelineInputAssemblyStateCreateInfo;
+#[repr(C)]
 pub struct PipelineInputAssemblyStateCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineInputAssemblyStateCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -994,6 +1045,7 @@ pub struct PipelineInputAssemblyStateCreateInfo/*<'s>*/ {
 //     VkPipelineTessellationStateCreateFlags    flags;
 //     uint32_t                                  patchControlPoints;
 // } VkPipelineTessellationStateCreateInfo;
+#[repr(C)]
 pub struct PipelineTessellationStateCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineTessellationStateCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1008,6 +1060,7 @@ pub struct PipelineTessellationStateCreateInfo/*<'s>*/ {
 //     float    minDepth;
 //     float    maxDepth;
 // } VkViewport;
+#[repr(C)]
 pub struct Viewport/*<'s>*/ {
     pub raw: vks::VkViewport,
     // _p: PhantomData<&'s ()>,
@@ -1018,6 +1071,7 @@ pub struct Viewport/*<'s>*/ {
 //     int32_t    x;
 //     int32_t    y;
 // } VkOffset2D;
+#[repr(C)]
 pub struct Offset2D/*<'s>*/ {
     pub raw: vks::VkOffset2D,
     // _p: PhantomData<&'s ()>,
@@ -1028,6 +1082,7 @@ pub struct Offset2D/*<'s>*/ {
 //     uint32_t    width;
 //     uint32_t    height;
 // } VkExtent2D;
+#[repr(C)]
 pub struct Extent2D/*<'s>*/ {
     pub raw: vks::VkExtent2D,
     // _p: PhantomData<&'s ()>,
@@ -1038,6 +1093,7 @@ pub struct Extent2D/*<'s>*/ {
 //     VkOffset2D    offset;
 //     VkExtent2D    extent;
 // } VkRect2D;
+#[repr(C)]
 pub struct Rect2D/*<'s>*/ {
     pub raw: vks::VkRect2D,
     // _p: PhantomData<&'s ()>,
@@ -1053,6 +1109,7 @@ pub struct Rect2D/*<'s>*/ {
 //     uint32_t                              scissorCount;
 //     const VkRect2D*                       pScissors;
 // } VkPipelineViewportStateCreateInfo;
+#[repr(C)]
 pub struct PipelineViewportStateCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineViewportStateCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1074,6 +1131,7 @@ pub struct PipelineViewportStateCreateInfo/*<'s>*/ {
 //     float                                      depthBiasSlopeFactor;
 //     float                                      lineWidth;
 // } VkPipelineRasterizationStateCreateInfo;
+#[repr(C)]
 pub struct PipelineRasterizationStateCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineRasterizationStateCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1091,6 +1149,7 @@ pub struct PipelineRasterizationStateCreateInfo/*<'s>*/ {
 //     VkBool32                                 alphaToCoverageEnable;
 //     VkBool32                                 alphaToOneEnable;
 // } VkPipelineMultisampleStateCreateInfo;
+#[repr(C)]
 pub struct PipelineMultisampleStateCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineMultisampleStateCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1106,6 +1165,7 @@ pub struct PipelineMultisampleStateCreateInfo/*<'s>*/ {
 //     uint32_t       writeMask;
 //     uint32_t       reference;
 // } VkStencilOpState;
+#[repr(C)]
 pub struct StencilOpState/*<'s>*/ {
     pub raw: vks::VkStencilOpState,
     // _p: PhantomData<&'s ()>,
@@ -1126,6 +1186,7 @@ pub struct StencilOpState/*<'s>*/ {
 //     float                                     minDepthBounds;
 //     float                                     maxDepthBounds;
 // } VkPipelineDepthStencilStateCreateInfo;
+#[repr(C)]
 pub struct PipelineDepthStencilStateCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineDepthStencilStateCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1142,6 +1203,7 @@ pub struct PipelineDepthStencilStateCreateInfo/*<'s>*/ {
 //     VkBlendOp                alphaBlendOp;
 //     VkColorComponentFlags    colorWriteMask;
 // } VkPipelineColorBlendAttachmentState;
+#[repr(C)]
 pub struct PipelineColorBlendAttachmentState/*<'s>*/ {
     pub raw: vks::VkPipelineColorBlendAttachmentState,
     // _p: PhantomData<&'s ()>,
@@ -1158,6 +1220,7 @@ pub struct PipelineColorBlendAttachmentState/*<'s>*/ {
 //     const VkPipelineColorBlendAttachmentState*    pAttachments;
 //     float                                         blendConstants[4];
 // } VkPipelineColorBlendStateCreateInfo;
+#[repr(C)]
 pub struct PipelineColorBlendStateCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineColorBlendStateCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1171,6 +1234,7 @@ pub struct PipelineColorBlendStateCreateInfo/*<'s>*/ {
 //     uint32_t                             dynamicStateCount;
 //     const VkDynamicState*                pDynamicStates;
 // } VkPipelineDynamicStateCreateInfo;
+#[repr(C)]
 pub struct PipelineDynamicStateCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineDynamicStateCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1198,6 +1262,7 @@ pub struct PipelineDynamicStateCreateInfo/*<'s>*/ {
 //     VkPipeline                                       basePipelineHandle;
 //     int32_t                                          basePipelineIndex;
 // } VkGraphicsPipelineCreateInfo;
+#[repr(C)]
 pub struct GraphicsPipelineCreateInfo/*<'s>*/ {
     pub raw: vks::VkGraphicsPipelineCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1213,6 +1278,7 @@ pub struct GraphicsPipelineCreateInfo/*<'s>*/ {
 //     VkPipeline                         basePipelineHandle;
 //     int32_t                            basePipelineIndex;
 // } VkComputePipelineCreateInfo;
+#[repr(C)]
 pub struct ComputePipelineCreateInfo/*<'s>*/ {
     pub raw: vks::VkComputePipelineCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1224,6 +1290,7 @@ pub struct ComputePipelineCreateInfo/*<'s>*/ {
 //     uint32_t              offset;
 //     uint32_t              size;
 // } VkPushConstantRange;
+#[repr(C)]
 pub struct PushConstantRange/*<'s>*/ {
     pub raw: vks::VkPushConstantRange,
     // _p: PhantomData<&'s ()>,
@@ -1239,6 +1306,7 @@ pub struct PushConstantRange/*<'s>*/ {
 //     uint32_t                        pushConstantRangeCount;
 //     const VkPushConstantRange*      pPushConstantRanges;
 // } VkPipelineLayoutCreateInfo;
+#[repr(C)]
 pub struct PipelineLayoutCreateInfo/*<'s>*/ {
     pub raw: vks::VkPipelineLayoutCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1265,6 +1333,7 @@ pub struct PipelineLayoutCreateInfo/*<'s>*/ {
 //     VkBorderColor           borderColor;
 //     VkBool32                unnormalizedCoordinates;
 // } VkSamplerCreateInfo;
+#[repr(C)]
 pub struct SamplerCreateInfo/*<'s>*/ {
     pub raw: vks::VkSamplerCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1278,6 +1347,7 @@ pub struct SamplerCreateInfo/*<'s>*/ {
 //     VkShaderStageFlags    stageFlags;
 //     const VkSampler*      pImmutableSamplers;
 // } VkDescriptorSetLayoutBinding;
+#[repr(C)]
 pub struct DescriptorSetLayoutBinding/*<'s>*/ {
     pub raw: vks::VkDescriptorSetLayoutBinding,
     // _p: PhantomData<&'s ()>,
@@ -1291,6 +1361,7 @@ pub struct DescriptorSetLayoutBinding/*<'s>*/ {
 //     uint32_t                               bindingCount;
 //     const VkDescriptorSetLayoutBinding*    pBindings;
 // } VkDescriptorSetLayoutCreateInfo;
+#[repr(C)]
 pub struct DescriptorSetLayoutCreateInfo/*<'s>*/ {
     pub raw: vks::VkDescriptorSetLayoutCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1301,6 +1372,7 @@ pub struct DescriptorSetLayoutCreateInfo/*<'s>*/ {
 //     VkDescriptorType    type;
 //     uint32_t            descriptorCount;
 // } VkDescriptorPoolSize;
+#[repr(C)]
 pub struct DescriptorPoolSize/*<'s>*/ {
     pub raw: vks::VkDescriptorPoolSize,
     // _p: PhantomData<&'s ()>,
@@ -1315,6 +1387,7 @@ pub struct DescriptorPoolSize/*<'s>*/ {
 //     uint32_t                       poolSizeCount;
 //     const VkDescriptorPoolSize*    pPoolSizes;
 // } VkDescriptorPoolCreateInfo;
+#[repr(C)]
 pub struct DescriptorPoolCreateInfo/*<'s>*/ {
     pub raw: vks::VkDescriptorPoolCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1328,6 +1401,7 @@ pub struct DescriptorPoolCreateInfo/*<'s>*/ {
 //     uint32_t                        descriptorSetCount;
 //     const VkDescriptorSetLayout*    pSetLayouts;
 // } VkDescriptorSetAllocateInfo;
+#[repr(C)]
 pub struct DescriptorSetAllocateInfo/*<'s>*/ {
     pub raw: vks::VkDescriptorSetAllocateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1339,6 +1413,7 @@ pub struct DescriptorSetAllocateInfo/*<'s>*/ {
 //     VkImageView      imageView;
 //     VkImageLayout    imageLayout;
 // } VkDescriptorImageInfo;
+#[repr(C)]
 pub struct DescriptorImageInfo/*<'s>*/ {
     pub raw: vks::VkDescriptorImageInfo,
     // _p: PhantomData<&'s ()>,
@@ -1350,6 +1425,7 @@ pub struct DescriptorImageInfo/*<'s>*/ {
 //     VkDeviceSize    offset;
 //     VkDeviceSize    range;
 // } VkDescriptorBufferInfo;
+#[repr(C)]
 pub struct DescriptorBufferInfo/*<'s>*/ {
     pub raw: vks::VkDescriptorBufferInfo,
     // _p: PhantomData<&'s ()>,
@@ -1368,6 +1444,7 @@ pub struct DescriptorBufferInfo/*<'s>*/ {
 //     const VkDescriptorBufferInfo*    pBufferInfo;
 //     const VkBufferView*              pTexelBufferView;
 // } VkWriteDescriptorSet;
+#[repr(C)]
 pub struct WriteDescriptorSet/*<'s>*/ {
     pub raw: vks::VkWriteDescriptorSet,
     // _p: PhantomData<&'s ()>,
@@ -1385,6 +1462,7 @@ pub struct WriteDescriptorSet/*<'s>*/ {
 //     uint32_t           dstArrayElement;
 //     uint32_t           descriptorCount;
 // } VkCopyDescriptorSet;
+#[repr(C)]
 pub struct CopyDescriptorSet/*<'s>*/ {
     pub raw: vks::VkCopyDescriptorSet,
     // _p: PhantomData<&'s ()>,
@@ -1402,6 +1480,7 @@ pub struct CopyDescriptorSet/*<'s>*/ {
 //     uint32_t                    height;
 //     uint32_t                    layers;
 // } VkFramebufferCreateInfo;
+#[repr(C)]
 pub struct FramebufferCreateInfo/*<'s>*/ {
     pub raw: vks::VkFramebufferCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1419,6 +1498,7 @@ pub struct FramebufferCreateInfo/*<'s>*/ {
 //     VkImageLayout                   initialLayout;
 //     VkImageLayout                   finalLayout;
 // } VkAttachmentDescription;
+#[repr(C)]
 pub struct AttachmentDescription/*<'s>*/ {
     pub raw: vks::VkAttachmentDescription,
     // _p: PhantomData<&'s ()>,
@@ -1429,6 +1509,7 @@ pub struct AttachmentDescription/*<'s>*/ {
 //     uint32_t         attachment;
 //     VkImageLayout    layout;
 // } VkAttachmentReference;
+#[repr(C)]
 pub struct AttachmentReference/*<'s>*/ {
     pub raw: vks::VkAttachmentReference,
     // _p: PhantomData<&'s ()>,
@@ -1447,6 +1528,7 @@ pub struct AttachmentReference/*<'s>*/ {
 //     uint32_t                        preserveAttachmentCount;
 //     const uint32_t*                 pPreserveAttachments;
 // } VkSubpassDescription;
+#[repr(C)]
 pub struct SubpassDescription/*<'s>*/ {
     pub raw: vks::VkSubpassDescription,
     // _p: PhantomData<&'s ()>,
@@ -1462,6 +1544,7 @@ pub struct SubpassDescription/*<'s>*/ {
 //     VkAccessFlags           dstAccessMask;
 //     VkDependencyFlags       dependencyFlags;
 // } VkSubpassDependency;
+#[repr(C)]
 pub struct SubpassDependency/*<'s>*/ {
     pub raw: vks::VkSubpassDependency,
     // _p: PhantomData<&'s ()>,
@@ -1479,6 +1562,7 @@ pub struct SubpassDependency/*<'s>*/ {
 //     uint32_t                          dependencyCount;
 //     const VkSubpassDependency*        pDependencies;
 // } VkRenderPassCreateInfo;
+#[repr(C)]
 pub struct RenderPassCreateInfo/*<'s>*/ {
     pub raw: vks::VkRenderPassCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1491,6 +1575,7 @@ pub struct RenderPassCreateInfo/*<'s>*/ {
 //     VkCommandPoolCreateFlags    flags;
 //     uint32_t                    queueFamilyIndex;
 // } VkCommandPoolCreateInfo;
+#[repr(C)]
 pub struct CommandPoolCreateInfo/*<'s>*/ {
     pub raw: vks::VkCommandPoolCreateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1504,6 +1589,7 @@ pub struct CommandPoolCreateInfo/*<'s>*/ {
 //     VkCommandBufferLevel    level;
 //     uint32_t                commandBufferCount;
 // } VkCommandBufferAllocateInfo;
+#[repr(C)]
 pub struct CommandBufferAllocateInfo/*<'s>*/ {
     pub raw: vks::VkCommandBufferAllocateInfo,
     // _p: PhantomData<&'s ()>,
@@ -1520,6 +1606,7 @@ pub struct CommandBufferAllocateInfo/*<'s>*/ {
 //     VkQueryControlFlags              queryFlags;
 //     VkQueryPipelineStatisticFlags    pipelineStatistics;
 // } VkCommandBufferInheritanceInfo;
+#[repr(C)]
 pub struct CommandBufferInheritanceInfo/*<'s>*/ {
     pub raw: vks::VkCommandBufferInheritanceInfo,
     // _p: PhantomData<&'s ()>,
@@ -1532,6 +1619,7 @@ pub struct CommandBufferInheritanceInfo/*<'s>*/ {
 //     VkCommandBufferUsageFlags                flags;
 //     const VkCommandBufferInheritanceInfo*    pInheritanceInfo;
 // } VkCommandBufferBeginInfo;
+#[repr(C)]
 pub struct CommandBufferBeginInfo/*<'s>*/ {
     pub raw: vks::VkCommandBufferBeginInfo,
     // _p: PhantomData<&'s ()>,
@@ -1543,6 +1631,7 @@ pub struct CommandBufferBeginInfo/*<'s>*/ {
 //     VkDeviceSize    dstOffset;
 //     VkDeviceSize    size;
 // } VkBufferCopy;
+#[repr(C)]
 pub struct BufferCopy/*<'s>*/ {
     pub raw: vks::VkBufferCopy,
     // _p: PhantomData<&'s ()>,
@@ -1555,6 +1644,7 @@ pub struct BufferCopy/*<'s>*/ {
 //     uint32_t              baseArrayLayer;
 //     uint32_t              layerCount;
 // } VkImageSubresourceLayers;
+#[repr(C)]
 pub struct ImageSubresourceLayers/*<'s>*/ {
     pub raw: vks::VkImageSubresourceLayers,
     // _p: PhantomData<&'s ()>,
@@ -1568,6 +1658,7 @@ pub struct ImageSubresourceLayers/*<'s>*/ {
 //     VkOffset3D                  dstOffset;
 //     VkExtent3D                  extent;
 // } VkImageCopy;
+#[repr(C)]
 pub struct ImageCopy/*<'s>*/ {
     pub raw: vks::VkImageCopy,
     // _p: PhantomData<&'s ()>,
@@ -1580,6 +1671,7 @@ pub struct ImageCopy/*<'s>*/ {
 //     VkImageSubresourceLayers    dstSubresource;
 //     VkOffset3D                  dstOffsets[2];
 // } VkImageBlit;
+#[repr(C)]
 pub struct ImageBlit/*<'s>*/ {
     pub raw: vks::VkImageBlit,
     // _p: PhantomData<&'s ()>,
@@ -1594,6 +1686,7 @@ pub struct ImageBlit/*<'s>*/ {
 //     VkOffset3D                  imageOffset;
 //     VkExtent3D                  imageExtent;
 // } VkBufferImageCopy;
+#[repr(C)]
 pub struct BufferImageCopy/*<'s>*/ {
     pub raw: vks::VkBufferImageCopy,
     // _p: PhantomData<&'s ()>,
@@ -1616,6 +1709,7 @@ pub enum ClearColorValue {
 //     float       depth;
 //     uint32_t    stencil;
 // } VkClearDepthStencilValue;
+#[repr(C)]
 pub struct ClearDepthStencilValue/*<'s>*/ {
     pub raw: vks::VkClearDepthStencilValue,
     // _p: PhantomData<&'s ()>,
@@ -1636,6 +1730,7 @@ pub enum ClearValue/*<'s>*/ {
 //     uint32_t              colorAttachment;
 //     VkClearValue          clearValue;
 // } VkClearAttachment;
+#[repr(C)]
 pub struct ClearAttachment/*<'s>*/ {
     pub raw: vks::VkClearAttachment,
     // _p: PhantomData<&'s ()>,
@@ -1647,6 +1742,7 @@ pub struct ClearAttachment/*<'s>*/ {
 //     uint32_t    baseArrayLayer;
 //     uint32_t    layerCount;
 // } VkClearRect;
+#[repr(C)]
 pub struct ClearRect/*<'s>*/ {
     pub raw: vks::VkClearRect,
     // _p: PhantomData<&'s ()>,
@@ -1660,6 +1756,7 @@ pub struct ClearRect/*<'s>*/ {
 //     VkOffset3D                  dstOffset;
 //     VkExtent3D                  extent;
 // } VkImageResolve;
+#[repr(C)]
 pub struct ImageResolve/*<'s>*/ {
     pub raw: vks::VkImageResolve,
     // _p: PhantomData<&'s ()>,
@@ -1672,6 +1769,7 @@ pub struct ImageResolve/*<'s>*/ {
 //     VkAccessFlags      srcAccessMask;
 //     VkAccessFlags      dstAccessMask;
 // } VkMemoryBarrier;
+#[repr(C)]
 pub struct MemoryBarrier/*<'s>*/ {
     pub raw: vks::VkMemoryBarrier,
     // _p: PhantomData<&'s ()>,
@@ -1689,6 +1787,7 @@ pub struct MemoryBarrier/*<'s>*/ {
 //     VkDeviceSize       offset;
 //     VkDeviceSize       size;
 // } VkBufferMemoryBarrier;
+#[repr(C)]
 pub struct BufferMemoryBarrier/*<'s>*/ {
     pub raw: vks::VkBufferMemoryBarrier,
     // _p: PhantomData<&'s ()>,
@@ -1707,6 +1806,7 @@ pub struct BufferMemoryBarrier/*<'s>*/ {
 //     VkImage                    image;
 //     VkImageSubresourceRange    subresourceRange;
 // } VkImageMemoryBarrier;
+#[repr(C)]
 pub struct ImageMemoryBarrier/*<'s>*/ {
     pub raw: vks::VkImageMemoryBarrier,
     // _p: PhantomData<&'s ()>,
@@ -1722,6 +1822,7 @@ pub struct ImageMemoryBarrier/*<'s>*/ {
 //     uint32_t               clearValueCount;
 //     const VkClearValue*    pClearValues;
 // } VkRenderPassBeginInfo;
+#[repr(C)]
 pub struct RenderPassBeginInfo/*<'s>*/ {
     pub raw: vks::VkRenderPassBeginInfo,
     // _p: PhantomData<&'s ()>,
@@ -1733,6 +1834,7 @@ pub struct RenderPassBeginInfo/*<'s>*/ {
 //     uint32_t    y;
 //     uint32_t    z;
 // } VkDispatchIndirectCommand;
+#[repr(C)]
 pub struct DispatchIndirectCommand/*<'s>*/ {
     pub raw: vks::VkDispatchIndirectCommand,
     // _p: PhantomData<&'s ()>,
@@ -1746,6 +1848,7 @@ pub struct DispatchIndirectCommand/*<'s>*/ {
 //     int32_t     vertexOffset;
 //     uint32_t    firstInstance;
 // } VkDrawIndexedIndirectCommand;
+#[repr(C)]
 pub struct DrawIndexedIndirectCommand/*<'s>*/ {
     pub raw: vks::VkDrawIndexedIndirectCommand,
     // _p: PhantomData<&'s ()>,
@@ -1758,27 +1861,64 @@ pub struct DrawIndexedIndirectCommand/*<'s>*/ {
 //     uint32_t    firstVertex;
 //     uint32_t    firstInstance;
 // } VkDrawIndirectCommand;
+#[repr(C)]
 pub struct DrawIndirectCommand/*<'s>*/ {
     pub raw: vks::VkDrawIndirectCommand,
     // _p: PhantomData<&'s ()>,
 }
 
 
-// typedef struct VkSurfaceCapabilitiesKHR
+// typedef struct VkSurfaceCapabilitiesKHR {
+//     uint32_t                         minImageCount;
+//     uint32_t                         maxImageCount;
+//     VkExtent2D                       currentExtent;
+//     VkExtent2D                       minImageExtent;
+//     VkExtent2D                       maxImageExtent;
+//     uint32_t                         maxImageArrayLayers;
+//     VkSurfaceTransformFlagsKHR       supportedTransforms;
+//     VkSurfaceTransformFlagBitsKHR    currentTransform;
+//     VkCompositeAlphaFlagsKHR         supportedCompositeAlpha;
+//     VkImageUsageFlags                supportedUsageFlags;
+// } VkSurfaceCapabilitiesKHR;
+#[repr(C)]
 pub struct SurfaceCapabilitiesKHR/*<'s>*/ {
     pub raw: vks::VkSurfaceCapabilitiesKHR,
     // _p: PhantomData<&'s ()>,
 }
 
 
-// // typedef struct VkSurfaceFormatKHR
+// typedef struct VkSurfaceFormatKHR {
+//     VkFormat           format;
+//     VkColorSpaceKHR    colorSpace;
+// } VkSurfaceFormatKHR;
+#[repr(C)]
 pub struct SurfaceFormatKHR/*<'s>*/ {
     pub raw: vks::VkSurfaceFormatKHR,
     // _p: PhantomData<&'s ()>,
 }
 
 
-// typedef struct VkSwapchainCreateInfoKHR
+// typedef struct VkSwapchainCreateInfoKHR {
+//     VkStructureType                  sType;
+//     const void*                      pNext;
+//     VkSwapchainCreateFlagsKHR        flags;
+//     VkSurfaceKHR                     surface;
+//     uint32_t                         minImageCount;
+//     VkFormat                         imageFormat;
+//     VkColorSpaceKHR                  imageColorSpace;
+//     VkExtent2D                       imageExtent;
+//     uint32_t                         imageArrayLayers;
+//     VkImageUsageFlags                imageUsage;
+//     VkSharingMode                    imageSharingMode;
+//     uint32_t                         queueFamilyIndexCount;
+//     const uint32_t*                  pQueueFamilyIndices;
+//     VkSurfaceTransformFlagBitsKHR    preTransform;
+//     VkCompositeAlphaFlagBitsKHR      compositeAlpha;
+//     VkPresentModeKHR                 presentMode;
+//     VkBool32                         clipped;
+//     VkSwapchainKHR                   oldSwapchain;
+// } VkSwapchainCreateInfoKHR;
+#[repr(C)]
 pub struct SwapchainCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkSwapchainCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1786,6 +1926,7 @@ pub struct SwapchainCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkPresentInfoKHR
+#[repr(C)]
 pub struct PresentInfoKHR/*<'s>*/ {
     pub raw: vks::VkPresentInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1793,6 +1934,7 @@ pub struct PresentInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkDisplayPropertiesKHR
+#[repr(C)]
 pub struct DisplayPropertiesKHR/*<'s>*/ {
     pub raw: vks::VkDisplayPropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -1800,6 +1942,7 @@ pub struct DisplayPropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkDisplayModeParametersKHR
+#[repr(C)]
 pub struct DisplayModeParametersKHR/*<'s>*/ {
     pub raw: vks::VkDisplayModeParametersKHR,
     // _p: PhantomData<&'s ()>,
@@ -1807,6 +1950,7 @@ pub struct DisplayModeParametersKHR/*<'s>*/ {
 
 
 // typedef struct VkDisplayModePropertiesKHR
+#[repr(C)]
 pub struct DisplayModePropertiesKHR/*<'s>*/ {
     pub raw: vks::VkDisplayModePropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -1814,6 +1958,7 @@ pub struct DisplayModePropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkDisplayModeCreateInfoKHR
+#[repr(C)]
 pub struct DisplayModeCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkDisplayModeCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1821,6 +1966,7 @@ pub struct DisplayModeCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkDisplayPlaneCapabilitiesKHR
+#[repr(C)]
 pub struct DisplayPlaneCapabilitiesKHR/*<'s>*/ {
     pub raw: vks::VkDisplayPlaneCapabilitiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -1828,6 +1974,7 @@ pub struct DisplayPlaneCapabilitiesKHR/*<'s>*/ {
 
 
 // typedef struct VkDisplayPlanePropertiesKHR
+#[repr(C)]
 pub struct DisplayPlanePropertiesKHR/*<'s>*/ {
     pub raw: vks::VkDisplayPlanePropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -1835,6 +1982,7 @@ pub struct DisplayPlanePropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkDisplaySurfaceCreateInfoKHR
+#[repr(C)]
 pub struct DisplaySurfaceCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkDisplaySurfaceCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1842,6 +1990,7 @@ pub struct DisplaySurfaceCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkDisplayPresentInfoKHR
+#[repr(C)]
 pub struct DisplayPresentInfoKHR/*<'s>*/ {
     pub raw: vks::VkDisplayPresentInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1849,6 +1998,7 @@ pub struct DisplayPresentInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkXlibSurfaceCreateInfoKHR
+#[repr(C)]
 pub struct XlibSurfaceCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkXlibSurfaceCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1856,6 +2006,7 @@ pub struct XlibSurfaceCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkXcbSurfaceCreateInfoKHR
+#[repr(C)]
 pub struct XcbSurfaceCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkXcbSurfaceCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1863,6 +2014,7 @@ pub struct XcbSurfaceCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkWaylandSurfaceCreateInfoKHR
+#[repr(C)]
 pub struct WaylandSurfaceCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkWaylandSurfaceCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1870,6 +2022,7 @@ pub struct WaylandSurfaceCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkMirSurfaceCreateInfoKHR
+#[repr(C)]
 pub struct MirSurfaceCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkMirSurfaceCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1877,6 +2030,7 @@ pub struct MirSurfaceCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkAndroidSurfaceCreateInfoKHR
+#[repr(C)]
 pub struct AndroidSurfaceCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkAndroidSurfaceCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1884,6 +2038,7 @@ pub struct AndroidSurfaceCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkWin32SurfaceCreateInfoKHR
+#[repr(C)]
 pub struct Win32SurfaceCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkWin32SurfaceCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1891,6 +2046,7 @@ pub struct Win32SurfaceCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceFeatures2KHR
+#[repr(C)]
 pub struct PhysicalDeviceFeatures2KHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceFeatures2KHR,
     // _p: PhantomData<&'s ()>,
@@ -1898,6 +2054,7 @@ pub struct PhysicalDeviceFeatures2KHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceProperties2KHR
+#[repr(C)]
 pub struct PhysicalDeviceProperties2KHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceProperties2KHR,
     // _p: PhantomData<&'s ()>,
@@ -1905,6 +2062,7 @@ pub struct PhysicalDeviceProperties2KHR/*<'s>*/ {
 
 
 // typedef struct VkFormatProperties2KHR
+#[repr(C)]
 pub struct FormatProperties2KHR/*<'s>*/ {
     pub raw: vks::VkFormatProperties2KHR,
     // _p: PhantomData<&'s ()>,
@@ -1912,6 +2070,7 @@ pub struct FormatProperties2KHR/*<'s>*/ {
 
 
 // typedef struct VkImageFormatProperties2KHR
+#[repr(C)]
 pub struct ImageFormatProperties2KHR/*<'s>*/ {
     pub raw: vks::VkImageFormatProperties2KHR,
     // _p: PhantomData<&'s ()>,
@@ -1919,6 +2078,7 @@ pub struct ImageFormatProperties2KHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceImageFormatInfo2KHR
+#[repr(C)]
 pub struct PhysicalDeviceImageFormatInfo2KHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceImageFormatInfo2KHR,
     // _p: PhantomData<&'s ()>,
@@ -1926,6 +2086,7 @@ pub struct PhysicalDeviceImageFormatInfo2KHR/*<'s>*/ {
 
 
 // typedef struct VkQueueFamilyProperties2KHR
+#[repr(C)]
 pub struct QueueFamilyProperties2KHR/*<'s>*/ {
     pub raw: vks::VkQueueFamilyProperties2KHR,
     // _p: PhantomData<&'s ()>,
@@ -1933,6 +2094,7 @@ pub struct QueueFamilyProperties2KHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceMemoryProperties2KHR
+#[repr(C)]
 pub struct PhysicalDeviceMemoryProperties2KHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceMemoryProperties2KHR,
     // _p: PhantomData<&'s ()>,
@@ -1940,6 +2102,7 @@ pub struct PhysicalDeviceMemoryProperties2KHR/*<'s>*/ {
 
 
 // typedef struct VkSparseImageFormatProperties2KHR
+#[repr(C)]
 pub struct SparseImageFormatProperties2KHR/*<'s>*/ {
     pub raw: vks::VkSparseImageFormatProperties2KHR,
     // _p: PhantomData<&'s ()>,
@@ -1947,6 +2110,7 @@ pub struct SparseImageFormatProperties2KHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceSparseImageFormatInfo2KHR
+#[repr(C)]
 pub struct PhysicalDeviceSparseImageFormatInfo2KHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceSparseImageFormatInfo2KHR,
     // _p: PhantomData<&'s ()>,
@@ -1954,6 +2118,7 @@ pub struct PhysicalDeviceSparseImageFormatInfo2KHR/*<'s>*/ {
 
 
 // typedef struct VkExternalMemoryPropertiesKHR
+#[repr(C)]
 pub struct ExternalMemoryPropertiesKHR/*<'s>*/ {
     pub raw: vks::VkExternalMemoryPropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -1961,6 +2126,7 @@ pub struct ExternalMemoryPropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceExternalImageFormatInfoKHR
+#[repr(C)]
 pub struct PhysicalDeviceExternalImageFormatInfoKHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceExternalImageFormatInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1968,6 +2134,7 @@ pub struct PhysicalDeviceExternalImageFormatInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkExternalImageFormatPropertiesKHR
+#[repr(C)]
 pub struct ExternalImageFormatPropertiesKHR/*<'s>*/ {
     pub raw: vks::VkExternalImageFormatPropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -1975,6 +2142,7 @@ pub struct ExternalImageFormatPropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceExternalBufferInfoKHR
+#[repr(C)]
 pub struct PhysicalDeviceExternalBufferInfoKHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceExternalBufferInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -1982,6 +2150,7 @@ pub struct PhysicalDeviceExternalBufferInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkExternalBufferPropertiesKHR
+#[repr(C)]
 pub struct ExternalBufferPropertiesKHR/*<'s>*/ {
     pub raw: vks::VkExternalBufferPropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -1989,6 +2158,7 @@ pub struct ExternalBufferPropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceIDPropertiesKHR
+#[repr(C)]
 pub struct PhysicalDeviceIDPropertiesKHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceIDPropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -1996,6 +2166,7 @@ pub struct PhysicalDeviceIDPropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkExternalMemoryImageCreateInfoKHR
+#[repr(C)]
 pub struct ExternalMemoryImageCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkExternalMemoryImageCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2003,6 +2174,7 @@ pub struct ExternalMemoryImageCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkExternalMemoryBufferCreateInfoKHR
+#[repr(C)]
 pub struct ExternalMemoryBufferCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkExternalMemoryBufferCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2010,6 +2182,7 @@ pub struct ExternalMemoryBufferCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkExportMemoryAllocateInfoKHR
+#[repr(C)]
 pub struct ExportMemoryAllocateInfoKHR/*<'s>*/ {
     pub raw: vks::VkExportMemoryAllocateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2017,6 +2190,7 @@ pub struct ExportMemoryAllocateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkImportMemoryWin32HandleInfoKHR
+#[repr(C)]
 pub struct ImportMemoryWin32HandleInfoKHR/*<'s>*/ {
     pub raw: vks::VkImportMemoryWin32HandleInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2024,6 +2198,7 @@ pub struct ImportMemoryWin32HandleInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkExportMemoryWin32HandleInfoKHR
+#[repr(C)]
 pub struct ExportMemoryWin32HandleInfoKHR/*<'s>*/ {
     pub raw: vks::VkExportMemoryWin32HandleInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2031,6 +2206,7 @@ pub struct ExportMemoryWin32HandleInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkMemoryWin32HandlePropertiesKHR
+#[repr(C)]
 pub struct MemoryWin32HandlePropertiesKHR/*<'s>*/ {
     pub raw: vks::VkMemoryWin32HandlePropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -2038,6 +2214,7 @@ pub struct MemoryWin32HandlePropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkMemoryGetWin32HandleInfoKHR
+#[repr(C)]
 pub struct MemoryGetWin32HandleInfoKHR/*<'s>*/ {
     pub raw: vks::VkMemoryGetWin32HandleInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2045,6 +2222,7 @@ pub struct MemoryGetWin32HandleInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkImportMemoryFdInfoKHR
+#[repr(C)]
 pub struct ImportMemoryFdInfoKHR/*<'s>*/ {
     pub raw: vks::VkImportMemoryFdInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2052,6 +2230,7 @@ pub struct ImportMemoryFdInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkMemoryFdPropertiesKHR
+#[repr(C)]
 pub struct MemoryFdPropertiesKHR/*<'s>*/ {
     pub raw: vks::VkMemoryFdPropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -2059,6 +2238,7 @@ pub struct MemoryFdPropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkMemoryGetFdInfoKHR
+#[repr(C)]
 pub struct MemoryGetFdInfoKHR/*<'s>*/ {
     pub raw: vks::VkMemoryGetFdInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2066,6 +2246,7 @@ pub struct MemoryGetFdInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkWin32KeyedMutexAcquireReleaseInfoKHR
+#[repr(C)]
 pub struct Win32KeyedMutexAcquireReleaseInfoKHR/*<'s>*/ {
     pub raw: vks::VkWin32KeyedMutexAcquireReleaseInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2073,6 +2254,7 @@ pub struct Win32KeyedMutexAcquireReleaseInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceExternalSemaphoreInfoKHR
+#[repr(C)]
 pub struct PhysicalDeviceExternalSemaphoreInfoKHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceExternalSemaphoreInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2080,6 +2262,7 @@ pub struct PhysicalDeviceExternalSemaphoreInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkExternalSemaphorePropertiesKHR
+#[repr(C)]
 pub struct ExternalSemaphorePropertiesKHR/*<'s>*/ {
     pub raw: vks::VkExternalSemaphorePropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -2087,6 +2270,7 @@ pub struct ExternalSemaphorePropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkExportSemaphoreCreateInfoKHR
+#[repr(C)]
 pub struct ExportSemaphoreCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkExportSemaphoreCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2094,6 +2278,7 @@ pub struct ExportSemaphoreCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkImportSemaphoreWin32HandleInfoKHR
+#[repr(C)]
 pub struct ImportSemaphoreWin32HandleInfoKHR/*<'s>*/ {
     pub raw: vks::VkImportSemaphoreWin32HandleInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2101,6 +2286,7 @@ pub struct ImportSemaphoreWin32HandleInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkExportSemaphoreWin32HandleInfoKHR
+#[repr(C)]
 pub struct ExportSemaphoreWin32HandleInfoKHR/*<'s>*/ {
     pub raw: vks::VkExportSemaphoreWin32HandleInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2108,6 +2294,7 @@ pub struct ExportSemaphoreWin32HandleInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkD3D12FenceSubmitInfoKHR
+#[repr(C)]
 pub struct D3D12FenceSubmitInfoKHR/*<'s>*/ {
     pub raw: vks::VkD3D12FenceSubmitInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2115,6 +2302,7 @@ pub struct D3D12FenceSubmitInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkSemaphoreGetWin32HandleInfoKHR
+#[repr(C)]
 pub struct SemaphoreGetWin32HandleInfoKHR/*<'s>*/ {
     pub raw: vks::VkSemaphoreGetWin32HandleInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2122,6 +2310,7 @@ pub struct SemaphoreGetWin32HandleInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkImportSemaphoreFdInfoKHR
+#[repr(C)]
 pub struct ImportSemaphoreFdInfoKHR/*<'s>*/ {
     pub raw: vks::VkImportSemaphoreFdInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2129,6 +2318,7 @@ pub struct ImportSemaphoreFdInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkSemaphoreGetFdInfoKHR
+#[repr(C)]
 pub struct SemaphoreGetFdInfoKHR/*<'s>*/ {
     pub raw: vks::VkSemaphoreGetFdInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2136,6 +2326,7 @@ pub struct SemaphoreGetFdInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDevicePushDescriptorPropertiesKHR
+#[repr(C)]
 pub struct PhysicalDevicePushDescriptorPropertiesKHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDevicePushDescriptorPropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -2143,6 +2334,7 @@ pub struct PhysicalDevicePushDescriptorPropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDevice16BitStorageFeaturesKHR
+#[repr(C)]
 pub struct PhysicalDevice16BitStorageFeaturesKHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDevice16BitStorageFeaturesKHR,
     // _p: PhantomData<&'s ()>,
@@ -2150,6 +2342,7 @@ pub struct PhysicalDevice16BitStorageFeaturesKHR/*<'s>*/ {
 
 
 // typedef struct VkRectLayerKHR
+#[repr(C)]
 pub struct RectLayerKHR/*<'s>*/ {
     pub raw: vks::VkRectLayerKHR,
     // _p: PhantomData<&'s ()>,
@@ -2157,6 +2350,7 @@ pub struct RectLayerKHR/*<'s>*/ {
 
 
 // typedef struct VkPresentRegionKHR
+#[repr(C)]
 pub struct PresentRegionKHR/*<'s>*/ {
     pub raw: vks::VkPresentRegionKHR,
     // _p: PhantomData<&'s ()>,
@@ -2164,6 +2358,7 @@ pub struct PresentRegionKHR/*<'s>*/ {
 
 
 // typedef struct VkPresentRegionsKHR
+#[repr(C)]
 pub struct PresentRegionsKHR/*<'s>*/ {
     pub raw: vks::VkPresentRegionsKHR,
     // _p: PhantomData<&'s ()>,
@@ -2171,6 +2366,7 @@ pub struct PresentRegionsKHR/*<'s>*/ {
 
 
 // typedef struct VkDescriptorUpdateTemplateEntryKHR
+#[repr(C)]
 pub struct DescriptorUpdateTemplateEntryKHR/*<'s>*/ {
     pub raw: vks::VkDescriptorUpdateTemplateEntryKHR,
     // _p: PhantomData<&'s ()>,
@@ -2178,6 +2374,7 @@ pub struct DescriptorUpdateTemplateEntryKHR/*<'s>*/ {
 
 
 // typedef struct VkDescriptorUpdateTemplateCreateInfoKHR
+#[repr(C)]
 pub struct DescriptorUpdateTemplateCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkDescriptorUpdateTemplateCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2185,6 +2382,7 @@ pub struct DescriptorUpdateTemplateCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkSharedPresentSurfaceCapabilitiesKHR
+#[repr(C)]
 pub struct SharedPresentSurfaceCapabilitiesKHR/*<'s>*/ {
     pub raw: vks::VkSharedPresentSurfaceCapabilitiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -2192,6 +2390,7 @@ pub struct SharedPresentSurfaceCapabilitiesKHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceExternalFenceInfoKHR
+#[repr(C)]
 pub struct PhysicalDeviceExternalFenceInfoKHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceExternalFenceInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2199,6 +2398,7 @@ pub struct PhysicalDeviceExternalFenceInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkExternalFencePropertiesKHR
+#[repr(C)]
 pub struct ExternalFencePropertiesKHR/*<'s>*/ {
     pub raw: vks::VkExternalFencePropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -2206,6 +2406,7 @@ pub struct ExternalFencePropertiesKHR/*<'s>*/ {
 
 
 // typedef struct VkExportFenceCreateInfoKHR
+#[repr(C)]
 pub struct ExportFenceCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkExportFenceCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2213,6 +2414,7 @@ pub struct ExportFenceCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkImportFenceWin32HandleInfoKHR
+#[repr(C)]
 pub struct ImportFenceWin32HandleInfoKHR/*<'s>*/ {
     pub raw: vks::VkImportFenceWin32HandleInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2220,6 +2422,7 @@ pub struct ImportFenceWin32HandleInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkExportFenceWin32HandleInfoKHR
+#[repr(C)]
 pub struct ExportFenceWin32HandleInfoKHR/*<'s>*/ {
     pub raw: vks::VkExportFenceWin32HandleInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2227,6 +2430,7 @@ pub struct ExportFenceWin32HandleInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkFenceGetWin32HandleInfoKHR
+#[repr(C)]
 pub struct FenceGetWin32HandleInfoKHR/*<'s>*/ {
     pub raw: vks::VkFenceGetWin32HandleInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2234,6 +2438,7 @@ pub struct FenceGetWin32HandleInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkImportFenceFdInfoKHR
+#[repr(C)]
 pub struct ImportFenceFdInfoKHR/*<'s>*/ {
     pub raw: vks::VkImportFenceFdInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2241,6 +2446,7 @@ pub struct ImportFenceFdInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkFenceGetFdInfoKHR
+#[repr(C)]
 pub struct FenceGetFdInfoKHR/*<'s>*/ {
     pub raw: vks::VkFenceGetFdInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2249,6 +2455,7 @@ pub struct FenceGetFdInfoKHR/*<'s>*/ {
 
 // typedef struct VkPhysicalDevicePointClippingPropertiesKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct PhysicalDevicePointClippingPropertiesKHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDevicePointClippingPropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -2257,6 +2464,7 @@ pub struct PhysicalDevicePointClippingPropertiesKHR/*<'s>*/ {
 
 // typedef struct VkInputAttachmentAspectReferenceKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct InputAttachmentAspectReferenceKHR/*<'s>*/ {
     pub raw: vks::VkInputAttachmentAspectReferenceKHR,
     // _p: PhantomData<&'s ()>,
@@ -2265,6 +2473,7 @@ pub struct InputAttachmentAspectReferenceKHR/*<'s>*/ {
 
 // typedef struct VkRenderPassInputAttachmentAspectCreateInfoKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct RenderPassInputAttachmentAspectCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkRenderPassInputAttachmentAspectCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2273,6 +2482,7 @@ pub struct RenderPassInputAttachmentAspectCreateInfoKHR/*<'s>*/ {
 
 // typedef struct VkImageViewUsageCreateInfoKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ImageViewUsageCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkImageViewUsageCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2281,6 +2491,7 @@ pub struct ImageViewUsageCreateInfoKHR/*<'s>*/ {
 
 // typedef struct VkPipelineTessellationDomainOriginStateCreateInfoKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct PipelineTessellationDomainOriginStateCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkPipelineTessellationDomainOriginStateCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2288,6 +2499,7 @@ pub struct PipelineTessellationDomainOriginStateCreateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceSurfaceInfo2KHR
+#[repr(C)]
 pub struct PhysicalDeviceSurfaceInfo2KHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceSurfaceInfo2KHR,
     // _p: PhantomData<&'s ()>,
@@ -2295,6 +2507,7 @@ pub struct PhysicalDeviceSurfaceInfo2KHR/*<'s>*/ {
 
 
 // typedef struct VkSurfaceCapabilities2KHR
+#[repr(C)]
 pub struct SurfaceCapabilities2KHR/*<'s>*/ {
     pub raw: vks::VkSurfaceCapabilities2KHR,
     // _p: PhantomData<&'s ()>,
@@ -2302,6 +2515,7 @@ pub struct SurfaceCapabilities2KHR/*<'s>*/ {
 
 
 // typedef struct VkSurfaceFormat2KHR
+#[repr(C)]
 pub struct SurfaceFormat2KHR/*<'s>*/ {
     pub raw: vks::VkSurfaceFormat2KHR,
     // _p: PhantomData<&'s ()>,
@@ -2309,6 +2523,7 @@ pub struct SurfaceFormat2KHR/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceVariablePointerFeaturesKHR
+#[repr(C)]
 pub struct PhysicalDeviceVariablePointerFeaturesKHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceVariablePointerFeaturesKHR,
     // _p: PhantomData<&'s ()>,
@@ -2316,6 +2531,7 @@ pub struct PhysicalDeviceVariablePointerFeaturesKHR/*<'s>*/ {
 
 
 // typedef struct VkMemoryDedicatedRequirementsKHR
+#[repr(C)]
 pub struct MemoryDedicatedRequirementsKHR/*<'s>*/ {
     pub raw: vks::VkMemoryDedicatedRequirementsKHR,
     // _p: PhantomData<&'s ()>,
@@ -2323,6 +2539,7 @@ pub struct MemoryDedicatedRequirementsKHR/*<'s>*/ {
 
 
 // typedef struct VkMemoryDedicatedAllocateInfoKHR
+#[repr(C)]
 pub struct MemoryDedicatedAllocateInfoKHR/*<'s>*/ {
     pub raw: vks::VkMemoryDedicatedAllocateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2330,6 +2547,7 @@ pub struct MemoryDedicatedAllocateInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkBufferMemoryRequirementsInfo2KHR
+#[repr(C)]
 pub struct BufferMemoryRequirementsInfo2KHR/*<'s>*/ {
     pub raw: vks::VkBufferMemoryRequirementsInfo2KHR,
     // _p: PhantomData<&'s ()>,
@@ -2337,6 +2555,7 @@ pub struct BufferMemoryRequirementsInfo2KHR/*<'s>*/ {
 
 
 // typedef struct VkImageMemoryRequirementsInfo2KHR
+#[repr(C)]
 pub struct ImageMemoryRequirementsInfo2KHR/*<'s>*/ {
     pub raw: vks::VkImageMemoryRequirementsInfo2KHR,
     // _p: PhantomData<&'s ()>,
@@ -2344,6 +2563,7 @@ pub struct ImageMemoryRequirementsInfo2KHR/*<'s>*/ {
 
 
 // typedef struct VkImageSparseMemoryRequirementsInfo2KHR
+#[repr(C)]
 pub struct ImageSparseMemoryRequirementsInfo2KHR/*<'s>*/ {
     pub raw: vks::VkImageSparseMemoryRequirementsInfo2KHR,
     // _p: PhantomData<&'s ()>,
@@ -2351,6 +2571,7 @@ pub struct ImageSparseMemoryRequirementsInfo2KHR/*<'s>*/ {
 
 
 // typedef struct VkMemoryRequirements2KHR
+#[repr(C)]
 pub struct MemoryRequirements2KHR/*<'s>*/ {
     pub raw: vks::VkMemoryRequirements2KHR,
     // _p: PhantomData<&'s ()>,
@@ -2358,6 +2579,7 @@ pub struct MemoryRequirements2KHR/*<'s>*/ {
 
 
 // typedef struct VkSparseImageMemoryRequirements2KHR
+#[repr(C)]
 pub struct SparseImageMemoryRequirements2KHR/*<'s>*/ {
     pub raw: vks::VkSparseImageMemoryRequirements2KHR,
     // _p: PhantomData<&'s ()>,
@@ -2366,6 +2588,7 @@ pub struct SparseImageMemoryRequirements2KHR/*<'s>*/ {
 
 // typedef struct VkImageFormatListCreateInfoKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ImageFormatListCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkImageFormatListCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2374,6 +2597,7 @@ pub struct ImageFormatListCreateInfoKHR/*<'s>*/ {
 
 // typedef struct VkSamplerYcbcrConversionCreateInfoKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct SamplerYcbcrConversionCreateInfoKHR/*<'s>*/ {
     pub raw: vks::VkSamplerYcbcrConversionCreateInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2382,6 +2606,7 @@ pub struct SamplerYcbcrConversionCreateInfoKHR/*<'s>*/ {
 
 // typedef struct VkSamplerYcbcrConversionInfoKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct SamplerYcbcrConversionInfoKHR/*<'s>*/ {
     pub raw: vks::VkSamplerYcbcrConversionInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2390,6 +2615,7 @@ pub struct SamplerYcbcrConversionInfoKHR/*<'s>*/ {
 
 // typedef struct VkBindImagePlaneMemoryInfoKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct BindImagePlaneMemoryInfoKHR/*<'s>*/ {
     pub raw: vks::VkBindImagePlaneMemoryInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2398,6 +2624,7 @@ pub struct BindImagePlaneMemoryInfoKHR/*<'s>*/ {
 
 // typedef struct VkImagePlaneMemoryRequirementsInfoKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ImagePlaneMemoryRequirementsInfoKHR/*<'s>*/ {
     pub raw: vks::VkImagePlaneMemoryRequirementsInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2406,6 +2633,7 @@ pub struct ImagePlaneMemoryRequirementsInfoKHR/*<'s>*/ {
 
 // typedef struct VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct PhysicalDeviceSamplerYcbcrConversionFeaturesKHR/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR,
     // _p: PhantomData<&'s ()>,
@@ -2414,6 +2642,7 @@ pub struct PhysicalDeviceSamplerYcbcrConversionFeaturesKHR/*<'s>*/ {
 
 // typedef struct VkSamplerYcbcrConversionImageFormatPropertiesKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct SamplerYcbcrConversionImageFormatPropertiesKHR/*<'s>*/ {
     pub raw: vks::VkSamplerYcbcrConversionImageFormatPropertiesKHR,
     // _p: PhantomData<&'s ()>,
@@ -2422,6 +2651,7 @@ pub struct SamplerYcbcrConversionImageFormatPropertiesKHR/*<'s>*/ {
 
 // typedef struct VkBindBufferMemoryInfoKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct BindBufferMemoryInfoKHR/*<'s>*/ {
     pub raw: vks::VkBindBufferMemoryInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2430,6 +2660,7 @@ pub struct BindBufferMemoryInfoKHR/*<'s>*/ {
 
 // typedef struct VkBindImageMemoryInfoKHR
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct BindImageMemoryInfoKHR/*<'s>*/ {
     pub raw: vks::VkBindImageMemoryInfoKHR,
     // _p: PhantomData<&'s ()>,
@@ -2437,6 +2668,7 @@ pub struct BindImageMemoryInfoKHR/*<'s>*/ {
 
 
 // typedef struct VkDebugReportCallbackCreateInfoEXT
+#[repr(C)]
 pub struct DebugReportCallbackCreateInfoEXT/*<'s>*/ {
     pub raw: vks::VkDebugReportCallbackCreateInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -2444,6 +2676,7 @@ pub struct DebugReportCallbackCreateInfoEXT/*<'s>*/ {
 
 
 // typedef struct VkPipelineRasterizationStateRasterizationOrderAMD
+#[repr(C)]
 pub struct PipelineRasterizationStateRasterizationOrderAMD/*<'s>*/ {
     pub raw: vks::VkPipelineRasterizationStateRasterizationOrderAMD,
     // _p: PhantomData<&'s ()>,
@@ -2451,6 +2684,7 @@ pub struct PipelineRasterizationStateRasterizationOrderAMD/*<'s>*/ {
 
 
 // typedef struct VkDebugMarkerObjectNameInfoEXT
+#[repr(C)]
 pub struct DebugMarkerObjectNameInfoEXT/*<'s>*/ {
     pub raw: vks::VkDebugMarkerObjectNameInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -2458,6 +2692,7 @@ pub struct DebugMarkerObjectNameInfoEXT/*<'s>*/ {
 
 
 // typedef struct VkDebugMarkerObjectTagInfoEXT
+#[repr(C)]
 pub struct DebugMarkerObjectTagInfoEXT/*<'s>*/ {
     pub raw: vks::VkDebugMarkerObjectTagInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -2465,6 +2700,7 @@ pub struct DebugMarkerObjectTagInfoEXT/*<'s>*/ {
 
 
 // typedef struct VkDebugMarkerMarkerInfoEXT
+#[repr(C)]
 pub struct DebugMarkerMarkerInfoEXT/*<'s>*/ {
     pub raw: vks::VkDebugMarkerMarkerInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -2472,6 +2708,7 @@ pub struct DebugMarkerMarkerInfoEXT/*<'s>*/ {
 
 
 // typedef struct VkDedicatedAllocationImageCreateInfoNV
+#[repr(C)]
 pub struct DedicatedAllocationImageCreateInfoNV/*<'s>*/ {
     pub raw: vks::VkDedicatedAllocationImageCreateInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -2479,6 +2716,7 @@ pub struct DedicatedAllocationImageCreateInfoNV/*<'s>*/ {
 
 
 // typedef struct VkDedicatedAllocationBufferCreateInfoNV
+#[repr(C)]
 pub struct DedicatedAllocationBufferCreateInfoNV/*<'s>*/ {
     pub raw: vks::VkDedicatedAllocationBufferCreateInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -2486,6 +2724,7 @@ pub struct DedicatedAllocationBufferCreateInfoNV/*<'s>*/ {
 
 
 // typedef struct VkDedicatedAllocationMemoryAllocateInfoNV
+#[repr(C)]
 pub struct DedicatedAllocationMemoryAllocateInfoNV/*<'s>*/ {
     pub raw: vks::VkDedicatedAllocationMemoryAllocateInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -2493,6 +2732,7 @@ pub struct DedicatedAllocationMemoryAllocateInfoNV/*<'s>*/ {
 
 
 // typedef struct VkTextureLODGatherFormatPropertiesAMD
+#[repr(C)]
 pub struct TextureLODGatherFormatPropertiesAMD/*<'s>*/ {
     pub raw: vks::VkTextureLODGatherFormatPropertiesAMD,
     // _p: PhantomData<&'s ()>,
@@ -2501,6 +2741,7 @@ pub struct TextureLODGatherFormatPropertiesAMD/*<'s>*/ {
 
 // typedef struct VkRenderPassMultiviewCreateInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct RenderPassMultiviewCreateInfoKHX/*<'s>*/ {
     pub raw: vks::VkRenderPassMultiviewCreateInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2509,6 +2750,7 @@ pub struct RenderPassMultiviewCreateInfoKHX/*<'s>*/ {
 
 // typedef struct VkPhysicalDeviceMultiviewFeaturesKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct PhysicalDeviceMultiviewFeaturesKHX/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceMultiviewFeaturesKHX,
     // _p: PhantomData<&'s ()>,
@@ -2517,6 +2759,7 @@ pub struct PhysicalDeviceMultiviewFeaturesKHX/*<'s>*/ {
 
 // typedef struct VkPhysicalDeviceMultiviewPropertiesKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct PhysicalDeviceMultiviewPropertiesKHX/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceMultiviewPropertiesKHX,
     // _p: PhantomData<&'s ()>,
@@ -2524,6 +2767,7 @@ pub struct PhysicalDeviceMultiviewPropertiesKHX/*<'s>*/ {
 
 
 // typedef struct VkExternalImageFormatPropertiesNV
+#[repr(C)]
 pub struct ExternalImageFormatPropertiesNV/*<'s>*/ {
     pub raw: vks::VkExternalImageFormatPropertiesNV,
     // _p: PhantomData<&'s ()>,
@@ -2531,6 +2775,7 @@ pub struct ExternalImageFormatPropertiesNV/*<'s>*/ {
 
 
 // typedef struct VkExternalMemoryImageCreateInfoNV
+#[repr(C)]
 pub struct ExternalMemoryImageCreateInfoNV/*<'s>*/ {
     pub raw: vks::VkExternalMemoryImageCreateInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -2538,6 +2783,7 @@ pub struct ExternalMemoryImageCreateInfoNV/*<'s>*/ {
 
 
 // typedef struct VkExportMemoryAllocateInfoNV
+#[repr(C)]
 pub struct ExportMemoryAllocateInfoNV/*<'s>*/ {
     pub raw: vks::VkExportMemoryAllocateInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -2545,6 +2791,7 @@ pub struct ExportMemoryAllocateInfoNV/*<'s>*/ {
 
 
 // typedef struct VkImportMemoryWin32HandleInfoNV
+#[repr(C)]
 pub struct ImportMemoryWin32HandleInfoNV/*<'s>*/ {
     pub raw: vks::VkImportMemoryWin32HandleInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -2552,6 +2799,7 @@ pub struct ImportMemoryWin32HandleInfoNV/*<'s>*/ {
 
 
 // typedef struct VkExportMemoryWin32HandleInfoNV
+#[repr(C)]
 pub struct ExportMemoryWin32HandleInfoNV/*<'s>*/ {
     pub raw: vks::VkExportMemoryWin32HandleInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -2559,6 +2807,7 @@ pub struct ExportMemoryWin32HandleInfoNV/*<'s>*/ {
 
 
 // typedef struct VkWin32KeyedMutexAcquireReleaseInfoNV
+#[repr(C)]
 pub struct Win32KeyedMutexAcquireReleaseInfoNV/*<'s>*/ {
     pub raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -2567,6 +2816,7 @@ pub struct Win32KeyedMutexAcquireReleaseInfoNV/*<'s>*/ {
 
 // typedef struct VkMemoryAllocateFlagsInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct MemoryAllocateFlagsInfoKHX/*<'s>*/ {
     pub raw: vks::VkMemoryAllocateFlagsInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2575,6 +2825,7 @@ pub struct MemoryAllocateFlagsInfoKHX/*<'s>*/ {
 
 // typedef struct VkDeviceGroupRenderPassBeginInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct DeviceGroupRenderPassBeginInfoKHX/*<'s>*/ {
     pub raw: vks::VkDeviceGroupRenderPassBeginInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2583,6 +2834,7 @@ pub struct DeviceGroupRenderPassBeginInfoKHX/*<'s>*/ {
 
 // typedef struct VkDeviceGroupCommandBufferBeginInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct DeviceGroupCommandBufferBeginInfoKHX/*<'s>*/ {
     pub raw: vks::VkDeviceGroupCommandBufferBeginInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2591,6 +2843,7 @@ pub struct DeviceGroupCommandBufferBeginInfoKHX/*<'s>*/ {
 
 // typedef struct VkDeviceGroupSubmitInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct DeviceGroupSubmitInfoKHX/*<'s>*/ {
     pub raw: vks::VkDeviceGroupSubmitInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2599,6 +2852,7 @@ pub struct DeviceGroupSubmitInfoKHX/*<'s>*/ {
 
 // typedef struct VkDeviceGroupBindSparseInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct DeviceGroupBindSparseInfoKHX/*<'s>*/ {
     pub raw: vks::VkDeviceGroupBindSparseInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2607,6 +2861,7 @@ pub struct DeviceGroupBindSparseInfoKHX/*<'s>*/ {
 
 // typedef struct VkBindBufferMemoryDeviceGroupInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct BindBufferMemoryDeviceGroupInfoKHX/*<'s>*/ {
     pub raw: vks::VkBindBufferMemoryDeviceGroupInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2615,6 +2870,7 @@ pub struct BindBufferMemoryDeviceGroupInfoKHX/*<'s>*/ {
 
 // typedef struct VkBindImageMemoryDeviceGroupInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct BindImageMemoryDeviceGroupInfoKHX/*<'s>*/ {
     pub raw: vks::VkBindImageMemoryDeviceGroupInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2623,6 +2879,7 @@ pub struct BindImageMemoryDeviceGroupInfoKHX/*<'s>*/ {
 
 // typedef struct VkDeviceGroupPresentCapabilitiesKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct DeviceGroupPresentCapabilitiesKHX/*<'s>*/ {
     pub raw: vks::VkDeviceGroupPresentCapabilitiesKHX,
     // _p: PhantomData<&'s ()>,
@@ -2631,6 +2888,7 @@ pub struct DeviceGroupPresentCapabilitiesKHX/*<'s>*/ {
 
 // typedef struct VkImageSwapchainCreateInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ImageSwapchainCreateInfoKHX/*<'s>*/ {
     pub raw: vks::VkImageSwapchainCreateInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2639,6 +2897,7 @@ pub struct ImageSwapchainCreateInfoKHX/*<'s>*/ {
 
 // typedef struct VkBindImageMemorySwapchainInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct BindImageMemorySwapchainInfoKHX/*<'s>*/ {
     pub raw: vks::VkBindImageMemorySwapchainInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2647,6 +2906,7 @@ pub struct BindImageMemorySwapchainInfoKHX/*<'s>*/ {
 
 // typedef struct VkAcquireNextImageInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct AcquireNextImageInfoKHX/*<'s>*/ {
     pub raw: vks::VkAcquireNextImageInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2655,6 +2915,7 @@ pub struct AcquireNextImageInfoKHX/*<'s>*/ {
 
 // typedef struct VkDeviceGroupPresentInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct DeviceGroupPresentInfoKHX/*<'s>*/ {
     pub raw: vks::VkDeviceGroupPresentInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2663,6 +2924,7 @@ pub struct DeviceGroupPresentInfoKHX/*<'s>*/ {
 
 // typedef struct VkDeviceGroupSwapchainCreateInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct DeviceGroupSwapchainCreateInfoKHX/*<'s>*/ {
     pub raw: vks::VkDeviceGroupSwapchainCreateInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2670,6 +2932,7 @@ pub struct DeviceGroupSwapchainCreateInfoKHX/*<'s>*/ {
 
 
 // typedef struct VkValidationFlagsEXT
+#[repr(C)]
 pub struct ValidationFlagsEXT/*<'s>*/ {
     pub raw: vks::VkValidationFlagsEXT,
     // _p: PhantomData<&'s ()>,
@@ -2677,6 +2940,7 @@ pub struct ValidationFlagsEXT/*<'s>*/ {
 
 
 // typedef struct VkViSurfaceCreateInfoNN
+#[repr(C)]
 pub struct ViSurfaceCreateInfoNN/*<'s>*/ {
     pub raw: vks::VkViSurfaceCreateInfoNN,
     // _p: PhantomData<&'s ()>,
@@ -2685,6 +2949,7 @@ pub struct ViSurfaceCreateInfoNN/*<'s>*/ {
 
 // typedef struct VkPhysicalDeviceGroupPropertiesKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct PhysicalDeviceGroupPropertiesKHX/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceGroupPropertiesKHX,
     // _p: PhantomData<&'s ()>,
@@ -2693,6 +2958,7 @@ pub struct PhysicalDeviceGroupPropertiesKHX/*<'s>*/ {
 
 // typedef struct VkDeviceGroupDeviceCreateInfoKHX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct DeviceGroupDeviceCreateInfoKHX/*<'s>*/ {
     pub raw: vks::VkDeviceGroupDeviceCreateInfoKHX,
     // _p: PhantomData<&'s ()>,
@@ -2701,6 +2967,7 @@ pub struct DeviceGroupDeviceCreateInfoKHX/*<'s>*/ {
 
 // typedef struct VkDeviceGeneratedCommandsFeaturesNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct DeviceGeneratedCommandsFeaturesNVX/*<'s>*/ {
     pub raw: vks::VkDeviceGeneratedCommandsFeaturesNVX,
     // _p: PhantomData<&'s ()>,
@@ -2709,6 +2976,7 @@ pub struct DeviceGeneratedCommandsFeaturesNVX/*<'s>*/ {
 
 // typedef struct VkDeviceGeneratedCommandsLimitsNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct DeviceGeneratedCommandsLimitsNVX/*<'s>*/ {
     pub raw: vks::VkDeviceGeneratedCommandsLimitsNVX,
     // _p: PhantomData<&'s ()>,
@@ -2717,6 +2985,7 @@ pub struct DeviceGeneratedCommandsLimitsNVX/*<'s>*/ {
 
 // typedef struct VkIndirectCommandsTokenNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct IndirectCommandsTokenNVX/*<'s>*/ {
     pub raw: vks::VkIndirectCommandsTokenNVX,
     // _p: PhantomData<&'s ()>,
@@ -2725,6 +2994,7 @@ pub struct IndirectCommandsTokenNVX/*<'s>*/ {
 
 // typedef struct VkIndirectCommandsLayoutTokenNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct IndirectCommandsLayoutTokenNVX/*<'s>*/ {
     pub raw: vks::VkIndirectCommandsLayoutTokenNVX,
     // _p: PhantomData<&'s ()>,
@@ -2733,6 +3003,7 @@ pub struct IndirectCommandsLayoutTokenNVX/*<'s>*/ {
 
 // typedef struct VkIndirectCommandsLayoutCreateInfoNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct IndirectCommandsLayoutCreateInfoNVX/*<'s>*/ {
     pub raw: vks::VkIndirectCommandsLayoutCreateInfoNVX,
     // _p: PhantomData<&'s ()>,
@@ -2741,6 +3012,7 @@ pub struct IndirectCommandsLayoutCreateInfoNVX/*<'s>*/ {
 
 // typedef struct VkCmdProcessCommandsInfoNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct CmdProcessCommandsInfoNVX/*<'s>*/ {
     pub raw: vks::VkCmdProcessCommandsInfoNVX,
     // _p: PhantomData<&'s ()>,
@@ -2749,6 +3021,7 @@ pub struct CmdProcessCommandsInfoNVX/*<'s>*/ {
 
 // typedef struct VkCmdReserveSpaceForCommandsInfoNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct CmdReserveSpaceForCommandsInfoNVX/*<'s>*/ {
     pub raw: vks::VkCmdReserveSpaceForCommandsInfoNVX,
     // _p: PhantomData<&'s ()>,
@@ -2757,6 +3030,7 @@ pub struct CmdReserveSpaceForCommandsInfoNVX/*<'s>*/ {
 
 // typedef struct VkObjectTableCreateInfoNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ObjectTableCreateInfoNVX/*<'s>*/ {
     pub raw: vks::VkObjectTableCreateInfoNVX,
     // _p: PhantomData<&'s ()>,
@@ -2765,6 +3039,7 @@ pub struct ObjectTableCreateInfoNVX/*<'s>*/ {
 
 // typedef struct VkObjectTableEntryNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ObjectTableEntryNVX/*<'s>*/ {
     pub raw: vks::VkObjectTableEntryNVX,
     // _p: PhantomData<&'s ()>,
@@ -2773,6 +3048,7 @@ pub struct ObjectTableEntryNVX/*<'s>*/ {
 
 // typedef struct VkObjectTablePipelineEntryNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ObjectTablePipelineEntryNVX/*<'s>*/ {
     pub raw: vks::VkObjectTablePipelineEntryNVX,
     // _p: PhantomData<&'s ()>,
@@ -2781,6 +3057,7 @@ pub struct ObjectTablePipelineEntryNVX/*<'s>*/ {
 
 // typedef struct VkObjectTableDescriptorSetEntryNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ObjectTableDescriptorSetEntryNVX/*<'s>*/ {
     pub raw: vks::VkObjectTableDescriptorSetEntryNVX,
     // _p: PhantomData<&'s ()>,
@@ -2789,6 +3066,7 @@ pub struct ObjectTableDescriptorSetEntryNVX/*<'s>*/ {
 
 // typedef struct VkObjectTableVertexBufferEntryNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ObjectTableVertexBufferEntryNVX/*<'s>*/ {
     pub raw: vks::VkObjectTableVertexBufferEntryNVX,
     // _p: PhantomData<&'s ()>,
@@ -2797,6 +3075,7 @@ pub struct ObjectTableVertexBufferEntryNVX/*<'s>*/ {
 
 // typedef struct VkObjectTableIndexBufferEntryNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ObjectTableIndexBufferEntryNVX/*<'s>*/ {
     pub raw: vks::VkObjectTableIndexBufferEntryNVX,
     // _p: PhantomData<&'s ()>,
@@ -2805,6 +3084,7 @@ pub struct ObjectTableIndexBufferEntryNVX/*<'s>*/ {
 
 // typedef struct VkObjectTablePushConstantEntryNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ObjectTablePushConstantEntryNVX/*<'s>*/ {
     pub raw: vks::VkObjectTablePushConstantEntryNVX,
     // _p: PhantomData<&'s ()>,
@@ -2812,6 +3092,7 @@ pub struct ObjectTablePushConstantEntryNVX/*<'s>*/ {
 
 
 // typedef struct VkViewportWScalingNV
+#[repr(C)]
 pub struct ViewportWScalingNV/*<'s>*/ {
     pub raw: vks::VkViewportWScalingNV,
     // _p: PhantomData<&'s ()>,
@@ -2819,6 +3100,7 @@ pub struct ViewportWScalingNV/*<'s>*/ {
 
 
 // typedef struct VkPipelineViewportWScalingStateCreateInfoNV
+#[repr(C)]
 pub struct PipelineViewportWScalingStateCreateInfoNV/*<'s>*/ {
     pub raw: vks::VkPipelineViewportWScalingStateCreateInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -2826,6 +3108,7 @@ pub struct PipelineViewportWScalingStateCreateInfoNV/*<'s>*/ {
 
 
 // typedef struct VkSurfaceCapabilities2EXT
+#[repr(C)]
 pub struct SurfaceCapabilities2EXT/*<'s>*/ {
     pub raw: vks::VkSurfaceCapabilities2EXT,
     // _p: PhantomData<&'s ()>,
@@ -2833,6 +3116,7 @@ pub struct SurfaceCapabilities2EXT/*<'s>*/ {
 
 
 // typedef struct VkDisplayPowerInfoEXT
+#[repr(C)]
 pub struct DisplayPowerInfoEXT/*<'s>*/ {
     pub raw: vks::VkDisplayPowerInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -2840,6 +3124,7 @@ pub struct DisplayPowerInfoEXT/*<'s>*/ {
 
 
 // typedef struct VkDeviceEventInfoEXT
+#[repr(C)]
 pub struct DeviceEventInfoEXT/*<'s>*/ {
     pub raw: vks::VkDeviceEventInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -2847,6 +3132,7 @@ pub struct DeviceEventInfoEXT/*<'s>*/ {
 
 
 // typedef struct VkDisplayEventInfoEXT
+#[repr(C)]
 pub struct DisplayEventInfoEXT/*<'s>*/ {
     pub raw: vks::VkDisplayEventInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -2854,6 +3140,7 @@ pub struct DisplayEventInfoEXT/*<'s>*/ {
 
 
 // typedef struct VkSwapchainCounterCreateInfoEXT
+#[repr(C)]
 pub struct SwapchainCounterCreateInfoEXT/*<'s>*/ {
     pub raw: vks::VkSwapchainCounterCreateInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -2861,6 +3148,7 @@ pub struct SwapchainCounterCreateInfoEXT/*<'s>*/ {
 
 
 // typedef struct VkRefreshCycleDurationGOOGLE
+#[repr(C)]
 pub struct RefreshCycleDurationGOOGLE/*<'s>*/ {
     pub raw: vks::VkRefreshCycleDurationGOOGLE,
     // _p: PhantomData<&'s ()>,
@@ -2868,6 +3156,7 @@ pub struct RefreshCycleDurationGOOGLE/*<'s>*/ {
 
 
 // typedef struct VkPastPresentationTimingGOOGLE
+#[repr(C)]
 pub struct PastPresentationTimingGOOGLE/*<'s>*/ {
     pub raw: vks::VkPastPresentationTimingGOOGLE,
     // _p: PhantomData<&'s ()>,
@@ -2875,6 +3164,7 @@ pub struct PastPresentationTimingGOOGLE/*<'s>*/ {
 
 
 // typedef struct VkPresentTimeGOOGLE
+#[repr(C)]
 pub struct PresentTimeGOOGLE/*<'s>*/ {
     pub raw: vks::VkPresentTimeGOOGLE,
     // _p: PhantomData<&'s ()>,
@@ -2882,6 +3172,7 @@ pub struct PresentTimeGOOGLE/*<'s>*/ {
 
 
 // typedef struct VkPresentTimesInfoGOOGLE
+#[repr(C)]
 pub struct PresentTimesInfoGOOGLE/*<'s>*/ {
     pub raw: vks::VkPresentTimesInfoGOOGLE,
     // _p: PhantomData<&'s ()>,
@@ -2890,6 +3181,7 @@ pub struct PresentTimesInfoGOOGLE/*<'s>*/ {
 
 // typedef struct VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct PhysicalDeviceMultiviewPerViewAttributesPropertiesNVX/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX,
     // _p: PhantomData<&'s ()>,
@@ -2897,6 +3189,7 @@ pub struct PhysicalDeviceMultiviewPerViewAttributesPropertiesNVX/*<'s>*/ {
 
 
 // typedef struct VkViewportSwizzleNV
+#[repr(C)]
 pub struct ViewportSwizzleNV/*<'s>*/ {
     pub raw: vks::VkViewportSwizzleNV,
     // _p: PhantomData<&'s ()>,
@@ -2904,6 +3197,7 @@ pub struct ViewportSwizzleNV/*<'s>*/ {
 
 
 // typedef struct VkPipelineViewportSwizzleStateCreateInfoNV
+#[repr(C)]
 pub struct PipelineViewportSwizzleStateCreateInfoNV/*<'s>*/ {
     pub raw: vks::VkPipelineViewportSwizzleStateCreateInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -2911,6 +3205,7 @@ pub struct PipelineViewportSwizzleStateCreateInfoNV/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceDiscardRectanglePropertiesEXT
+#[repr(C)]
 pub struct PhysicalDeviceDiscardRectanglePropertiesEXT/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT,
     // _p: PhantomData<&'s ()>,
@@ -2918,6 +3213,7 @@ pub struct PhysicalDeviceDiscardRectanglePropertiesEXT/*<'s>*/ {
 
 
 // typedef struct VkPipelineDiscardRectangleStateCreateInfoEXT
+#[repr(C)]
 pub struct PipelineDiscardRectangleStateCreateInfoEXT/*<'s>*/ {
     pub raw: vks::VkPipelineDiscardRectangleStateCreateInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -2925,6 +3221,7 @@ pub struct PipelineDiscardRectangleStateCreateInfoEXT/*<'s>*/ {
 
 
 // typedef struct VkXYColorEXT
+#[repr(C)]
 pub struct XYColorEXT/*<'s>*/ {
     pub raw: vks::VkXYColorEXT,
     // _p: PhantomData<&'s ()>,
@@ -2932,6 +3229,7 @@ pub struct XYColorEXT/*<'s>*/ {
 
 
 // typedef struct VkHdrMetadataEXT
+#[repr(C)]
 pub struct HdrMetadataEXT/*<'s>*/ {
     pub raw: vks::VkHdrMetadataEXT,
     // _p: PhantomData<&'s ()>,
@@ -2939,6 +3237,7 @@ pub struct HdrMetadataEXT/*<'s>*/ {
 
 
 // typedef struct VkIOSSurfaceCreateInfoMVK
+#[repr(C)]
 pub struct IOSSurfaceCreateInfoMVK/*<'s>*/ {
     pub raw: vks::VkIOSSurfaceCreateInfoMVK,
     // _p: PhantomData<&'s ()>,
@@ -2946,6 +3245,7 @@ pub struct IOSSurfaceCreateInfoMVK/*<'s>*/ {
 
 
 // typedef struct VkMacOSSurfaceCreateInfoMVK
+#[repr(C)]
 pub struct MacOSSurfaceCreateInfoMVK/*<'s>*/ {
     pub raw: vks::VkMacOSSurfaceCreateInfoMVK,
     // _p: PhantomData<&'s ()>,
@@ -2953,6 +3253,7 @@ pub struct MacOSSurfaceCreateInfoMVK/*<'s>*/ {
 
 
 // typedef struct VkSamplerReductionModeCreateInfoEXT
+#[repr(C)]
 pub struct SamplerReductionModeCreateInfoEXT/*<'s>*/ {
     pub raw: vks::VkSamplerReductionModeCreateInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -2960,6 +3261,7 @@ pub struct SamplerReductionModeCreateInfoEXT/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT
+#[repr(C)]
 pub struct PhysicalDeviceSamplerFilterMinmaxPropertiesEXT/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT,
     // _p: PhantomData<&'s ()>,
@@ -2968,6 +3270,7 @@ pub struct PhysicalDeviceSamplerFilterMinmaxPropertiesEXT/*<'s>*/ {
 
 // typedef struct VkSampleLocationEXT
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct SampleLocationEXT/*<'s>*/ {
     pub raw: vks::VkSampleLocationEXT,
     // _p: PhantomData<&'s ()>,
@@ -2976,6 +3279,7 @@ pub struct SampleLocationEXT/*<'s>*/ {
 
 // typedef struct VkSampleLocationsInfoEXT
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct SampleLocationsInfoEXT/*<'s>*/ {
     pub raw: vks::VkSampleLocationsInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -2984,6 +3288,7 @@ pub struct SampleLocationsInfoEXT/*<'s>*/ {
 
 // typedef struct VkAttachmentSampleLocationsEXT
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct AttachmentSampleLocationsEXT/*<'s>*/ {
     pub raw: vks::VkAttachmentSampleLocationsEXT,
     // _p: PhantomData<&'s ()>,
@@ -2992,6 +3297,7 @@ pub struct AttachmentSampleLocationsEXT/*<'s>*/ {
 
 // typedef struct VkSubpassSampleLocationsEXT
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct SubpassSampleLocationsEXT/*<'s>*/ {
     pub raw: vks::VkSubpassSampleLocationsEXT,
     // _p: PhantomData<&'s ()>,
@@ -3000,6 +3306,7 @@ pub struct SubpassSampleLocationsEXT/*<'s>*/ {
 
 // typedef struct VkRenderPassSampleLocationsBeginInfoEXT
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct RenderPassSampleLocationsBeginInfoEXT/*<'s>*/ {
     pub raw: vks::VkRenderPassSampleLocationsBeginInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -3008,6 +3315,7 @@ pub struct RenderPassSampleLocationsBeginInfoEXT/*<'s>*/ {
 
 // typedef struct VkPipelineSampleLocationsStateCreateInfoEXT
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct PipelineSampleLocationsStateCreateInfoEXT/*<'s>*/ {
     pub raw: vks::VkPipelineSampleLocationsStateCreateInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -3016,6 +3324,7 @@ pub struct PipelineSampleLocationsStateCreateInfoEXT/*<'s>*/ {
 
 // typedef struct VkPhysicalDeviceSampleLocationsPropertiesEXT
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct PhysicalDeviceSampleLocationsPropertiesEXT/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceSampleLocationsPropertiesEXT,
     // _p: PhantomData<&'s ()>,
@@ -3024,6 +3333,7 @@ pub struct PhysicalDeviceSampleLocationsPropertiesEXT/*<'s>*/ {
 
 // typedef struct VkMultisamplePropertiesEXT
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct MultisamplePropertiesEXT/*<'s>*/ {
     pub raw: vks::VkMultisamplePropertiesEXT,
     // _p: PhantomData<&'s ()>,
@@ -3031,6 +3341,7 @@ pub struct MultisamplePropertiesEXT/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT
+#[repr(C)]
 pub struct PhysicalDeviceBlendOperationAdvancedFeaturesEXT/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT,
     // _p: PhantomData<&'s ()>,
@@ -3038,6 +3349,7 @@ pub struct PhysicalDeviceBlendOperationAdvancedFeaturesEXT/*<'s>*/ {
 
 
 // typedef struct VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT
+#[repr(C)]
 pub struct PhysicalDeviceBlendOperationAdvancedPropertiesEXT/*<'s>*/ {
     pub raw: vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT,
     // _p: PhantomData<&'s ()>,
@@ -3045,6 +3357,7 @@ pub struct PhysicalDeviceBlendOperationAdvancedPropertiesEXT/*<'s>*/ {
 
 
 // typedef struct VkPipelineColorBlendAdvancedStateCreateInfoEXT
+#[repr(C)]
 pub struct PipelineColorBlendAdvancedStateCreateInfoEXT/*<'s>*/ {
     pub raw: vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -3052,6 +3365,7 @@ pub struct PipelineColorBlendAdvancedStateCreateInfoEXT/*<'s>*/ {
 
 
 // typedef struct VkPipelineCoverageToColorStateCreateInfoNV
+#[repr(C)]
 pub struct PipelineCoverageToColorStateCreateInfoNV/*<'s>*/ {
     pub raw: vks::VkPipelineCoverageToColorStateCreateInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -3059,6 +3373,7 @@ pub struct PipelineCoverageToColorStateCreateInfoNV/*<'s>*/ {
 
 
 // typedef struct VkPipelineCoverageModulationStateCreateInfoNV
+#[repr(C)]
 pub struct PipelineCoverageModulationStateCreateInfoNV/*<'s>*/ {
     pub raw: vks::VkPipelineCoverageModulationStateCreateInfoNV,
     // _p: PhantomData<&'s ()>,
@@ -3067,6 +3382,7 @@ pub struct PipelineCoverageModulationStateCreateInfoNV/*<'s>*/ {
 
 // typedef struct VkValidationCacheCreateInfoEXT
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ValidationCacheCreateInfoEXT/*<'s>*/ {
     pub raw: vks::VkValidationCacheCreateInfoEXT,
     // _p: PhantomData<&'s ()>,
@@ -3075,6 +3391,7 @@ pub struct ValidationCacheCreateInfoEXT/*<'s>*/ {
 
 // typedef struct VkShaderModuleValidationCacheCreateInfoEXT
 #[cfg(feature = "experimental")]
+#[repr(C)]
 pub struct ShaderModuleValidationCacheCreateInfoEXT/*<'s>*/ {
     pub raw: vks::VkShaderModuleValidationCacheCreateInfoEXT,
     // _p: PhantomData<&'s ()>,
