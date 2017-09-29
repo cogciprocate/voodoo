@@ -21,6 +21,7 @@ Cargo.lock
 **/Cargo.lock
 /target/
 /examples/**/target/
+/codegen/target/
 
 # My junk
 /data

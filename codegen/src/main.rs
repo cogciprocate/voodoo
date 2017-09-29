@@ -7,38 +7,117 @@ use std::io::{self, BufRead, BufReader};
 use xml::reader::{EventReader, XmlEvent};
 use xml::attribute::OwnedAttribute;
 
-/* The Plan:
+const PRINT: bool = false;
 
-- Open the file
-- if a line begins with typedef struct, parse until a `}` is reached.
-- Store type and member names, converting type names and member names (storing both
-  camelCase and snake_case versions for later)
 
-*/
+fn convert_type(orig_type: &str) -> String {
+    match orig_type {
+        "float" => String::from("f32"),
+        "int32_t" => String::from("i32"),
+        "uint32_t" => String::from("u32"),
+        "char" => String::from("i8"),
+        "uint8_t" => String::from("u8"),
+        "void" => String::from("()"),
+        other @ _ => {
+            if other.split_at(4).0 != "PFN_" {
+                assert!(other.split_at(2).0 == "Vk", "unknown type: {}", other);
+            }
+            String::from(other)
+        }
+    }
+}
+
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum TypeCategory {
+    None,
+    Struct,
+    Union,
+    Enum,
+    Other,
+}
+
 
 #[derive(Clone, Debug)]
 struct Member {
-    name: String,
     ty: String,
+    name: String,
+    is_ptr: bool,
+    is_const: bool,
+    is_struct: bool,
+    optional: bool,
+    noautovalidity: bool,
+    externsync: bool,
+    array_size: Option<String>,
+    comment: Option<String>,
+    values: Option<String>,
+    len: Option<String>,
+    altlen: Option<String>,
 }
+
+impl Member {
+    fn new(attribs: &[OwnedAttribute]) -> Member {
+        let mut member = Member {
+            ty: String::new(),
+            name: String::new(),
+            is_ptr: false,
+            is_const: false,
+            is_struct: false,
+            optional: false,
+            noautovalidity: false,
+            externsync: false,
+            array_size: None,
+            comment: None,
+            values: None,
+            len: None,
+            altlen: None,
+        };
+
+        for attrib in attribs {
+            match attrib.name.local_name.as_str() {
+                "values" => member.values = Some(attrib.value.clone()),
+                "optional" => member.optional |= attrib.value == "true",
+                "len" => member.len = Some(attrib.value.clone()),
+                "noautovalidity" => member.noautovalidity |= attrib.value == "true",
+                "altlen" => member.altlen = Some(attrib.value.clone()),
+                "externsync" => member.externsync |= attrib.value == "true",
+                unknown @ _ => panic!("unknown struct attribute: {:?}={:?}",
+                    unknown, attrib.value),
+            }
+        }
+
+        member
+    }
+
+    fn validate(&self) {
+        assert!(self.name.len() > 0);
+    }
+}
+
 
 #[derive(Clone, Debug)]
 struct Struct {
     name: String,
     returnedonly: bool,
+    structextends: Option<String>,
+    comment: String,
     members: Vec<Member>,
 }
 
 impl Struct {
-    fn new(attribs: &Vec<OwnedAttribute>) -> Struct {
+    fn new(attribs: &[OwnedAttribute]) -> Struct {
         let mut name = None;
         let mut returnedonly = false;
+        let mut structextends = None;
+        let mut comment = String::new();
 
         for attrib in attribs {
             match attrib.name.local_name.as_str() {
                 "category" => (),
                 "name" => name = Some(attrib.value.clone()),
-                "returnedonly" => if attrib.value == "true" { returnedonly = true },
+                "returnedonly" => returnedonly |= attrib.value == "true",
+                "structextends" => structextends = Some(String::from(attrib.value.clone())),
+                "comment" => comment = attrib.value.clone(),
                 unknown @ _ => panic!("unknown struct attribute: {:?}={:?}",
                     unknown, attrib.value),
             }
@@ -47,11 +126,58 @@ impl Struct {
         Struct {
             name: name.expect("no struct name found"),
             returnedonly,
-            members: vec![],
+            structextends,
+            comment,
+            members: Vec::with_capacity(16),
         }
     }
 }
 
+
+fn category(s: &str) -> TypeCategory {
+    match s {
+        "struct" => TypeCategory::Struct,
+        "union" => TypeCategory::Union,
+        "enum" => TypeCategory::Enum,
+        _ => TypeCategory::Other,
+    }
+}
+
+fn parse_stray_text(s: &str, current_member: &mut Member) {
+    match s {
+        "[" => (),
+        "]" => (),
+        "[2]" => current_member.array_size = Some("2".to_string()),
+        "[4]" => current_member.array_size = Some("4".to_string()),
+        _ => {
+            if s.starts_with("const") {
+                current_member.is_const = true;
+            } else if s.starts_with("struct") {
+                current_member.is_struct = true;
+            } else if s.starts_with("*") {
+                current_member.is_ptr = true;
+            } else if s.starts_with("[") {
+                let mut array_size = String::with_capacity(4);
+                for (char_idx, c) in s.chars().enumerate() {
+                    match c {
+                        '[' => (),
+                        ']' => assert!(char_idx == s.len() - 1),
+                        digit @ _ => {
+                            assert!(digit.is_numeric(),
+                                "unexpected character found \
+                                while parsing array size: {}", c);
+                            array_size.push(digit);
+                        },
+                        // _ => panic!(),
+                    }
+                }
+
+            } else {
+                panic!("unknown characters present: {}", s)
+            }
+        }
+    }
+}
 
 fn indent(size: usize) -> String {
     const INDENT: &'static str = "    ";
@@ -67,65 +193,123 @@ fn main() {
     let mut structs: Vec<Struct> = Vec::with_capacity(400);
 
     let mut current_struct: Option<Struct> = None;
-    let mut current_member: Option<Member> = None;
+    let mut struct_start_depth = 0;
+    let mut parsing_struct_comment = false;
 
-    let mut parsing_struct = false;
-    let mut parsing_struct_depth = 0;
+    let mut current_member: Option<Member> = None;
+    let mut member_start_depth = 0;
+    let mut parsing_member_type = false;
+    let mut parsing_member_name = false;
+    let mut parsing_member_array_size = false;
+    let mut parsing_member_comment = false;
 
     let mut depth = 0;
-    let mut struct_count = 0;
 
     for e in parser {
-        if struct_count > 5 { break; }
         match e {
             Ok(XmlEvent::StartElement { name, attributes, .. }) => {
-                if name.local_name == "type" &&
-                        attributes.len() > 0 &&
-                        attributes[0].name.local_name == "category" {
-                    match attributes[0].value.as_str() {
-                        "struct" => {
-                            current_struct = Some(Struct::new(&attributes));
-                            parsing_struct = true;
-                            parsing_struct_depth = depth;
+                let mut type_category = TypeCategory::None;
+
+                if name.local_name == "type" {
+                    for attrib in &attributes {
+                        if attrib.name.local_name == "category" {
+                            type_category = category(&attrib.value);
+                        }
+                    }
+                }
+                if type_category == TypeCategory::Struct {
+                    current_struct = Some(Struct::new(&attributes));
+                    struct_start_depth = depth;
+                }
+
+                if let Some(ref mut st) = current_struct {
+                    match name.local_name.as_str() {
+                        "member" => {
+                            assert!(current_member.is_none());
+                            current_member = Some(Member::new(&attributes));
+                            member_start_depth = depth;
                         },
-                        _ => (),
+                        "type" => {
+                            parsing_member_type = true;
+                        },
+                        "name" => {
+                            parsing_member_name = true;
+                        },
+                        "enum" => {
+                            parsing_member_array_size = true;
+                        },
+                        "comment" => {
+                            if current_member.is_some() {
+                                parsing_member_comment = true;
+                            } else {
+                                parsing_struct_comment = true;
+                            }
+                        },
+                        unknown @ _ => panic!("unknown tag: \"{}\"", unknown),
+                    }
+
+                    if PRINT {
+                        print!("{}<{}", indent(depth), name);
+                        for attrib in attributes {
+                            print!(" {}=\"{}\"", attrib.name, attrib.value);
+                        }
+                        print!(">\n");
                     }
                 }
-
-                if parsing_struct {
-                    print!("{}<{}", indent(depth), name);
-                    for attrib in attributes {
-                        print!(" {}=\"{}\"", attrib.name, attrib.value);
-                    }
-                    print!(">\n");
-                }
-
                 depth += 1;
             },
             Ok(XmlEvent::EndElement { name }) => {
                 depth -= 1;
-
-                if parsing_struct {
+                if PRINT && current_struct.is_some() {
                     println!("{}</{}>", indent(depth), name);
                 }
-
-                if name.local_name == "type" {
-                    if parsing_struct {
-                        if depth == parsing_struct_depth {
-                            structs.push(current_struct.take().unwrap());
-                            struct_count += 1;
-                            parsing_struct = false;
+                if name.local_name == "member" && current_struct.is_some() {
+                    if depth == member_start_depth {
+                        let st = current_struct.as_mut().expect("no current struct");
+                        let new_member = current_member.take().expect("no current member");
+                        new_member.validate();
+                        st.members.push(new_member);
+                    }
+                } else if name.local_name == "type" && current_struct.is_some() {
+                    if depth == struct_start_depth {
+                        assert!(current_struct.is_some());
+                        if let Some(st) = current_struct.take() {
+                            structs.push(st);;
                         }
+                    }
+                }
+            },
+            Ok(XmlEvent::Characters(s)) => {
+                if PRINT && current_struct.is_some() {
+                    println!("{}{}", indent(depth), s.as_str());
+                }
+                if let Some(ref mut cur_mem) = current_member {
+                    if s.len() > 0 {
+                        if parsing_member_type {
+                            cur_mem.ty = s;
+                            parsing_member_type = false;
+                        } else if parsing_member_name {
+                            cur_mem.name = s;
+                            parsing_member_name = false;
+                        } else if parsing_member_array_size {
+                            cur_mem.array_size = Some(s);
+                            parsing_member_array_size = false;
+                        } else if parsing_member_comment {
+                            cur_mem.comment = Some(s);
+                            parsing_member_comment = false;
+                        } else {
+                            parse_stray_text(&s, cur_mem);
+                        }
+                    }
+                } else if let Some(ref mut cur_struct) = current_struct {
+                    if parsing_struct_comment && s.len() > 0 {
+                        cur_struct.comment = String::from(s);
+                        parsing_struct_comment = false;
                     }
                 }
             },
             // Ok(XmlEvent::CData(s)) => println!("{}{}", indent(depth), s),
             // Ok(XmlEvent::Comment(s)) => println!("{}{}", indent(depth), s),
-            Ok(XmlEvent::Characters(s)) => {
-                if parsing_struct {
-                    println!("{}{}", indent(depth), s);
-                }
-            },
             // Ok(XmlEvent::Whitespace(s)) => println!("{}{}", indent(depth), s),
             Err(e) => {
                 println!("Error: {}", e);
@@ -135,28 +319,7 @@ fn main() {
         }
     }
 
-    println!("Structs: \n\n{:?}", structs);
+    println!("Structs: \n\n{:#?}", structs);
+    println!("{} structs parsed", structs.len());
 }
-
-
-
-// /// Reads a file into a byte Vec.
-// pub fn read_file<P: AsRef<Path>>(file: P) -> VooResult<Vec<u8>> {
-//     let file_name = file.as_ref().display().to_string();
-//     let f = File::open(file).expect("shader file not found");
-//     let file_bytes = f.metadata().unwrap().len() as usize;
-//     let mut contents = Vec::<u8>::with_capacity(file_bytes);
-//     let mut reader = BufReader::new(f);
-//     match reader.read_to_end(&mut contents) {
-//         Ok(bytes) => {
-//             assert_eq!(bytes, file_bytes);
-//             if PRINT { println!("Read {} bytes from {}", bytes, &file_name); }
-//         },
-//         Err(e) => panic!("{}", e),
-//     }
-//     Ok(contents)
-// }
-
-
-
 
