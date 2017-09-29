@@ -7,10 +7,90 @@ use std::io::{self, BufRead, BufReader};
 use xml::reader::{EventReader, XmlEvent};
 use xml::attribute::OwnedAttribute;
 
-const PRINT: bool = false;
+const PRINT: bool = true;
 
 
-fn convert_type(orig_type: &str) -> String {
+// /// Removes preceeding `Vk` from type names.
+// fn to_voodoo_name(orig: &str) -> String {
+
+// }
+
+
+fn pascal_to_snake_case(orig: &str, prune_p: bool) -> (String, bool, bool) {
+    let mut output = String::with_capacity(48);
+    let mut prev_was_new_word = true;
+
+    let mut first_is_p = false;
+    let mut second_is_p = false;
+    let mut p_was_pruned = false;
+    let mut pp_was_pruned = false;
+    let mut orig_pruned = orig;
+
+    if prune_p {
+        // If the first character is 'p' and second is uppercase, strip the 'p'.
+        for (char_idx, c) in orig.chars().enumerate() {
+            if char_idx == 0 {
+                if c == 'p' {
+                    first_is_p = true;
+                } else {
+                    break;
+                }
+            } else if char_idx == 1 {
+                if first_is_p {
+                    if c.is_uppercase() {
+                        orig_pruned = orig.split_at(1).1;
+                        p_was_pruned = true;
+                    } else if c == 'p' {
+                        second_is_p = true;
+                        continue;
+                    }
+                }
+                break;
+            } else if char_idx == 2 {
+                if second_is_p {
+                    if c.is_uppercase() {
+                        orig_pruned = orig.split_at(2).1;
+                        pp_was_pruned = true;
+                    } else {
+                        panic!("Unexpected \"pp\" at start of member name");
+                    }
+                }
+                break;
+            } else {
+                unreachable!();
+            }
+        }
+    }
+
+    for (char_idx, c) in orig_pruned.chars().enumerate() {
+        if c.is_lowercase() {
+            output.push(c);
+            prev_was_new_word = false;
+        } else if c.is_uppercase() || c.is_numeric() {
+
+            if !prev_was_new_word {
+                output.push('_');
+                prev_was_new_word = true;
+            } else {
+                prev_was_new_word = false;
+            }
+
+            if c.is_uppercase() {
+                output.push_str(&c.to_lowercase().to_string());
+            } else {
+                output.push(c);
+            }
+        }
+    }
+
+    println!("{}   ->   {}", orig, &output);
+
+    assert!(!(p_was_pruned && pp_was_pruned));
+    (output, p_was_pruned, pp_was_pruned)
+}
+
+
+fn convert_type_name(orig_type: &str) -> String {
     match orig_type {
         "float" => "f32".to_string(),
         "int32_t" => "i32".to_string(),
@@ -22,7 +102,11 @@ fn convert_type(orig_type: &str) -> String {
         "uint64_t" => "u64".to_string(),
         "int" => "i32".to_string(),
         other @ _ => {
-            if      !other.contains("ANativeWindow") &&
+            if other.len() > 2 && other.split_at(2).0 == "Vk" {
+                String::from(other.split_at(2).1)
+            } else if other.len() > 4 && other.split_at(4).0 == "PFN_" {
+                String::from(other.split_at(4).1)
+            } else if !other.contains("ANativeWindow") &&
                     !other.contains("MirConnection") &&
                     !other.contains("MirSurface") &&
                     !other.contains("wl_display") &&
@@ -36,13 +120,11 @@ fn convert_type(orig_type: &str) -> String {
                     !other.contains("HANDLE") &&
                     !other.contains("SECURITY_ATTRIBUTES") &&
                     !other.contains("DWORD") &&
-                    !other.contains("LPCWSTR") &&
-                    !(other.len() > 4 && other.split_at(4).0 == "PFN_") &&
-                    !(other.len() > 2 && other.split_at(2).0 == "Vk")
-            {
+                    !other.contains("LPCWSTR") {
                 panic!("unknown type: \"{}\"", other);
+            } else {
+                String::from(other)
             }
-            String::from(other)
         }
     }
 }
@@ -61,9 +143,12 @@ enum TypeCategory {
 #[derive(Clone, Debug)]
 struct Member {
     ty: String,
-    name: String,
+    orig_name: String,
+    voodoo_name: String,
     is_ptr: bool,
+    is_ptr_ptr: bool,
     is_const: bool,
+    is_const_const: bool,
     is_struct: bool,
     optional: bool,
     noautovalidity: bool,
@@ -79,9 +164,12 @@ impl Member {
     fn new(attribs: &[OwnedAttribute]) -> Member {
         let mut member = Member {
             ty: String::new(),
-            name: String::new(),
+            orig_name: String::new(),
+            voodoo_name: String::new(),
             is_ptr: false,
+            is_ptr_ptr: false,
             is_const: false,
+            is_const_const: false,
             is_struct: false,
             optional: false,
             noautovalidity: false,
@@ -109,20 +197,27 @@ impl Member {
         member
     }
 
-    fn set_type(&mut self, orig_type: &str) {
-        assert!(self.ty.is_empty());
-        self.ty = convert_type(orig_type);
+    fn set_name(&mut self, orig_name: String) {
+        assert!(self.orig_name.is_empty());
+        assert!(self.voodoo_name.is_empty());
+        let (voodoo_name, p_was_pruned, pp_was_pruned) = pascal_to_snake_case(&orig_name, true);
+        assert!((p_was_pruned && self.is_ptr) || !p_was_pruned);
+        assert!((pp_was_pruned && self.is_ptr_ptr) || !pp_was_pruned);
+        self.voodoo_name = voodoo_name;
+        self.orig_name = orig_name;
     }
 
-    fn validate(&self) {
-        assert!(self.name.len() > 0);
+    fn set_type(&mut self, orig_type: &str) {
+        assert!(self.ty.is_empty());
+        self.ty = convert_type_name(orig_type);
     }
 }
 
 
 #[derive(Clone, Debug)]
 struct Struct {
-    name: String,
+    orig_name: String,
+    voodoo_name: String,
     returnedonly: bool,
     structextends: Option<String>,
     comment: String,
@@ -131,7 +226,8 @@ struct Struct {
 
 impl Struct {
     fn new(attribs: &[OwnedAttribute]) -> Struct {
-        let mut name = None;
+        let mut orig_name = None;
+        let mut voodoo_name = None;
         let mut returnedonly = false;
         let mut structextends = None;
         let mut comment = String::new();
@@ -139,7 +235,11 @@ impl Struct {
         for attrib in attribs {
             match attrib.name.local_name.as_str() {
                 "category" => (),
-                "name" => name = Some(attrib.value.clone()),
+                "name" => {
+                    let name = attrib.value.clone();
+                    voodoo_name = Some(convert_type_name(&name));
+                    orig_name = Some(name);
+                },
                 "returnedonly" => returnedonly |= attrib.value == "true",
                 "structextends" => structextends = Some(String::from(attrib.value.clone())),
                 "comment" => comment = attrib.value.clone(),
@@ -149,7 +249,8 @@ impl Struct {
         }
 
         Struct {
-            name: name.expect("no struct name found"),
+            orig_name: orig_name.expect("no struct name found"),
+            voodoo_name: voodoo_name.expect("no struct name found"),
             returnedonly,
             structextends,
             comment,
@@ -174,11 +275,29 @@ fn parse_stray_text(s: &str, current_member: &mut Member) {
         "[" => (),
         "]" => (),
         _ => {
-            if s.starts_with("const") {
-                current_member.is_const = true;
+            if s.starts_with("* const*") {
+                assert!(!current_member.is_ptr);
+                current_member.is_ptr_ptr = true;
+                if current_member.is_const {
+                    current_member.is_const = false;
+                    current_member.is_const_const = true;
+                } else {
+                    current_member.is_const = true;
+                }
+            } else if s.starts_with("const") {
+                assert!(!current_member.is_const);
+                assert!(!current_member.is_const_const);
+                if current_member.is_const {
+                    current_member.is_const = false;
+                    current_member.is_const_const = true;
+                } else {
+                    current_member.is_const = true;
+                }
             } else if s.starts_with("struct") {
+                assert!(!current_member.is_struct);
                 current_member.is_struct = true;
             } else if s.starts_with("*") {
+                assert!(!current_member.is_ptr);
                 current_member.is_ptr = true;
             } else if s.starts_with("[") {
                 let mut array_size = String::with_capacity(4);
@@ -287,7 +406,7 @@ fn parse_structs() -> Vec<Struct> {
                     if depth == member_start_depth {
                         let st = current_struct.as_mut().expect("no current struct");
                         let new_member = current_member.take().expect("no current member");
-                        new_member.validate();
+                        // new_member.validate();
                         st.members.push(new_member);
                     }
                 } else if name.local_name == "type" && current_struct.is_some() {
@@ -309,7 +428,8 @@ fn parse_structs() -> Vec<Struct> {
                             cur_mem.set_type(&s);
                             parsing_member_type = false;
                         } else if parsing_member_name {
-                            cur_mem.name = s;
+                            // cur_mem.name = s;
+                            cur_mem.set_name(s);
                             parsing_member_name = false;
                         } else if parsing_member_array_size {
                             cur_mem.array_size = Some(s);
@@ -339,7 +459,7 @@ fn parse_structs() -> Vec<Struct> {
         }
     }
 
-    // println!("Structs: \n\n{:#?}", structs);
+    // println!("Structs: \n\n{:?}", structs);
     println!("{} structs parsed", structs.len());
     structs
 }
