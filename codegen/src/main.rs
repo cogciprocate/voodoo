@@ -12,15 +12,35 @@ const PRINT: bool = false;
 
 fn convert_type(orig_type: &str) -> String {
     match orig_type {
-        "float" => String::from("f32"),
-        "int32_t" => String::from("i32"),
-        "uint32_t" => String::from("u32"),
-        "char" => String::from("i8"),
-        "uint8_t" => String::from("u8"),
-        "void" => String::from("()"),
+        "float" => "f32".to_string(),
+        "int32_t" => "i32".to_string(),
+        "uint32_t" => "u32".to_string(),
+        "char" => "i8".to_string(),
+        "uint8_t" => "u8".to_string(),
+        "void" => "()".to_string(),
+        "size_t" => "usize".to_string(),
+        "uint64_t" => "u64".to_string(),
+        "int" => "i32".to_string(),
         other @ _ => {
-            if other.split_at(4).0 != "PFN_" {
-                assert!(other.split_at(2).0 == "Vk", "unknown type: {}", other);
+            if      !other.contains("ANativeWindow") &&
+                    !other.contains("MirConnection") &&
+                    !other.contains("MirSurface") &&
+                    !other.contains("wl_display") &&
+                    !other.contains("wl_surface") &&
+                    !other.contains("HINSTANCE") &&
+                    !other.contains("HWND") &&
+                    !other.contains("Display") &&
+                    !other.contains("Window") &&
+                    !other.contains("xcb_connection_t") &&
+                    !other.contains("xcb_window_t") &&
+                    !other.contains("HANDLE") &&
+                    !other.contains("SECURITY_ATTRIBUTES") &&
+                    !other.contains("DWORD") &&
+                    !other.contains("LPCWSTR") &&
+                    !(other.len() > 4 && other.split_at(4).0 == "PFN_") &&
+                    !(other.len() > 2 && other.split_at(2).0 == "Vk")
+            {
+                panic!("unknown type: \"{}\"", other);
             }
             String::from(other)
         }
@@ -89,6 +109,11 @@ impl Member {
         member
     }
 
+    fn set_type(&mut self, orig_type: &str) {
+        assert!(self.ty.is_empty());
+        self.ty = convert_type(orig_type);
+    }
+
     fn validate(&self) {
         assert!(self.name.len() > 0);
     }
@@ -145,10 +170,9 @@ fn category(s: &str) -> TypeCategory {
 
 fn parse_stray_text(s: &str, current_member: &mut Member) {
     match s {
+        // Brackets alone will have sizes set by a value wrapped in an <enum> tag.
         "[" => (),
         "]" => (),
-        "[2]" => current_member.array_size = Some("2".to_string()),
-        "[4]" => current_member.array_size = Some("4".to_string()),
         _ => {
             if s.starts_with("const") {
                 current_member.is_const = true;
@@ -168,7 +192,6 @@ fn parse_stray_text(s: &str, current_member: &mut Member) {
                                 while parsing array size: {}", c);
                             array_size.push(digit);
                         },
-                        // _ => panic!(),
                     }
                 }
 
@@ -185,7 +208,7 @@ fn indent(size: usize) -> String {
         .fold(String::with_capacity(size*INDENT.len()), |r, s| r + s)
 }
 
-fn main() {
+fn parse_structs() -> Vec<Struct> {
     let file = File::open("./gen_src/vk.xml").unwrap();
     let reader = BufReader::new(file);
     let parser = EventReader::new(reader);
@@ -209,7 +232,6 @@ fn main() {
         match e {
             Ok(XmlEvent::StartElement { name, attributes, .. }) => {
                 let mut type_category = TypeCategory::None;
-
                 if name.local_name == "type" {
                     for attrib in &attributes {
                         if attrib.name.local_name == "category" {
@@ -221,7 +243,6 @@ fn main() {
                     current_struct = Some(Struct::new(&attributes));
                     struct_start_depth = depth;
                 }
-
                 if let Some(ref mut st) = current_struct {
                     match name.local_name.as_str() {
                         "member" => {
@@ -247,7 +268,6 @@ fn main() {
                         },
                         unknown @ _ => panic!("unknown tag: \"{}\"", unknown),
                     }
-
                     if PRINT {
                         print!("{}<{}", indent(depth), name);
                         for attrib in attributes {
@@ -286,7 +306,7 @@ fn main() {
                 if let Some(ref mut cur_mem) = current_member {
                     if s.len() > 0 {
                         if parsing_member_type {
-                            cur_mem.ty = s;
+                            cur_mem.set_type(&s);
                             parsing_member_type = false;
                         } else if parsing_member_name {
                             cur_mem.name = s;
@@ -308,9 +328,9 @@ fn main() {
                     }
                 }
             },
-            // Ok(XmlEvent::CData(s)) => println!("{}{}", indent(depth), s),
-            // Ok(XmlEvent::Comment(s)) => println!("{}{}", indent(depth), s),
-            // Ok(XmlEvent::Whitespace(s)) => println!("{}{}", indent(depth), s),
+            Ok(XmlEvent::CData(s)) => (),
+            Ok(XmlEvent::Comment(s)) => (),
+            Ok(XmlEvent::Whitespace(s)) => (),
             Err(e) => {
                 println!("Error: {}", e);
                 break;
@@ -319,7 +339,14 @@ fn main() {
         }
     }
 
-    println!("Structs: \n\n{:#?}", structs);
+    // println!("Structs: \n\n{:#?}", structs);
     println!("{} structs parsed", structs.len());
+    structs
+}
+
+fn main() {
+    let mut structs: Vec<Struct> = parse_structs();
+
+
 }
 
