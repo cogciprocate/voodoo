@@ -7,13 +7,7 @@ use std::io::{self, BufRead, BufReader};
 use xml::reader::{EventReader, XmlEvent};
 use xml::attribute::OwnedAttribute;
 
-const PRINT: bool = true;
-
-
-// /// Removes preceeding `Vk` from type names.
-// fn to_voodoo_name(orig: &str) -> String {
-
-// }
+const PRINT: bool = false;
 
 
 fn pascal_to_snake_case(orig: &str, prune_p: bool) -> (String, bool, bool) {
@@ -27,13 +21,11 @@ fn pascal_to_snake_case(orig: &str, prune_p: bool) -> (String, bool, bool) {
     let mut orig_pruned = orig;
 
     if prune_p {
-        // If the first character is 'p' and second is uppercase, strip the 'p'.
+        // Strip preceeding "p" or "pp" from name:
         for (char_idx, c) in orig.chars().enumerate() {
             if char_idx == 0 {
                 if c == 'p' {
                     first_is_p = true;
-                } else {
-                    break;
                 }
             } else if char_idx == 1 {
                 if first_is_p {
@@ -45,7 +37,6 @@ fn pascal_to_snake_case(orig: &str, prune_p: bool) -> (String, bool, bool) {
                         continue;
                     }
                 }
-                break;
             } else if char_idx == 2 {
                 if second_is_p {
                     if c.is_uppercase() {
@@ -55,9 +46,8 @@ fn pascal_to_snake_case(orig: &str, prune_p: bool) -> (String, bool, bool) {
                         panic!("Unexpected \"pp\" at start of member name");
                     }
                 }
-                break;
             } else {
-                unreachable!();
+                break;
             }
         }
     }
@@ -83,12 +73,24 @@ fn pascal_to_snake_case(orig: &str, prune_p: bool) -> (String, bool, bool) {
         }
     }
 
-    println!("{}   ->   {}", orig, &output);
-
+    if PRINT { println!("{}   ->   {}", orig, &output); }
     assert!(!(p_was_pruned && pp_was_pruned));
     (output, p_was_pruned, pp_was_pruned)
 }
 
+fn pascalize_suffix(orig: &str) -> String {
+    if orig.contains("1D") { return orig.replace("1D", "1d"); }
+    if orig.contains("2D") { return orig.replace("2D", "2d"); }
+    if orig.contains("3D") { return orig.replace("3D", "3d"); }
+    if orig.contains("KHR") { return orig.replace("KHR", "Khr"); }
+    if orig.contains("EXT") { return orig.replace("EXT", "Ext"); }
+    if orig.contains("NVX") { return orig.replace("NVX", "Nvx"); }
+    if orig.contains("KHX") { return orig.replace("KHX", "Khx"); }
+    if orig.contains("GOOGLE") { return orig.replace("GOOGLE", "Google");}
+    if orig.contains("MVK") { return orig.replace("MVK", "Mvk"); }
+    if orig.contains("NV") { return orig.replace("NV", "Nv"); }
+    orig.to_string()
+}
 
 fn convert_type_name(orig_type: &str) -> String {
     match orig_type {
@@ -103,7 +105,7 @@ fn convert_type_name(orig_type: &str) -> String {
         "int" => "i32".to_string(),
         other @ _ => {
             if other.len() > 2 && other.split_at(2).0 == "Vk" {
-                String::from(other.split_at(2).1)
+                pascalize_suffix(other.split_at(2).1)
             } else if other.len() > 4 && other.split_at(4).0 == "PFN_" {
                 String::from(other.split_at(4).1)
             } else if !other.contains("ANativeWindow") &&
@@ -222,6 +224,7 @@ struct Struct {
     structextends: Option<String>,
     comment: String,
     members: Vec<Member>,
+    contains_ptr: bool,
 }
 
 impl Struct {
@@ -255,6 +258,7 @@ impl Struct {
             structextends,
             comment,
             members: Vec::with_capacity(16),
+            contains_ptr: false,
         }
     }
 }
@@ -428,7 +432,6 @@ fn parse_structs() -> Vec<Struct> {
                             cur_mem.set_type(&s);
                             parsing_member_type = false;
                         } else if parsing_member_name {
-                            // cur_mem.name = s;
                             cur_mem.set_name(s);
                             parsing_member_name = false;
                         } else if parsing_member_array_size {
@@ -439,6 +442,9 @@ fn parse_structs() -> Vec<Struct> {
                             parsing_member_comment = false;
                         } else {
                             parse_stray_text(&s, cur_mem);
+                            if cur_mem.is_ptr || cur_mem.is_ptr_ptr {
+                                current_struct.as_mut().unwrap().contains_ptr = true;
+                            }
                         }
                     }
                 } else if let Some(ref mut cur_struct) = current_struct {
@@ -459,7 +465,7 @@ fn parse_structs() -> Vec<Struct> {
         }
     }
 
-    // println!("Structs: \n\n{:?}", structs);
+    println!("Structs: \n\n{:#?}", structs);
     println!("{} structs parsed", structs.len());
     structs
 }
