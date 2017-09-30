@@ -40,6 +40,18 @@ pub enum ResultEnum {
     ErrorInvalidExternalHandleKhr = vks::VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR as i32,
 }
 
+impl From<ResultEnum> for i32 {
+    fn from(f: ResultEnum) -> i32 {
+        f as i32
+    }
+}
+
+impl From<ResultEnum> for u32 {
+    fn from(f: ResultEnum) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum StructureType {
@@ -251,6 +263,18 @@ pub enum StructureType {
     PipelineCoverageModulationStateCreateInfoNv = vks::VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV as i32,
 }
 
+impl From<StructureType> for i32 {
+    fn from(f: StructureType) -> i32 {
+        f as i32
+    }
+}
+
+impl From<StructureType> for u32 {
+    fn from(f: StructureType) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum SystemAllocationScope {
@@ -261,10 +285,34 @@ pub enum SystemAllocationScope {
     Instance = vks::VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE as i32,
 }
 
+impl From<SystemAllocationScope> for i32 {
+    fn from(f: SystemAllocationScope) -> i32 {
+        f as i32
+    }
+}
+
+impl From<SystemAllocationScope> for u32 {
+    fn from(f: SystemAllocationScope) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum InternalAllocationType {
     Executable = vks::VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE as i32,
+}
+
+impl From<InternalAllocationType> for i32 {
+    fn from(f: InternalAllocationType) -> i32 {
+        f as i32
+    }
+}
+
+impl From<InternalAllocationType> for u32 {
+    fn from(f: InternalAllocationType) -> u32 {
+        f as u32
+    }
 }
 
 #[repr(i32)]
@@ -465,6 +513,18 @@ pub enum Format {
     Pvrtc24bppSrgbBlockImg = vks::VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG as i32,
 }
 
+impl From<Format> for i32 {
+    fn from(f: Format) -> i32 {
+        f as i32
+    }
+}
+
+impl From<Format> for u32 {
+    fn from(f: Format) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum ImageType {
@@ -473,11 +533,35 @@ pub enum ImageType {
     Type3d = vks::VK_IMAGE_TYPE_3D as i32,
 }
 
+impl From<ImageType> for i32 {
+    fn from(f: ImageType) -> i32 {
+        f as i32
+    }
+}
+
+impl From<ImageType> for u32 {
+    fn from(f: ImageType) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum ImageTiling {
     Optimal = vks::VK_IMAGE_TILING_OPTIMAL as i32,
     Linear = vks::VK_IMAGE_TILING_LINEAR as i32,
+}
+
+impl From<ImageTiling> for i32 {
+    fn from(f: ImageTiling) -> i32 {
+        f as i32
+    }
+}
+
+impl From<ImageTiling> for u32 {
+    fn from(f: ImageTiling) -> u32 {
+        f as u32
+    }
 }
 
 #[repr(i32)]
@@ -490,6 +574,18 @@ pub enum PhysicalDeviceType {
     Cpu = vks::VK_PHYSICAL_DEVICE_TYPE_CPU as i32,
 }
 
+impl From<PhysicalDeviceType> for i32 {
+    fn from(f: PhysicalDeviceType) -> i32 {
+        f as i32
+    }
+}
+
+impl From<PhysicalDeviceType> for u32 {
+    fn from(f: PhysicalDeviceType) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum QueryType {
@@ -498,11 +594,35 @@ pub enum QueryType {
     Timestamp = vks::VK_QUERY_TYPE_TIMESTAMP as i32,
 }
 
+impl From<QueryType> for i32 {
+    fn from(f: QueryType) -> i32 {
+        f as i32
+    }
+}
+
+impl From<QueryType> for u32 {
+    fn from(f: QueryType) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum SharingMode {
     Exclusive = vks::VK_SHARING_MODE_EXCLUSIVE as i32,
     Concurrent = vks::VK_SHARING_MODE_CONCURRENT as i32,
+}
+
+impl From<SharingMode> for i32 {
+    fn from(f: SharingMode) -> i32 {
+        f as i32
+    }
+}
+
+impl From<SharingMode> for u32 {
+    fn from(f: SharingMode) -> u32 {
+        f as u32
+    }
 }
 
 #[repr(i32)]
@@ -521,6 +641,18 @@ pub enum ImageLayout {
     SharedPresentKhr = vks::VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR as i32,
 }
 
+impl From<ImageLayout> for i32 {
+    fn from(f: ImageLayout) -> i32 {
+        f as i32
+    }
+}
+
+impl From<ImageLayout> for u32 {
+    fn from(f: ImageLayout) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum ImageViewType {
@@ -531,6 +663,18 @@ pub enum ImageViewType {
     Type1dArray = vks::VK_IMAGE_VIEW_TYPE_1D_ARRAY as i32,
     Type2dArray = vks::VK_IMAGE_VIEW_TYPE_2D_ARRAY as i32,
     CubeArray = vks::VK_IMAGE_VIEW_TYPE_CUBE_ARRAY as i32,
+}
+
+impl From<ImageViewType> for i32 {
+    fn from(f: ImageViewType) -> i32 {
+        f as i32
+    }
+}
+
+impl From<ImageViewType> for u32 {
+    fn from(f: ImageViewType) -> u32 {
+        f as u32
+    }
 }
 
 #[repr(i32)]
@@ -545,11 +689,35 @@ pub enum ComponentSwizzle {
     A = vks::VK_COMPONENT_SWIZZLE_A as i32,
 }
 
+impl From<ComponentSwizzle> for i32 {
+    fn from(f: ComponentSwizzle) -> i32 {
+        f as i32
+    }
+}
+
+impl From<ComponentSwizzle> for u32 {
+    fn from(f: ComponentSwizzle) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum VertexInputRate {
     Vertex = vks::VK_VERTEX_INPUT_RATE_VERTEX as i32,
     Instance = vks::VK_VERTEX_INPUT_RATE_INSTANCE as i32,
+}
+
+impl From<VertexInputRate> for i32 {
+    fn from(f: VertexInputRate) -> i32 {
+        f as i32
+    }
+}
+
+impl From<VertexInputRate> for u32 {
+    fn from(f: VertexInputRate) -> u32 {
+        f as u32
+    }
 }
 
 #[repr(i32)]
@@ -568,6 +736,18 @@ pub enum PrimitiveTopology {
     PatchList = vks::VK_PRIMITIVE_TOPOLOGY_PATCH_LIST as i32,
 }
 
+impl From<PrimitiveTopology> for i32 {
+    fn from(f: PrimitiveTopology) -> i32 {
+        f as i32
+    }
+}
+
+impl From<PrimitiveTopology> for u32 {
+    fn from(f: PrimitiveTopology) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum PolygonMode {
@@ -577,11 +757,35 @@ pub enum PolygonMode {
     FillRectangleNv = vks::VK_POLYGON_MODE_FILL_RECTANGLE_NV as i32,
 }
 
+impl From<PolygonMode> for i32 {
+    fn from(f: PolygonMode) -> i32 {
+        f as i32
+    }
+}
+
+impl From<PolygonMode> for u32 {
+    fn from(f: PolygonMode) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum FrontFace {
     CounterClockwise = vks::VK_FRONT_FACE_COUNTER_CLOCKWISE as i32,
     Clockwise = vks::VK_FRONT_FACE_CLOCKWISE as i32,
+}
+
+impl From<FrontFace> for i32 {
+    fn from(f: FrontFace) -> i32 {
+        f as i32
+    }
+}
+
+impl From<FrontFace> for u32 {
+    fn from(f: FrontFace) -> u32 {
+        f as u32
+    }
 }
 
 #[repr(i32)]
@@ -597,6 +801,18 @@ pub enum CompareOp {
     Always = vks::VK_COMPARE_OP_ALWAYS as i32,
 }
 
+impl From<CompareOp> for i32 {
+    fn from(f: CompareOp) -> i32 {
+        f as i32
+    }
+}
+
+impl From<CompareOp> for u32 {
+    fn from(f: CompareOp) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum StencilOp {
@@ -608,6 +824,18 @@ pub enum StencilOp {
     Invert = vks::VK_STENCIL_OP_INVERT as i32,
     IncrementAndWrap = vks::VK_STENCIL_OP_INCREMENT_AND_WRAP as i32,
     DecrementAndWrap = vks::VK_STENCIL_OP_DECREMENT_AND_WRAP as i32,
+}
+
+impl From<StencilOp> for i32 {
+    fn from(f: StencilOp) -> i32 {
+        f as i32
+    }
+}
+
+impl From<StencilOp> for u32 {
+    fn from(f: StencilOp) -> u32 {
+        f as u32
+    }
 }
 
 #[repr(i32)]
@@ -629,6 +857,18 @@ pub enum LogicOp {
     OrInverted = vks::VK_LOGIC_OP_OR_INVERTED as i32,
     Nand = vks::VK_LOGIC_OP_NAND as i32,
     Set = vks::VK_LOGIC_OP_SET as i32,
+}
+
+impl From<LogicOp> for i32 {
+    fn from(f: LogicOp) -> i32 {
+        f as i32
+    }
+}
+
+impl From<LogicOp> for u32 {
+    fn from(f: LogicOp) -> u32 {
+        f as u32
+    }
 }
 
 #[repr(i32)]
@@ -653,6 +893,18 @@ pub enum BlendFactor {
     OneMinusSrc1Color = vks::VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR as i32,
     Src1Alpha = vks::VK_BLEND_FACTOR_SRC1_ALPHA as i32,
     OneMinusSrc1Alpha = vks::VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA as i32,
+}
+
+impl From<BlendFactor> for i32 {
+    fn from(f: BlendFactor) -> i32 {
+        f as i32
+    }
+}
+
+impl From<BlendFactor> for u32 {
+    fn from(f: BlendFactor) -> u32 {
+        f as u32
+    }
 }
 
 #[repr(i32)]
@@ -711,6 +963,18 @@ pub enum BlendOp {
     BlueExt = vks::VK_BLEND_OP_BLUE_EXT as i32,
 }
 
+impl From<BlendOp> for i32 {
+    fn from(f: BlendOp) -> i32 {
+        f as i32
+    }
+}
+
+impl From<BlendOp> for u32 {
+    fn from(f: BlendOp) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum DynamicState {
@@ -727,6 +991,18 @@ pub enum DynamicState {
     DiscardRectangleExt = vks::VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT as i32,
 }
 
+impl From<DynamicState> for i32 {
+    fn from(f: DynamicState) -> i32 {
+        f as i32
+    }
+}
+
+impl From<DynamicState> for u32 {
+    fn from(f: DynamicState) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum Filter {
@@ -735,11 +1011,35 @@ pub enum Filter {
     CubicImg = vks::VK_FILTER_CUBIC_IMG as i32,
 }
 
+impl From<Filter> for i32 {
+    fn from(f: Filter) -> i32 {
+        f as i32
+    }
+}
+
+impl From<Filter> for u32 {
+    fn from(f: Filter) -> u32 {
+        f as u32
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum SamplerMipmapMode {
     Nearest = vks::VK_SAMPLER_MIPMAP_MODE_NEAREST as i32,
     Linear = vks::VK_SAMPLER_MIPMAP_MODE_LINEAR as i32,
+}
+
+impl From<SamplerMipmapMode> for i32 {
+    fn from(f: SamplerMipmapMode) -> i32 {
+        f as i32
+    }
+}
+
+impl From<SamplerMipmapMode> for u32 {
+    fn from(f: SamplerMipmapMode) -> u32 {
+        f as u32
+    }
 }
 
 #[repr(i32)]
@@ -752,6 +1052,19 @@ pub enum SamplerAddressMode {
     MirrorClampToEdge = vks::VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE as i32,
 }
 
+impl From<SamplerAddressMode> for i32 {
+    fn from(f: SamplerAddressMode) -> i32 {
+        f as i32
+    }
+}
+
+impl From<SamplerAddressMode> for u32 {
+    fn from(f: SamplerAddressMode) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum BorderColor {
@@ -762,6 +1075,19 @@ pub enum BorderColor {
     FloatOpaqueWhite = vks::VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE as i32,
     IntOpaqueWhite = vks::VK_BORDER_COLOR_INT_OPAQUE_WHITE as i32,
 }
+
+impl From<BorderColor> for i32 {
+    fn from(f: BorderColor) -> i32 {
+        f as i32
+    }
+}
+
+impl From<BorderColor> for u32 {
+    fn from(f: BorderColor) -> u32 {
+        f as u32
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
@@ -779,6 +1105,19 @@ pub enum DescriptorType {
     InputAttachment = vks::VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as i32,
 }
 
+impl From<DescriptorType> for i32 {
+    fn from(f: DescriptorType) -> i32 {
+        f as i32
+    }
+}
+
+impl From<DescriptorType> for u32 {
+    fn from(f: DescriptorType) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum AttachmentLoadOp {
@@ -787,12 +1126,38 @@ pub enum AttachmentLoadOp {
     DontCare = vks::VK_ATTACHMENT_LOAD_OP_DONT_CARE as i32,
 }
 
+impl From<AttachmentLoadOp> for i32 {
+    fn from(f: AttachmentLoadOp) -> i32 {
+        f as i32
+    }
+}
+
+impl From<AttachmentLoadOp> for u32 {
+    fn from(f: AttachmentLoadOp) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum AttachmentStoreOp {
     Store = vks::VK_ATTACHMENT_STORE_OP_STORE as i32,
     DontCare = vks::VK_ATTACHMENT_STORE_OP_DONT_CARE as i32,
 }
+
+impl From<AttachmentStoreOp> for i32 {
+    fn from(f: AttachmentStoreOp) -> i32 {
+        f as i32
+    }
+}
+
+impl From<AttachmentStoreOp> for u32 {
+    fn from(f: AttachmentStoreOp) -> u32 {
+        f as u32
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
@@ -801,12 +1166,38 @@ pub enum PipelineBindPoint {
     Compute = vks::VK_PIPELINE_BIND_POINT_COMPUTE as i32,
 }
 
+impl From<PipelineBindPoint> for i32 {
+    fn from(f: PipelineBindPoint) -> i32 {
+        f as i32
+    }
+}
+
+impl From<PipelineBindPoint> for u32 {
+    fn from(f: PipelineBindPoint) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum CommandBufferLevel {
     Primary = vks::VK_COMMAND_BUFFER_LEVEL_PRIMARY as i32,
     Secondary = vks::VK_COMMAND_BUFFER_LEVEL_SECONDARY as i32,
 }
+
+impl From<CommandBufferLevel> for i32 {
+    fn from(f: CommandBufferLevel) -> i32 {
+        f as i32
+    }
+}
+
+impl From<CommandBufferLevel> for u32 {
+    fn from(f: CommandBufferLevel) -> u32 {
+        f as u32
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
@@ -815,12 +1206,38 @@ pub enum IndexType {
     Uint32 = vks::VK_INDEX_TYPE_UINT32 as i32,
 }
 
+impl From<IndexType> for i32 {
+    fn from(f: IndexType) -> i32 {
+        f as i32
+    }
+}
+
+impl From<IndexType> for u32 {
+    fn from(f: IndexType) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum SubpassContents {
     Inline = vks::VK_SUBPASS_CONTENTS_INLINE as i32,
     SecondaryCommandBuffers = vks::VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS as i32,
 }
+
+impl From<SubpassContents> for i32 {
+    fn from(f: SubpassContents) -> i32 {
+        f as i32
+    }
+}
+
+impl From<SubpassContents> for u32 {
+    fn from(f: SubpassContents) -> u32 {
+        f as u32
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
@@ -863,6 +1280,19 @@ pub enum ObjectType {
     IndirectCommandsLayoutNvx = vks::VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX as i32,
 }
 
+impl From<ObjectType> for i32 {
+    fn from(f: ObjectType) -> i32 {
+        f as i32
+    }
+}
+
+impl From<ObjectType> for u32 {
+    fn from(f: ObjectType) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum ColorSpaceKhr {
@@ -887,6 +1317,19 @@ pub enum ColorSpaceKhr {
     MaxEnumKhr = vks::VK_COLOR_SPACE_MAX_ENUM_KHR as i32,
 }
 
+impl From<ColorSpaceKhr> for i32 {
+    fn from(f: ColorSpaceKhr) -> i32 {
+        f as i32
+    }
+}
+
+impl From<ColorSpaceKhr> for u32 {
+    fn from(f: ColorSpaceKhr) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum PresentModeKhr {
@@ -902,6 +1345,19 @@ pub enum PresentModeKhr {
     MaxEnumKhr = vks::VK_PRESENT_MODE_MAX_ENUM_KHR as i32,
 }
 
+impl From<PresentModeKhr> for i32 {
+    fn from(f: PresentModeKhr) -> i32 {
+        f as i32
+    }
+}
+
+impl From<PresentModeKhr> for u32 {
+    fn from(f: PresentModeKhr) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum DescriptorUpdateTemplateTypeKhr {
@@ -912,6 +1368,19 @@ pub enum DescriptorUpdateTemplateTypeKhr {
     #[cfg(feature = "experimental")]
     MaxEnumKhr = vks::VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_MAX_ENUM_KHR as i32,
 }
+
+impl From<DescriptorUpdateTemplateTypeKhr> for i32 {
+    fn from(f: DescriptorUpdateTemplateTypeKhr) -> i32 {
+        f as i32
+    }
+}
+
+impl From<DescriptorUpdateTemplateTypeKhr> for u32 {
+    fn from(f: DescriptorUpdateTemplateTypeKhr) -> u32 {
+        f as u32
+    }
+}
+
 pub type DescriptorUpdateTemplateCreateFlagsKHR = i32;
 
 #[cfg(feature = "experimental")]
@@ -925,6 +1394,21 @@ pub enum PointClippingBehaviorKhr {
 }
 
 #[cfg(feature = "experimental")]
+impl From<PointClippingBehaviorKhr> for i32 {
+    fn from(f: PointClippingBehaviorKhr) -> i32 {
+        f as i32
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<PointClippingBehaviorKhr> for u32 {
+    fn from(f: PointClippingBehaviorKhr) -> u32 {
+        f as u32
+    }
+}
+
+
+#[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum TessellationDomainOriginKhr {
@@ -933,6 +1417,21 @@ pub enum TessellationDomainOriginKhr {
     RangeSizeKhr = vks::VK_TESSELLATION_DOMAIN_ORIGIN_RANGE_SIZE_KHR as i32,
     MaxEnumKhr = vks::VK_TESSELLATION_DOMAIN_ORIGIN_MAX_ENUM_KHR as i32,
 }
+
+#[cfg(feature = "experimental")]
+impl From<TessellationDomainOriginKhr> for i32 {
+    fn from(f: TessellationDomainOriginKhr) -> i32 {
+        f as i32
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<TessellationDomainOriginKhr> for u32 {
+    fn from(f: TessellationDomainOriginKhr) -> u32 {
+        f as u32
+    }
+}
+
 
 #[cfg(feature = "experimental")]
 #[repr(i32)]
@@ -948,6 +1447,21 @@ pub enum SamplerYcbcrModelConversionKhr {
 }
 
 #[cfg(feature = "experimental")]
+impl From<SamplerYcbcrModelConversionKhr> for i32 {
+    fn from(f: SamplerYcbcrModelConversionKhr) -> i32 {
+        f as i32
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<SamplerYcbcrModelConversionKhr> for u32 {
+    fn from(f: SamplerYcbcrModelConversionKhr) -> u32 {
+        f as u32
+    }
+}
+
+
+#[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum SamplerYcbcrRangeKhr {
@@ -958,6 +1472,21 @@ pub enum SamplerYcbcrRangeKhr {
 }
 
 #[cfg(feature = "experimental")]
+impl From<SamplerYcbcrRangeKhr> for i32 {
+    fn from(f: SamplerYcbcrRangeKhr) -> i32 {
+        f as i32
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<SamplerYcbcrRangeKhr> for u32 {
+    fn from(f: SamplerYcbcrRangeKhr) -> u32 {
+        f as u32
+    }
+}
+
+
+#[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum ChromaLocationKhr {
@@ -966,6 +1495,21 @@ pub enum ChromaLocationKhr {
     RangeSizeKhr = vks::VK_CHROMA_LOCATION_RANGE_SIZE_KHR as i32,
     MaxEnumKhr = vks::VK_CHROMA_LOCATION_MAX_ENUM_KHR as i32,
 }
+
+#[cfg(feature = "experimental")]
+impl From<ChromaLocationKhr> for i32 {
+    fn from(f: ChromaLocationKhr) -> i32 {
+        f as i32
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<ChromaLocationKhr> for u32 {
+    fn from(f: ChromaLocationKhr) -> u32 {
+        f as u32
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1016,6 +1560,19 @@ pub enum DebugReportObjectTypeExt {
     MaxEnumExt = vks::VK_DEBUG_REPORT_OBJECT_TYPE_MAX_ENUM_EXT as i32,
 }
 
+impl From<DebugReportObjectTypeExt> for i32 {
+    fn from(f: DebugReportObjectTypeExt) -> i32 {
+        f as i32
+    }
+}
+
+impl From<DebugReportObjectTypeExt> for u32 {
+    fn from(f: DebugReportObjectTypeExt) -> u32 {
+        f as u32
+    }
+}
+
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1028,6 +1585,17 @@ pub enum RasterizationOrderAmd {
     MaxEnumAmd = vks::VK_RASTERIZATION_ORDER_MAX_ENUM_AMD as i32,
 }
 
+impl From<RasterizationOrderAmd> for i32 {
+    fn from(f: RasterizationOrderAmd) -> i32 {
+        f as i32
+    }
+}
+
+impl From<RasterizationOrderAmd> for u32 {
+    fn from(f: RasterizationOrderAmd) -> u32 {
+        f as u32
+    }
+}
 
 
 #[repr(i32)]
@@ -1040,6 +1608,19 @@ pub enum ValidationCheckExt {
     #[cfg(feature = "experimental")]
     MaxEnumExt = vks::VK_VALIDATION_CHECK_MAX_ENUM_EXT as i32,
 }
+
+impl From<ValidationCheckExt> for i32 {
+    fn from(f: ValidationCheckExt) -> i32 {
+        f as i32
+    }
+}
+
+impl From<ValidationCheckExt> for u32 {
+    fn from(f: ValidationCheckExt) -> u32 {
+        f as u32
+    }
+}
+
 
 #[cfg(feature = "experimental")]
 #[repr(i32)]
@@ -1058,6 +1639,21 @@ pub enum IndirectCommandsTokenTypeNvx {
 }
 
 #[cfg(feature = "experimental")]
+impl From<IndirectCommandsTokenTypeNvx> for i32 {
+    fn from(f: IndirectCommandsTokenTypeNvx) -> i32 {
+        f as i32
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<IndirectCommandsTokenTypeNvx> for u32 {
+    fn from(f: IndirectCommandsTokenTypeNvx) -> u32 {
+        f as u32
+    }
+}
+
+
+#[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum ObjectEntryTypeNvx {
@@ -1069,6 +1665,21 @@ pub enum ObjectEntryTypeNvx {
     RangeSizeNvx = vks::VK_OBJECT_ENTRY_TYPE_RANGE_SIZE_NVX as i32,
     MaxEnumNvx = vks::VK_OBJECT_ENTRY_TYPE_MAX_ENUM_NVX as i32,
 }
+
+#[cfg(feature = "experimental")]
+impl From<ObjectEntryTypeNvx> for i32 {
+    fn from(f: ObjectEntryTypeNvx) -> i32 {
+        f as i32
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<ObjectEntryTypeNvx> for u32 {
+    fn from(f: ObjectEntryTypeNvx) -> u32 {
+        f as u32
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1082,6 +1693,19 @@ pub enum DisplayPowerStateExt {
     MaxEnumExt = vks::VK_DISPLAY_POWER_STATE_MAX_ENUM_EXT as i32,
 }
 
+impl From<DisplayPowerStateExt> for i32 {
+    fn from(f: DisplayPowerStateExt) -> i32 {
+        f as i32
+    }
+}
+
+impl From<DisplayPowerStateExt> for u32 {
+    fn from(f: DisplayPowerStateExt) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum DeviceEventTypeExt {
@@ -1092,6 +1716,19 @@ pub enum DeviceEventTypeExt {
     MaxEnumExt = vks::VK_DEVICE_EVENT_TYPE_MAX_ENUM_EXT as i32,
 }
 
+impl From<DeviceEventTypeExt> for i32 {
+    fn from(f: DeviceEventTypeExt) -> i32 {
+        f as i32
+    }
+}
+
+impl From<DeviceEventTypeExt> for u32 {
+    fn from(f: DeviceEventTypeExt) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum DisplayEventTypeExt {
@@ -1101,6 +1738,19 @@ pub enum DisplayEventTypeExt {
     #[cfg(feature = "experimental")]
     MaxEnumExt = vks::VK_DISPLAY_EVENT_TYPE_MAX_ENUM_EXT as i32,
 }
+
+impl From<DisplayEventTypeExt> for i32 {
+    fn from(f: DisplayEventTypeExt) -> i32 {
+        f as i32
+    }
+}
+
+impl From<DisplayEventTypeExt> for u32 {
+    fn from(f: DisplayEventTypeExt) -> u32 {
+        f as u32
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1119,6 +1769,19 @@ pub enum ViewportCoordinateSwizzleNv {
     MaxEnumNv = vks::VK_VIEWPORT_COORDINATE_SWIZZLE_MAX_ENUM_NV as i32,
 }
 
+impl From<ViewportCoordinateSwizzleNv> for i32 {
+    fn from(f: ViewportCoordinateSwizzleNv) -> i32 {
+        f as i32
+    }
+}
+
+impl From<ViewportCoordinateSwizzleNv> for u32 {
+    fn from(f: ViewportCoordinateSwizzleNv) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum DiscardRectangleModeExt {
@@ -1129,6 +1792,19 @@ pub enum DiscardRectangleModeExt {
     #[cfg(feature = "experimental")]
     MaxEnumExt = vks::VK_DISCARD_RECTANGLE_MODE_MAX_ENUM_EXT as i32,
 }
+
+impl From<DiscardRectangleModeExt> for i32 {
+    fn from(f: DiscardRectangleModeExt) -> i32 {
+        f as i32
+    }
+}
+
+impl From<DiscardRectangleModeExt> for u32 {
+    fn from(f: DiscardRectangleModeExt) -> u32 {
+        f as u32
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1142,6 +1818,19 @@ pub enum SamplerReductionModeExt {
     MaxEnumExt = vks::VK_SAMPLER_REDUCTION_MODE_MAX_ENUM_EXT as i32,
 }
 
+impl From<SamplerReductionModeExt> for i32 {
+    fn from(f: SamplerReductionModeExt) -> i32 {
+        f as i32
+    }
+}
+
+impl From<SamplerReductionModeExt> for u32 {
+    fn from(f: SamplerReductionModeExt) -> u32 {
+        f as u32
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum BlendOverlapExt {
@@ -1153,6 +1842,19 @@ pub enum BlendOverlapExt {
     #[cfg(feature = "experimental")]
     MaxEnumExt = vks::VK_BLEND_OVERLAP_MAX_ENUM_EXT as i32,
 }
+
+impl From<BlendOverlapExt> for i32 {
+    fn from(f: BlendOverlapExt) -> i32 {
+        f as i32
+    }
+}
+
+impl From<BlendOverlapExt> for u32 {
+    fn from(f: BlendOverlapExt) -> u32 {
+        f as u32
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1167,10 +1869,37 @@ pub enum CoverageModulationModeNv {
     MaxEnumNv = vks::VK_COVERAGE_MODULATION_MODE_MAX_ENUM_NV as i32,
 }
 
+impl From<CoverageModulationModeNv> for i32 {
+    fn from(f: CoverageModulationModeNv) -> i32 {
+        f as i32
+    }
+}
+
+impl From<CoverageModulationModeNv> for u32 {
+    fn from(f: CoverageModulationModeNv) -> u32 {
+        f as u32
+    }
+}
+
+
 #[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum ValidationCacheHeaderVersionExt {
     OneExt = vks::VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT as i32,
     MaxEnumExt = vks::VK_VALIDATION_CACHE_HEADER_VERSION_MAX_ENUM_EXT as i32,
+}
+
+#[cfg(feature = "experimental")]
+impl From<ValidationCacheHeaderVersionExt> for i32 {
+    fn from(f: ValidationCacheHeaderVersionExt) -> i32 {
+        f as i32
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<ValidationCacheHeaderVersionExt> for u32 {
+    fn from(f: ValidationCacheHeaderVersionExt) -> u32 {
+        f as u32
+    }
 }

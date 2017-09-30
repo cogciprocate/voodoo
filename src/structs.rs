@@ -1,19 +1,23 @@
 //! Structs.
 
+#![allow(unused_mut)]
+
 use std::ptr;
 use std::ffi::{CString, CStr};
 use std::marker::PhantomData;
+use libc::c_void;
+use num_traits::ToPrimitive;
 use ::*;
 use vks;
-use vks::{PFN_vkAllocationFunction, PFN_vkReallocationFunction, PFN_vkFreeFunction,
-    PFN_vkInternalAllocationNotification, PFN_vkInternalFreeNotification,
+use vks::{PFN_vkAllocationFunction, PFN_vkReallocationFunction, PFN_vkFreeFunction, 
+    PFN_vkInternalAllocationNotification, PFN_vkInternalFreeNotification, 
     PFN_vkDebugReportCallbackEXT};
 
 
 
 /// A `VkOffset2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Offset2d {
@@ -37,9 +41,16 @@ impl Offset2d {
 }
 
 
+impl From<Offset2d> for vks::VkOffset2D {
+    fn from(f: Offset2d) -> vks::VkOffset2D {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkOffset2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Offset2dBuilder {
     raw: vks::VkOffset2D,
@@ -52,12 +63,20 @@ impl Offset2dBuilder {
         }
     }
 
-    pub fn x<'m>(&'m mut self, x: i32) -> &'m mut Offset2dBuilder {
+    pub fn x<'m>(mut self, x: i32) -> Offset2dBuilder {
+        self.raw.x = x.into();
         self
     }
 
-    pub fn y<'m>(&'m mut self, y: i32) -> &'m mut Offset2dBuilder {
+    pub fn y<'m>(mut self, y: i32) -> Offset2dBuilder {
+        self.raw.y = y.into();
         self
+    }
+
+    pub fn build(self) -> Offset2d {
+        Offset2d {
+            raw: self.raw,
+        }
     }
 
 }
@@ -65,7 +84,7 @@ impl Offset2dBuilder {
 
 /// A `VkOffset3D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Offset3d {
@@ -92,9 +111,16 @@ impl Offset3d {
 }
 
 
+impl From<Offset3d> for vks::VkOffset3D {
+    fn from(f: Offset3d) -> vks::VkOffset3D {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkOffset3D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Offset3dBuilder {
     raw: vks::VkOffset3D,
@@ -107,16 +133,25 @@ impl Offset3dBuilder {
         }
     }
 
-    pub fn x<'m>(&'m mut self, x: i32) -> &'m mut Offset3dBuilder {
+    pub fn x<'m>(mut self, x: i32) -> Offset3dBuilder {
+        self.raw.x = x.into();
         self
     }
 
-    pub fn y<'m>(&'m mut self, y: i32) -> &'m mut Offset3dBuilder {
+    pub fn y<'m>(mut self, y: i32) -> Offset3dBuilder {
+        self.raw.y = y.into();
         self
     }
 
-    pub fn z<'m>(&'m mut self, z: i32) -> &'m mut Offset3dBuilder {
+    pub fn z<'m>(mut self, z: i32) -> Offset3dBuilder {
+        self.raw.z = z.into();
         self
+    }
+
+    pub fn build(self) -> Offset3d {
+        Offset3d {
+            raw: self.raw,
+        }
     }
 
 }
@@ -124,7 +159,7 @@ impl Offset3dBuilder {
 
 /// A `VkExtent2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Extent2d {
@@ -148,9 +183,16 @@ impl Extent2d {
 }
 
 
+impl From<Extent2d> for vks::VkExtent2D {
+    fn from(f: Extent2d) -> vks::VkExtent2D {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExtent2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Extent2dBuilder {
     raw: vks::VkExtent2D,
@@ -163,12 +205,20 @@ impl Extent2dBuilder {
         }
     }
 
-    pub fn width<'m>(&'m mut self, width: u32) -> &'m mut Extent2dBuilder {
+    pub fn width<'m>(mut self, width: u32) -> Extent2dBuilder {
+        self.raw.width = width.into();
         self
     }
 
-    pub fn height<'m>(&'m mut self, height: u32) -> &'m mut Extent2dBuilder {
+    pub fn height<'m>(mut self, height: u32) -> Extent2dBuilder {
+        self.raw.height = height.into();
         self
+    }
+
+    pub fn build(self) -> Extent2d {
+        Extent2d {
+            raw: self.raw,
+        }
     }
 
 }
@@ -176,7 +226,7 @@ impl Extent2dBuilder {
 
 /// A `VkExtent3D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Extent3d {
@@ -203,9 +253,16 @@ impl Extent3d {
 }
 
 
+impl From<Extent3d> for vks::VkExtent3D {
+    fn from(f: Extent3d) -> vks::VkExtent3D {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExtent3D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Extent3dBuilder {
     raw: vks::VkExtent3D,
@@ -218,16 +275,25 @@ impl Extent3dBuilder {
         }
     }
 
-    pub fn width<'m>(&'m mut self, width: u32) -> &'m mut Extent3dBuilder {
+    pub fn width<'m>(mut self, width: u32) -> Extent3dBuilder {
+        self.raw.width = width.into();
         self
     }
 
-    pub fn height<'m>(&'m mut self, height: u32) -> &'m mut Extent3dBuilder {
+    pub fn height<'m>(mut self, height: u32) -> Extent3dBuilder {
+        self.raw.height = height.into();
         self
     }
 
-    pub fn depth<'m>(&'m mut self, depth: u32) -> &'m mut Extent3dBuilder {
+    pub fn depth<'m>(mut self, depth: u32) -> Extent3dBuilder {
+        self.raw.depth = depth.into();
         self
+    }
+
+    pub fn build(self) -> Extent3d {
+        Extent3d {
+            raw: self.raw,
+        }
     }
 
 }
@@ -235,7 +301,7 @@ impl Extent3dBuilder {
 
 /// A `VkViewport`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Viewport {
@@ -271,9 +337,16 @@ impl Viewport {
 }
 
 
+impl From<Viewport> for vks::VkViewport {
+    fn from(f: Viewport) -> vks::VkViewport {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkViewport`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ViewportBuilder {
     raw: vks::VkViewport,
@@ -286,28 +359,40 @@ impl ViewportBuilder {
         }
     }
 
-    pub fn x<'m>(&'m mut self, x: f32) -> &'m mut ViewportBuilder {
+    pub fn x<'m>(mut self, x: f32) -> ViewportBuilder {
+        self.raw.x = x.into();
         self
     }
 
-    pub fn y<'m>(&'m mut self, y: f32) -> &'m mut ViewportBuilder {
+    pub fn y<'m>(mut self, y: f32) -> ViewportBuilder {
+        self.raw.y = y.into();
         self
     }
 
-    pub fn width<'m>(&'m mut self, width: f32) -> &'m mut ViewportBuilder {
+    pub fn width<'m>(mut self, width: f32) -> ViewportBuilder {
+        self.raw.width = width.into();
         self
     }
 
-    pub fn height<'m>(&'m mut self, height: f32) -> &'m mut ViewportBuilder {
+    pub fn height<'m>(mut self, height: f32) -> ViewportBuilder {
+        self.raw.height = height.into();
         self
     }
 
-    pub fn min_depth<'m>(&'m mut self, min_depth: f32) -> &'m mut ViewportBuilder {
+    pub fn min_depth<'m>(mut self, min_depth: f32) -> ViewportBuilder {
+        self.raw.minDepth = min_depth.into();
         self
     }
 
-    pub fn max_depth<'m>(&'m mut self, max_depth: f32) -> &'m mut ViewportBuilder {
+    pub fn max_depth<'m>(mut self, max_depth: f32) -> ViewportBuilder {
+        self.raw.maxDepth = max_depth.into();
         self
+    }
+
+    pub fn build(self) -> Viewport {
+        Viewport {
+            raw: self.raw,
+        }
     }
 
 }
@@ -315,7 +400,7 @@ impl ViewportBuilder {
 
 /// A `VkRect2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Rect2d {
@@ -339,9 +424,16 @@ impl Rect2d {
 }
 
 
+impl From<Rect2d> for vks::VkRect2D {
+    fn from(f: Rect2d) -> vks::VkRect2D {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkRect2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Rect2dBuilder {
     raw: vks::VkRect2D,
@@ -354,12 +446,20 @@ impl Rect2dBuilder {
         }
     }
 
-    pub fn offset<'m>(&'m mut self, offset: Offset2d) -> &'m mut Rect2dBuilder {
+    pub fn offset<'m>(mut self, offset: Offset2d) -> Rect2dBuilder {
+        self.raw.offset = offset.raw;
         self
     }
 
-    pub fn extent<'m>(&'m mut self, extent: Extent2d) -> &'m mut Rect2dBuilder {
+    pub fn extent<'m>(mut self, extent: Extent2d) -> Rect2dBuilder {
+        self.raw.extent = extent.raw;
         self
+    }
+
+    pub fn build(self) -> Rect2d {
+        Rect2d {
+            raw: self.raw,
+        }
     }
 
 }
@@ -367,7 +467,7 @@ impl Rect2dBuilder {
 
 /// A `VkClearRect`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ClearRect {
@@ -394,9 +494,16 @@ impl ClearRect {
 }
 
 
+impl From<ClearRect> for vks::VkClearRect {
+    fn from(f: ClearRect) -> vks::VkClearRect {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkClearRect`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ClearRectBuilder {
     raw: vks::VkClearRect,
@@ -409,16 +516,25 @@ impl ClearRectBuilder {
         }
     }
 
-    pub fn rect<'m>(&'m mut self, rect: Rect2d) -> &'m mut ClearRectBuilder {
+    pub fn rect<'m>(mut self, rect: Rect2d) -> ClearRectBuilder {
+        self.raw.rect = rect.raw;
         self
     }
 
-    pub fn base_array_layer<'m>(&'m mut self, base_array_layer: u32) -> &'m mut ClearRectBuilder {
+    pub fn base_array_layer<'m>(mut self, base_array_layer: u32) -> ClearRectBuilder {
+        self.raw.baseArrayLayer = base_array_layer.into();
         self
     }
 
-    pub fn layer_count<'m>(&'m mut self, layer_count: u32) -> &'m mut ClearRectBuilder {
+    pub fn layer_count<'m>(mut self, layer_count: u32) -> ClearRectBuilder {
+        self.raw.layerCount = layer_count.into();
         self
+    }
+
+    pub fn build(self) -> ClearRect {
+        ClearRect {
+            raw: self.raw,
+        }
     }
 
 }
@@ -426,7 +542,7 @@ impl ClearRectBuilder {
 
 /// A `VkComponentMapping`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ComponentMapping {
@@ -456,9 +572,16 @@ impl ComponentMapping {
 }
 
 
+impl From<ComponentMapping> for vks::VkComponentMapping {
+    fn from(f: ComponentMapping) -> vks::VkComponentMapping {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkComponentMapping`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ComponentMappingBuilder {
     raw: vks::VkComponentMapping,
@@ -471,20 +594,30 @@ impl ComponentMappingBuilder {
         }
     }
 
-    pub fn r<'m>(&'m mut self, r: ComponentSwizzle) -> &'m mut ComponentMappingBuilder {
+    pub fn r<'m>(mut self, r: ComponentSwizzle) -> ComponentMappingBuilder {
+        self.raw.r = r.into();
         self
     }
 
-    pub fn g<'m>(&'m mut self, g: ComponentSwizzle) -> &'m mut ComponentMappingBuilder {
+    pub fn g<'m>(mut self, g: ComponentSwizzle) -> ComponentMappingBuilder {
+        self.raw.g = g.into();
         self
     }
 
-    pub fn b<'m>(&'m mut self, b: ComponentSwizzle) -> &'m mut ComponentMappingBuilder {
+    pub fn b<'m>(mut self, b: ComponentSwizzle) -> ComponentMappingBuilder {
+        self.raw.b = b.into();
         self
     }
 
-    pub fn a<'m>(&'m mut self, a: ComponentSwizzle) -> &'m mut ComponentMappingBuilder {
+    pub fn a<'m>(mut self, a: ComponentSwizzle) -> ComponentMappingBuilder {
+        self.raw.a = a.into();
         self
+    }
+
+    pub fn build(self) -> ComponentMapping {
+        ComponentMapping {
+            raw: self.raw,
+        }
     }
 
 }
@@ -492,7 +625,7 @@ impl ComponentMappingBuilder {
 
 /// A `VkPhysicalDeviceProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceProperties {
@@ -533,9 +666,16 @@ impl PhysicalDeviceProperties {
 }
 
 
+impl From<PhysicalDeviceProperties> for vks::VkPhysicalDeviceProperties {
+    fn from(f: PhysicalDeviceProperties) -> vks::VkPhysicalDeviceProperties {
+        f.raw
+    }
+}
+
+
 /// A `VkExtensionProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExtensionProperties {
@@ -555,9 +695,16 @@ impl ExtensionProperties {
 }
 
 
+impl From<ExtensionProperties> for vks::VkExtensionProperties {
+    fn from(f: ExtensionProperties) -> vks::VkExtensionProperties {
+        f.raw
+    }
+}
+
+
 /// A `VkLayerProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct LayerProperties {
@@ -583,13 +730,21 @@ impl LayerProperties {
 }
 
 
+impl From<LayerProperties> for vks::VkLayerProperties {
+    fn from(f: LayerProperties) -> vks::VkLayerProperties {
+        f.raw
+    }
+}
+
+
 /// A `VkApplicationInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct ApplicationInfo<'s> {
     raw: vks::VkApplicationInfo,
+    application_name: Option<CharStr<'s>>,
+    engine_name: Option<CharStr<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -622,12 +777,21 @@ impl<'s> ApplicationInfo<'s> {
 }
 
 
+impl<'s> From<ApplicationInfo<'s>> for vks::VkApplicationInfo {
+    fn from(f: ApplicationInfo<'s>) -> vks::VkApplicationInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkApplicationInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ApplicationInfoBuilder<'b> {
     raw: vks::VkApplicationInfo,
+    application_name: Option<CharStr<'b>>,
+    engine_name: Option<CharStr<'b>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -635,32 +799,51 @@ impl<'b> ApplicationInfoBuilder<'b> {
     pub fn new() -> ApplicationInfoBuilder<'b> {
         ApplicationInfoBuilder {
             raw: vks::VkApplicationInfo::default(),
+            application_name: None,
+            engine_name: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ApplicationInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ApplicationInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn application_name<'m, 'a>(&'m mut self, application_name: &'a i8) -> &'m mut ApplicationInfoBuilder<'b> {
+    pub fn application_name<'m, 'a, T>(mut self, application_name: T) -> ApplicationInfoBuilder<'b> where 'a: 'b, T: Into<CharStr<'a>> {
+        self.application_name = Some(application_name.into());
+        self.raw.pApplicationName = self.application_name.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn application_version<'m>(&'m mut self, application_version: u32) -> &'m mut ApplicationInfoBuilder<'b> {
+    pub fn application_version<'m, T>(mut self, application_version: T) -> ApplicationInfoBuilder<'b> where T: Into<Version> {
+        self.raw.applicationVersion = application_version.into().into();
         self
     }
 
-    pub fn engine_name<'m, 'a>(&'m mut self, engine_name: &'a i8) -> &'m mut ApplicationInfoBuilder<'b> {
+    pub fn engine_name<'m, 'a, T>(mut self, engine_name: T) -> ApplicationInfoBuilder<'b> where 'a: 'b, T: Into<CharStr<'a>> {
+        self.engine_name = Some(engine_name.into());
+        self.raw.pEngineName = self.engine_name.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn engine_version<'m>(&'m mut self, engine_version: u32) -> &'m mut ApplicationInfoBuilder<'b> {
+    pub fn engine_version<'m, T>(mut self, engine_version: T) -> ApplicationInfoBuilder<'b> where T: Into<Version> {
+        self.raw.engineVersion = engine_version.into().into();
         self
     }
 
-    pub fn api_version<'m>(&'m mut self, api_version: u32) -> &'m mut ApplicationInfoBuilder<'b> {
+    pub fn api_version<'m, T>(mut self, api_version: T) -> ApplicationInfoBuilder<'b> where T: Into<Version> {
+        self.raw.apiVersion = api_version.into().into();
         self
+    }
+
+    pub fn build(self) -> ApplicationInfo<'b> {
+        ApplicationInfo {
+            raw: self.raw,
+            application_name: self.application_name,
+            engine_name: self.engine_name,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -668,7 +851,7 @@ impl<'b> ApplicationInfoBuilder<'b> {
 
 /// A `VkAllocationCallbacks`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct AllocationCallbacks<'s> {
@@ -681,7 +864,7 @@ impl<'s> AllocationCallbacks<'s> {
         AllocationCallbacksBuilder::new()
     }
 
-    pub fn user_data(&self) {
+    pub unsafe fn user_data(&self) {
     }
 
     pub fn pfn_allocation(&self) {
@@ -705,9 +888,16 @@ impl<'s> AllocationCallbacks<'s> {
 }
 
 
+impl<'s> From<AllocationCallbacks<'s>> for vks::VkAllocationCallbacks {
+    fn from(f: AllocationCallbacks<'s>) -> vks::VkAllocationCallbacks {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkAllocationCallbacks`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct AllocationCallbacksBuilder<'b> {
     raw: vks::VkAllocationCallbacks,
@@ -722,28 +912,41 @@ impl<'b> AllocationCallbacksBuilder<'b> {
         }
     }
 
-    pub fn user_data<'m, 'a>(&'m mut self, user_data: &'a ()) -> &'m mut AllocationCallbacksBuilder<'b> {
+    pub unsafe fn user_data<'m>(mut self, user_data: *mut c_void) -> AllocationCallbacksBuilder<'b> {
+        self.raw.pUserData = user_data;
         self
     }
 
-    pub fn pfn_allocation<'m>(&'m mut self, pfn_allocation: PFN_vkAllocationFunction) -> &'m mut AllocationCallbacksBuilder<'b> {
+    pub fn pfn_allocation<'m>(mut self, pfn_allocation: PFN_vkAllocationFunction) -> AllocationCallbacksBuilder<'b> {
+        self.raw.pfnAllocation = pfn_allocation.into();
         self
     }
 
-    pub fn pfn_reallocation<'m>(&'m mut self, pfn_reallocation: PFN_vkReallocationFunction) -> &'m mut AllocationCallbacksBuilder<'b> {
+    pub fn pfn_reallocation<'m>(mut self, pfn_reallocation: PFN_vkReallocationFunction) -> AllocationCallbacksBuilder<'b> {
+        self.raw.pfnReallocation = pfn_reallocation.into();
         self
     }
 
-    pub fn pfn_free<'m>(&'m mut self, pfn_free: PFN_vkFreeFunction) -> &'m mut AllocationCallbacksBuilder<'b> {
+    pub fn pfn_free<'m>(mut self, pfn_free: PFN_vkFreeFunction) -> AllocationCallbacksBuilder<'b> {
+        self.raw.pfnFree = pfn_free.into();
         self
     }
 
-    pub fn pfn_internal_allocation<'m>(&'m mut self, pfn_internal_allocation: PFN_vkInternalAllocationNotification) -> &'m mut AllocationCallbacksBuilder<'b> {
+    pub fn pfn_internal_allocation<'m>(mut self, pfn_internal_allocation: PFN_vkInternalAllocationNotification) -> AllocationCallbacksBuilder<'b> {
+        self.raw.pfnInternalAllocation = pfn_internal_allocation.into();
         self
     }
 
-    pub fn pfn_internal_free<'m>(&'m mut self, pfn_internal_free: PFN_vkInternalFreeNotification) -> &'m mut AllocationCallbacksBuilder<'b> {
+    pub fn pfn_internal_free<'m>(mut self, pfn_internal_free: PFN_vkInternalFreeNotification) -> AllocationCallbacksBuilder<'b> {
+        self.raw.pfnInternalFree = pfn_internal_free.into();
         self
+    }
+
+    pub fn build(self) -> AllocationCallbacks<'b> {
+        AllocationCallbacks {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -751,7 +954,7 @@ impl<'b> AllocationCallbacksBuilder<'b> {
 
 /// A `VkDeviceQueueCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DeviceQueueCreateInfo<'s> {
@@ -785,9 +988,16 @@ impl<'s> DeviceQueueCreateInfo<'s> {
 }
 
 
+impl<'s> From<DeviceQueueCreateInfo<'s>> for vks::VkDeviceQueueCreateInfo {
+    fn from(f: DeviceQueueCreateInfo<'s>) -> vks::VkDeviceQueueCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceQueueCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DeviceQueueCreateInfoBuilder<'b> {
     raw: vks::VkDeviceQueueCreateInfo,
@@ -802,24 +1012,36 @@ impl<'b> DeviceQueueCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceQueueCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceQueueCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: DeviceQueueCreateFlags) -> &'m mut DeviceQueueCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: DeviceQueueCreateFlags) -> DeviceQueueCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn queue_family_index<'m>(&'m mut self, queue_family_index: u32) -> &'m mut DeviceQueueCreateInfoBuilder<'b> {
+    pub fn queue_family_index<'m>(mut self, queue_family_index: u32) -> DeviceQueueCreateInfoBuilder<'b> {
+        self.raw.queueFamilyIndex = queue_family_index.into();
         self
     }
 
-    pub fn queue_count<'m>(&'m mut self, queue_count: u32) -> &'m mut DeviceQueueCreateInfoBuilder<'b> {
+    pub fn queue_count<'m>(mut self, queue_count: u32) -> DeviceQueueCreateInfoBuilder<'b> {
+        self.raw.queueCount = queue_count.into();
         self
     }
 
-    pub fn queue_priorities<'m, 'a>(&'m mut self, queue_priorities: &'a f32) -> &'m mut DeviceQueueCreateInfoBuilder<'b> {
+    pub fn queue_priorities<'m, 'a>(mut self, queue_priorities: &'a [f32]) -> DeviceQueueCreateInfoBuilder<'b> {
+        self.raw.pQueuePriorities = queue_priorities.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> DeviceQueueCreateInfo<'b> {
+        DeviceQueueCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -827,11 +1049,12 @@ impl<'b> DeviceQueueCreateInfoBuilder<'b> {
 
 /// A `VkDeviceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct DeviceCreateInfo<'s> {
     raw: vks::VkDeviceCreateInfo,
+    enabled_extension_names: Option<CharStrs<'s>>,
+    enabled_layer_names: Option<CharStrs<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -873,12 +1096,21 @@ impl<'s> DeviceCreateInfo<'s> {
 }
 
 
+impl<'s> From<DeviceCreateInfo<'s>> for vks::VkDeviceCreateInfo {
+    fn from(f: DeviceCreateInfo<'s>) -> vks::VkDeviceCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DeviceCreateInfoBuilder<'b> {
     raw: vks::VkDeviceCreateInfo,
+    enabled_extension_names: Option<CharStrs<'b>>,
+    enabled_layer_names: Option<CharStrs<'b>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -886,44 +1118,66 @@ impl<'b> DeviceCreateInfoBuilder<'b> {
     pub fn new() -> DeviceCreateInfoBuilder<'b> {
         DeviceCreateInfoBuilder {
             raw: vks::VkDeviceCreateInfo::default(),
+            enabled_extension_names: None,
+            enabled_layer_names: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: DeviceCreateFlags) -> &'m mut DeviceCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: DeviceCreateFlags) -> DeviceCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn queue_create_info_count<'m>(&'m mut self, queue_create_info_count: u32) -> &'m mut DeviceCreateInfoBuilder<'b> {
+    pub fn queue_create_info_count<'m>(mut self, queue_create_info_count: u32) -> DeviceCreateInfoBuilder<'b> {
+        self.raw.queueCreateInfoCount = queue_create_info_count.into();
         self
     }
 
-    pub fn queue_create_infos<'m, 'a>(&'m mut self, queue_create_infos: &'a DeviceQueueCreateInfo) -> &'m mut DeviceCreateInfoBuilder<'b> {
+    pub fn queue_create_infos<'m, 'a>(mut self, queue_create_infos: &'a [DeviceQueueCreateInfo]) -> DeviceCreateInfoBuilder<'b> {
+        self.raw.pQueueCreateInfos = queue_create_infos.as_ptr() as *const _;
         self
     }
 
-    pub fn enabled_layer_count<'m>(&'m mut self, enabled_layer_count: u32) -> &'m mut DeviceCreateInfoBuilder<'b> {
+    pub fn enabled_layer_count<'m>(mut self, enabled_layer_count: u32) -> DeviceCreateInfoBuilder<'b> {
+        self.raw.enabledLayerCount = enabled_layer_count.into();
         self
     }
 
-    pub fn enabled_layer_names<'m>(&'m mut self, enabled_layer_names: i8) -> &'m mut DeviceCreateInfoBuilder<'b> {
+    pub fn enabled_layer_names<'m, 'a, T>(mut self, enabled_layer_names: T) -> DeviceCreateInfoBuilder<'b> where 'a: 'b, T: Into<CharStrs<'a>> {
+        self.enabled_layer_names = Some(enabled_layer_names.into());
+        self.raw.ppEnabledLayerNames = self.enabled_layer_names.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn enabled_extension_count<'m>(&'m mut self, enabled_extension_count: u32) -> &'m mut DeviceCreateInfoBuilder<'b> {
+    pub fn enabled_extension_count<'m>(mut self, enabled_extension_count: u32) -> DeviceCreateInfoBuilder<'b> {
+        self.raw.enabledExtensionCount = enabled_extension_count.into();
         self
     }
 
-    pub fn enabled_extension_names<'m>(&'m mut self, enabled_extension_names: i8) -> &'m mut DeviceCreateInfoBuilder<'b> {
+    pub fn enabled_extension_names<'m, 'a, T>(mut self, enabled_extension_names: T) -> DeviceCreateInfoBuilder<'b> where 'a: 'b, T: Into<CharStrs<'a>> {
+        self.enabled_extension_names = Some(enabled_extension_names.into());
+        self.raw.ppEnabledExtensionNames = self.enabled_extension_names.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn enabled_features<'m, 'a>(&'m mut self, enabled_features: &'a PhysicalDeviceFeatures) -> &'m mut DeviceCreateInfoBuilder<'b> {
+    pub fn enabled_features<'m, 'a>(mut self, enabled_features: &'a [PhysicalDeviceFeatures]) -> DeviceCreateInfoBuilder<'b> {
+        self.raw.pEnabledFeatures = enabled_features.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> DeviceCreateInfo<'b> {
+        DeviceCreateInfo {
+            raw: self.raw,
+            enabled_extension_names: self.enabled_extension_names,
+            enabled_layer_names: self.enabled_layer_names,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -931,11 +1185,12 @@ impl<'b> DeviceCreateInfoBuilder<'b> {
 
 /// A `VkInstanceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct InstanceCreateInfo<'s> {
     raw: vks::VkInstanceCreateInfo,
+    enabled_layer_names: Option<CharStrs<'s>>,
+    enabled_extension_names: Option<CharStrs<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -971,12 +1226,21 @@ impl<'s> InstanceCreateInfo<'s> {
 }
 
 
+impl<'s> From<InstanceCreateInfo<'s>> for vks::VkInstanceCreateInfo {
+    fn from(f: InstanceCreateInfo<'s>) -> vks::VkInstanceCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkInstanceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct InstanceCreateInfoBuilder<'b> {
     raw: vks::VkInstanceCreateInfo,
+    enabled_layer_names: Option<CharStrs<'b>>,
+    enabled_extension_names: Option<CharStrs<'b>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -984,36 +1248,56 @@ impl<'b> InstanceCreateInfoBuilder<'b> {
     pub fn new() -> InstanceCreateInfoBuilder<'b> {
         InstanceCreateInfoBuilder {
             raw: vks::VkInstanceCreateInfo::default(),
+            enabled_layer_names: None,
+            enabled_extension_names: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut InstanceCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> InstanceCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: InstanceCreateFlags) -> &'m mut InstanceCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: InstanceCreateFlags) -> InstanceCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn application_info<'m, 'a>(&'m mut self, application_info: &'a ApplicationInfo) -> &'m mut InstanceCreateInfoBuilder<'b> {
+    pub fn application_info<'m, 'a>(mut self, application_info: &'a ApplicationInfo) -> InstanceCreateInfoBuilder<'b> {
+        self.raw.pApplicationInfo = application_info.raw();
         self
     }
 
-    pub fn enabled_layer_count<'m>(&'m mut self, enabled_layer_count: u32) -> &'m mut InstanceCreateInfoBuilder<'b> {
+    pub fn enabled_layer_count<'m>(mut self, enabled_layer_count: u32) -> InstanceCreateInfoBuilder<'b> {
+        self.raw.enabledLayerCount = enabled_layer_count.into();
         self
     }
 
-    pub fn enabled_layer_names<'m>(&'m mut self, enabled_layer_names: i8) -> &'m mut InstanceCreateInfoBuilder<'b> {
+    pub fn enabled_layer_names<'m, 'a, T>(mut self, enabled_layer_names: T) -> InstanceCreateInfoBuilder<'b> where 'a: 'b, T: Into<CharStrs<'a>> {
+        self.enabled_layer_names = Some(enabled_layer_names.into());
+        self.raw.ppEnabledLayerNames = self.enabled_layer_names.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn enabled_extension_count<'m>(&'m mut self, enabled_extension_count: u32) -> &'m mut InstanceCreateInfoBuilder<'b> {
+    pub fn enabled_extension_count<'m>(mut self, enabled_extension_count: u32) -> InstanceCreateInfoBuilder<'b> {
+        self.raw.enabledExtensionCount = enabled_extension_count.into();
         self
     }
 
-    pub fn enabled_extension_names<'m>(&'m mut self, enabled_extension_names: i8) -> &'m mut InstanceCreateInfoBuilder<'b> {
+    pub fn enabled_extension_names<'m, 'a, T>(mut self, enabled_extension_names: T) -> InstanceCreateInfoBuilder<'b> where 'a: 'b, T: Into<CharStrs<'a>> {
+        self.enabled_extension_names = Some(enabled_extension_names.into());
+        self.raw.ppEnabledExtensionNames = self.enabled_extension_names.as_ref().unwrap().as_ptr();
         self
+    }
+
+    pub fn build(self) -> InstanceCreateInfo<'b> {
+        InstanceCreateInfo {
+            raw: self.raw,
+            enabled_layer_names: self.enabled_layer_names,
+            enabled_extension_names: self.enabled_extension_names,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -1021,7 +1305,7 @@ impl<'b> InstanceCreateInfoBuilder<'b> {
 
 /// A `VkQueueFamilyProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct QueueFamilyProperties {
@@ -1047,9 +1331,16 @@ impl QueueFamilyProperties {
 }
 
 
+impl From<QueueFamilyProperties> for vks::VkQueueFamilyProperties {
+    fn from(f: QueueFamilyProperties) -> vks::VkQueueFamilyProperties {
+        f.raw
+    }
+}
+
+
 /// A `VkPhysicalDeviceMemoryProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceMemoryProperties {
@@ -1075,9 +1366,16 @@ impl PhysicalDeviceMemoryProperties {
 }
 
 
+impl From<PhysicalDeviceMemoryProperties> for vks::VkPhysicalDeviceMemoryProperties {
+    fn from(f: PhysicalDeviceMemoryProperties) -> vks::VkPhysicalDeviceMemoryProperties {
+        f.raw
+    }
+}
+
+
 /// A `VkMemoryAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryAllocateInfo<'s> {
@@ -1105,9 +1403,16 @@ impl<'s> MemoryAllocateInfo<'s> {
 }
 
 
+impl<'s> From<MemoryAllocateInfo<'s>> for vks::VkMemoryAllocateInfo {
+    fn from(f: MemoryAllocateInfo<'s>) -> vks::VkMemoryAllocateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkMemoryAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryAllocateInfoBuilder<'b> {
     raw: vks::VkMemoryAllocateInfo,
@@ -1122,16 +1427,26 @@ impl<'b> MemoryAllocateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut MemoryAllocateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> MemoryAllocateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn allocation_size<'m>(&'m mut self, allocation_size: u64) -> &'m mut MemoryAllocateInfoBuilder<'b> {
+    pub fn allocation_size<'m>(mut self, allocation_size: u64) -> MemoryAllocateInfoBuilder<'b> {
+        self.raw.allocationSize = allocation_size.into();
         self
     }
 
-    pub fn memory_type_index<'m>(&'m mut self, memory_type_index: u32) -> &'m mut MemoryAllocateInfoBuilder<'b> {
+    pub fn memory_type_index<'m>(mut self, memory_type_index: u32) -> MemoryAllocateInfoBuilder<'b> {
+        self.raw.memoryTypeIndex = memory_type_index.into();
         self
+    }
+
+    pub fn build(self) -> MemoryAllocateInfo<'b> {
+        MemoryAllocateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -1139,7 +1454,7 @@ impl<'b> MemoryAllocateInfoBuilder<'b> {
 
 /// A `VkMemoryRequirements`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryRequirements {
@@ -1162,9 +1477,16 @@ impl MemoryRequirements {
 }
 
 
+impl From<MemoryRequirements> for vks::VkMemoryRequirements {
+    fn from(f: MemoryRequirements) -> vks::VkMemoryRequirements {
+        f.raw
+    }
+}
+
+
 /// A `VkSparseImageFormatProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageFormatProperties {
@@ -1187,9 +1509,16 @@ impl SparseImageFormatProperties {
 }
 
 
+impl From<SparseImageFormatProperties> for vks::VkSparseImageFormatProperties {
+    fn from(f: SparseImageFormatProperties) -> vks::VkSparseImageFormatProperties {
+        f.raw
+    }
+}
+
+
 /// A `VkSparseImageMemoryRequirements`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageMemoryRequirements {
@@ -1218,9 +1547,16 @@ impl SparseImageMemoryRequirements {
 }
 
 
+impl From<SparseImageMemoryRequirements> for vks::VkSparseImageMemoryRequirements {
+    fn from(f: SparseImageMemoryRequirements) -> vks::VkSparseImageMemoryRequirements {
+        f.raw
+    }
+}
+
+
 /// A `VkMemoryType`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryType {
@@ -1240,9 +1576,16 @@ impl MemoryType {
 }
 
 
+impl From<MemoryType> for vks::VkMemoryType {
+    fn from(f: MemoryType) -> vks::VkMemoryType {
+        f.raw
+    }
+}
+
+
 /// A `VkMemoryHeap`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryHeap {
@@ -1262,9 +1605,16 @@ impl MemoryHeap {
 }
 
 
+impl From<MemoryHeap> for vks::VkMemoryHeap {
+    fn from(f: MemoryHeap) -> vks::VkMemoryHeap {
+        f.raw
+    }
+}
+
+
 /// A `VkMappedMemoryRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MappedMemoryRange<'s> {
@@ -1295,9 +1645,16 @@ impl<'s> MappedMemoryRange<'s> {
 }
 
 
+impl<'s> From<MappedMemoryRange<'s>> for vks::VkMappedMemoryRange {
+    fn from(f: MappedMemoryRange<'s>) -> vks::VkMappedMemoryRange {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkMappedMemoryRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MappedMemoryRangeBuilder<'b> {
     raw: vks::VkMappedMemoryRange,
@@ -1312,20 +1669,31 @@ impl<'b> MappedMemoryRangeBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut MappedMemoryRangeBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> MappedMemoryRangeBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn memory<'m>(&'m mut self, memory: DeviceMemory) -> &'m mut MappedMemoryRangeBuilder<'b> {
+    pub fn memory<'m, 'a>(mut self, memory: &'a DeviceMemory) -> MappedMemoryRangeBuilder<'b> {
+        self.raw.memory = memory.handle();
         self
     }
 
-    pub fn offset<'m>(&'m mut self, offset: u64) -> &'m mut MappedMemoryRangeBuilder<'b> {
+    pub fn offset<'m>(mut self, offset: u64) -> MappedMemoryRangeBuilder<'b> {
+        self.raw.offset = offset.into();
         self
     }
 
-    pub fn size<'m>(&'m mut self, size: u64) -> &'m mut MappedMemoryRangeBuilder<'b> {
+    pub fn size<'m>(mut self, size: u64) -> MappedMemoryRangeBuilder<'b> {
+        self.raw.size = size.into();
         self
+    }
+
+    pub fn build(self) -> MappedMemoryRange<'b> {
+        MappedMemoryRange {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -1333,7 +1701,7 @@ impl<'b> MappedMemoryRangeBuilder<'b> {
 
 /// A `VkFormatProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct FormatProperties {
@@ -1356,9 +1724,16 @@ impl FormatProperties {
 }
 
 
+impl From<FormatProperties> for vks::VkFormatProperties {
+    fn from(f: FormatProperties) -> vks::VkFormatProperties {
+        f.raw
+    }
+}
+
+
 /// A `VkImageFormatProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageFormatProperties {
@@ -1387,9 +1762,16 @@ impl ImageFormatProperties {
 }
 
 
+impl From<ImageFormatProperties> for vks::VkImageFormatProperties {
+    fn from(f: ImageFormatProperties) -> vks::VkImageFormatProperties {
+        f.raw
+    }
+}
+
+
 /// A `VkDescriptorBufferInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorBufferInfo {
@@ -1416,9 +1798,16 @@ impl DescriptorBufferInfo {
 }
 
 
+impl From<DescriptorBufferInfo> for vks::VkDescriptorBufferInfo {
+    fn from(f: DescriptorBufferInfo) -> vks::VkDescriptorBufferInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDescriptorBufferInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorBufferInfoBuilder {
     raw: vks::VkDescriptorBufferInfo,
@@ -1431,16 +1820,25 @@ impl DescriptorBufferInfoBuilder {
         }
     }
 
-    pub fn buffer<'m>(&'m mut self, buffer: Buffer) -> &'m mut DescriptorBufferInfoBuilder {
+    pub fn buffer<'m, 'a>(mut self, buffer: &'a Buffer) -> DescriptorBufferInfoBuilder {
+        self.raw.buffer = buffer.handle();
         self
     }
 
-    pub fn offset<'m>(&'m mut self, offset: u64) -> &'m mut DescriptorBufferInfoBuilder {
+    pub fn offset<'m>(mut self, offset: u64) -> DescriptorBufferInfoBuilder {
+        self.raw.offset = offset.into();
         self
     }
 
-    pub fn range<'m>(&'m mut self, range: u64) -> &'m mut DescriptorBufferInfoBuilder {
+    pub fn range<'m>(mut self, range: u64) -> DescriptorBufferInfoBuilder {
+        self.raw.range = range.into();
         self
+    }
+
+    pub fn build(self) -> DescriptorBufferInfo {
+        DescriptorBufferInfo {
+            raw: self.raw,
+        }
     }
 
 }
@@ -1448,7 +1846,7 @@ impl DescriptorBufferInfoBuilder {
 
 /// A `VkDescriptorImageInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorImageInfo {
@@ -1475,9 +1873,16 @@ impl DescriptorImageInfo {
 }
 
 
+impl From<DescriptorImageInfo> for vks::VkDescriptorImageInfo {
+    fn from(f: DescriptorImageInfo) -> vks::VkDescriptorImageInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDescriptorImageInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorImageInfoBuilder {
     raw: vks::VkDescriptorImageInfo,
@@ -1490,16 +1895,25 @@ impl DescriptorImageInfoBuilder {
         }
     }
 
-    pub fn sampler<'m>(&'m mut self, sampler: Sampler) -> &'m mut DescriptorImageInfoBuilder {
+    pub fn sampler<'m, 'a>(mut self, sampler: &'a Sampler) -> DescriptorImageInfoBuilder {
+        self.raw.sampler = sampler.handle();
         self
     }
 
-    pub fn image_view<'m>(&'m mut self, image_view: ImageView) -> &'m mut DescriptorImageInfoBuilder {
+    pub fn image_view<'m, 'a>(mut self, image_view: &'a ImageView) -> DescriptorImageInfoBuilder {
+        self.raw.imageView = image_view.handle();
         self
     }
 
-    pub fn image_layout<'m>(&'m mut self, image_layout: ImageLayout) -> &'m mut DescriptorImageInfoBuilder {
+    pub fn image_layout<'m>(mut self, image_layout: ImageLayout) -> DescriptorImageInfoBuilder {
+        self.raw.imageLayout = image_layout.into();
         self
+    }
+
+    pub fn build(self) -> DescriptorImageInfo {
+        DescriptorImageInfo {
+            raw: self.raw,
+        }
     }
 
 }
@@ -1507,7 +1921,7 @@ impl DescriptorImageInfoBuilder {
 
 /// A `VkWriteDescriptorSet`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct WriteDescriptorSet<'s> {
@@ -1553,9 +1967,16 @@ impl<'s> WriteDescriptorSet<'s> {
 }
 
 
+impl<'s> From<WriteDescriptorSet<'s>> for vks::VkWriteDescriptorSet {
+    fn from(f: WriteDescriptorSet<'s>) -> vks::VkWriteDescriptorSet {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkWriteDescriptorSet`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct WriteDescriptorSetBuilder<'b> {
     raw: vks::VkWriteDescriptorSet,
@@ -1570,40 +1991,56 @@ impl<'b> WriteDescriptorSetBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut WriteDescriptorSetBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> WriteDescriptorSetBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn dst_set<'m>(&'m mut self, dst_set: DescriptorSet) -> &'m mut WriteDescriptorSetBuilder<'b> {
+    pub fn dst_set<'m, 'a>(mut self, dst_set: &'a DescriptorSet) -> WriteDescriptorSetBuilder<'b> {
+        self.raw.dstSet = dst_set.handle();
         self
     }
 
-    pub fn dst_binding<'m>(&'m mut self, dst_binding: u32) -> &'m mut WriteDescriptorSetBuilder<'b> {
+    pub fn dst_binding<'m>(mut self, dst_binding: u32) -> WriteDescriptorSetBuilder<'b> {
+        self.raw.dstBinding = dst_binding.into();
         self
     }
 
-    pub fn dst_array_element<'m>(&'m mut self, dst_array_element: u32) -> &'m mut WriteDescriptorSetBuilder<'b> {
+    pub fn dst_array_element<'m>(mut self, dst_array_element: u32) -> WriteDescriptorSetBuilder<'b> {
+        self.raw.dstArrayElement = dst_array_element.into();
         self
     }
 
-    pub fn descriptor_count<'m>(&'m mut self, descriptor_count: u32) -> &'m mut WriteDescriptorSetBuilder<'b> {
+    pub fn descriptor_count<'m>(mut self, descriptor_count: u32) -> WriteDescriptorSetBuilder<'b> {
+        self.raw.descriptorCount = descriptor_count.into();
         self
     }
 
-    pub fn descriptor_type<'m>(&'m mut self, descriptor_type: DescriptorType) -> &'m mut WriteDescriptorSetBuilder<'b> {
+    pub fn descriptor_type<'m>(mut self, descriptor_type: DescriptorType) -> WriteDescriptorSetBuilder<'b> {
+        self.raw.descriptorType = descriptor_type.into();
         self
     }
 
-    pub fn image_info<'m, 'a>(&'m mut self, image_info: &'a DescriptorImageInfo) -> &'m mut WriteDescriptorSetBuilder<'b> {
+    pub fn image_info<'m, 'a>(mut self, image_info: &'a DescriptorImageInfo) -> WriteDescriptorSetBuilder<'b> {
+        self.raw.pImageInfo = image_info.raw();
         self
     }
 
-    pub fn buffer_info<'m, 'a>(&'m mut self, buffer_info: &'a DescriptorBufferInfo) -> &'m mut WriteDescriptorSetBuilder<'b> {
+    pub fn buffer_info<'m, 'a>(mut self, buffer_info: &'a DescriptorBufferInfo) -> WriteDescriptorSetBuilder<'b> {
+        self.raw.pBufferInfo = buffer_info.raw();
         self
     }
 
-    pub fn texel_buffer_view<'m, 'a>(&'m mut self, texel_buffer_view: &'a BufferView) -> &'m mut WriteDescriptorSetBuilder<'b> {
+    pub fn texel_buffer_view<'m, 'a>(mut self, texel_buffer_view: &'a BufferView) -> WriteDescriptorSetBuilder<'b> {
+        self.raw.pTexelBufferView = &texel_buffer_view.handle();
         self
+    }
+
+    pub fn build(self) -> WriteDescriptorSet<'b> {
+        WriteDescriptorSet {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -1611,7 +2048,7 @@ impl<'b> WriteDescriptorSetBuilder<'b> {
 
 /// A `VkCopyDescriptorSet`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct CopyDescriptorSet<'s> {
@@ -1654,9 +2091,16 @@ impl<'s> CopyDescriptorSet<'s> {
 }
 
 
+impl<'s> From<CopyDescriptorSet<'s>> for vks::VkCopyDescriptorSet {
+    fn from(f: CopyDescriptorSet<'s>) -> vks::VkCopyDescriptorSet {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkCopyDescriptorSet`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct CopyDescriptorSetBuilder<'b> {
     raw: vks::VkCopyDescriptorSet,
@@ -1671,36 +2115,51 @@ impl<'b> CopyDescriptorSetBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut CopyDescriptorSetBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> CopyDescriptorSetBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn src_set<'m>(&'m mut self, src_set: DescriptorSet) -> &'m mut CopyDescriptorSetBuilder<'b> {
+    pub fn src_set<'m, 'a>(mut self, src_set: &'a DescriptorSet) -> CopyDescriptorSetBuilder<'b> {
+        self.raw.srcSet = src_set.handle();
         self
     }
 
-    pub fn src_binding<'m>(&'m mut self, src_binding: u32) -> &'m mut CopyDescriptorSetBuilder<'b> {
+    pub fn src_binding<'m>(mut self, src_binding: u32) -> CopyDescriptorSetBuilder<'b> {
+        self.raw.srcBinding = src_binding.into();
         self
     }
 
-    pub fn src_array_element<'m>(&'m mut self, src_array_element: u32) -> &'m mut CopyDescriptorSetBuilder<'b> {
+    pub fn src_array_element<'m>(mut self, src_array_element: u32) -> CopyDescriptorSetBuilder<'b> {
+        self.raw.srcArrayElement = src_array_element.into();
         self
     }
 
-    pub fn dst_set<'m>(&'m mut self, dst_set: DescriptorSet) -> &'m mut CopyDescriptorSetBuilder<'b> {
+    pub fn dst_set<'m, 'a>(mut self, dst_set: &'a DescriptorSet) -> CopyDescriptorSetBuilder<'b> {
+        self.raw.dstSet = dst_set.handle();
         self
     }
 
-    pub fn dst_binding<'m>(&'m mut self, dst_binding: u32) -> &'m mut CopyDescriptorSetBuilder<'b> {
+    pub fn dst_binding<'m>(mut self, dst_binding: u32) -> CopyDescriptorSetBuilder<'b> {
+        self.raw.dstBinding = dst_binding.into();
         self
     }
 
-    pub fn dst_array_element<'m>(&'m mut self, dst_array_element: u32) -> &'m mut CopyDescriptorSetBuilder<'b> {
+    pub fn dst_array_element<'m>(mut self, dst_array_element: u32) -> CopyDescriptorSetBuilder<'b> {
+        self.raw.dstArrayElement = dst_array_element.into();
         self
     }
 
-    pub fn descriptor_count<'m>(&'m mut self, descriptor_count: u32) -> &'m mut CopyDescriptorSetBuilder<'b> {
+    pub fn descriptor_count<'m>(mut self, descriptor_count: u32) -> CopyDescriptorSetBuilder<'b> {
+        self.raw.descriptorCount = descriptor_count.into();
         self
+    }
+
+    pub fn build(self) -> CopyDescriptorSet<'b> {
+        CopyDescriptorSet {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -1708,7 +2167,7 @@ impl<'b> CopyDescriptorSetBuilder<'b> {
 
 /// A `VkBufferCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferCreateInfo<'s> {
@@ -1748,9 +2207,16 @@ impl<'s> BufferCreateInfo<'s> {
 }
 
 
+impl<'s> From<BufferCreateInfo<'s>> for vks::VkBufferCreateInfo {
+    fn from(f: BufferCreateInfo<'s>) -> vks::VkBufferCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkBufferCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferCreateInfoBuilder<'b> {
     raw: vks::VkBufferCreateInfo,
@@ -1765,32 +2231,46 @@ impl<'b> BufferCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut BufferCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> BufferCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: BufferCreateFlags) -> &'m mut BufferCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: BufferCreateFlags) -> BufferCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn size<'m>(&'m mut self, size: u64) -> &'m mut BufferCreateInfoBuilder<'b> {
+    pub fn size<'m>(mut self, size: u64) -> BufferCreateInfoBuilder<'b> {
+        self.raw.size = size.into();
         self
     }
 
-    pub fn usage<'m>(&'m mut self, usage: BufferUsageFlags) -> &'m mut BufferCreateInfoBuilder<'b> {
+    pub fn usage<'m>(mut self, usage: BufferUsageFlags) -> BufferCreateInfoBuilder<'b> {
+        self.raw.usage = usage.bits();
         self
     }
 
-    pub fn sharing_mode<'m>(&'m mut self, sharing_mode: SharingMode) -> &'m mut BufferCreateInfoBuilder<'b> {
+    pub fn sharing_mode<'m>(mut self, sharing_mode: SharingMode) -> BufferCreateInfoBuilder<'b> {
+        self.raw.sharingMode = sharing_mode.into();
         self
     }
 
-    pub fn queue_family_index_count<'m>(&'m mut self, queue_family_index_count: u32) -> &'m mut BufferCreateInfoBuilder<'b> {
+    pub fn queue_family_index_count<'m>(mut self, queue_family_index_count: u32) -> BufferCreateInfoBuilder<'b> {
+        self.raw.queueFamilyIndexCount = queue_family_index_count.into();
         self
     }
 
-    pub fn queue_family_indices<'m, 'a>(&'m mut self, queue_family_indices: &'a u32) -> &'m mut BufferCreateInfoBuilder<'b> {
+    pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> BufferCreateInfoBuilder<'b> {
+        self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> BufferCreateInfo<'b> {
+        BufferCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -1798,7 +2278,7 @@ impl<'b> BufferCreateInfoBuilder<'b> {
 
 /// A `VkBufferViewCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferViewCreateInfo<'s> {
@@ -1835,9 +2315,16 @@ impl<'s> BufferViewCreateInfo<'s> {
 }
 
 
+impl<'s> From<BufferViewCreateInfo<'s>> for vks::VkBufferViewCreateInfo {
+    fn from(f: BufferViewCreateInfo<'s>) -> vks::VkBufferViewCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkBufferViewCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferViewCreateInfoBuilder<'b> {
     raw: vks::VkBufferViewCreateInfo,
@@ -1852,28 +2339,41 @@ impl<'b> BufferViewCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut BufferViewCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> BufferViewCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: BufferViewCreateFlags) -> &'m mut BufferViewCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: BufferViewCreateFlags) -> BufferViewCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn buffer<'m>(&'m mut self, buffer: Buffer) -> &'m mut BufferViewCreateInfoBuilder<'b> {
+    pub fn buffer<'m, 'a>(mut self, buffer: &'a Buffer) -> BufferViewCreateInfoBuilder<'b> {
+        self.raw.buffer = buffer.handle();
         self
     }
 
-    pub fn format<'m>(&'m mut self, format: Format) -> &'m mut BufferViewCreateInfoBuilder<'b> {
+    pub fn format<'m>(mut self, format: Format) -> BufferViewCreateInfoBuilder<'b> {
+        self.raw.format = format.into();
         self
     }
 
-    pub fn offset<'m>(&'m mut self, offset: u64) -> &'m mut BufferViewCreateInfoBuilder<'b> {
+    pub fn offset<'m>(mut self, offset: u64) -> BufferViewCreateInfoBuilder<'b> {
+        self.raw.offset = offset.into();
         self
     }
 
-    pub fn range<'m>(&'m mut self, range: u64) -> &'m mut BufferViewCreateInfoBuilder<'b> {
+    pub fn range<'m>(mut self, range: u64) -> BufferViewCreateInfoBuilder<'b> {
+        self.raw.range = range.into();
         self
+    }
+
+    pub fn build(self) -> BufferViewCreateInfo<'b> {
+        BufferViewCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -1881,7 +2381,7 @@ impl<'b> BufferViewCreateInfoBuilder<'b> {
 
 /// A `VkImageSubresource`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageSubresource {
@@ -1908,9 +2408,16 @@ impl ImageSubresource {
 }
 
 
+impl From<ImageSubresource> for vks::VkImageSubresource {
+    fn from(f: ImageSubresource) -> vks::VkImageSubresource {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageSubresource`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageSubresourceBuilder {
     raw: vks::VkImageSubresource,
@@ -1923,16 +2430,25 @@ impl ImageSubresourceBuilder {
         }
     }
 
-    pub fn aspect_mask<'m>(&'m mut self, aspect_mask: ImageAspectFlags) -> &'m mut ImageSubresourceBuilder {
+    pub fn aspect_mask<'m>(mut self, aspect_mask: ImageAspectFlags) -> ImageSubresourceBuilder {
+        self.raw.aspectMask = aspect_mask.bits();
         self
     }
 
-    pub fn mip_level<'m>(&'m mut self, mip_level: u32) -> &'m mut ImageSubresourceBuilder {
+    pub fn mip_level<'m>(mut self, mip_level: u32) -> ImageSubresourceBuilder {
+        self.raw.mipLevel = mip_level.into();
         self
     }
 
-    pub fn array_layer<'m>(&'m mut self, array_layer: u32) -> &'m mut ImageSubresourceBuilder {
+    pub fn array_layer<'m>(mut self, array_layer: u32) -> ImageSubresourceBuilder {
+        self.raw.arrayLayer = array_layer.into();
         self
+    }
+
+    pub fn build(self) -> ImageSubresource {
+        ImageSubresource {
+            raw: self.raw,
+        }
     }
 
 }
@@ -1940,7 +2456,7 @@ impl ImageSubresourceBuilder {
 
 /// A `VkImageSubresourceLayers`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageSubresourceLayers {
@@ -1970,9 +2486,16 @@ impl ImageSubresourceLayers {
 }
 
 
+impl From<ImageSubresourceLayers> for vks::VkImageSubresourceLayers {
+    fn from(f: ImageSubresourceLayers) -> vks::VkImageSubresourceLayers {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageSubresourceLayers`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageSubresourceLayersBuilder {
     raw: vks::VkImageSubresourceLayers,
@@ -1985,20 +2508,30 @@ impl ImageSubresourceLayersBuilder {
         }
     }
 
-    pub fn aspect_mask<'m>(&'m mut self, aspect_mask: ImageAspectFlags) -> &'m mut ImageSubresourceLayersBuilder {
+    pub fn aspect_mask<'m>(mut self, aspect_mask: ImageAspectFlags) -> ImageSubresourceLayersBuilder {
+        self.raw.aspectMask = aspect_mask.bits();
         self
     }
 
-    pub fn mip_level<'m>(&'m mut self, mip_level: u32) -> &'m mut ImageSubresourceLayersBuilder {
+    pub fn mip_level<'m>(mut self, mip_level: u32) -> ImageSubresourceLayersBuilder {
+        self.raw.mipLevel = mip_level.into();
         self
     }
 
-    pub fn base_array_layer<'m>(&'m mut self, base_array_layer: u32) -> &'m mut ImageSubresourceLayersBuilder {
+    pub fn base_array_layer<'m>(mut self, base_array_layer: u32) -> ImageSubresourceLayersBuilder {
+        self.raw.baseArrayLayer = base_array_layer.into();
         self
     }
 
-    pub fn layer_count<'m>(&'m mut self, layer_count: u32) -> &'m mut ImageSubresourceLayersBuilder {
+    pub fn layer_count<'m>(mut self, layer_count: u32) -> ImageSubresourceLayersBuilder {
+        self.raw.layerCount = layer_count.into();
         self
+    }
+
+    pub fn build(self) -> ImageSubresourceLayers {
+        ImageSubresourceLayers {
+            raw: self.raw,
+        }
     }
 
 }
@@ -2006,7 +2539,7 @@ impl ImageSubresourceLayersBuilder {
 
 /// A `VkImageSubresourceRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageSubresourceRange {
@@ -2039,9 +2572,16 @@ impl ImageSubresourceRange {
 }
 
 
+impl From<ImageSubresourceRange> for vks::VkImageSubresourceRange {
+    fn from(f: ImageSubresourceRange) -> vks::VkImageSubresourceRange {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageSubresourceRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageSubresourceRangeBuilder {
     raw: vks::VkImageSubresourceRange,
@@ -2054,24 +2594,35 @@ impl ImageSubresourceRangeBuilder {
         }
     }
 
-    pub fn aspect_mask<'m>(&'m mut self, aspect_mask: ImageAspectFlags) -> &'m mut ImageSubresourceRangeBuilder {
+    pub fn aspect_mask<'m>(mut self, aspect_mask: ImageAspectFlags) -> ImageSubresourceRangeBuilder {
+        self.raw.aspectMask = aspect_mask.bits();
         self
     }
 
-    pub fn base_mip_level<'m>(&'m mut self, base_mip_level: u32) -> &'m mut ImageSubresourceRangeBuilder {
+    pub fn base_mip_level<'m>(mut self, base_mip_level: u32) -> ImageSubresourceRangeBuilder {
+        self.raw.baseMipLevel = base_mip_level.into();
         self
     }
 
-    pub fn level_count<'m>(&'m mut self, level_count: u32) -> &'m mut ImageSubresourceRangeBuilder {
+    pub fn level_count<'m>(mut self, level_count: u32) -> ImageSubresourceRangeBuilder {
+        self.raw.levelCount = level_count.into();
         self
     }
 
-    pub fn base_array_layer<'m>(&'m mut self, base_array_layer: u32) -> &'m mut ImageSubresourceRangeBuilder {
+    pub fn base_array_layer<'m>(mut self, base_array_layer: u32) -> ImageSubresourceRangeBuilder {
+        self.raw.baseArrayLayer = base_array_layer.into();
         self
     }
 
-    pub fn layer_count<'m>(&'m mut self, layer_count: u32) -> &'m mut ImageSubresourceRangeBuilder {
+    pub fn layer_count<'m>(mut self, layer_count: u32) -> ImageSubresourceRangeBuilder {
+        self.raw.layerCount = layer_count.into();
         self
+    }
+
+    pub fn build(self) -> ImageSubresourceRange {
+        ImageSubresourceRange {
+            raw: self.raw,
+        }
     }
 
 }
@@ -2079,7 +2630,7 @@ impl ImageSubresourceRangeBuilder {
 
 /// A `VkMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryBarrier<'s> {
@@ -2107,9 +2658,16 @@ impl<'s> MemoryBarrier<'s> {
 }
 
 
+impl<'s> From<MemoryBarrier<'s>> for vks::VkMemoryBarrier {
+    fn from(f: MemoryBarrier<'s>) -> vks::VkMemoryBarrier {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryBarrierBuilder<'b> {
     raw: vks::VkMemoryBarrier,
@@ -2124,16 +2682,26 @@ impl<'b> MemoryBarrierBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut MemoryBarrierBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> MemoryBarrierBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn src_access_mask<'m>(&'m mut self, src_access_mask: AccessFlags) -> &'m mut MemoryBarrierBuilder<'b> {
+    pub fn src_access_mask<'m>(mut self, src_access_mask: AccessFlags) -> MemoryBarrierBuilder<'b> {
+        self.raw.srcAccessMask = src_access_mask.bits();
         self
     }
 
-    pub fn dst_access_mask<'m>(&'m mut self, dst_access_mask: AccessFlags) -> &'m mut MemoryBarrierBuilder<'b> {
+    pub fn dst_access_mask<'m>(mut self, dst_access_mask: AccessFlags) -> MemoryBarrierBuilder<'b> {
+        self.raw.dstAccessMask = dst_access_mask.bits();
         self
+    }
+
+    pub fn build(self) -> MemoryBarrier<'b> {
+        MemoryBarrier {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -2141,7 +2709,7 @@ impl<'b> MemoryBarrierBuilder<'b> {
 
 /// A `VkBufferMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferMemoryBarrier<'s> {
@@ -2184,9 +2752,16 @@ impl<'s> BufferMemoryBarrier<'s> {
 }
 
 
+impl<'s> From<BufferMemoryBarrier<'s>> for vks::VkBufferMemoryBarrier {
+    fn from(f: BufferMemoryBarrier<'s>) -> vks::VkBufferMemoryBarrier {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkBufferMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferMemoryBarrierBuilder<'b> {
     raw: vks::VkBufferMemoryBarrier,
@@ -2201,36 +2776,51 @@ impl<'b> BufferMemoryBarrierBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut BufferMemoryBarrierBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> BufferMemoryBarrierBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn src_access_mask<'m>(&'m mut self, src_access_mask: AccessFlags) -> &'m mut BufferMemoryBarrierBuilder<'b> {
+    pub fn src_access_mask<'m>(mut self, src_access_mask: AccessFlags) -> BufferMemoryBarrierBuilder<'b> {
+        self.raw.srcAccessMask = src_access_mask.bits();
         self
     }
 
-    pub fn dst_access_mask<'m>(&'m mut self, dst_access_mask: AccessFlags) -> &'m mut BufferMemoryBarrierBuilder<'b> {
+    pub fn dst_access_mask<'m>(mut self, dst_access_mask: AccessFlags) -> BufferMemoryBarrierBuilder<'b> {
+        self.raw.dstAccessMask = dst_access_mask.bits();
         self
     }
 
-    pub fn src_queue_family_index<'m>(&'m mut self, src_queue_family_index: u32) -> &'m mut BufferMemoryBarrierBuilder<'b> {
+    pub fn src_queue_family_index<'m>(mut self, src_queue_family_index: u32) -> BufferMemoryBarrierBuilder<'b> {
+        self.raw.srcQueueFamilyIndex = src_queue_family_index.into();
         self
     }
 
-    pub fn dst_queue_family_index<'m>(&'m mut self, dst_queue_family_index: u32) -> &'m mut BufferMemoryBarrierBuilder<'b> {
+    pub fn dst_queue_family_index<'m>(mut self, dst_queue_family_index: u32) -> BufferMemoryBarrierBuilder<'b> {
+        self.raw.dstQueueFamilyIndex = dst_queue_family_index.into();
         self
     }
 
-    pub fn buffer<'m>(&'m mut self, buffer: Buffer) -> &'m mut BufferMemoryBarrierBuilder<'b> {
+    pub fn buffer<'m, 'a>(mut self, buffer: &'a Buffer) -> BufferMemoryBarrierBuilder<'b> {
+        self.raw.buffer = buffer.handle();
         self
     }
 
-    pub fn offset<'m>(&'m mut self, offset: u64) -> &'m mut BufferMemoryBarrierBuilder<'b> {
+    pub fn offset<'m>(mut self, offset: u64) -> BufferMemoryBarrierBuilder<'b> {
+        self.raw.offset = offset.into();
         self
     }
 
-    pub fn size<'m>(&'m mut self, size: u64) -> &'m mut BufferMemoryBarrierBuilder<'b> {
+    pub fn size<'m>(mut self, size: u64) -> BufferMemoryBarrierBuilder<'b> {
+        self.raw.size = size.into();
         self
+    }
+
+    pub fn build(self) -> BufferMemoryBarrier<'b> {
+        BufferMemoryBarrier {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -2238,7 +2828,7 @@ impl<'b> BufferMemoryBarrierBuilder<'b> {
 
 /// A `VkImageMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageMemoryBarrier<'s> {
@@ -2284,9 +2874,16 @@ impl<'s> ImageMemoryBarrier<'s> {
 }
 
 
+impl<'s> From<ImageMemoryBarrier<'s>> for vks::VkImageMemoryBarrier {
+    fn from(f: ImageMemoryBarrier<'s>) -> vks::VkImageMemoryBarrier {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageMemoryBarrierBuilder<'b> {
     raw: vks::VkImageMemoryBarrier,
@@ -2301,40 +2898,56 @@ impl<'b> ImageMemoryBarrierBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImageMemoryBarrierBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImageMemoryBarrierBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn src_access_mask<'m>(&'m mut self, src_access_mask: AccessFlags) -> &'m mut ImageMemoryBarrierBuilder<'b> {
+    pub fn src_access_mask<'m>(mut self, src_access_mask: AccessFlags) -> ImageMemoryBarrierBuilder<'b> {
+        self.raw.srcAccessMask = src_access_mask.bits();
         self
     }
 
-    pub fn dst_access_mask<'m>(&'m mut self, dst_access_mask: AccessFlags) -> &'m mut ImageMemoryBarrierBuilder<'b> {
+    pub fn dst_access_mask<'m>(mut self, dst_access_mask: AccessFlags) -> ImageMemoryBarrierBuilder<'b> {
+        self.raw.dstAccessMask = dst_access_mask.bits();
         self
     }
 
-    pub fn old_layout<'m>(&'m mut self, old_layout: ImageLayout) -> &'m mut ImageMemoryBarrierBuilder<'b> {
+    pub fn old_layout<'m>(mut self, old_layout: ImageLayout) -> ImageMemoryBarrierBuilder<'b> {
+        self.raw.oldLayout = old_layout.into();
         self
     }
 
-    pub fn new_layout<'m>(&'m mut self, new_layout: ImageLayout) -> &'m mut ImageMemoryBarrierBuilder<'b> {
+    pub fn new_layout<'m>(mut self, new_layout: ImageLayout) -> ImageMemoryBarrierBuilder<'b> {
+        self.raw.newLayout = new_layout.into();
         self
     }
 
-    pub fn src_queue_family_index<'m>(&'m mut self, src_queue_family_index: u32) -> &'m mut ImageMemoryBarrierBuilder<'b> {
+    pub fn src_queue_family_index<'m>(mut self, src_queue_family_index: u32) -> ImageMemoryBarrierBuilder<'b> {
+        self.raw.srcQueueFamilyIndex = src_queue_family_index.into();
         self
     }
 
-    pub fn dst_queue_family_index<'m>(&'m mut self, dst_queue_family_index: u32) -> &'m mut ImageMemoryBarrierBuilder<'b> {
+    pub fn dst_queue_family_index<'m>(mut self, dst_queue_family_index: u32) -> ImageMemoryBarrierBuilder<'b> {
+        self.raw.dstQueueFamilyIndex = dst_queue_family_index.into();
         self
     }
 
-    pub fn image<'m>(&'m mut self, image: Image) -> &'m mut ImageMemoryBarrierBuilder<'b> {
+    pub fn image<'m, 'a>(mut self, image: &'a Image) -> ImageMemoryBarrierBuilder<'b> {
+        self.raw.image = image.handle();
         self
     }
 
-    pub fn subresource_range<'m>(&'m mut self, subresource_range: ImageSubresourceRange) -> &'m mut ImageMemoryBarrierBuilder<'b> {
+    pub fn subresource_range<'m>(mut self, subresource_range: ImageSubresourceRange) -> ImageMemoryBarrierBuilder<'b> {
+        self.raw.subresourceRange = subresource_range.raw;
         self
+    }
+
+    pub fn build(self) -> ImageMemoryBarrier<'b> {
+        ImageMemoryBarrier {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -2342,7 +2955,7 @@ impl<'b> ImageMemoryBarrierBuilder<'b> {
 
 /// A `VkImageCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageCreateInfo<'s> {
@@ -2403,9 +3016,16 @@ impl<'s> ImageCreateInfo<'s> {
 }
 
 
+impl<'s> From<ImageCreateInfo<'s>> for vks::VkImageCreateInfo {
+    fn from(f: ImageCreateInfo<'s>) -> vks::VkImageCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageCreateInfoBuilder<'b> {
     raw: vks::VkImageCreateInfo,
@@ -2420,60 +3040,81 @@ impl<'b> ImageCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImageCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: ImageCreateFlags) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: ImageCreateFlags) -> ImageCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn image_type<'m>(&'m mut self, image_type: ImageType) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn image_type<'m>(mut self, image_type: ImageType) -> ImageCreateInfoBuilder<'b> {
+        self.raw.imageType = image_type.into();
         self
     }
 
-    pub fn format<'m>(&'m mut self, format: Format) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn format<'m>(mut self, format: Format) -> ImageCreateInfoBuilder<'b> {
+        self.raw.format = format.into();
         self
     }
 
-    pub fn extent<'m>(&'m mut self, extent: Extent3d) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn extent<'m>(mut self, extent: Extent3d) -> ImageCreateInfoBuilder<'b> {
+        self.raw.extent = extent.raw;
         self
     }
 
-    pub fn mip_levels<'m>(&'m mut self, mip_levels: u32) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn mip_levels<'m>(mut self, mip_levels: u32) -> ImageCreateInfoBuilder<'b> {
+        self.raw.mipLevels = mip_levels.into();
         self
     }
 
-    pub fn array_layers<'m>(&'m mut self, array_layers: u32) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn array_layers<'m>(mut self, array_layers: u32) -> ImageCreateInfoBuilder<'b> {
+        self.raw.arrayLayers = array_layers.into();
         self
     }
 
-    pub fn samples<'m>(&'m mut self, samples: SampleCountFlags) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn samples<'m>(mut self, samples: SampleCountFlags) -> ImageCreateInfoBuilder<'b> {
+        self.raw.samples = samples.bits();
         self
     }
 
-    pub fn tiling<'m>(&'m mut self, tiling: ImageTiling) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn tiling<'m>(mut self, tiling: ImageTiling) -> ImageCreateInfoBuilder<'b> {
+        self.raw.tiling = tiling.into();
         self
     }
 
-    pub fn usage<'m>(&'m mut self, usage: ImageUsageFlags) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn usage<'m>(mut self, usage: ImageUsageFlags) -> ImageCreateInfoBuilder<'b> {
+        self.raw.usage = usage.bits();
         self
     }
 
-    pub fn sharing_mode<'m>(&'m mut self, sharing_mode: SharingMode) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn sharing_mode<'m>(mut self, sharing_mode: SharingMode) -> ImageCreateInfoBuilder<'b> {
+        self.raw.sharingMode = sharing_mode.into();
         self
     }
 
-    pub fn queue_family_index_count<'m>(&'m mut self, queue_family_index_count: u32) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn queue_family_index_count<'m>(mut self, queue_family_index_count: u32) -> ImageCreateInfoBuilder<'b> {
+        self.raw.queueFamilyIndexCount = queue_family_index_count.into();
         self
     }
 
-    pub fn queue_family_indices<'m, 'a>(&'m mut self, queue_family_indices: &'a u32) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> ImageCreateInfoBuilder<'b> {
+        self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const _;
         self
     }
 
-    pub fn initial_layout<'m>(&'m mut self, initial_layout: ImageLayout) -> &'m mut ImageCreateInfoBuilder<'b> {
+    pub fn initial_layout<'m>(mut self, initial_layout: ImageLayout) -> ImageCreateInfoBuilder<'b> {
+        self.raw.initialLayout = initial_layout.into();
         self
+    }
+
+    pub fn build(self) -> ImageCreateInfo<'b> {
+        ImageCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -2481,7 +3122,7 @@ impl<'b> ImageCreateInfoBuilder<'b> {
 
 /// A `VkSubresourceLayout`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SubresourceLayout {
@@ -2510,9 +3151,16 @@ impl SubresourceLayout {
 }
 
 
+impl From<SubresourceLayout> for vks::VkSubresourceLayout {
+    fn from(f: SubresourceLayout) -> vks::VkSubresourceLayout {
+        f.raw
+    }
+}
+
+
 /// A `VkImageViewCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageViewCreateInfo<'s> {
@@ -2552,9 +3200,16 @@ impl<'s> ImageViewCreateInfo<'s> {
 }
 
 
+impl<'s> From<ImageViewCreateInfo<'s>> for vks::VkImageViewCreateInfo {
+    fn from(f: ImageViewCreateInfo<'s>) -> vks::VkImageViewCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageViewCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageViewCreateInfoBuilder<'b> {
     raw: vks::VkImageViewCreateInfo,
@@ -2569,32 +3224,46 @@ impl<'b> ImageViewCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImageViewCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImageViewCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: ImageViewCreateFlags) -> &'m mut ImageViewCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: ImageViewCreateFlags) -> ImageViewCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn image<'m>(&'m mut self, image: Image) -> &'m mut ImageViewCreateInfoBuilder<'b> {
+    pub fn image<'m, 'a>(mut self, image: &'a Image) -> ImageViewCreateInfoBuilder<'b> {
+        self.raw.image = image.handle();
         self
     }
 
-    pub fn view_type<'m>(&'m mut self, view_type: ImageViewType) -> &'m mut ImageViewCreateInfoBuilder<'b> {
+    pub fn view_type<'m>(mut self, view_type: ImageViewType) -> ImageViewCreateInfoBuilder<'b> {
+        self.raw.viewType = view_type.into();
         self
     }
 
-    pub fn format<'m>(&'m mut self, format: Format) -> &'m mut ImageViewCreateInfoBuilder<'b> {
+    pub fn format<'m>(mut self, format: Format) -> ImageViewCreateInfoBuilder<'b> {
+        self.raw.format = format.into();
         self
     }
 
-    pub fn components<'m>(&'m mut self, components: ComponentMapping) -> &'m mut ImageViewCreateInfoBuilder<'b> {
+    pub fn components<'m>(mut self, components: ComponentMapping) -> ImageViewCreateInfoBuilder<'b> {
+        self.raw.components = components.raw;
         self
     }
 
-    pub fn subresource_range<'m>(&'m mut self, subresource_range: ImageSubresourceRange) -> &'m mut ImageViewCreateInfoBuilder<'b> {
+    pub fn subresource_range<'m>(mut self, subresource_range: ImageSubresourceRange) -> ImageViewCreateInfoBuilder<'b> {
+        self.raw.subresourceRange = subresource_range.raw;
         self
+    }
+
+    pub fn build(self) -> ImageViewCreateInfo<'b> {
+        ImageViewCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -2602,7 +3271,7 @@ impl<'b> ImageViewCreateInfoBuilder<'b> {
 
 /// A `VkBufferCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferCopy {
@@ -2629,9 +3298,16 @@ impl BufferCopy {
 }
 
 
+impl From<BufferCopy> for vks::VkBufferCopy {
+    fn from(f: BufferCopy) -> vks::VkBufferCopy {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkBufferCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferCopyBuilder {
     raw: vks::VkBufferCopy,
@@ -2644,16 +3320,25 @@ impl BufferCopyBuilder {
         }
     }
 
-    pub fn src_offset<'m>(&'m mut self, src_offset: u64) -> &'m mut BufferCopyBuilder {
+    pub fn src_offset<'m>(mut self, src_offset: u64) -> BufferCopyBuilder {
+        self.raw.srcOffset = src_offset.into();
         self
     }
 
-    pub fn dst_offset<'m>(&'m mut self, dst_offset: u64) -> &'m mut BufferCopyBuilder {
+    pub fn dst_offset<'m>(mut self, dst_offset: u64) -> BufferCopyBuilder {
+        self.raw.dstOffset = dst_offset.into();
         self
     }
 
-    pub fn size<'m>(&'m mut self, size: u64) -> &'m mut BufferCopyBuilder {
+    pub fn size<'m>(mut self, size: u64) -> BufferCopyBuilder {
+        self.raw.size = size.into();
         self
+    }
+
+    pub fn build(self) -> BufferCopy {
+        BufferCopy {
+            raw: self.raw,
+        }
     }
 
 }
@@ -2661,7 +3346,7 @@ impl BufferCopyBuilder {
 
 /// A `VkSparseMemoryBind`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseMemoryBind {
@@ -2694,9 +3379,16 @@ impl SparseMemoryBind {
 }
 
 
+impl From<SparseMemoryBind> for vks::VkSparseMemoryBind {
+    fn from(f: SparseMemoryBind) -> vks::VkSparseMemoryBind {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSparseMemoryBind`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseMemoryBindBuilder {
     raw: vks::VkSparseMemoryBind,
@@ -2709,24 +3401,35 @@ impl SparseMemoryBindBuilder {
         }
     }
 
-    pub fn resource_offset<'m>(&'m mut self, resource_offset: u64) -> &'m mut SparseMemoryBindBuilder {
+    pub fn resource_offset<'m>(mut self, resource_offset: u64) -> SparseMemoryBindBuilder {
+        self.raw.resourceOffset = resource_offset.into();
         self
     }
 
-    pub fn size<'m>(&'m mut self, size: u64) -> &'m mut SparseMemoryBindBuilder {
+    pub fn size<'m>(mut self, size: u64) -> SparseMemoryBindBuilder {
+        self.raw.size = size.into();
         self
     }
 
-    pub fn memory<'m>(&'m mut self, memory: DeviceMemory) -> &'m mut SparseMemoryBindBuilder {
+    pub fn memory<'m, 'a>(mut self, memory: &'a DeviceMemory) -> SparseMemoryBindBuilder {
+        self.raw.memory = memory.handle();
         self
     }
 
-    pub fn memory_offset<'m>(&'m mut self, memory_offset: u64) -> &'m mut SparseMemoryBindBuilder {
+    pub fn memory_offset<'m>(mut self, memory_offset: u64) -> SparseMemoryBindBuilder {
+        self.raw.memoryOffset = memory_offset.into();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: SparseMemoryBindFlags) -> &'m mut SparseMemoryBindBuilder {
+    pub fn flags<'m>(mut self, flags: SparseMemoryBindFlags) -> SparseMemoryBindBuilder {
+        self.raw.flags = flags.bits();
         self
+    }
+
+    pub fn build(self) -> SparseMemoryBind {
+        SparseMemoryBind {
+            raw: self.raw,
+        }
     }
 
 }
@@ -2734,7 +3437,7 @@ impl SparseMemoryBindBuilder {
 
 /// A `VkSparseImageMemoryBind`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageMemoryBind {
@@ -2770,9 +3473,16 @@ impl SparseImageMemoryBind {
 }
 
 
+impl From<SparseImageMemoryBind> for vks::VkSparseImageMemoryBind {
+    fn from(f: SparseImageMemoryBind) -> vks::VkSparseImageMemoryBind {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSparseImageMemoryBind`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseImageMemoryBindBuilder {
     raw: vks::VkSparseImageMemoryBind,
@@ -2785,28 +3495,40 @@ impl SparseImageMemoryBindBuilder {
         }
     }
 
-    pub fn subresource<'m>(&'m mut self, subresource: ImageSubresource) -> &'m mut SparseImageMemoryBindBuilder {
+    pub fn subresource<'m>(mut self, subresource: ImageSubresource) -> SparseImageMemoryBindBuilder {
+        self.raw.subresource = subresource.raw;
         self
     }
 
-    pub fn offset<'m>(&'m mut self, offset: Offset3d) -> &'m mut SparseImageMemoryBindBuilder {
+    pub fn offset<'m>(mut self, offset: Offset3d) -> SparseImageMemoryBindBuilder {
+        self.raw.offset = offset.raw;
         self
     }
 
-    pub fn extent<'m>(&'m mut self, extent: Extent3d) -> &'m mut SparseImageMemoryBindBuilder {
+    pub fn extent<'m>(mut self, extent: Extent3d) -> SparseImageMemoryBindBuilder {
+        self.raw.extent = extent.raw;
         self
     }
 
-    pub fn memory<'m>(&'m mut self, memory: DeviceMemory) -> &'m mut SparseImageMemoryBindBuilder {
+    pub fn memory<'m, 'a>(mut self, memory: &'a DeviceMemory) -> SparseImageMemoryBindBuilder {
+        self.raw.memory = memory.handle();
         self
     }
 
-    pub fn memory_offset<'m>(&'m mut self, memory_offset: u64) -> &'m mut SparseImageMemoryBindBuilder {
+    pub fn memory_offset<'m>(mut self, memory_offset: u64) -> SparseImageMemoryBindBuilder {
+        self.raw.memoryOffset = memory_offset.into();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: SparseMemoryBindFlags) -> &'m mut SparseImageMemoryBindBuilder {
+    pub fn flags<'m>(mut self, flags: SparseMemoryBindFlags) -> SparseImageMemoryBindBuilder {
+        self.raw.flags = flags.bits();
         self
+    }
+
+    pub fn build(self) -> SparseImageMemoryBind {
+        SparseImageMemoryBind {
+            raw: self.raw,
+        }
     }
 
 }
@@ -2814,7 +3536,7 @@ impl SparseImageMemoryBindBuilder {
 
 /// A `VkSparseBufferMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseBufferMemoryBindInfo<'s> {
@@ -2842,9 +3564,16 @@ impl<'s> SparseBufferMemoryBindInfo<'s> {
 }
 
 
+impl<'s> From<SparseBufferMemoryBindInfo<'s>> for vks::VkSparseBufferMemoryBindInfo {
+    fn from(f: SparseBufferMemoryBindInfo<'s>) -> vks::VkSparseBufferMemoryBindInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSparseBufferMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseBufferMemoryBindInfoBuilder<'b> {
     raw: vks::VkSparseBufferMemoryBindInfo,
@@ -2859,16 +3588,26 @@ impl<'b> SparseBufferMemoryBindInfoBuilder<'b> {
         }
     }
 
-    pub fn buffer<'m>(&'m mut self, buffer: Buffer) -> &'m mut SparseBufferMemoryBindInfoBuilder<'b> {
+    pub fn buffer<'m, 'a>(mut self, buffer: &'a Buffer) -> SparseBufferMemoryBindInfoBuilder<'b> {
+        self.raw.buffer = buffer.handle();
         self
     }
 
-    pub fn bind_count<'m>(&'m mut self, bind_count: u32) -> &'m mut SparseBufferMemoryBindInfoBuilder<'b> {
+    pub fn bind_count<'m>(mut self, bind_count: u32) -> SparseBufferMemoryBindInfoBuilder<'b> {
+        self.raw.bindCount = bind_count.into();
         self
     }
 
-    pub fn binds<'m, 'a>(&'m mut self, binds: &'a SparseMemoryBind) -> &'m mut SparseBufferMemoryBindInfoBuilder<'b> {
+    pub fn binds<'m, 'a>(mut self, binds: &'a [SparseMemoryBind]) -> SparseBufferMemoryBindInfoBuilder<'b> {
+        self.raw.pBinds = binds.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> SparseBufferMemoryBindInfo<'b> {
+        SparseBufferMemoryBindInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -2876,7 +3615,7 @@ impl<'b> SparseBufferMemoryBindInfoBuilder<'b> {
 
 /// A `VkSparseImageOpaqueMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageOpaqueMemoryBindInfo<'s> {
@@ -2904,9 +3643,16 @@ impl<'s> SparseImageOpaqueMemoryBindInfo<'s> {
 }
 
 
+impl<'s> From<SparseImageOpaqueMemoryBindInfo<'s>> for vks::VkSparseImageOpaqueMemoryBindInfo {
+    fn from(f: SparseImageOpaqueMemoryBindInfo<'s>) -> vks::VkSparseImageOpaqueMemoryBindInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSparseImageOpaqueMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseImageOpaqueMemoryBindInfoBuilder<'b> {
     raw: vks::VkSparseImageOpaqueMemoryBindInfo,
@@ -2921,16 +3667,26 @@ impl<'b> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
         }
     }
 
-    pub fn image<'m>(&'m mut self, image: Image) -> &'m mut SparseImageOpaqueMemoryBindInfoBuilder<'b> {
+    pub fn image<'m, 'a>(mut self, image: &'a Image) -> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
+        self.raw.image = image.handle();
         self
     }
 
-    pub fn bind_count<'m>(&'m mut self, bind_count: u32) -> &'m mut SparseImageOpaqueMemoryBindInfoBuilder<'b> {
+    pub fn bind_count<'m>(mut self, bind_count: u32) -> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
+        self.raw.bindCount = bind_count.into();
         self
     }
 
-    pub fn binds<'m, 'a>(&'m mut self, binds: &'a SparseMemoryBind) -> &'m mut SparseImageOpaqueMemoryBindInfoBuilder<'b> {
+    pub fn binds<'m, 'a>(mut self, binds: &'a [SparseMemoryBind]) -> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
+        self.raw.pBinds = binds.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> SparseImageOpaqueMemoryBindInfo<'b> {
+        SparseImageOpaqueMemoryBindInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -2938,7 +3694,7 @@ impl<'b> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
 
 /// A `VkSparseImageMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageMemoryBindInfo<'s> {
@@ -2966,9 +3722,16 @@ impl<'s> SparseImageMemoryBindInfo<'s> {
 }
 
 
+impl<'s> From<SparseImageMemoryBindInfo<'s>> for vks::VkSparseImageMemoryBindInfo {
+    fn from(f: SparseImageMemoryBindInfo<'s>) -> vks::VkSparseImageMemoryBindInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSparseImageMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseImageMemoryBindInfoBuilder<'b> {
     raw: vks::VkSparseImageMemoryBindInfo,
@@ -2983,16 +3746,26 @@ impl<'b> SparseImageMemoryBindInfoBuilder<'b> {
         }
     }
 
-    pub fn image<'m>(&'m mut self, image: Image) -> &'m mut SparseImageMemoryBindInfoBuilder<'b> {
+    pub fn image<'m, 'a>(mut self, image: &'a Image) -> SparseImageMemoryBindInfoBuilder<'b> {
+        self.raw.image = image.handle();
         self
     }
 
-    pub fn bind_count<'m>(&'m mut self, bind_count: u32) -> &'m mut SparseImageMemoryBindInfoBuilder<'b> {
+    pub fn bind_count<'m>(mut self, bind_count: u32) -> SparseImageMemoryBindInfoBuilder<'b> {
+        self.raw.bindCount = bind_count.into();
         self
     }
 
-    pub fn binds<'m, 'a>(&'m mut self, binds: &'a SparseImageMemoryBind) -> &'m mut SparseImageMemoryBindInfoBuilder<'b> {
+    pub fn binds<'m, 'a>(mut self, binds: &'a [SparseImageMemoryBind]) -> SparseImageMemoryBindInfoBuilder<'b> {
+        self.raw.pBinds = binds.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> SparseImageMemoryBindInfo<'b> {
+        SparseImageMemoryBindInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -3000,11 +3773,12 @@ impl<'b> SparseImageMemoryBindInfoBuilder<'b> {
 
 /// A `VkBindSparseInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct BindSparseInfo<'s> {
     raw: vks::VkBindSparseInfo,
+    wait_semaphores: Option<Vec<vks::VkSemaphore>>,
+    signal_semaphores: Option<Vec<vks::VkSemaphore>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -3052,12 +3826,21 @@ impl<'s> BindSparseInfo<'s> {
 }
 
 
+impl<'s> From<BindSparseInfo<'s>> for vks::VkBindSparseInfo {
+    fn from(f: BindSparseInfo<'s>) -> vks::VkBindSparseInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkBindSparseInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BindSparseInfoBuilder<'b> {
     raw: vks::VkBindSparseInfo,
+    wait_semaphores: Option<Vec<vks::VkSemaphore>>,
+    signal_semaphores: Option<Vec<vks::VkSemaphore>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -3065,52 +3848,76 @@ impl<'b> BindSparseInfoBuilder<'b> {
     pub fn new() -> BindSparseInfoBuilder<'b> {
         BindSparseInfoBuilder {
             raw: vks::VkBindSparseInfo::default(),
+            wait_semaphores: None,
+            signal_semaphores: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut BindSparseInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> BindSparseInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn wait_semaphore_count<'m>(&'m mut self, wait_semaphore_count: u32) -> &'m mut BindSparseInfoBuilder<'b> {
+    pub fn wait_semaphore_count<'m>(mut self, wait_semaphore_count: u32) -> BindSparseInfoBuilder<'b> {
+        self.raw.waitSemaphoreCount = wait_semaphore_count.into();
         self
     }
 
-    pub fn wait_semaphores<'m, 'a>(&'m mut self, wait_semaphores: &'a Semaphore) -> &'m mut BindSparseInfoBuilder<'b> {
+    pub fn wait_semaphores<'m, 'a>(mut self, wait_semaphores: &'a [Semaphore]) -> BindSparseInfoBuilder<'b> where 'a: 'b {
+        self.wait_semaphores = Some(wait_semaphores.iter().map(|h| h.handle()).collect());
+        self.raw.pWaitSemaphores = self.wait_semaphores.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn buffer_bind_count<'m>(&'m mut self, buffer_bind_count: u32) -> &'m mut BindSparseInfoBuilder<'b> {
+    pub fn buffer_bind_count<'m>(mut self, buffer_bind_count: u32) -> BindSparseInfoBuilder<'b> {
+        self.raw.bufferBindCount = buffer_bind_count.into();
         self
     }
 
-    pub fn buffer_binds<'m, 'a>(&'m mut self, buffer_binds: &'a SparseBufferMemoryBindInfo) -> &'m mut BindSparseInfoBuilder<'b> {
+    pub fn buffer_binds<'m, 'a>(mut self, buffer_binds: &'a [SparseBufferMemoryBindInfo]) -> BindSparseInfoBuilder<'b> {
+        self.raw.pBufferBinds = buffer_binds.as_ptr() as *const _;
         self
     }
 
-    pub fn image_opaque_bind_count<'m>(&'m mut self, image_opaque_bind_count: u32) -> &'m mut BindSparseInfoBuilder<'b> {
+    pub fn image_opaque_bind_count<'m>(mut self, image_opaque_bind_count: u32) -> BindSparseInfoBuilder<'b> {
+        self.raw.imageOpaqueBindCount = image_opaque_bind_count.into();
         self
     }
 
-    pub fn image_opaque_binds<'m, 'a>(&'m mut self, image_opaque_binds: &'a SparseImageOpaqueMemoryBindInfo) -> &'m mut BindSparseInfoBuilder<'b> {
+    pub fn image_opaque_binds<'m, 'a>(mut self, image_opaque_binds: &'a [SparseImageOpaqueMemoryBindInfo]) -> BindSparseInfoBuilder<'b> {
+        self.raw.pImageOpaqueBinds = image_opaque_binds.as_ptr() as *const _;
         self
     }
 
-    pub fn image_bind_count<'m>(&'m mut self, image_bind_count: u32) -> &'m mut BindSparseInfoBuilder<'b> {
+    pub fn image_bind_count<'m>(mut self, image_bind_count: u32) -> BindSparseInfoBuilder<'b> {
+        self.raw.imageBindCount = image_bind_count.into();
         self
     }
 
-    pub fn image_binds<'m, 'a>(&'m mut self, image_binds: &'a SparseImageMemoryBindInfo) -> &'m mut BindSparseInfoBuilder<'b> {
+    pub fn image_binds<'m, 'a>(mut self, image_binds: &'a [SparseImageMemoryBindInfo]) -> BindSparseInfoBuilder<'b> {
+        self.raw.pImageBinds = image_binds.as_ptr() as *const _;
         self
     }
 
-    pub fn signal_semaphore_count<'m>(&'m mut self, signal_semaphore_count: u32) -> &'m mut BindSparseInfoBuilder<'b> {
+    pub fn signal_semaphore_count<'m>(mut self, signal_semaphore_count: u32) -> BindSparseInfoBuilder<'b> {
+        self.raw.signalSemaphoreCount = signal_semaphore_count.into();
         self
     }
 
-    pub fn signal_semaphores<'m, 'a>(&'m mut self, signal_semaphores: &'a Semaphore) -> &'m mut BindSparseInfoBuilder<'b> {
+    pub fn signal_semaphores<'m, 'a>(mut self, signal_semaphores: &'a [Semaphore]) -> BindSparseInfoBuilder<'b> where 'a: 'b {
+        self.signal_semaphores = Some(signal_semaphores.iter().map(|h| h.handle()).collect());
+        self.raw.pSignalSemaphores = self.signal_semaphores.as_ref().unwrap().as_ptr();
         self
+    }
+
+    pub fn build(self) -> BindSparseInfo<'b> {
+        BindSparseInfo {
+            raw: self.raw,
+            wait_semaphores: self.wait_semaphores,
+            signal_semaphores: self.signal_semaphores,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -3118,7 +3925,7 @@ impl<'b> BindSparseInfoBuilder<'b> {
 
 /// A `VkImageCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageCopy {
@@ -3151,9 +3958,16 @@ impl ImageCopy {
 }
 
 
+impl From<ImageCopy> for vks::VkImageCopy {
+    fn from(f: ImageCopy) -> vks::VkImageCopy {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageCopyBuilder {
     raw: vks::VkImageCopy,
@@ -3166,24 +3980,35 @@ impl ImageCopyBuilder {
         }
     }
 
-    pub fn src_subresource<'m>(&'m mut self, src_subresource: ImageSubresourceLayers) -> &'m mut ImageCopyBuilder {
+    pub fn src_subresource<'m>(mut self, src_subresource: ImageSubresourceLayers) -> ImageCopyBuilder {
+        self.raw.srcSubresource = src_subresource.raw;
         self
     }
 
-    pub fn src_offset<'m>(&'m mut self, src_offset: Offset3d) -> &'m mut ImageCopyBuilder {
+    pub fn src_offset<'m>(mut self, src_offset: Offset3d) -> ImageCopyBuilder {
+        self.raw.srcOffset = src_offset.raw;
         self
     }
 
-    pub fn dst_subresource<'m>(&'m mut self, dst_subresource: ImageSubresourceLayers) -> &'m mut ImageCopyBuilder {
+    pub fn dst_subresource<'m>(mut self, dst_subresource: ImageSubresourceLayers) -> ImageCopyBuilder {
+        self.raw.dstSubresource = dst_subresource.raw;
         self
     }
 
-    pub fn dst_offset<'m>(&'m mut self, dst_offset: Offset3d) -> &'m mut ImageCopyBuilder {
+    pub fn dst_offset<'m>(mut self, dst_offset: Offset3d) -> ImageCopyBuilder {
+        self.raw.dstOffset = dst_offset.raw;
         self
     }
 
-    pub fn extent<'m>(&'m mut self, extent: Extent3d) -> &'m mut ImageCopyBuilder {
+    pub fn extent<'m>(mut self, extent: Extent3d) -> ImageCopyBuilder {
+        self.raw.extent = extent.raw;
         self
+    }
+
+    pub fn build(self) -> ImageCopy {
+        ImageCopy {
+            raw: self.raw,
+        }
     }
 
 }
@@ -3191,7 +4016,7 @@ impl ImageCopyBuilder {
 
 /// A `VkImageBlit`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageBlit {
@@ -3221,9 +4046,16 @@ impl ImageBlit {
 }
 
 
+impl From<ImageBlit> for vks::VkImageBlit {
+    fn from(f: ImageBlit) -> vks::VkImageBlit {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageBlit`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageBlitBuilder {
     raw: vks::VkImageBlit,
@@ -3236,20 +4068,30 @@ impl ImageBlitBuilder {
         }
     }
 
-    pub fn src_subresource<'m>(&'m mut self, src_subresource: ImageSubresourceLayers) -> &'m mut ImageBlitBuilder {
+    pub fn src_subresource<'m>(mut self, src_subresource: ImageSubresourceLayers) -> ImageBlitBuilder {
+        self.raw.srcSubresource = src_subresource.raw;
         self
     }
 
-    pub fn src_offsets<'m>(&'m mut self, src_offsets: Offset3d) -> &'m mut ImageBlitBuilder {
+    pub fn src_offsets<'m>(mut self, src_offsets: [Offset3d; 2]) -> ImageBlitBuilder {
+        self.raw.srcOffsets = [src_offsets[0].raw, src_offsets[1].raw, ];
         self
     }
 
-    pub fn dst_subresource<'m>(&'m mut self, dst_subresource: ImageSubresourceLayers) -> &'m mut ImageBlitBuilder {
+    pub fn dst_subresource<'m>(mut self, dst_subresource: ImageSubresourceLayers) -> ImageBlitBuilder {
+        self.raw.dstSubresource = dst_subresource.raw;
         self
     }
 
-    pub fn dst_offsets<'m>(&'m mut self, dst_offsets: Offset3d) -> &'m mut ImageBlitBuilder {
+    pub fn dst_offsets<'m>(mut self, dst_offsets: [Offset3d; 2]) -> ImageBlitBuilder {
+        self.raw.dstOffsets = [dst_offsets[0].raw, dst_offsets[1].raw, ];
         self
+    }
+
+    pub fn build(self) -> ImageBlit {
+        ImageBlit {
+            raw: self.raw,
+        }
     }
 
 }
@@ -3257,7 +4099,7 @@ impl ImageBlitBuilder {
 
 /// A `VkBufferImageCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferImageCopy {
@@ -3293,9 +4135,16 @@ impl BufferImageCopy {
 }
 
 
+impl From<BufferImageCopy> for vks::VkBufferImageCopy {
+    fn from(f: BufferImageCopy) -> vks::VkBufferImageCopy {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkBufferImageCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferImageCopyBuilder {
     raw: vks::VkBufferImageCopy,
@@ -3308,28 +4157,40 @@ impl BufferImageCopyBuilder {
         }
     }
 
-    pub fn buffer_offset<'m>(&'m mut self, buffer_offset: u64) -> &'m mut BufferImageCopyBuilder {
+    pub fn buffer_offset<'m>(mut self, buffer_offset: u64) -> BufferImageCopyBuilder {
+        self.raw.bufferOffset = buffer_offset.into();
         self
     }
 
-    pub fn buffer_row_length<'m>(&'m mut self, buffer_row_length: u32) -> &'m mut BufferImageCopyBuilder {
+    pub fn buffer_row_length<'m>(mut self, buffer_row_length: u32) -> BufferImageCopyBuilder {
+        self.raw.bufferRowLength = buffer_row_length.into();
         self
     }
 
-    pub fn buffer_image_height<'m>(&'m mut self, buffer_image_height: u32) -> &'m mut BufferImageCopyBuilder {
+    pub fn buffer_image_height<'m>(mut self, buffer_image_height: u32) -> BufferImageCopyBuilder {
+        self.raw.bufferImageHeight = buffer_image_height.into();
         self
     }
 
-    pub fn image_subresource<'m>(&'m mut self, image_subresource: ImageSubresourceLayers) -> &'m mut BufferImageCopyBuilder {
+    pub fn image_subresource<'m>(mut self, image_subresource: ImageSubresourceLayers) -> BufferImageCopyBuilder {
+        self.raw.imageSubresource = image_subresource.raw;
         self
     }
 
-    pub fn image_offset<'m>(&'m mut self, image_offset: Offset3d) -> &'m mut BufferImageCopyBuilder {
+    pub fn image_offset<'m>(mut self, image_offset: Offset3d) -> BufferImageCopyBuilder {
+        self.raw.imageOffset = image_offset.raw;
         self
     }
 
-    pub fn image_extent<'m>(&'m mut self, image_extent: Extent3d) -> &'m mut BufferImageCopyBuilder {
+    pub fn image_extent<'m>(mut self, image_extent: Extent3d) -> BufferImageCopyBuilder {
+        self.raw.imageExtent = image_extent.raw;
         self
+    }
+
+    pub fn build(self) -> BufferImageCopy {
+        BufferImageCopy {
+            raw: self.raw,
+        }
     }
 
 }
@@ -3337,7 +4198,7 @@ impl BufferImageCopyBuilder {
 
 /// A `VkImageResolve`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageResolve {
@@ -3370,9 +4231,16 @@ impl ImageResolve {
 }
 
 
+impl From<ImageResolve> for vks::VkImageResolve {
+    fn from(f: ImageResolve) -> vks::VkImageResolve {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageResolve`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageResolveBuilder {
     raw: vks::VkImageResolve,
@@ -3385,24 +4253,35 @@ impl ImageResolveBuilder {
         }
     }
 
-    pub fn src_subresource<'m>(&'m mut self, src_subresource: ImageSubresourceLayers) -> &'m mut ImageResolveBuilder {
+    pub fn src_subresource<'m>(mut self, src_subresource: ImageSubresourceLayers) -> ImageResolveBuilder {
+        self.raw.srcSubresource = src_subresource.raw;
         self
     }
 
-    pub fn src_offset<'m>(&'m mut self, src_offset: Offset3d) -> &'m mut ImageResolveBuilder {
+    pub fn src_offset<'m>(mut self, src_offset: Offset3d) -> ImageResolveBuilder {
+        self.raw.srcOffset = src_offset.raw;
         self
     }
 
-    pub fn dst_subresource<'m>(&'m mut self, dst_subresource: ImageSubresourceLayers) -> &'m mut ImageResolveBuilder {
+    pub fn dst_subresource<'m>(mut self, dst_subresource: ImageSubresourceLayers) -> ImageResolveBuilder {
+        self.raw.dstSubresource = dst_subresource.raw;
         self
     }
 
-    pub fn dst_offset<'m>(&'m mut self, dst_offset: Offset3d) -> &'m mut ImageResolveBuilder {
+    pub fn dst_offset<'m>(mut self, dst_offset: Offset3d) -> ImageResolveBuilder {
+        self.raw.dstOffset = dst_offset.raw;
         self
     }
 
-    pub fn extent<'m>(&'m mut self, extent: Extent3d) -> &'m mut ImageResolveBuilder {
+    pub fn extent<'m>(mut self, extent: Extent3d) -> ImageResolveBuilder {
+        self.raw.extent = extent.raw;
         self
+    }
+
+    pub fn build(self) -> ImageResolve {
+        ImageResolve {
+            raw: self.raw,
+        }
     }
 
 }
@@ -3410,7 +4289,7 @@ impl ImageResolveBuilder {
 
 /// A `VkShaderModuleCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ShaderModuleCreateInfo<'s> {
@@ -3441,9 +4320,16 @@ impl<'s> ShaderModuleCreateInfo<'s> {
 }
 
 
+impl<'s> From<ShaderModuleCreateInfo<'s>> for vks::VkShaderModuleCreateInfo {
+    fn from(f: ShaderModuleCreateInfo<'s>) -> vks::VkShaderModuleCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkShaderModuleCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ShaderModuleCreateInfoBuilder<'b> {
     raw: vks::VkShaderModuleCreateInfo,
@@ -3458,20 +4344,31 @@ impl<'b> ShaderModuleCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ShaderModuleCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ShaderModuleCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: ShaderModuleCreateFlags) -> &'m mut ShaderModuleCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: ShaderModuleCreateFlags) -> ShaderModuleCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn code_size<'m>(&'m mut self, code_size: usize) -> &'m mut ShaderModuleCreateInfoBuilder<'b> {
+    pub fn code_size<'m>(mut self, code_size: usize) -> ShaderModuleCreateInfoBuilder<'b> {
+        self.raw.codeSize = code_size.into();
         self
     }
 
-    pub fn code<'m, 'a>(&'m mut self, code: &'a u32) -> &'m mut ShaderModuleCreateInfoBuilder<'b> {
+    pub fn code<'m, 'a>(mut self, code: &'a [u32]) -> ShaderModuleCreateInfoBuilder<'b> {
+        self.raw.pCode = code.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> ShaderModuleCreateInfo<'b> {
+        ShaderModuleCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -3479,11 +4376,11 @@ impl<'b> ShaderModuleCreateInfoBuilder<'b> {
 
 /// A `VkDescriptorSetLayoutBinding`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct DescriptorSetLayoutBinding<'s> {
     raw: vks::VkDescriptorSetLayoutBinding,
+    immutable_samplers: Option<Vec<vks::VkSampler>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -3513,12 +4410,20 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
 }
 
 
+impl<'s> From<DescriptorSetLayoutBinding<'s>> for vks::VkDescriptorSetLayoutBinding {
+    fn from(f: DescriptorSetLayoutBinding<'s>) -> vks::VkDescriptorSetLayoutBinding {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDescriptorSetLayoutBinding`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorSetLayoutBindingBuilder<'b> {
     raw: vks::VkDescriptorSetLayoutBinding,
+    immutable_samplers: Option<Vec<vks::VkSampler>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -3526,28 +4431,43 @@ impl<'b> DescriptorSetLayoutBindingBuilder<'b> {
     pub fn new() -> DescriptorSetLayoutBindingBuilder<'b> {
         DescriptorSetLayoutBindingBuilder {
             raw: vks::VkDescriptorSetLayoutBinding::default(),
+            immutable_samplers: None,
             _p: PhantomData,
         }
     }
 
-    pub fn binding<'m>(&'m mut self, binding: u32) -> &'m mut DescriptorSetLayoutBindingBuilder<'b> {
+    pub fn binding<'m>(mut self, binding: u32) -> DescriptorSetLayoutBindingBuilder<'b> {
+        self.raw.binding = binding.into();
         self
     }
 
-    pub fn descriptor_type<'m>(&'m mut self, descriptor_type: DescriptorType) -> &'m mut DescriptorSetLayoutBindingBuilder<'b> {
+    pub fn descriptor_type<'m>(mut self, descriptor_type: DescriptorType) -> DescriptorSetLayoutBindingBuilder<'b> {
+        self.raw.descriptorType = descriptor_type.into();
         self
     }
 
-    pub fn descriptor_count<'m>(&'m mut self, descriptor_count: u32) -> &'m mut DescriptorSetLayoutBindingBuilder<'b> {
+    pub fn descriptor_count<'m>(mut self, descriptor_count: u32) -> DescriptorSetLayoutBindingBuilder<'b> {
+        self.raw.descriptorCount = descriptor_count.into();
         self
     }
 
-    pub fn stage_flags<'m>(&'m mut self, stage_flags: ShaderStageFlags) -> &'m mut DescriptorSetLayoutBindingBuilder<'b> {
+    pub fn stage_flags<'m>(mut self, stage_flags: ShaderStageFlags) -> DescriptorSetLayoutBindingBuilder<'b> {
+        self.raw.stageFlags = stage_flags.bits();
         self
     }
 
-    pub fn immutable_samplers<'m, 'a>(&'m mut self, immutable_samplers: &'a Sampler) -> &'m mut DescriptorSetLayoutBindingBuilder<'b> {
+    pub fn immutable_samplers<'m, 'a>(mut self, immutable_samplers: &'a [Sampler]) -> DescriptorSetLayoutBindingBuilder<'b> where 'a: 'b {
+        self.immutable_samplers = Some(immutable_samplers.iter().map(|h| h.handle()).collect());
+        self.raw.pImmutableSamplers = self.immutable_samplers.as_ref().unwrap().as_ptr();
         self
+    }
+
+    pub fn build(self) -> DescriptorSetLayoutBinding<'b> {
+        DescriptorSetLayoutBinding {
+            raw: self.raw,
+            immutable_samplers: self.immutable_samplers,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -3555,11 +4475,11 @@ impl<'b> DescriptorSetLayoutBindingBuilder<'b> {
 
 /// A `VkDescriptorSetLayoutCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct DescriptorSetLayoutCreateInfo<'s> {
     raw: vks::VkDescriptorSetLayoutCreateInfo,
+    bindings: Option<Vec<vks::VkDescriptorSetLayoutBinding>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -3586,12 +4506,20 @@ impl<'s> DescriptorSetLayoutCreateInfo<'s> {
 }
 
 
+impl<'s> From<DescriptorSetLayoutCreateInfo<'s>> for vks::VkDescriptorSetLayoutCreateInfo {
+    fn from(f: DescriptorSetLayoutCreateInfo<'s>) -> vks::VkDescriptorSetLayoutCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDescriptorSetLayoutCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorSetLayoutCreateInfoBuilder<'b> {
     raw: vks::VkDescriptorSetLayoutCreateInfo,
+    bindings: Option<Vec<vks::VkDescriptorSetLayoutBinding>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -3599,24 +4527,38 @@ impl<'b> DescriptorSetLayoutCreateInfoBuilder<'b> {
     pub fn new() -> DescriptorSetLayoutCreateInfoBuilder<'b> {
         DescriptorSetLayoutCreateInfoBuilder {
             raw: vks::VkDescriptorSetLayoutCreateInfo::default(),
+            bindings: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DescriptorSetLayoutCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DescriptorSetLayoutCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: DescriptorSetLayoutCreateFlags) -> &'m mut DescriptorSetLayoutCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: DescriptorSetLayoutCreateFlags) -> DescriptorSetLayoutCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn binding_count<'m>(&'m mut self, binding_count: u32) -> &'m mut DescriptorSetLayoutCreateInfoBuilder<'b> {
+    pub fn binding_count<'m>(mut self, binding_count: u32) -> DescriptorSetLayoutCreateInfoBuilder<'b> {
+        self.raw.bindingCount = binding_count.into();
         self
     }
 
-    pub fn bindings<'m, 'a>(&'m mut self, bindings: &'a DescriptorSetLayoutBinding) -> &'m mut DescriptorSetLayoutCreateInfoBuilder<'b> {
+    pub fn bindings<'m, 'a>(mut self, bindings: &'a [DescriptorSetLayoutBinding]) -> DescriptorSetLayoutCreateInfoBuilder<'b> {
+        self.bindings = Some(bindings.iter().map(|h| h.raw).collect());
+        self.raw.pBindings = self.bindings.as_ref().unwrap().as_ptr();
         self
+    }
+
+    pub fn build(self) -> DescriptorSetLayoutCreateInfo<'b> {
+        DescriptorSetLayoutCreateInfo {
+            raw: self.raw,
+            bindings: self.bindings,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -3624,7 +4566,7 @@ impl<'b> DescriptorSetLayoutCreateInfoBuilder<'b> {
 
 /// A `VkDescriptorPoolSize`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorPoolSize {
@@ -3648,9 +4590,16 @@ impl DescriptorPoolSize {
 }
 
 
+impl From<DescriptorPoolSize> for vks::VkDescriptorPoolSize {
+    fn from(f: DescriptorPoolSize) -> vks::VkDescriptorPoolSize {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDescriptorPoolSize`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorPoolSizeBuilder {
     raw: vks::VkDescriptorPoolSize,
@@ -3663,12 +4612,20 @@ impl DescriptorPoolSizeBuilder {
         }
     }
 
-    pub fn type_of<'m>(&'m mut self, type_of: DescriptorType) -> &'m mut DescriptorPoolSizeBuilder {
+    pub fn type_of<'m>(mut self, type_of: DescriptorType) -> DescriptorPoolSizeBuilder {
+        self.raw.type_ = type_of.into();
         self
     }
 
-    pub fn descriptor_count<'m>(&'m mut self, descriptor_count: u32) -> &'m mut DescriptorPoolSizeBuilder {
+    pub fn descriptor_count<'m>(mut self, descriptor_count: u32) -> DescriptorPoolSizeBuilder {
+        self.raw.descriptorCount = descriptor_count.into();
         self
+    }
+
+    pub fn build(self) -> DescriptorPoolSize {
+        DescriptorPoolSize {
+            raw: self.raw,
+        }
     }
 
 }
@@ -3676,7 +4633,7 @@ impl DescriptorPoolSizeBuilder {
 
 /// A `VkDescriptorPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorPoolCreateInfo<'s> {
@@ -3710,9 +4667,16 @@ impl<'s> DescriptorPoolCreateInfo<'s> {
 }
 
 
+impl<'s> From<DescriptorPoolCreateInfo<'s>> for vks::VkDescriptorPoolCreateInfo {
+    fn from(f: DescriptorPoolCreateInfo<'s>) -> vks::VkDescriptorPoolCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDescriptorPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorPoolCreateInfoBuilder<'b> {
     raw: vks::VkDescriptorPoolCreateInfo,
@@ -3727,24 +4691,36 @@ impl<'b> DescriptorPoolCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DescriptorPoolCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DescriptorPoolCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: DescriptorPoolCreateFlags) -> &'m mut DescriptorPoolCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: DescriptorPoolCreateFlags) -> DescriptorPoolCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn max_sets<'m>(&'m mut self, max_sets: u32) -> &'m mut DescriptorPoolCreateInfoBuilder<'b> {
+    pub fn max_sets<'m>(mut self, max_sets: u32) -> DescriptorPoolCreateInfoBuilder<'b> {
+        self.raw.maxSets = max_sets.into();
         self
     }
 
-    pub fn pool_size_count<'m>(&'m mut self, pool_size_count: u32) -> &'m mut DescriptorPoolCreateInfoBuilder<'b> {
+    pub fn pool_size_count<'m>(mut self, pool_size_count: u32) -> DescriptorPoolCreateInfoBuilder<'b> {
+        self.raw.poolSizeCount = pool_size_count.into();
         self
     }
 
-    pub fn pool_sizes<'m, 'a>(&'m mut self, pool_sizes: &'a DescriptorPoolSize) -> &'m mut DescriptorPoolCreateInfoBuilder<'b> {
+    pub fn pool_sizes<'m, 'a>(mut self, pool_sizes: &'a [DescriptorPoolSize]) -> DescriptorPoolCreateInfoBuilder<'b> {
+        self.raw.pPoolSizes = pool_sizes.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> DescriptorPoolCreateInfo<'b> {
+        DescriptorPoolCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -3752,11 +4728,11 @@ impl<'b> DescriptorPoolCreateInfoBuilder<'b> {
 
 /// A `VkDescriptorSetAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct DescriptorSetAllocateInfo<'s> {
     raw: vks::VkDescriptorSetAllocateInfo,
+    set_layouts: Option<Vec<vks::VkDescriptorSetLayout>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -3783,12 +4759,20 @@ impl<'s> DescriptorSetAllocateInfo<'s> {
 }
 
 
+impl<'s> From<DescriptorSetAllocateInfo<'s>> for vks::VkDescriptorSetAllocateInfo {
+    fn from(f: DescriptorSetAllocateInfo<'s>) -> vks::VkDescriptorSetAllocateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDescriptorSetAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorSetAllocateInfoBuilder<'b> {
     raw: vks::VkDescriptorSetAllocateInfo,
+    set_layouts: Option<Vec<vks::VkDescriptorSetLayout>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -3796,24 +4780,38 @@ impl<'b> DescriptorSetAllocateInfoBuilder<'b> {
     pub fn new() -> DescriptorSetAllocateInfoBuilder<'b> {
         DescriptorSetAllocateInfoBuilder {
             raw: vks::VkDescriptorSetAllocateInfo::default(),
+            set_layouts: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DescriptorSetAllocateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DescriptorSetAllocateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn descriptor_pool<'m>(&'m mut self, descriptor_pool: DescriptorPool) -> &'m mut DescriptorSetAllocateInfoBuilder<'b> {
+    pub fn descriptor_pool<'m, 'a>(mut self, descriptor_pool: &'a DescriptorPool) -> DescriptorSetAllocateInfoBuilder<'b> {
+        self.raw.descriptorPool = descriptor_pool.handle();
         self
     }
 
-    pub fn descriptor_set_count<'m>(&'m mut self, descriptor_set_count: u32) -> &'m mut DescriptorSetAllocateInfoBuilder<'b> {
+    pub fn descriptor_set_count<'m>(mut self, descriptor_set_count: u32) -> DescriptorSetAllocateInfoBuilder<'b> {
+        self.raw.descriptorSetCount = descriptor_set_count.into();
         self
     }
 
-    pub fn set_layouts<'m, 'a>(&'m mut self, set_layouts: &'a DescriptorSetLayout) -> &'m mut DescriptorSetAllocateInfoBuilder<'b> {
+    pub fn set_layouts<'m, 'a>(mut self, set_layouts: &'a [DescriptorSetLayout]) -> DescriptorSetAllocateInfoBuilder<'b> where 'a: 'b {
+        self.set_layouts = Some(set_layouts.iter().map(|h| h.handle()).collect());
+        self.raw.pSetLayouts = self.set_layouts.as_ref().unwrap().as_ptr();
         self
+    }
+
+    pub fn build(self) -> DescriptorSetAllocateInfo<'b> {
+        DescriptorSetAllocateInfo {
+            raw: self.raw,
+            set_layouts: self.set_layouts,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -3821,7 +4819,7 @@ impl<'b> DescriptorSetAllocateInfoBuilder<'b> {
 
 /// A `VkSpecializationMapEntry`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SpecializationMapEntry {
@@ -3848,9 +4846,16 @@ impl SpecializationMapEntry {
 }
 
 
+impl From<SpecializationMapEntry> for vks::VkSpecializationMapEntry {
+    fn from(f: SpecializationMapEntry) -> vks::VkSpecializationMapEntry {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSpecializationMapEntry`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SpecializationMapEntryBuilder {
     raw: vks::VkSpecializationMapEntry,
@@ -3863,16 +4868,25 @@ impl SpecializationMapEntryBuilder {
         }
     }
 
-    pub fn constant_id<'m>(&'m mut self, constant_id: u32) -> &'m mut SpecializationMapEntryBuilder {
+    pub fn constant_id<'m>(mut self, constant_id: u32) -> SpecializationMapEntryBuilder {
+        self.raw.constantID = constant_id.into();
         self
     }
 
-    pub fn offset<'m>(&'m mut self, offset: u32) -> &'m mut SpecializationMapEntryBuilder {
+    pub fn offset<'m>(mut self, offset: u32) -> SpecializationMapEntryBuilder {
+        self.raw.offset = offset.into();
         self
     }
 
-    pub fn size<'m>(&'m mut self, size: usize) -> &'m mut SpecializationMapEntryBuilder {
+    pub fn size<'m>(mut self, size: usize) -> SpecializationMapEntryBuilder {
+        self.raw.size = size.into();
         self
+    }
+
+    pub fn build(self) -> SpecializationMapEntry {
+        SpecializationMapEntry {
+            raw: self.raw,
+        }
     }
 
 }
@@ -3880,7 +4894,7 @@ impl SpecializationMapEntryBuilder {
 
 /// A `VkSpecializationInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SpecializationInfo<'s> {
@@ -3902,7 +4916,7 @@ impl<'s> SpecializationInfo<'s> {
     pub fn data_size(&self) {
     }
 
-    pub fn data(&self) {
+    pub unsafe fn data(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkSpecializationInfo {
@@ -3911,9 +4925,16 @@ impl<'s> SpecializationInfo<'s> {
 }
 
 
+impl<'s> From<SpecializationInfo<'s>> for vks::VkSpecializationInfo {
+    fn from(f: SpecializationInfo<'s>) -> vks::VkSpecializationInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSpecializationInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SpecializationInfoBuilder<'b> {
     raw: vks::VkSpecializationInfo,
@@ -3928,20 +4949,31 @@ impl<'b> SpecializationInfoBuilder<'b> {
         }
     }
 
-    pub fn map_entry_count<'m>(&'m mut self, map_entry_count: u32) -> &'m mut SpecializationInfoBuilder<'b> {
+    pub fn map_entry_count<'m>(mut self, map_entry_count: u32) -> SpecializationInfoBuilder<'b> {
+        self.raw.mapEntryCount = map_entry_count.into();
         self
     }
 
-    pub fn map_entries<'m, 'a>(&'m mut self, map_entries: &'a SpecializationMapEntry) -> &'m mut SpecializationInfoBuilder<'b> {
+    pub fn map_entries<'m, 'a>(mut self, map_entries: &'a [SpecializationMapEntry]) -> SpecializationInfoBuilder<'b> {
+        self.raw.pMapEntries = map_entries.as_ptr() as *const _;
         self
     }
 
-    pub fn data_size<'m>(&'m mut self, data_size: usize) -> &'m mut SpecializationInfoBuilder<'b> {
+    pub fn data_size<'m>(mut self, data_size: usize) -> SpecializationInfoBuilder<'b> {
+        self.raw.dataSize = data_size.into();
         self
     }
 
-    pub fn data<'m, 'a>(&'m mut self, data: &'a ()) -> &'m mut SpecializationInfoBuilder<'b> {
+    pub unsafe fn data<'m>(mut self, data: *const c_void) -> SpecializationInfoBuilder<'b> {
+        self.raw.pData = data;
         self
+    }
+
+    pub fn build(self) -> SpecializationInfo<'b> {
+        SpecializationInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -3949,11 +4981,11 @@ impl<'b> SpecializationInfoBuilder<'b> {
 
 /// A `VkPipelineShaderStageCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct PipelineShaderStageCreateInfo<'s> {
     raw: vks::VkPipelineShaderStageCreateInfo,
+    name: Option<CharStr<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -3986,12 +5018,20 @@ impl<'s> PipelineShaderStageCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineShaderStageCreateInfo<'s>> for vks::VkPipelineShaderStageCreateInfo {
+    fn from(f: PipelineShaderStageCreateInfo<'s>) -> vks::VkPipelineShaderStageCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineShaderStageCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineShaderStageCreateInfoBuilder<'b> {
     raw: vks::VkPipelineShaderStageCreateInfo,
+    name: Option<CharStr<'b>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -3999,32 +5039,48 @@ impl<'b> PipelineShaderStageCreateInfoBuilder<'b> {
     pub fn new() -> PipelineShaderStageCreateInfoBuilder<'b> {
         PipelineShaderStageCreateInfoBuilder {
             raw: vks::VkPipelineShaderStageCreateInfo::default(),
+            name: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineShaderStageCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineShaderStageCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineShaderStageCreateFlags) -> &'m mut PipelineShaderStageCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineShaderStageCreateFlags) -> PipelineShaderStageCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn stage<'m>(&'m mut self, stage: ShaderStageFlags) -> &'m mut PipelineShaderStageCreateInfoBuilder<'b> {
+    pub fn stage<'m>(mut self, stage: ShaderStageFlags) -> PipelineShaderStageCreateInfoBuilder<'b> {
+        self.raw.stage = stage.bits();
         self
     }
 
-    pub fn module<'m>(&'m mut self, module: ShaderModule) -> &'m mut PipelineShaderStageCreateInfoBuilder<'b> {
+    pub fn module<'m, 'a>(mut self, module: &'a ShaderModule) -> PipelineShaderStageCreateInfoBuilder<'b> {
+        self.raw.module = module.handle();
         self
     }
 
-    pub fn name<'m, 'a>(&'m mut self, name: &'a i8) -> &'m mut PipelineShaderStageCreateInfoBuilder<'b> {
+    pub fn name<'m, 'a, T>(mut self, name: T) -> PipelineShaderStageCreateInfoBuilder<'b> where 'a: 'b, T: Into<CharStr<'a>> {
+        self.name = Some(name.into());
+        self.raw.pName = self.name.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn specialization_info<'m, 'a>(&'m mut self, specialization_info: &'a SpecializationInfo) -> &'m mut PipelineShaderStageCreateInfoBuilder<'b> {
+    pub fn specialization_info<'m, 'a>(mut self, specialization_info: &'a SpecializationInfo) -> PipelineShaderStageCreateInfoBuilder<'b> {
+        self.raw.pSpecializationInfo = specialization_info.raw();
         self
+    }
+
+    pub fn build(self) -> PipelineShaderStageCreateInfo<'b> {
+        PipelineShaderStageCreateInfo {
+            raw: self.raw,
+            name: self.name,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -4032,7 +5088,7 @@ impl<'b> PipelineShaderStageCreateInfoBuilder<'b> {
 
 /// A `VkComputePipelineCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ComputePipelineCreateInfo<'s> {
@@ -4069,9 +5125,16 @@ impl<'s> ComputePipelineCreateInfo<'s> {
 }
 
 
+impl<'s> From<ComputePipelineCreateInfo<'s>> for vks::VkComputePipelineCreateInfo {
+    fn from(f: ComputePipelineCreateInfo<'s>) -> vks::VkComputePipelineCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkComputePipelineCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ComputePipelineCreateInfoBuilder<'b> {
     raw: vks::VkComputePipelineCreateInfo,
@@ -4086,28 +5149,41 @@ impl<'b> ComputePipelineCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ComputePipelineCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ComputePipelineCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineCreateFlags) -> &'m mut ComputePipelineCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineCreateFlags) -> ComputePipelineCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn stage<'m>(&'m mut self, stage: PipelineShaderStageCreateInfo) -> &'m mut ComputePipelineCreateInfoBuilder<'b> {
+    pub fn stage<'m>(mut self, stage: PipelineShaderStageCreateInfo) -> ComputePipelineCreateInfoBuilder<'b> {
+        self.raw.stage = stage.raw;
         self
     }
 
-    pub fn layout<'m>(&'m mut self, layout: PipelineLayout) -> &'m mut ComputePipelineCreateInfoBuilder<'b> {
+    pub fn layout<'m, 'a>(mut self, layout: &'a PipelineLayout) -> ComputePipelineCreateInfoBuilder<'b> {
+        self.raw.layout = layout.handle();
         self
     }
 
-    pub fn base_pipeline_handle<'m>(&'m mut self, base_pipeline_handle: Pipeline) -> &'m mut ComputePipelineCreateInfoBuilder<'b> {
+    pub fn base_pipeline_handle<'m, 'a>(mut self, base_pipeline_handle: &'a Pipeline) -> ComputePipelineCreateInfoBuilder<'b> {
+        self.raw.basePipelineHandle = base_pipeline_handle.handle();
         self
     }
 
-    pub fn base_pipeline_index<'m>(&'m mut self, base_pipeline_index: i32) -> &'m mut ComputePipelineCreateInfoBuilder<'b> {
+    pub fn base_pipeline_index<'m>(mut self, base_pipeline_index: i32) -> ComputePipelineCreateInfoBuilder<'b> {
+        self.raw.basePipelineIndex = base_pipeline_index.into();
         self
+    }
+
+    pub fn build(self) -> ComputePipelineCreateInfo<'b> {
+        ComputePipelineCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -4115,7 +5191,7 @@ impl<'b> ComputePipelineCreateInfoBuilder<'b> {
 
 /// A `VkVertexInputBindingDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct VertexInputBindingDescription {
@@ -4142,9 +5218,16 @@ impl VertexInputBindingDescription {
 }
 
 
+impl From<VertexInputBindingDescription> for vks::VkVertexInputBindingDescription {
+    fn from(f: VertexInputBindingDescription) -> vks::VkVertexInputBindingDescription {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkVertexInputBindingDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct VertexInputBindingDescriptionBuilder {
     raw: vks::VkVertexInputBindingDescription,
@@ -4157,16 +5240,25 @@ impl VertexInputBindingDescriptionBuilder {
         }
     }
 
-    pub fn binding<'m>(&'m mut self, binding: u32) -> &'m mut VertexInputBindingDescriptionBuilder {
+    pub fn binding<'m>(mut self, binding: u32) -> VertexInputBindingDescriptionBuilder {
+        self.raw.binding = binding.into();
         self
     }
 
-    pub fn stride<'m>(&'m mut self, stride: u32) -> &'m mut VertexInputBindingDescriptionBuilder {
+    pub fn stride<'m>(mut self, stride: u32) -> VertexInputBindingDescriptionBuilder {
+        self.raw.stride = stride.into();
         self
     }
 
-    pub fn input_rate<'m>(&'m mut self, input_rate: VertexInputRate) -> &'m mut VertexInputBindingDescriptionBuilder {
+    pub fn input_rate<'m>(mut self, input_rate: VertexInputRate) -> VertexInputBindingDescriptionBuilder {
+        self.raw.inputRate = input_rate.into();
         self
+    }
+
+    pub fn build(self) -> VertexInputBindingDescription {
+        VertexInputBindingDescription {
+            raw: self.raw,
+        }
     }
 
 }
@@ -4174,7 +5266,7 @@ impl VertexInputBindingDescriptionBuilder {
 
 /// A `VkVertexInputAttributeDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct VertexInputAttributeDescription {
@@ -4204,9 +5296,16 @@ impl VertexInputAttributeDescription {
 }
 
 
+impl From<VertexInputAttributeDescription> for vks::VkVertexInputAttributeDescription {
+    fn from(f: VertexInputAttributeDescription) -> vks::VkVertexInputAttributeDescription {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkVertexInputAttributeDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct VertexInputAttributeDescriptionBuilder {
     raw: vks::VkVertexInputAttributeDescription,
@@ -4219,20 +5318,30 @@ impl VertexInputAttributeDescriptionBuilder {
         }
     }
 
-    pub fn location<'m>(&'m mut self, location: u32) -> &'m mut VertexInputAttributeDescriptionBuilder {
+    pub fn location<'m>(mut self, location: u32) -> VertexInputAttributeDescriptionBuilder {
+        self.raw.location = location.into();
         self
     }
 
-    pub fn binding<'m>(&'m mut self, binding: u32) -> &'m mut VertexInputAttributeDescriptionBuilder {
+    pub fn binding<'m>(mut self, binding: u32) -> VertexInputAttributeDescriptionBuilder {
+        self.raw.binding = binding.into();
         self
     }
 
-    pub fn format<'m>(&'m mut self, format: Format) -> &'m mut VertexInputAttributeDescriptionBuilder {
+    pub fn format<'m>(mut self, format: Format) -> VertexInputAttributeDescriptionBuilder {
+        self.raw.format = format.into();
         self
     }
 
-    pub fn offset<'m>(&'m mut self, offset: u32) -> &'m mut VertexInputAttributeDescriptionBuilder {
+    pub fn offset<'m>(mut self, offset: u32) -> VertexInputAttributeDescriptionBuilder {
+        self.raw.offset = offset.into();
         self
+    }
+
+    pub fn build(self) -> VertexInputAttributeDescription {
+        VertexInputAttributeDescription {
+            raw: self.raw,
+        }
     }
 
 }
@@ -4240,7 +5349,7 @@ impl VertexInputAttributeDescriptionBuilder {
 
 /// A `VkPipelineVertexInputStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineVertexInputStateCreateInfo<'s> {
@@ -4277,9 +5386,16 @@ impl<'s> PipelineVertexInputStateCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineVertexInputStateCreateInfo<'s>> for vks::VkPipelineVertexInputStateCreateInfo {
+    fn from(f: PipelineVertexInputStateCreateInfo<'s>) -> vks::VkPipelineVertexInputStateCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineVertexInputStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineVertexInputStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineVertexInputStateCreateInfo,
@@ -4294,28 +5410,41 @@ impl<'b> PipelineVertexInputStateCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineVertexInputStateCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineVertexInputStateCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineVertexInputStateCreateFlags) -> &'m mut PipelineVertexInputStateCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineVertexInputStateCreateFlags) -> PipelineVertexInputStateCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn vertex_binding_description_count<'m>(&'m mut self, vertex_binding_description_count: u32) -> &'m mut PipelineVertexInputStateCreateInfoBuilder<'b> {
+    pub fn vertex_binding_description_count<'m>(mut self, vertex_binding_description_count: u32) -> PipelineVertexInputStateCreateInfoBuilder<'b> {
+        self.raw.vertexBindingDescriptionCount = vertex_binding_description_count.into();
         self
     }
 
-    pub fn vertex_binding_descriptions<'m, 'a>(&'m mut self, vertex_binding_descriptions: &'a VertexInputBindingDescription) -> &'m mut PipelineVertexInputStateCreateInfoBuilder<'b> {
+    pub fn vertex_binding_descriptions<'m, 'a>(mut self, vertex_binding_descriptions: &'a [VertexInputBindingDescription]) -> PipelineVertexInputStateCreateInfoBuilder<'b> {
+        self.raw.pVertexBindingDescriptions = vertex_binding_descriptions.as_ptr() as *const _;
         self
     }
 
-    pub fn vertex_attribute_description_count<'m>(&'m mut self, vertex_attribute_description_count: u32) -> &'m mut PipelineVertexInputStateCreateInfoBuilder<'b> {
+    pub fn vertex_attribute_description_count<'m>(mut self, vertex_attribute_description_count: u32) -> PipelineVertexInputStateCreateInfoBuilder<'b> {
+        self.raw.vertexAttributeDescriptionCount = vertex_attribute_description_count.into();
         self
     }
 
-    pub fn vertex_attribute_descriptions<'m, 'a>(&'m mut self, vertex_attribute_descriptions: &'a VertexInputAttributeDescription) -> &'m mut PipelineVertexInputStateCreateInfoBuilder<'b> {
+    pub fn vertex_attribute_descriptions<'m, 'a>(mut self, vertex_attribute_descriptions: &'a [VertexInputAttributeDescription]) -> PipelineVertexInputStateCreateInfoBuilder<'b> {
+        self.raw.pVertexAttributeDescriptions = vertex_attribute_descriptions.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> PipelineVertexInputStateCreateInfo<'b> {
+        PipelineVertexInputStateCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -4323,7 +5452,7 @@ impl<'b> PipelineVertexInputStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineInputAssemblyStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineInputAssemblyStateCreateInfo<'s> {
@@ -4354,9 +5483,16 @@ impl<'s> PipelineInputAssemblyStateCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineInputAssemblyStateCreateInfo<'s>> for vks::VkPipelineInputAssemblyStateCreateInfo {
+    fn from(f: PipelineInputAssemblyStateCreateInfo<'s>) -> vks::VkPipelineInputAssemblyStateCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineInputAssemblyStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineInputAssemblyStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineInputAssemblyStateCreateInfo,
@@ -4371,20 +5507,31 @@ impl<'b> PipelineInputAssemblyStateCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineInputAssemblyStateCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineInputAssemblyStateCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineInputAssemblyStateCreateFlags) -> &'m mut PipelineInputAssemblyStateCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineInputAssemblyStateCreateFlags) -> PipelineInputAssemblyStateCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn topology<'m>(&'m mut self, topology: PrimitiveTopology) -> &'m mut PipelineInputAssemblyStateCreateInfoBuilder<'b> {
+    pub fn topology<'m>(mut self, topology: PrimitiveTopology) -> PipelineInputAssemblyStateCreateInfoBuilder<'b> {
+        self.raw.topology = topology.into();
         self
     }
 
-    pub fn primitive_restart_enable<'m>(&'m mut self, primitive_restart_enable: bool) -> &'m mut PipelineInputAssemblyStateCreateInfoBuilder<'b> {
+    pub fn primitive_restart_enable<'m>(mut self, primitive_restart_enable: bool) -> PipelineInputAssemblyStateCreateInfoBuilder<'b> {
+        self.raw.primitiveRestartEnable = primitive_restart_enable as u32;
         self
+    }
+
+    pub fn build(self) -> PipelineInputAssemblyStateCreateInfo<'b> {
+        PipelineInputAssemblyStateCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -4392,7 +5539,7 @@ impl<'b> PipelineInputAssemblyStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineTessellationStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineTessellationStateCreateInfo<'s> {
@@ -4420,9 +5567,16 @@ impl<'s> PipelineTessellationStateCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineTessellationStateCreateInfo<'s>> for vks::VkPipelineTessellationStateCreateInfo {
+    fn from(f: PipelineTessellationStateCreateInfo<'s>) -> vks::VkPipelineTessellationStateCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineTessellationStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineTessellationStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineTessellationStateCreateInfo,
@@ -4437,16 +5591,26 @@ impl<'b> PipelineTessellationStateCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineTessellationStateCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineTessellationStateCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineTessellationStateCreateFlags) -> &'m mut PipelineTessellationStateCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineTessellationStateCreateFlags) -> PipelineTessellationStateCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn patch_control_points<'m>(&'m mut self, patch_control_points: u32) -> &'m mut PipelineTessellationStateCreateInfoBuilder<'b> {
+    pub fn patch_control_points<'m>(mut self, patch_control_points: u32) -> PipelineTessellationStateCreateInfoBuilder<'b> {
+        self.raw.patchControlPoints = patch_control_points.into();
         self
+    }
+
+    pub fn build(self) -> PipelineTessellationStateCreateInfo<'b> {
+        PipelineTessellationStateCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -4454,7 +5618,7 @@ impl<'b> PipelineTessellationStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineViewportStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineViewportStateCreateInfo<'s> {
@@ -4491,9 +5655,16 @@ impl<'s> PipelineViewportStateCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineViewportStateCreateInfo<'s>> for vks::VkPipelineViewportStateCreateInfo {
+    fn from(f: PipelineViewportStateCreateInfo<'s>) -> vks::VkPipelineViewportStateCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineViewportStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineViewportStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineViewportStateCreateInfo,
@@ -4508,28 +5679,41 @@ impl<'b> PipelineViewportStateCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineViewportStateCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineViewportStateCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineViewportStateCreateFlags) -> &'m mut PipelineViewportStateCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineViewportStateCreateFlags) -> PipelineViewportStateCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn viewport_count<'m>(&'m mut self, viewport_count: u32) -> &'m mut PipelineViewportStateCreateInfoBuilder<'b> {
+    pub fn viewport_count<'m>(mut self, viewport_count: u32) -> PipelineViewportStateCreateInfoBuilder<'b> {
+        self.raw.viewportCount = viewport_count.into();
         self
     }
 
-    pub fn viewports<'m, 'a>(&'m mut self, viewports: &'a Viewport) -> &'m mut PipelineViewportStateCreateInfoBuilder<'b> {
+    pub fn viewports<'m, 'a>(mut self, viewports: &'a [Viewport]) -> PipelineViewportStateCreateInfoBuilder<'b> {
+        self.raw.pViewports = viewports.as_ptr() as *const _;
         self
     }
 
-    pub fn scissor_count<'m>(&'m mut self, scissor_count: u32) -> &'m mut PipelineViewportStateCreateInfoBuilder<'b> {
+    pub fn scissor_count<'m>(mut self, scissor_count: u32) -> PipelineViewportStateCreateInfoBuilder<'b> {
+        self.raw.scissorCount = scissor_count.into();
         self
     }
 
-    pub fn scissors<'m, 'a>(&'m mut self, scissors: &'a Rect2d) -> &'m mut PipelineViewportStateCreateInfoBuilder<'b> {
+    pub fn scissors<'m, 'a>(mut self, scissors: &'a [Rect2d]) -> PipelineViewportStateCreateInfoBuilder<'b> {
+        self.raw.pScissors = scissors.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> PipelineViewportStateCreateInfo<'b> {
+        PipelineViewportStateCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -4537,7 +5721,7 @@ impl<'b> PipelineViewportStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineRasterizationStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineRasterizationStateCreateInfo<'s> {
@@ -4592,9 +5776,16 @@ impl<'s> PipelineRasterizationStateCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineRasterizationStateCreateInfo<'s>> for vks::VkPipelineRasterizationStateCreateInfo {
+    fn from(f: PipelineRasterizationStateCreateInfo<'s>) -> vks::VkPipelineRasterizationStateCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineRasterizationStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineRasterizationStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineRasterizationStateCreateInfo,
@@ -4609,52 +5800,71 @@ impl<'b> PipelineRasterizationStateCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineRasterizationStateCreateFlags) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineRasterizationStateCreateFlags) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn depth_clamp_enable<'m>(&'m mut self, depth_clamp_enable: bool) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub fn depth_clamp_enable<'m>(mut self, depth_clamp_enable: bool) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.depthClampEnable = depth_clamp_enable as u32;
         self
     }
 
-    pub fn rasterizer_discard_enable<'m>(&'m mut self, rasterizer_discard_enable: bool) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub fn rasterizer_discard_enable<'m>(mut self, rasterizer_discard_enable: bool) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.rasterizerDiscardEnable = rasterizer_discard_enable as u32;
         self
     }
 
-    pub fn polygon_mode<'m>(&'m mut self, polygon_mode: PolygonMode) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub fn polygon_mode<'m>(mut self, polygon_mode: PolygonMode) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.polygonMode = polygon_mode.into();
         self
     }
 
-    pub fn cull_mode<'m>(&'m mut self, cull_mode: CullModeFlags) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub fn cull_mode<'m>(mut self, cull_mode: CullModeFlags) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.cullMode = cull_mode.bits();
         self
     }
 
-    pub fn front_face<'m>(&'m mut self, front_face: FrontFace) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub fn front_face<'m>(mut self, front_face: FrontFace) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.frontFace = front_face.into();
         self
     }
 
-    pub fn depth_bias_enable<'m>(&'m mut self, depth_bias_enable: bool) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub fn depth_bias_enable<'m>(mut self, depth_bias_enable: bool) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.depthBiasEnable = depth_bias_enable as u32;
         self
     }
 
-    pub fn depth_bias_constant_factor<'m>(&'m mut self, depth_bias_constant_factor: f32) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub fn depth_bias_constant_factor<'m>(mut self, depth_bias_constant_factor: f32) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.depthBiasConstantFactor = depth_bias_constant_factor.into();
         self
     }
 
-    pub fn depth_bias_clamp<'m>(&'m mut self, depth_bias_clamp: f32) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub fn depth_bias_clamp<'m>(mut self, depth_bias_clamp: f32) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.depthBiasClamp = depth_bias_clamp.into();
         self
     }
 
-    pub fn depth_bias_slope_factor<'m>(&'m mut self, depth_bias_slope_factor: f32) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub fn depth_bias_slope_factor<'m>(mut self, depth_bias_slope_factor: f32) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.depthBiasSlopeFactor = depth_bias_slope_factor.into();
         self
     }
 
-    pub fn line_width<'m>(&'m mut self, line_width: f32) -> &'m mut PipelineRasterizationStateCreateInfoBuilder<'b> {
+    pub fn line_width<'m>(mut self, line_width: f32) -> PipelineRasterizationStateCreateInfoBuilder<'b> {
+        self.raw.lineWidth = line_width.into();
         self
+    }
+
+    pub fn build(self) -> PipelineRasterizationStateCreateInfo<'b> {
+        PipelineRasterizationStateCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -4662,7 +5872,7 @@ impl<'b> PipelineRasterizationStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineMultisampleStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineMultisampleStateCreateInfo<'s> {
@@ -4705,9 +5915,16 @@ impl<'s> PipelineMultisampleStateCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineMultisampleStateCreateInfo<'s>> for vks::VkPipelineMultisampleStateCreateInfo {
+    fn from(f: PipelineMultisampleStateCreateInfo<'s>) -> vks::VkPipelineMultisampleStateCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineMultisampleStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineMultisampleStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineMultisampleStateCreateInfo,
@@ -4722,36 +5939,51 @@ impl<'b> PipelineMultisampleStateCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineMultisampleStateCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineMultisampleStateCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineMultisampleStateCreateFlags) -> &'m mut PipelineMultisampleStateCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineMultisampleStateCreateFlags) -> PipelineMultisampleStateCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn rasterization_samples<'m>(&'m mut self, rasterization_samples: SampleCountFlags) -> &'m mut PipelineMultisampleStateCreateInfoBuilder<'b> {
+    pub fn rasterization_samples<'m>(mut self, rasterization_samples: SampleCountFlags) -> PipelineMultisampleStateCreateInfoBuilder<'b> {
+        self.raw.rasterizationSamples = rasterization_samples.bits();
         self
     }
 
-    pub fn sample_shading_enable<'m>(&'m mut self, sample_shading_enable: bool) -> &'m mut PipelineMultisampleStateCreateInfoBuilder<'b> {
+    pub fn sample_shading_enable<'m>(mut self, sample_shading_enable: bool) -> PipelineMultisampleStateCreateInfoBuilder<'b> {
+        self.raw.sampleShadingEnable = sample_shading_enable as u32;
         self
     }
 
-    pub fn min_sample_shading<'m>(&'m mut self, min_sample_shading: f32) -> &'m mut PipelineMultisampleStateCreateInfoBuilder<'b> {
+    pub fn min_sample_shading<'m>(mut self, min_sample_shading: f32) -> PipelineMultisampleStateCreateInfoBuilder<'b> {
+        self.raw.minSampleShading = min_sample_shading.into();
         self
     }
 
-    pub fn sample_mask<'m, 'a>(&'m mut self, sample_mask: &'a u32) -> &'m mut PipelineMultisampleStateCreateInfoBuilder<'b> {
+    pub fn sample_mask<'m, 'a>(mut self, sample_mask: &'a u32) -> PipelineMultisampleStateCreateInfoBuilder<'b> {
+        self.raw.pSampleMask = sample_mask;
         self
     }
 
-    pub fn alpha_to_coverage_enable<'m>(&'m mut self, alpha_to_coverage_enable: bool) -> &'m mut PipelineMultisampleStateCreateInfoBuilder<'b> {
+    pub fn alpha_to_coverage_enable<'m>(mut self, alpha_to_coverage_enable: bool) -> PipelineMultisampleStateCreateInfoBuilder<'b> {
+        self.raw.alphaToCoverageEnable = alpha_to_coverage_enable as u32;
         self
     }
 
-    pub fn alpha_to_one_enable<'m>(&'m mut self, alpha_to_one_enable: bool) -> &'m mut PipelineMultisampleStateCreateInfoBuilder<'b> {
+    pub fn alpha_to_one_enable<'m>(mut self, alpha_to_one_enable: bool) -> PipelineMultisampleStateCreateInfoBuilder<'b> {
+        self.raw.alphaToOneEnable = alpha_to_one_enable as u32;
         self
+    }
+
+    pub fn build(self) -> PipelineMultisampleStateCreateInfo<'b> {
+        PipelineMultisampleStateCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -4759,7 +5991,7 @@ impl<'b> PipelineMultisampleStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineColorBlendAttachmentState`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineColorBlendAttachmentState {
@@ -4801,9 +6033,16 @@ impl PipelineColorBlendAttachmentState {
 }
 
 
+impl From<PipelineColorBlendAttachmentState> for vks::VkPipelineColorBlendAttachmentState {
+    fn from(f: PipelineColorBlendAttachmentState) -> vks::VkPipelineColorBlendAttachmentState {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineColorBlendAttachmentState`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineColorBlendAttachmentStateBuilder {
     raw: vks::VkPipelineColorBlendAttachmentState,
@@ -4816,36 +6055,50 @@ impl PipelineColorBlendAttachmentStateBuilder {
         }
     }
 
-    pub fn blend_enable<'m>(&'m mut self, blend_enable: bool) -> &'m mut PipelineColorBlendAttachmentStateBuilder {
+    pub fn blend_enable<'m>(mut self, blend_enable: bool) -> PipelineColorBlendAttachmentStateBuilder {
+        self.raw.blendEnable = blend_enable as u32;
         self
     }
 
-    pub fn src_color_blend_factor<'m>(&'m mut self, src_color_blend_factor: BlendFactor) -> &'m mut PipelineColorBlendAttachmentStateBuilder {
+    pub fn src_color_blend_factor<'m>(mut self, src_color_blend_factor: BlendFactor) -> PipelineColorBlendAttachmentStateBuilder {
+        self.raw.srcColorBlendFactor = src_color_blend_factor.into();
         self
     }
 
-    pub fn dst_color_blend_factor<'m>(&'m mut self, dst_color_blend_factor: BlendFactor) -> &'m mut PipelineColorBlendAttachmentStateBuilder {
+    pub fn dst_color_blend_factor<'m>(mut self, dst_color_blend_factor: BlendFactor) -> PipelineColorBlendAttachmentStateBuilder {
+        self.raw.dstColorBlendFactor = dst_color_blend_factor.into();
         self
     }
 
-    pub fn color_blend_op<'m>(&'m mut self, color_blend_op: BlendOp) -> &'m mut PipelineColorBlendAttachmentStateBuilder {
+    pub fn color_blend_op<'m>(mut self, color_blend_op: BlendOp) -> PipelineColorBlendAttachmentStateBuilder {
+        self.raw.colorBlendOp = color_blend_op.into();
         self
     }
 
-    pub fn src_alpha_blend_factor<'m>(&'m mut self, src_alpha_blend_factor: BlendFactor) -> &'m mut PipelineColorBlendAttachmentStateBuilder {
+    pub fn src_alpha_blend_factor<'m>(mut self, src_alpha_blend_factor: BlendFactor) -> PipelineColorBlendAttachmentStateBuilder {
+        self.raw.srcAlphaBlendFactor = src_alpha_blend_factor.into();
         self
     }
 
-    pub fn dst_alpha_blend_factor<'m>(&'m mut self, dst_alpha_blend_factor: BlendFactor) -> &'m mut PipelineColorBlendAttachmentStateBuilder {
+    pub fn dst_alpha_blend_factor<'m>(mut self, dst_alpha_blend_factor: BlendFactor) -> PipelineColorBlendAttachmentStateBuilder {
+        self.raw.dstAlphaBlendFactor = dst_alpha_blend_factor.into();
         self
     }
 
-    pub fn alpha_blend_op<'m>(&'m mut self, alpha_blend_op: BlendOp) -> &'m mut PipelineColorBlendAttachmentStateBuilder {
+    pub fn alpha_blend_op<'m>(mut self, alpha_blend_op: BlendOp) -> PipelineColorBlendAttachmentStateBuilder {
+        self.raw.alphaBlendOp = alpha_blend_op.into();
         self
     }
 
-    pub fn color_write_mask<'m>(&'m mut self, color_write_mask: ColorComponentFlags) -> &'m mut PipelineColorBlendAttachmentStateBuilder {
+    pub fn color_write_mask<'m>(mut self, color_write_mask: ColorComponentFlags) -> PipelineColorBlendAttachmentStateBuilder {
+        self.raw.colorWriteMask = color_write_mask.bits();
         self
+    }
+
+    pub fn build(self) -> PipelineColorBlendAttachmentState {
+        PipelineColorBlendAttachmentState {
+            raw: self.raw,
+        }
     }
 
 }
@@ -4853,7 +6106,7 @@ impl PipelineColorBlendAttachmentStateBuilder {
 
 /// A `VkPipelineColorBlendStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineColorBlendStateCreateInfo<'s> {
@@ -4893,9 +6146,16 @@ impl<'s> PipelineColorBlendStateCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineColorBlendStateCreateInfo<'s>> for vks::VkPipelineColorBlendStateCreateInfo {
+    fn from(f: PipelineColorBlendStateCreateInfo<'s>) -> vks::VkPipelineColorBlendStateCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineColorBlendStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineColorBlendStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineColorBlendStateCreateInfo,
@@ -4910,32 +6170,46 @@ impl<'b> PipelineColorBlendStateCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineColorBlendStateCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineColorBlendStateCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineColorBlendStateCreateFlags) -> &'m mut PipelineColorBlendStateCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineColorBlendStateCreateFlags) -> PipelineColorBlendStateCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn logic_op_enable<'m>(&'m mut self, logic_op_enable: bool) -> &'m mut PipelineColorBlendStateCreateInfoBuilder<'b> {
+    pub fn logic_op_enable<'m>(mut self, logic_op_enable: bool) -> PipelineColorBlendStateCreateInfoBuilder<'b> {
+        self.raw.logicOpEnable = logic_op_enable as u32;
         self
     }
 
-    pub fn logic_op<'m>(&'m mut self, logic_op: LogicOp) -> &'m mut PipelineColorBlendStateCreateInfoBuilder<'b> {
+    pub fn logic_op<'m>(mut self, logic_op: LogicOp) -> PipelineColorBlendStateCreateInfoBuilder<'b> {
+        self.raw.logicOp = logic_op.into();
         self
     }
 
-    pub fn attachment_count<'m>(&'m mut self, attachment_count: u32) -> &'m mut PipelineColorBlendStateCreateInfoBuilder<'b> {
+    pub fn attachment_count<'m>(mut self, attachment_count: u32) -> PipelineColorBlendStateCreateInfoBuilder<'b> {
+        self.raw.attachmentCount = attachment_count.into();
         self
     }
 
-    pub fn attachments<'m, 'a>(&'m mut self, attachments: &'a PipelineColorBlendAttachmentState) -> &'m mut PipelineColorBlendStateCreateInfoBuilder<'b> {
+    pub fn attachments<'m, 'a>(mut self, attachments: &'a [PipelineColorBlendAttachmentState]) -> PipelineColorBlendStateCreateInfoBuilder<'b> {
+        self.raw.pAttachments = attachments.as_ptr() as *const _;
         self
     }
 
-    pub fn blend_constants<'m>(&'m mut self, blend_constants: f32) -> &'m mut PipelineColorBlendStateCreateInfoBuilder<'b> {
+    pub fn blend_constants<'m>(mut self, blend_constants: [f32; 4]) -> PipelineColorBlendStateCreateInfoBuilder<'b> {
+        self.raw.blendConstants = blend_constants;
         self
+    }
+
+    pub fn build(self) -> PipelineColorBlendStateCreateInfo<'b> {
+        PipelineColorBlendStateCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -4943,7 +6217,7 @@ impl<'b> PipelineColorBlendStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineDynamicStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineDynamicStateCreateInfo<'s> {
@@ -4974,9 +6248,16 @@ impl<'s> PipelineDynamicStateCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineDynamicStateCreateInfo<'s>> for vks::VkPipelineDynamicStateCreateInfo {
+    fn from(f: PipelineDynamicStateCreateInfo<'s>) -> vks::VkPipelineDynamicStateCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineDynamicStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineDynamicStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineDynamicStateCreateInfo,
@@ -4991,20 +6272,31 @@ impl<'b> PipelineDynamicStateCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineDynamicStateCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineDynamicStateCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineDynamicStateCreateFlags) -> &'m mut PipelineDynamicStateCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineDynamicStateCreateFlags) -> PipelineDynamicStateCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn dynamic_state_count<'m>(&'m mut self, dynamic_state_count: u32) -> &'m mut PipelineDynamicStateCreateInfoBuilder<'b> {
+    pub fn dynamic_state_count<'m>(mut self, dynamic_state_count: u32) -> PipelineDynamicStateCreateInfoBuilder<'b> {
+        self.raw.dynamicStateCount = dynamic_state_count.into();
         self
     }
 
-    pub fn dynamic_states<'m, 'a>(&'m mut self, dynamic_states: &'a DynamicState) -> &'m mut PipelineDynamicStateCreateInfoBuilder<'b> {
+    pub fn dynamic_states<'m, 'a>(mut self, dynamic_states: &'a [DynamicState]) -> PipelineDynamicStateCreateInfoBuilder<'b> {
+        self.raw.pDynamicStates = dynamic_states.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> PipelineDynamicStateCreateInfo<'b> {
+        PipelineDynamicStateCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -5012,7 +6304,7 @@ impl<'b> PipelineDynamicStateCreateInfoBuilder<'b> {
 
 /// A `VkStencilOpState`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct StencilOpState {
@@ -5051,9 +6343,16 @@ impl StencilOpState {
 }
 
 
+impl From<StencilOpState> for vks::VkStencilOpState {
+    fn from(f: StencilOpState) -> vks::VkStencilOpState {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkStencilOpState`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct StencilOpStateBuilder {
     raw: vks::VkStencilOpState,
@@ -5066,32 +6365,45 @@ impl StencilOpStateBuilder {
         }
     }
 
-    pub fn fail_op<'m>(&'m mut self, fail_op: StencilOp) -> &'m mut StencilOpStateBuilder {
+    pub fn fail_op<'m>(mut self, fail_op: StencilOp) -> StencilOpStateBuilder {
+        self.raw.failOp = fail_op.into();
         self
     }
 
-    pub fn pass_op<'m>(&'m mut self, pass_op: StencilOp) -> &'m mut StencilOpStateBuilder {
+    pub fn pass_op<'m>(mut self, pass_op: StencilOp) -> StencilOpStateBuilder {
+        self.raw.passOp = pass_op.into();
         self
     }
 
-    pub fn depth_fail_op<'m>(&'m mut self, depth_fail_op: StencilOp) -> &'m mut StencilOpStateBuilder {
+    pub fn depth_fail_op<'m>(mut self, depth_fail_op: StencilOp) -> StencilOpStateBuilder {
+        self.raw.depthFailOp = depth_fail_op.into();
         self
     }
 
-    pub fn compare_op<'m>(&'m mut self, compare_op: CompareOp) -> &'m mut StencilOpStateBuilder {
+    pub fn compare_op<'m>(mut self, compare_op: CompareOp) -> StencilOpStateBuilder {
+        self.raw.compareOp = compare_op.into();
         self
     }
 
-    pub fn compare_mask<'m>(&'m mut self, compare_mask: u32) -> &'m mut StencilOpStateBuilder {
+    pub fn compare_mask<'m>(mut self, compare_mask: u32) -> StencilOpStateBuilder {
+        self.raw.compareMask = compare_mask.into();
         self
     }
 
-    pub fn write_mask<'m>(&'m mut self, write_mask: u32) -> &'m mut StencilOpStateBuilder {
+    pub fn write_mask<'m>(mut self, write_mask: u32) -> StencilOpStateBuilder {
+        self.raw.writeMask = write_mask.into();
         self
     }
 
-    pub fn reference<'m>(&'m mut self, reference: u32) -> &'m mut StencilOpStateBuilder {
+    pub fn reference<'m>(mut self, reference: u32) -> StencilOpStateBuilder {
+        self.raw.reference = reference.into();
         self
+    }
+
+    pub fn build(self) -> StencilOpState {
+        StencilOpState {
+            raw: self.raw,
+        }
     }
 
 }
@@ -5099,7 +6411,7 @@ impl StencilOpStateBuilder {
 
 /// A `VkPipelineDepthStencilStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineDepthStencilStateCreateInfo<'s> {
@@ -5151,9 +6463,16 @@ impl<'s> PipelineDepthStencilStateCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineDepthStencilStateCreateInfo<'s>> for vks::VkPipelineDepthStencilStateCreateInfo {
+    fn from(f: PipelineDepthStencilStateCreateInfo<'s>) -> vks::VkPipelineDepthStencilStateCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineDepthStencilStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineDepthStencilStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineDepthStencilStateCreateInfo,
@@ -5168,48 +6487,66 @@ impl<'b> PipelineDepthStencilStateCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineDepthStencilStateCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineDepthStencilStateCreateFlags) -> &'m mut PipelineDepthStencilStateCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineDepthStencilStateCreateFlags) -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn depth_test_enable<'m>(&'m mut self, depth_test_enable: bool) -> &'m mut PipelineDepthStencilStateCreateInfoBuilder<'b> {
+    pub fn depth_test_enable<'m>(mut self, depth_test_enable: bool) -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
+        self.raw.depthTestEnable = depth_test_enable as u32;
         self
     }
 
-    pub fn depth_write_enable<'m>(&'m mut self, depth_write_enable: bool) -> &'m mut PipelineDepthStencilStateCreateInfoBuilder<'b> {
+    pub fn depth_write_enable<'m>(mut self, depth_write_enable: bool) -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
+        self.raw.depthWriteEnable = depth_write_enable as u32;
         self
     }
 
-    pub fn depth_compare_op<'m>(&'m mut self, depth_compare_op: CompareOp) -> &'m mut PipelineDepthStencilStateCreateInfoBuilder<'b> {
+    pub fn depth_compare_op<'m>(mut self, depth_compare_op: CompareOp) -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
+        self.raw.depthCompareOp = depth_compare_op.into();
         self
     }
 
-    pub fn depth_bounds_test_enable<'m>(&'m mut self, depth_bounds_test_enable: bool) -> &'m mut PipelineDepthStencilStateCreateInfoBuilder<'b> {
+    pub fn depth_bounds_test_enable<'m>(mut self, depth_bounds_test_enable: bool) -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
+        self.raw.depthBoundsTestEnable = depth_bounds_test_enable as u32;
         self
     }
 
-    pub fn stencil_test_enable<'m>(&'m mut self, stencil_test_enable: bool) -> &'m mut PipelineDepthStencilStateCreateInfoBuilder<'b> {
+    pub fn stencil_test_enable<'m>(mut self, stencil_test_enable: bool) -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
+        self.raw.stencilTestEnable = stencil_test_enable as u32;
         self
     }
 
-    pub fn front<'m>(&'m mut self, front: StencilOpState) -> &'m mut PipelineDepthStencilStateCreateInfoBuilder<'b> {
+    pub fn front<'m>(mut self, front: StencilOpState) -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
+        self.raw.front = front.raw;
         self
     }
 
-    pub fn back<'m>(&'m mut self, back: StencilOpState) -> &'m mut PipelineDepthStencilStateCreateInfoBuilder<'b> {
+    pub fn back<'m>(mut self, back: StencilOpState) -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
+        self.raw.back = back.raw;
         self
     }
 
-    pub fn min_depth_bounds<'m>(&'m mut self, min_depth_bounds: f32) -> &'m mut PipelineDepthStencilStateCreateInfoBuilder<'b> {
+    pub fn min_depth_bounds<'m>(mut self, min_depth_bounds: f32) -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
+        self.raw.minDepthBounds = min_depth_bounds.into();
         self
     }
 
-    pub fn max_depth_bounds<'m>(&'m mut self, max_depth_bounds: f32) -> &'m mut PipelineDepthStencilStateCreateInfoBuilder<'b> {
+    pub fn max_depth_bounds<'m>(mut self, max_depth_bounds: f32) -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
+        self.raw.maxDepthBounds = max_depth_bounds.into();
         self
+    }
+
+    pub fn build(self) -> PipelineDepthStencilStateCreateInfo<'b> {
+        PipelineDepthStencilStateCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -5217,11 +6554,11 @@ impl<'b> PipelineDepthStencilStateCreateInfoBuilder<'b> {
 
 /// A `VkGraphicsPipelineCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct GraphicsPipelineCreateInfo<'s> {
     raw: vks::VkGraphicsPipelineCreateInfo,
+    stages: Option<Vec<vks::VkPipelineShaderStageCreateInfo>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -5290,12 +6627,20 @@ impl<'s> GraphicsPipelineCreateInfo<'s> {
 }
 
 
+impl<'s> From<GraphicsPipelineCreateInfo<'s>> for vks::VkGraphicsPipelineCreateInfo {
+    fn from(f: GraphicsPipelineCreateInfo<'s>) -> vks::VkGraphicsPipelineCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkGraphicsPipelineCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct GraphicsPipelineCreateInfoBuilder<'b> {
     raw: vks::VkGraphicsPipelineCreateInfo,
+    stages: Option<Vec<vks::VkPipelineShaderStageCreateInfo>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -5303,80 +6648,108 @@ impl<'b> GraphicsPipelineCreateInfoBuilder<'b> {
     pub fn new() -> GraphicsPipelineCreateInfoBuilder<'b> {
         GraphicsPipelineCreateInfoBuilder {
             raw: vks::VkGraphicsPipelineCreateInfo::default(),
+            stages: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineCreateFlags) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineCreateFlags) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn stage_count<'m>(&'m mut self, stage_count: u32) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn stage_count<'m>(mut self, stage_count: u32) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.stageCount = stage_count.into();
         self
     }
 
-    pub fn stages<'m, 'a>(&'m mut self, stages: &'a PipelineShaderStageCreateInfo) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn stages<'m, 'a>(mut self, stages: &'a [PipelineShaderStageCreateInfo]) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.stages = Some(stages.iter().map(|h| h.raw).collect());
+        self.raw.pStages = self.stages.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn vertex_input_state<'m, 'a>(&'m mut self, vertex_input_state: &'a PipelineVertexInputStateCreateInfo) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn vertex_input_state<'m, 'a>(mut self, vertex_input_state: &'a PipelineVertexInputStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.pVertexInputState = vertex_input_state.raw();
         self
     }
 
-    pub fn input_assembly_state<'m, 'a>(&'m mut self, input_assembly_state: &'a PipelineInputAssemblyStateCreateInfo) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn input_assembly_state<'m, 'a>(mut self, input_assembly_state: &'a PipelineInputAssemblyStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.pInputAssemblyState = input_assembly_state.raw();
         self
     }
 
-    pub fn tessellation_state<'m, 'a>(&'m mut self, tessellation_state: &'a PipelineTessellationStateCreateInfo) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn tessellation_state<'m, 'a>(mut self, tessellation_state: &'a PipelineTessellationStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.pTessellationState = tessellation_state.raw();
         self
     }
 
-    pub fn viewport_state<'m, 'a>(&'m mut self, viewport_state: &'a PipelineViewportStateCreateInfo) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn viewport_state<'m, 'a>(mut self, viewport_state: &'a PipelineViewportStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.pViewportState = viewport_state.raw();
         self
     }
 
-    pub fn rasterization_state<'m, 'a>(&'m mut self, rasterization_state: &'a PipelineRasterizationStateCreateInfo) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn rasterization_state<'m, 'a>(mut self, rasterization_state: &'a PipelineRasterizationStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.pRasterizationState = rasterization_state.raw();
         self
     }
 
-    pub fn multisample_state<'m, 'a>(&'m mut self, multisample_state: &'a PipelineMultisampleStateCreateInfo) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn multisample_state<'m, 'a>(mut self, multisample_state: &'a PipelineMultisampleStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.pMultisampleState = multisample_state.raw();
         self
     }
 
-    pub fn depth_stencil_state<'m, 'a>(&'m mut self, depth_stencil_state: &'a PipelineDepthStencilStateCreateInfo) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn depth_stencil_state<'m, 'a>(mut self, depth_stencil_state: &'a PipelineDepthStencilStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.pDepthStencilState = depth_stencil_state.raw();
         self
     }
 
-    pub fn color_blend_state<'m, 'a>(&'m mut self, color_blend_state: &'a PipelineColorBlendStateCreateInfo) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn color_blend_state<'m, 'a>(mut self, color_blend_state: &'a PipelineColorBlendStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.pColorBlendState = color_blend_state.raw();
         self
     }
 
-    pub fn dynamic_state<'m, 'a>(&'m mut self, dynamic_state: &'a PipelineDynamicStateCreateInfo) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn dynamic_state<'m, 'a>(mut self, dynamic_state: &'a PipelineDynamicStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.pDynamicState = dynamic_state.raw();
         self
     }
 
-    pub fn layout<'m>(&'m mut self, layout: PipelineLayout) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn layout<'m, 'a>(mut self, layout: &'a PipelineLayout) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.layout = layout.handle();
         self
     }
 
-    pub fn render_pass<'m>(&'m mut self, render_pass: RenderPass) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn render_pass<'m, 'a>(mut self, render_pass: &'a RenderPass) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.renderPass = render_pass.handle();
         self
     }
 
-    pub fn subpass<'m>(&'m mut self, subpass: u32) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn subpass<'m>(mut self, subpass: u32) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.subpass = subpass.into();
         self
     }
 
-    pub fn base_pipeline_handle<'m>(&'m mut self, base_pipeline_handle: Pipeline) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn base_pipeline_handle<'m, 'a>(mut self, base_pipeline_handle: &'a Pipeline) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.basePipelineHandle = base_pipeline_handle.handle();
         self
     }
 
-    pub fn base_pipeline_index<'m>(&'m mut self, base_pipeline_index: i32) -> &'m mut GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn base_pipeline_index<'m>(mut self, base_pipeline_index: i32) -> GraphicsPipelineCreateInfoBuilder<'b> {
+        self.raw.basePipelineIndex = base_pipeline_index.into();
         self
+    }
+
+    pub fn build(self) -> GraphicsPipelineCreateInfo<'b> {
+        GraphicsPipelineCreateInfo {
+            raw: self.raw,
+            stages: self.stages,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -5384,7 +6757,7 @@ impl<'b> GraphicsPipelineCreateInfoBuilder<'b> {
 
 /// A `VkPipelineCacheCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineCacheCreateInfo<'s> {
@@ -5406,7 +6779,7 @@ impl<'s> PipelineCacheCreateInfo<'s> {
     pub fn initial_data_size(&self) {
     }
 
-    pub fn initial_data(&self) {
+    pub unsafe fn initial_data(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkPipelineCacheCreateInfo {
@@ -5415,9 +6788,16 @@ impl<'s> PipelineCacheCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineCacheCreateInfo<'s>> for vks::VkPipelineCacheCreateInfo {
+    fn from(f: PipelineCacheCreateInfo<'s>) -> vks::VkPipelineCacheCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineCacheCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineCacheCreateInfoBuilder<'b> {
     raw: vks::VkPipelineCacheCreateInfo,
@@ -5432,20 +6812,31 @@ impl<'b> PipelineCacheCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineCacheCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineCacheCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineCacheCreateFlags) -> &'m mut PipelineCacheCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineCacheCreateFlags) -> PipelineCacheCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn initial_data_size<'m>(&'m mut self, initial_data_size: usize) -> &'m mut PipelineCacheCreateInfoBuilder<'b> {
+    pub fn initial_data_size<'m>(mut self, initial_data_size: usize) -> PipelineCacheCreateInfoBuilder<'b> {
+        self.raw.initialDataSize = initial_data_size.into();
         self
     }
 
-    pub fn initial_data<'m, 'a>(&'m mut self, initial_data: &'a ()) -> &'m mut PipelineCacheCreateInfoBuilder<'b> {
+    pub unsafe fn initial_data<'m>(mut self, initial_data: *const c_void) -> PipelineCacheCreateInfoBuilder<'b> {
+        self.raw.pInitialData = initial_data;
         self
+    }
+
+    pub fn build(self) -> PipelineCacheCreateInfo<'b> {
+        PipelineCacheCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -5453,7 +6844,7 @@ impl<'b> PipelineCacheCreateInfoBuilder<'b> {
 
 /// A `VkPushConstantRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PushConstantRange {
@@ -5480,9 +6871,16 @@ impl PushConstantRange {
 }
 
 
+impl From<PushConstantRange> for vks::VkPushConstantRange {
+    fn from(f: PushConstantRange) -> vks::VkPushConstantRange {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPushConstantRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PushConstantRangeBuilder {
     raw: vks::VkPushConstantRange,
@@ -5495,16 +6893,25 @@ impl PushConstantRangeBuilder {
         }
     }
 
-    pub fn stage_flags<'m>(&'m mut self, stage_flags: ShaderStageFlags) -> &'m mut PushConstantRangeBuilder {
+    pub fn stage_flags<'m>(mut self, stage_flags: ShaderStageFlags) -> PushConstantRangeBuilder {
+        self.raw.stageFlags = stage_flags.bits();
         self
     }
 
-    pub fn offset<'m>(&'m mut self, offset: u32) -> &'m mut PushConstantRangeBuilder {
+    pub fn offset<'m>(mut self, offset: u32) -> PushConstantRangeBuilder {
+        self.raw.offset = offset.into();
         self
     }
 
-    pub fn size<'m>(&'m mut self, size: u32) -> &'m mut PushConstantRangeBuilder {
+    pub fn size<'m>(mut self, size: u32) -> PushConstantRangeBuilder {
+        self.raw.size = size.into();
         self
+    }
+
+    pub fn build(self) -> PushConstantRange {
+        PushConstantRange {
+            raw: self.raw,
+        }
     }
 
 }
@@ -5512,11 +6919,11 @@ impl PushConstantRangeBuilder {
 
 /// A `VkPipelineLayoutCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct PipelineLayoutCreateInfo<'s> {
     raw: vks::VkPipelineLayoutCreateInfo,
+    set_layouts: Option<Vec<vks::VkDescriptorSetLayout>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -5549,12 +6956,20 @@ impl<'s> PipelineLayoutCreateInfo<'s> {
 }
 
 
+impl<'s> From<PipelineLayoutCreateInfo<'s>> for vks::VkPipelineLayoutCreateInfo {
+    fn from(f: PipelineLayoutCreateInfo<'s>) -> vks::VkPipelineLayoutCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineLayoutCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineLayoutCreateInfoBuilder<'b> {
     raw: vks::VkPipelineLayoutCreateInfo,
+    set_layouts: Option<Vec<vks::VkDescriptorSetLayout>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -5562,32 +6977,48 @@ impl<'b> PipelineLayoutCreateInfoBuilder<'b> {
     pub fn new() -> PipelineLayoutCreateInfoBuilder<'b> {
         PipelineLayoutCreateInfoBuilder {
             raw: vks::VkPipelineLayoutCreateInfo::default(),
+            set_layouts: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineLayoutCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineLayoutCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineLayoutCreateFlags) -> &'m mut PipelineLayoutCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineLayoutCreateFlags) -> PipelineLayoutCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn set_layout_count<'m>(&'m mut self, set_layout_count: u32) -> &'m mut PipelineLayoutCreateInfoBuilder<'b> {
+    pub fn set_layout_count<'m>(mut self, set_layout_count: u32) -> PipelineLayoutCreateInfoBuilder<'b> {
+        self.raw.setLayoutCount = set_layout_count.into();
         self
     }
 
-    pub fn set_layouts<'m, 'a>(&'m mut self, set_layouts: &'a DescriptorSetLayout) -> &'m mut PipelineLayoutCreateInfoBuilder<'b> {
+    pub fn set_layouts<'m, 'a>(mut self, set_layouts: &'a [DescriptorSetLayout]) -> PipelineLayoutCreateInfoBuilder<'b> where 'a: 'b {
+        self.set_layouts = Some(set_layouts.iter().map(|h| h.handle()).collect());
+        self.raw.pSetLayouts = self.set_layouts.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn push_constant_range_count<'m>(&'m mut self, push_constant_range_count: u32) -> &'m mut PipelineLayoutCreateInfoBuilder<'b> {
+    pub fn push_constant_range_count<'m>(mut self, push_constant_range_count: u32) -> PipelineLayoutCreateInfoBuilder<'b> {
+        self.raw.pushConstantRangeCount = push_constant_range_count.into();
         self
     }
 
-    pub fn push_constant_ranges<'m, 'a>(&'m mut self, push_constant_ranges: &'a PushConstantRange) -> &'m mut PipelineLayoutCreateInfoBuilder<'b> {
+    pub fn push_constant_ranges<'m, 'a>(mut self, push_constant_ranges: &'a [PushConstantRange]) -> PipelineLayoutCreateInfoBuilder<'b> {
+        self.raw.pPushConstantRanges = push_constant_ranges.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> PipelineLayoutCreateInfo<'b> {
+        PipelineLayoutCreateInfo {
+            raw: self.raw,
+            set_layouts: self.set_layouts,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -5595,7 +7026,7 @@ impl<'b> PipelineLayoutCreateInfoBuilder<'b> {
 
 /// A `VkSamplerCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SamplerCreateInfo<'s> {
@@ -5665,9 +7096,16 @@ impl<'s> SamplerCreateInfo<'s> {
 }
 
 
+impl<'s> From<SamplerCreateInfo<'s>> for vks::VkSamplerCreateInfo {
+    fn from(f: SamplerCreateInfo<'s>) -> vks::VkSamplerCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSamplerCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SamplerCreateInfoBuilder<'b> {
     raw: vks::VkSamplerCreateInfo,
@@ -5682,72 +7120,96 @@ impl<'b> SamplerCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: SamplerCreateFlags) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: SamplerCreateFlags) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn mag_filter<'m>(&'m mut self, mag_filter: Filter) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn mag_filter<'m>(mut self, mag_filter: Filter) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.magFilter = mag_filter.into();
         self
     }
 
-    pub fn min_filter<'m>(&'m mut self, min_filter: Filter) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn min_filter<'m>(mut self, min_filter: Filter) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.minFilter = min_filter.into();
         self
     }
 
-    pub fn mipmap_mode<'m>(&'m mut self, mipmap_mode: SamplerMipmapMode) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn mipmap_mode<'m>(mut self, mipmap_mode: SamplerMipmapMode) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.mipmapMode = mipmap_mode.into();
         self
     }
 
-    pub fn address_mode_u<'m>(&'m mut self, address_mode_u: SamplerAddressMode) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn address_mode_u<'m>(mut self, address_mode_u: SamplerAddressMode) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.addressModeU = address_mode_u.into();
         self
     }
 
-    pub fn address_mode_v<'m>(&'m mut self, address_mode_v: SamplerAddressMode) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn address_mode_v<'m>(mut self, address_mode_v: SamplerAddressMode) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.addressModeV = address_mode_v.into();
         self
     }
 
-    pub fn address_mode_w<'m>(&'m mut self, address_mode_w: SamplerAddressMode) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn address_mode_w<'m>(mut self, address_mode_w: SamplerAddressMode) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.addressModeW = address_mode_w.into();
         self
     }
 
-    pub fn mip_lod_bias<'m>(&'m mut self, mip_lod_bias: f32) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn mip_lod_bias<'m>(mut self, mip_lod_bias: f32) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.mipLodBias = mip_lod_bias.into();
         self
     }
 
-    pub fn anisotropy_enable<'m>(&'m mut self, anisotropy_enable: bool) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn anisotropy_enable<'m>(mut self, anisotropy_enable: bool) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.anisotropyEnable = anisotropy_enable as u32;
         self
     }
 
-    pub fn max_anisotropy<'m>(&'m mut self, max_anisotropy: f32) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn max_anisotropy<'m>(mut self, max_anisotropy: f32) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.maxAnisotropy = max_anisotropy.into();
         self
     }
 
-    pub fn compare_enable<'m>(&'m mut self, compare_enable: bool) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn compare_enable<'m>(mut self, compare_enable: bool) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.compareEnable = compare_enable as u32;
         self
     }
 
-    pub fn compare_op<'m>(&'m mut self, compare_op: CompareOp) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn compare_op<'m>(mut self, compare_op: CompareOp) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.compareOp = compare_op.into();
         self
     }
 
-    pub fn min_lod<'m>(&'m mut self, min_lod: f32) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn min_lod<'m>(mut self, min_lod: f32) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.minLod = min_lod.into();
         self
     }
 
-    pub fn max_lod<'m>(&'m mut self, max_lod: f32) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn max_lod<'m>(mut self, max_lod: f32) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.maxLod = max_lod.into();
         self
     }
 
-    pub fn border_color<'m>(&'m mut self, border_color: BorderColor) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn border_color<'m>(mut self, border_color: BorderColor) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.borderColor = border_color.into();
         self
     }
 
-    pub fn unnormalized_coordinates<'m>(&'m mut self, unnormalized_coordinates: bool) -> &'m mut SamplerCreateInfoBuilder<'b> {
+    pub fn unnormalized_coordinates<'m>(mut self, unnormalized_coordinates: bool) -> SamplerCreateInfoBuilder<'b> {
+        self.raw.unnormalizedCoordinates = unnormalized_coordinates as u32;
         self
+    }
+
+    pub fn build(self) -> SamplerCreateInfo<'b> {
+        SamplerCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -5755,7 +7217,7 @@ impl<'b> SamplerCreateInfoBuilder<'b> {
 
 /// A `VkCommandPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct CommandPoolCreateInfo<'s> {
@@ -5783,9 +7245,16 @@ impl<'s> CommandPoolCreateInfo<'s> {
 }
 
 
+impl<'s> From<CommandPoolCreateInfo<'s>> for vks::VkCommandPoolCreateInfo {
+    fn from(f: CommandPoolCreateInfo<'s>) -> vks::VkCommandPoolCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkCommandPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandPoolCreateInfoBuilder<'b> {
     raw: vks::VkCommandPoolCreateInfo,
@@ -5800,16 +7269,26 @@ impl<'b> CommandPoolCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut CommandPoolCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> CommandPoolCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: CommandPoolCreateFlags) -> &'m mut CommandPoolCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: CommandPoolCreateFlags) -> CommandPoolCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn queue_family_index<'m>(&'m mut self, queue_family_index: u32) -> &'m mut CommandPoolCreateInfoBuilder<'b> {
+    pub fn queue_family_index<'m>(mut self, queue_family_index: u32) -> CommandPoolCreateInfoBuilder<'b> {
+        self.raw.queueFamilyIndex = queue_family_index.into();
         self
+    }
+
+    pub fn build(self) -> CommandPoolCreateInfo<'b> {
+        CommandPoolCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -5817,7 +7296,7 @@ impl<'b> CommandPoolCreateInfoBuilder<'b> {
 
 /// A `VkCommandBufferAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct CommandBufferAllocateInfo<'s> {
@@ -5848,9 +7327,16 @@ impl<'s> CommandBufferAllocateInfo<'s> {
 }
 
 
+impl<'s> From<CommandBufferAllocateInfo<'s>> for vks::VkCommandBufferAllocateInfo {
+    fn from(f: CommandBufferAllocateInfo<'s>) -> vks::VkCommandBufferAllocateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkCommandBufferAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandBufferAllocateInfoBuilder<'b> {
     raw: vks::VkCommandBufferAllocateInfo,
@@ -5865,20 +7351,31 @@ impl<'b> CommandBufferAllocateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut CommandBufferAllocateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> CommandBufferAllocateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn command_pool<'m>(&'m mut self, command_pool: CommandPool) -> &'m mut CommandBufferAllocateInfoBuilder<'b> {
+    pub fn command_pool<'m, 'a>(mut self, command_pool: &'a CommandPool) -> CommandBufferAllocateInfoBuilder<'b> {
+        self.raw.commandPool = command_pool.handle();
         self
     }
 
-    pub fn level<'m>(&'m mut self, level: CommandBufferLevel) -> &'m mut CommandBufferAllocateInfoBuilder<'b> {
+    pub fn level<'m>(mut self, level: CommandBufferLevel) -> CommandBufferAllocateInfoBuilder<'b> {
+        self.raw.level = level.into();
         self
     }
 
-    pub fn command_buffer_count<'m>(&'m mut self, command_buffer_count: u32) -> &'m mut CommandBufferAllocateInfoBuilder<'b> {
+    pub fn command_buffer_count<'m>(mut self, command_buffer_count: u32) -> CommandBufferAllocateInfoBuilder<'b> {
+        self.raw.commandBufferCount = command_buffer_count.into();
         self
+    }
+
+    pub fn build(self) -> CommandBufferAllocateInfo<'b> {
+        CommandBufferAllocateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -5886,7 +7383,7 @@ impl<'b> CommandBufferAllocateInfoBuilder<'b> {
 
 /// A `VkCommandBufferInheritanceInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct CommandBufferInheritanceInfo<'s> {
@@ -5926,9 +7423,16 @@ impl<'s> CommandBufferInheritanceInfo<'s> {
 }
 
 
+impl<'s> From<CommandBufferInheritanceInfo<'s>> for vks::VkCommandBufferInheritanceInfo {
+    fn from(f: CommandBufferInheritanceInfo<'s>) -> vks::VkCommandBufferInheritanceInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkCommandBufferInheritanceInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandBufferInheritanceInfoBuilder<'b> {
     raw: vks::VkCommandBufferInheritanceInfo,
@@ -5943,32 +7447,46 @@ impl<'b> CommandBufferInheritanceInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut CommandBufferInheritanceInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> CommandBufferInheritanceInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn render_pass<'m>(&'m mut self, render_pass: RenderPass) -> &'m mut CommandBufferInheritanceInfoBuilder<'b> {
+    pub fn render_pass<'m, 'a>(mut self, render_pass: &'a RenderPass) -> CommandBufferInheritanceInfoBuilder<'b> {
+        self.raw.renderPass = render_pass.handle();
         self
     }
 
-    pub fn subpass<'m>(&'m mut self, subpass: u32) -> &'m mut CommandBufferInheritanceInfoBuilder<'b> {
+    pub fn subpass<'m>(mut self, subpass: u32) -> CommandBufferInheritanceInfoBuilder<'b> {
+        self.raw.subpass = subpass.into();
         self
     }
 
-    pub fn framebuffer<'m>(&'m mut self, framebuffer: Framebuffer) -> &'m mut CommandBufferInheritanceInfoBuilder<'b> {
+    pub fn framebuffer<'m, 'a>(mut self, framebuffer: &'a Framebuffer) -> CommandBufferInheritanceInfoBuilder<'b> {
+        self.raw.framebuffer = framebuffer.handle();
         self
     }
 
-    pub fn occlusion_query_enable<'m>(&'m mut self, occlusion_query_enable: bool) -> &'m mut CommandBufferInheritanceInfoBuilder<'b> {
+    pub fn occlusion_query_enable<'m>(mut self, occlusion_query_enable: bool) -> CommandBufferInheritanceInfoBuilder<'b> {
+        self.raw.occlusionQueryEnable = occlusion_query_enable as u32;
         self
     }
 
-    pub fn query_flags<'m>(&'m mut self, query_flags: QueryControlFlags) -> &'m mut CommandBufferInheritanceInfoBuilder<'b> {
+    pub fn query_flags<'m>(mut self, query_flags: QueryControlFlags) -> CommandBufferInheritanceInfoBuilder<'b> {
+        self.raw.queryFlags = query_flags.bits();
         self
     }
 
-    pub fn pipeline_statistics<'m>(&'m mut self, pipeline_statistics: QueryPipelineStatisticFlags) -> &'m mut CommandBufferInheritanceInfoBuilder<'b> {
+    pub fn pipeline_statistics<'m>(mut self, pipeline_statistics: QueryPipelineStatisticFlags) -> CommandBufferInheritanceInfoBuilder<'b> {
+        self.raw.pipelineStatistics = pipeline_statistics.bits();
         self
+    }
+
+    pub fn build(self) -> CommandBufferInheritanceInfo<'b> {
+        CommandBufferInheritanceInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -5976,7 +7494,7 @@ impl<'b> CommandBufferInheritanceInfoBuilder<'b> {
 
 /// A `VkCommandBufferBeginInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct CommandBufferBeginInfo<'s> {
@@ -6004,9 +7522,16 @@ impl<'s> CommandBufferBeginInfo<'s> {
 }
 
 
+impl<'s> From<CommandBufferBeginInfo<'s>> for vks::VkCommandBufferBeginInfo {
+    fn from(f: CommandBufferBeginInfo<'s>) -> vks::VkCommandBufferBeginInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkCommandBufferBeginInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandBufferBeginInfoBuilder<'b> {
     raw: vks::VkCommandBufferBeginInfo,
@@ -6021,16 +7546,26 @@ impl<'b> CommandBufferBeginInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut CommandBufferBeginInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> CommandBufferBeginInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: CommandBufferUsageFlags) -> &'m mut CommandBufferBeginInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: CommandBufferUsageFlags) -> CommandBufferBeginInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn inheritance_info<'m, 'a>(&'m mut self, inheritance_info: &'a CommandBufferInheritanceInfo) -> &'m mut CommandBufferBeginInfoBuilder<'b> {
+    pub fn inheritance_info<'m, 'a>(mut self, inheritance_info: &'a CommandBufferInheritanceInfo) -> CommandBufferBeginInfoBuilder<'b> {
+        self.raw.pInheritanceInfo = inheritance_info.raw();
         self
+    }
+
+    pub fn build(self) -> CommandBufferBeginInfo<'b> {
+        CommandBufferBeginInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -6038,7 +7573,7 @@ impl<'b> CommandBufferBeginInfoBuilder<'b> {
 
 /// A `VkRenderPassBeginInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct RenderPassBeginInfo<'s> {
@@ -6075,9 +7610,16 @@ impl<'s> RenderPassBeginInfo<'s> {
 }
 
 
+impl<'s> From<RenderPassBeginInfo<'s>> for vks::VkRenderPassBeginInfo {
+    fn from(f: RenderPassBeginInfo<'s>) -> vks::VkRenderPassBeginInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkRenderPassBeginInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct RenderPassBeginInfoBuilder<'b> {
     raw: vks::VkRenderPassBeginInfo,
@@ -6092,28 +7634,41 @@ impl<'b> RenderPassBeginInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut RenderPassBeginInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> RenderPassBeginInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn render_pass<'m>(&'m mut self, render_pass: RenderPass) -> &'m mut RenderPassBeginInfoBuilder<'b> {
+    pub fn render_pass<'m, 'a>(mut self, render_pass: &'a RenderPass) -> RenderPassBeginInfoBuilder<'b> {
+        self.raw.renderPass = render_pass.handle();
         self
     }
 
-    pub fn framebuffer<'m>(&'m mut self, framebuffer: Framebuffer) -> &'m mut RenderPassBeginInfoBuilder<'b> {
+    pub fn framebuffer<'m, 'a>(mut self, framebuffer: &'a Framebuffer) -> RenderPassBeginInfoBuilder<'b> {
+        self.raw.framebuffer = framebuffer.handle();
         self
     }
 
-    pub fn render_area<'m>(&'m mut self, render_area: Rect2d) -> &'m mut RenderPassBeginInfoBuilder<'b> {
+    pub fn render_area<'m>(mut self, render_area: Rect2d) -> RenderPassBeginInfoBuilder<'b> {
+        self.raw.renderArea = render_area.raw;
         self
     }
 
-    pub fn clear_value_count<'m>(&'m mut self, clear_value_count: u32) -> &'m mut RenderPassBeginInfoBuilder<'b> {
+    pub fn clear_value_count<'m>(mut self, clear_value_count: u32) -> RenderPassBeginInfoBuilder<'b> {
+        self.raw.clearValueCount = clear_value_count.into();
         self
     }
 
-    pub fn clear_values<'m, 'a>(&'m mut self, clear_values: &'a ClearValue) -> &'m mut RenderPassBeginInfoBuilder<'b> {
+    pub fn clear_values<'m, 'a>(mut self, clear_values: &'a [ClearValue]) -> RenderPassBeginInfoBuilder<'b> {
+        self.raw.pClearValues = clear_values.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> RenderPassBeginInfo<'b> {
+        RenderPassBeginInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -6121,7 +7676,7 @@ impl<'b> RenderPassBeginInfoBuilder<'b> {
 
 /// A `VkClearDepthStencilValue`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ClearDepthStencilValue {
@@ -6145,9 +7700,16 @@ impl ClearDepthStencilValue {
 }
 
 
+impl From<ClearDepthStencilValue> for vks::VkClearDepthStencilValue {
+    fn from(f: ClearDepthStencilValue) -> vks::VkClearDepthStencilValue {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkClearDepthStencilValue`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ClearDepthStencilValueBuilder {
     raw: vks::VkClearDepthStencilValue,
@@ -6160,12 +7722,20 @@ impl ClearDepthStencilValueBuilder {
         }
     }
 
-    pub fn depth<'m>(&'m mut self, depth: f32) -> &'m mut ClearDepthStencilValueBuilder {
+    pub fn depth<'m>(mut self, depth: f32) -> ClearDepthStencilValueBuilder {
+        self.raw.depth = depth.into();
         self
     }
 
-    pub fn stencil<'m>(&'m mut self, stencil: u32) -> &'m mut ClearDepthStencilValueBuilder {
+    pub fn stencil<'m>(mut self, stencil: u32) -> ClearDepthStencilValueBuilder {
+        self.raw.stencil = stencil.into();
         self
+    }
+
+    pub fn build(self) -> ClearDepthStencilValue {
+        ClearDepthStencilValue {
+            raw: self.raw,
+        }
     }
 
 }
@@ -6173,7 +7743,7 @@ impl ClearDepthStencilValueBuilder {
 
 /// A `VkClearAttachment`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ClearAttachment {
@@ -6200,9 +7770,16 @@ impl ClearAttachment {
 }
 
 
+impl From<ClearAttachment> for vks::VkClearAttachment {
+    fn from(f: ClearAttachment) -> vks::VkClearAttachment {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkClearAttachment`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ClearAttachmentBuilder {
     raw: vks::VkClearAttachment,
@@ -6215,16 +7792,25 @@ impl ClearAttachmentBuilder {
         }
     }
 
-    pub fn aspect_mask<'m>(&'m mut self, aspect_mask: ImageAspectFlags) -> &'m mut ClearAttachmentBuilder {
+    pub fn aspect_mask<'m>(mut self, aspect_mask: ImageAspectFlags) -> ClearAttachmentBuilder {
+        self.raw.aspectMask = aspect_mask.bits();
         self
     }
 
-    pub fn color_attachment<'m>(&'m mut self, color_attachment: u32) -> &'m mut ClearAttachmentBuilder {
+    pub fn color_attachment<'m>(mut self, color_attachment: u32) -> ClearAttachmentBuilder {
+        self.raw.colorAttachment = color_attachment.into();
         self
     }
 
-    pub fn clear_value<'m>(&'m mut self, clear_value: ClearValue) -> &'m mut ClearAttachmentBuilder {
+    pub fn clear_value<'m>(mut self, clear_value: ClearValue) -> ClearAttachmentBuilder {
+        self.raw.clearValue = clear_value.into();
         self
+    }
+
+    pub fn build(self) -> ClearAttachment {
+        ClearAttachment {
+            raw: self.raw,
+        }
     }
 
 }
@@ -6232,7 +7818,7 @@ impl ClearAttachmentBuilder {
 
 /// A `VkAttachmentDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct AttachmentDescription {
@@ -6277,9 +7863,16 @@ impl AttachmentDescription {
 }
 
 
+impl From<AttachmentDescription> for vks::VkAttachmentDescription {
+    fn from(f: AttachmentDescription) -> vks::VkAttachmentDescription {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkAttachmentDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct AttachmentDescriptionBuilder {
     raw: vks::VkAttachmentDescription,
@@ -6292,40 +7885,55 @@ impl AttachmentDescriptionBuilder {
         }
     }
 
-    pub fn flags<'m>(&'m mut self, flags: AttachmentDescriptionFlags) -> &'m mut AttachmentDescriptionBuilder {
+    pub fn flags<'m>(mut self, flags: AttachmentDescriptionFlags) -> AttachmentDescriptionBuilder {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn format<'m>(&'m mut self, format: Format) -> &'m mut AttachmentDescriptionBuilder {
+    pub fn format<'m>(mut self, format: Format) -> AttachmentDescriptionBuilder {
+        self.raw.format = format.into();
         self
     }
 
-    pub fn samples<'m>(&'m mut self, samples: SampleCountFlags) -> &'m mut AttachmentDescriptionBuilder {
+    pub fn samples<'m>(mut self, samples: SampleCountFlags) -> AttachmentDescriptionBuilder {
+        self.raw.samples = samples.bits();
         self
     }
 
-    pub fn load_op<'m>(&'m mut self, load_op: AttachmentLoadOp) -> &'m mut AttachmentDescriptionBuilder {
+    pub fn load_op<'m>(mut self, load_op: AttachmentLoadOp) -> AttachmentDescriptionBuilder {
+        self.raw.loadOp = load_op.into();
         self
     }
 
-    pub fn store_op<'m>(&'m mut self, store_op: AttachmentStoreOp) -> &'m mut AttachmentDescriptionBuilder {
+    pub fn store_op<'m>(mut self, store_op: AttachmentStoreOp) -> AttachmentDescriptionBuilder {
+        self.raw.storeOp = store_op.into();
         self
     }
 
-    pub fn stencil_load_op<'m>(&'m mut self, stencil_load_op: AttachmentLoadOp) -> &'m mut AttachmentDescriptionBuilder {
+    pub fn stencil_load_op<'m>(mut self, stencil_load_op: AttachmentLoadOp) -> AttachmentDescriptionBuilder {
+        self.raw.stencilLoadOp = stencil_load_op.into();
         self
     }
 
-    pub fn stencil_store_op<'m>(&'m mut self, stencil_store_op: AttachmentStoreOp) -> &'m mut AttachmentDescriptionBuilder {
+    pub fn stencil_store_op<'m>(mut self, stencil_store_op: AttachmentStoreOp) -> AttachmentDescriptionBuilder {
+        self.raw.stencilStoreOp = stencil_store_op.into();
         self
     }
 
-    pub fn initial_layout<'m>(&'m mut self, initial_layout: ImageLayout) -> &'m mut AttachmentDescriptionBuilder {
+    pub fn initial_layout<'m>(mut self, initial_layout: ImageLayout) -> AttachmentDescriptionBuilder {
+        self.raw.initialLayout = initial_layout.into();
         self
     }
 
-    pub fn final_layout<'m>(&'m mut self, final_layout: ImageLayout) -> &'m mut AttachmentDescriptionBuilder {
+    pub fn final_layout<'m>(mut self, final_layout: ImageLayout) -> AttachmentDescriptionBuilder {
+        self.raw.finalLayout = final_layout.into();
         self
+    }
+
+    pub fn build(self) -> AttachmentDescription {
+        AttachmentDescription {
+            raw: self.raw,
+        }
     }
 
 }
@@ -6333,7 +7941,7 @@ impl AttachmentDescriptionBuilder {
 
 /// A `VkAttachmentReference`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct AttachmentReference {
@@ -6357,9 +7965,16 @@ impl AttachmentReference {
 }
 
 
+impl From<AttachmentReference> for vks::VkAttachmentReference {
+    fn from(f: AttachmentReference) -> vks::VkAttachmentReference {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkAttachmentReference`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct AttachmentReferenceBuilder {
     raw: vks::VkAttachmentReference,
@@ -6372,12 +7987,20 @@ impl AttachmentReferenceBuilder {
         }
     }
 
-    pub fn attachment<'m>(&'m mut self, attachment: u32) -> &'m mut AttachmentReferenceBuilder {
+    pub fn attachment<'m>(mut self, attachment: u32) -> AttachmentReferenceBuilder {
+        self.raw.attachment = attachment.into();
         self
     }
 
-    pub fn layout<'m>(&'m mut self, layout: ImageLayout) -> &'m mut AttachmentReferenceBuilder {
+    pub fn layout<'m>(mut self, layout: ImageLayout) -> AttachmentReferenceBuilder {
+        self.raw.layout = layout.into();
         self
+    }
+
+    pub fn build(self) -> AttachmentReference {
+        AttachmentReference {
+            raw: self.raw,
+        }
     }
 
 }
@@ -6385,7 +8008,7 @@ impl AttachmentReferenceBuilder {
 
 /// A `VkSubpassDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SubpassDescription<'s> {
@@ -6434,9 +8057,16 @@ impl<'s> SubpassDescription<'s> {
 }
 
 
+impl<'s> From<SubpassDescription<'s>> for vks::VkSubpassDescription {
+    fn from(f: SubpassDescription<'s>) -> vks::VkSubpassDescription {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSubpassDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SubpassDescriptionBuilder<'b> {
     raw: vks::VkSubpassDescription,
@@ -6451,44 +8081,61 @@ impl<'b> SubpassDescriptionBuilder<'b> {
         }
     }
 
-    pub fn flags<'m>(&'m mut self, flags: SubpassDescriptionFlags) -> &'m mut SubpassDescriptionBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: SubpassDescriptionFlags) -> SubpassDescriptionBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn pipeline_bind_point<'m>(&'m mut self, pipeline_bind_point: PipelineBindPoint) -> &'m mut SubpassDescriptionBuilder<'b> {
+    pub fn pipeline_bind_point<'m>(mut self, pipeline_bind_point: PipelineBindPoint) -> SubpassDescriptionBuilder<'b> {
+        self.raw.pipelineBindPoint = pipeline_bind_point.into();
         self
     }
 
-    pub fn input_attachment_count<'m>(&'m mut self, input_attachment_count: u32) -> &'m mut SubpassDescriptionBuilder<'b> {
+    pub fn input_attachment_count<'m>(mut self, input_attachment_count: u32) -> SubpassDescriptionBuilder<'b> {
+        self.raw.inputAttachmentCount = input_attachment_count.into();
         self
     }
 
-    pub fn input_attachments<'m, 'a>(&'m mut self, input_attachments: &'a AttachmentReference) -> &'m mut SubpassDescriptionBuilder<'b> {
+    pub fn input_attachments<'m, 'a>(mut self, input_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b> {
+        self.raw.pInputAttachments = input_attachments.as_ptr() as *const _;
         self
     }
 
-    pub fn color_attachment_count<'m>(&'m mut self, color_attachment_count: u32) -> &'m mut SubpassDescriptionBuilder<'b> {
+    pub fn color_attachment_count<'m>(mut self, color_attachment_count: u32) -> SubpassDescriptionBuilder<'b> {
+        self.raw.colorAttachmentCount = color_attachment_count.into();
         self
     }
 
-    pub fn color_attachments<'m, 'a>(&'m mut self, color_attachments: &'a AttachmentReference) -> &'m mut SubpassDescriptionBuilder<'b> {
+    pub fn color_attachments<'m, 'a>(mut self, color_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b> {
+        self.raw.pColorAttachments = color_attachments.as_ptr() as *const _;
         self
     }
 
-    pub fn resolve_attachments<'m, 'a>(&'m mut self, resolve_attachments: &'a AttachmentReference) -> &'m mut SubpassDescriptionBuilder<'b> {
+    pub fn resolve_attachments<'m, 'a>(mut self, resolve_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b> {
+        self.raw.pResolveAttachments = resolve_attachments.as_ptr() as *const _;
         self
     }
 
-    pub fn depth_stencil_attachment<'m, 'a>(&'m mut self, depth_stencil_attachment: &'a AttachmentReference) -> &'m mut SubpassDescriptionBuilder<'b> {
+    pub fn depth_stencil_attachment<'m, 'a>(mut self, depth_stencil_attachment: &'a AttachmentReference) -> SubpassDescriptionBuilder<'b> {
+        self.raw.pDepthStencilAttachment = depth_stencil_attachment.raw();
         self
     }
 
-    pub fn preserve_attachment_count<'m>(&'m mut self, preserve_attachment_count: u32) -> &'m mut SubpassDescriptionBuilder<'b> {
+    pub fn preserve_attachment_count<'m>(mut self, preserve_attachment_count: u32) -> SubpassDescriptionBuilder<'b> {
+        self.raw.preserveAttachmentCount = preserve_attachment_count.into();
         self
     }
 
-    pub fn preserve_attachments<'m, 'a>(&'m mut self, preserve_attachments: &'a u32) -> &'m mut SubpassDescriptionBuilder<'b> {
+    pub fn preserve_attachments<'m, 'a>(mut self, preserve_attachments: &'a [u32]) -> SubpassDescriptionBuilder<'b> {
+        self.raw.pPreserveAttachments = preserve_attachments.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> SubpassDescription<'b> {
+        SubpassDescription {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -6496,7 +8143,7 @@ impl<'b> SubpassDescriptionBuilder<'b> {
 
 /// A `VkSubpassDependency`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SubpassDependency {
@@ -6535,9 +8182,16 @@ impl SubpassDependency {
 }
 
 
+impl From<SubpassDependency> for vks::VkSubpassDependency {
+    fn from(f: SubpassDependency) -> vks::VkSubpassDependency {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSubpassDependency`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SubpassDependencyBuilder {
     raw: vks::VkSubpassDependency,
@@ -6550,32 +8204,45 @@ impl SubpassDependencyBuilder {
         }
     }
 
-    pub fn src_subpass<'m>(&'m mut self, src_subpass: u32) -> &'m mut SubpassDependencyBuilder {
+    pub fn src_subpass<'m>(mut self, src_subpass: u32) -> SubpassDependencyBuilder {
+        self.raw.srcSubpass = src_subpass.into();
         self
     }
 
-    pub fn dst_subpass<'m>(&'m mut self, dst_subpass: u32) -> &'m mut SubpassDependencyBuilder {
+    pub fn dst_subpass<'m>(mut self, dst_subpass: u32) -> SubpassDependencyBuilder {
+        self.raw.dstSubpass = dst_subpass.into();
         self
     }
 
-    pub fn src_stage_mask<'m>(&'m mut self, src_stage_mask: PipelineStageFlags) -> &'m mut SubpassDependencyBuilder {
+    pub fn src_stage_mask<'m>(mut self, src_stage_mask: PipelineStageFlags) -> SubpassDependencyBuilder {
+        self.raw.srcStageMask = src_stage_mask.bits();
         self
     }
 
-    pub fn dst_stage_mask<'m>(&'m mut self, dst_stage_mask: PipelineStageFlags) -> &'m mut SubpassDependencyBuilder {
+    pub fn dst_stage_mask<'m>(mut self, dst_stage_mask: PipelineStageFlags) -> SubpassDependencyBuilder {
+        self.raw.dstStageMask = dst_stage_mask.bits();
         self
     }
 
-    pub fn src_access_mask<'m>(&'m mut self, src_access_mask: AccessFlags) -> &'m mut SubpassDependencyBuilder {
+    pub fn src_access_mask<'m>(mut self, src_access_mask: AccessFlags) -> SubpassDependencyBuilder {
+        self.raw.srcAccessMask = src_access_mask.bits();
         self
     }
 
-    pub fn dst_access_mask<'m>(&'m mut self, dst_access_mask: AccessFlags) -> &'m mut SubpassDependencyBuilder {
+    pub fn dst_access_mask<'m>(mut self, dst_access_mask: AccessFlags) -> SubpassDependencyBuilder {
+        self.raw.dstAccessMask = dst_access_mask.bits();
         self
     }
 
-    pub fn dependency_flags<'m>(&'m mut self, dependency_flags: DependencyFlags) -> &'m mut SubpassDependencyBuilder {
+    pub fn dependency_flags<'m>(mut self, dependency_flags: DependencyFlags) -> SubpassDependencyBuilder {
+        self.raw.dependencyFlags = dependency_flags.bits();
         self
+    }
+
+    pub fn build(self) -> SubpassDependency {
+        SubpassDependency {
+            raw: self.raw,
+        }
     }
 
 }
@@ -6583,7 +8250,7 @@ impl SubpassDependencyBuilder {
 
 /// A `VkRenderPassCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct RenderPassCreateInfo<'s> {
@@ -6626,9 +8293,16 @@ impl<'s> RenderPassCreateInfo<'s> {
 }
 
 
+impl<'s> From<RenderPassCreateInfo<'s>> for vks::VkRenderPassCreateInfo {
+    fn from(f: RenderPassCreateInfo<'s>) -> vks::VkRenderPassCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkRenderPassCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct RenderPassCreateInfoBuilder<'b> {
     raw: vks::VkRenderPassCreateInfo,
@@ -6643,36 +8317,51 @@ impl<'b> RenderPassCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut RenderPassCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> RenderPassCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: RenderPassCreateFlags) -> &'m mut RenderPassCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: RenderPassCreateFlags) -> RenderPassCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn attachment_count<'m>(&'m mut self, attachment_count: u32) -> &'m mut RenderPassCreateInfoBuilder<'b> {
+    pub fn attachment_count<'m>(mut self, attachment_count: u32) -> RenderPassCreateInfoBuilder<'b> {
+        self.raw.attachmentCount = attachment_count.into();
         self
     }
 
-    pub fn attachments<'m, 'a>(&'m mut self, attachments: &'a AttachmentDescription) -> &'m mut RenderPassCreateInfoBuilder<'b> {
+    pub fn attachments<'m, 'a>(mut self, attachments: &'a [AttachmentDescription]) -> RenderPassCreateInfoBuilder<'b> {
+        self.raw.pAttachments = attachments.as_ptr() as *const _;
         self
     }
 
-    pub fn subpass_count<'m>(&'m mut self, subpass_count: u32) -> &'m mut RenderPassCreateInfoBuilder<'b> {
+    pub fn subpass_count<'m>(mut self, subpass_count: u32) -> RenderPassCreateInfoBuilder<'b> {
+        self.raw.subpassCount = subpass_count.into();
         self
     }
 
-    pub fn subpasses<'m, 'a>(&'m mut self, subpasses: &'a SubpassDescription) -> &'m mut RenderPassCreateInfoBuilder<'b> {
+    pub fn subpasses<'m, 'a>(mut self, subpasses: &'a [SubpassDescription]) -> RenderPassCreateInfoBuilder<'b> {
+        self.raw.pSubpasses = subpasses.as_ptr() as *const _;
         self
     }
 
-    pub fn dependency_count<'m>(&'m mut self, dependency_count: u32) -> &'m mut RenderPassCreateInfoBuilder<'b> {
+    pub fn dependency_count<'m>(mut self, dependency_count: u32) -> RenderPassCreateInfoBuilder<'b> {
+        self.raw.dependencyCount = dependency_count.into();
         self
     }
 
-    pub fn dependencies<'m, 'a>(&'m mut self, dependencies: &'a SubpassDependency) -> &'m mut RenderPassCreateInfoBuilder<'b> {
+    pub fn dependencies<'m, 'a>(mut self, dependencies: &'a [SubpassDependency]) -> RenderPassCreateInfoBuilder<'b> {
+        self.raw.pDependencies = dependencies.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> RenderPassCreateInfo<'b> {
+        RenderPassCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -6680,7 +8369,7 @@ impl<'b> RenderPassCreateInfoBuilder<'b> {
 
 /// A `VkEventCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct EventCreateInfo<'s> {
@@ -6705,9 +8394,16 @@ impl<'s> EventCreateInfo<'s> {
 }
 
 
+impl<'s> From<EventCreateInfo<'s>> for vks::VkEventCreateInfo {
+    fn from(f: EventCreateInfo<'s>) -> vks::VkEventCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkEventCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct EventCreateInfoBuilder<'b> {
     raw: vks::VkEventCreateInfo,
@@ -6722,12 +8418,21 @@ impl<'b> EventCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut EventCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> EventCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: EventCreateFlags) -> &'m mut EventCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: EventCreateFlags) -> EventCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
+    }
+
+    pub fn build(self) -> EventCreateInfo<'b> {
+        EventCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -6735,7 +8440,7 @@ impl<'b> EventCreateInfoBuilder<'b> {
 
 /// A `VkFenceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct FenceCreateInfo<'s> {
@@ -6760,9 +8465,16 @@ impl<'s> FenceCreateInfo<'s> {
 }
 
 
+impl<'s> From<FenceCreateInfo<'s>> for vks::VkFenceCreateInfo {
+    fn from(f: FenceCreateInfo<'s>) -> vks::VkFenceCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkFenceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct FenceCreateInfoBuilder<'b> {
     raw: vks::VkFenceCreateInfo,
@@ -6777,12 +8489,21 @@ impl<'b> FenceCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut FenceCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> FenceCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: FenceCreateFlags) -> &'m mut FenceCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: FenceCreateFlags) -> FenceCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
+    }
+
+    pub fn build(self) -> FenceCreateInfo<'b> {
+        FenceCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -6790,7 +8511,7 @@ impl<'b> FenceCreateInfoBuilder<'b> {
 
 /// A `VkPhysicalDeviceFeatures`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceFeatures {
@@ -6973,9 +8694,16 @@ impl PhysicalDeviceFeatures {
 }
 
 
+impl From<PhysicalDeviceFeatures> for vks::VkPhysicalDeviceFeatures {
+    fn from(f: PhysicalDeviceFeatures) -> vks::VkPhysicalDeviceFeatures {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceFeatures`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceFeaturesBuilder {
     raw: vks::VkPhysicalDeviceFeatures,
@@ -6988,224 +8716,285 @@ impl PhysicalDeviceFeaturesBuilder {
         }
     }
 
-    pub fn robust_buffer_access<'m>(&'m mut self, robust_buffer_access: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn robust_buffer_access<'m>(mut self, robust_buffer_access: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.robustBufferAccess = robust_buffer_access as u32;
         self
     }
 
-    pub fn full_draw_index_uint_32<'m>(&'m mut self, full_draw_index_uint_32: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn full_draw_index_uint_32<'m>(mut self, full_draw_index_uint_32: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.fullDrawIndexUint32 = full_draw_index_uint_32 as u32;
         self
     }
 
-    pub fn image_cube_array<'m>(&'m mut self, image_cube_array: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn image_cube_array<'m>(mut self, image_cube_array: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.imageCubeArray = image_cube_array as u32;
         self
     }
 
-    pub fn independent_blend<'m>(&'m mut self, independent_blend: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn independent_blend<'m>(mut self, independent_blend: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.independentBlend = independent_blend as u32;
         self
     }
 
-    pub fn geometry_shader<'m>(&'m mut self, geometry_shader: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn geometry_shader<'m>(mut self, geometry_shader: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.geometryShader = geometry_shader as u32;
         self
     }
 
-    pub fn tessellation_shader<'m>(&'m mut self, tessellation_shader: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn tessellation_shader<'m>(mut self, tessellation_shader: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.tessellationShader = tessellation_shader as u32;
         self
     }
 
-    pub fn sample_rate_shading<'m>(&'m mut self, sample_rate_shading: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn sample_rate_shading<'m>(mut self, sample_rate_shading: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.sampleRateShading = sample_rate_shading as u32;
         self
     }
 
-    pub fn dual_src_blend<'m>(&'m mut self, dual_src_blend: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn dual_src_blend<'m>(mut self, dual_src_blend: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.dualSrcBlend = dual_src_blend as u32;
         self
     }
 
-    pub fn logic_op<'m>(&'m mut self, logic_op: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn logic_op<'m>(mut self, logic_op: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.logicOp = logic_op as u32;
         self
     }
 
-    pub fn multi_draw_indirect<'m>(&'m mut self, multi_draw_indirect: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn multi_draw_indirect<'m>(mut self, multi_draw_indirect: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.multiDrawIndirect = multi_draw_indirect as u32;
         self
     }
 
-    pub fn draw_indirect_first_instance<'m>(&'m mut self, draw_indirect_first_instance: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn draw_indirect_first_instance<'m>(mut self, draw_indirect_first_instance: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.drawIndirectFirstInstance = draw_indirect_first_instance as u32;
         self
     }
 
-    pub fn depth_clamp<'m>(&'m mut self, depth_clamp: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn depth_clamp<'m>(mut self, depth_clamp: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.depthClamp = depth_clamp as u32;
         self
     }
 
-    pub fn depth_bias_clamp<'m>(&'m mut self, depth_bias_clamp: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn depth_bias_clamp<'m>(mut self, depth_bias_clamp: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.depthBiasClamp = depth_bias_clamp as u32;
         self
     }
 
-    pub fn fill_mode_non_solid<'m>(&'m mut self, fill_mode_non_solid: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn fill_mode_non_solid<'m>(mut self, fill_mode_non_solid: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.fillModeNonSolid = fill_mode_non_solid as u32;
         self
     }
 
-    pub fn depth_bounds<'m>(&'m mut self, depth_bounds: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn depth_bounds<'m>(mut self, depth_bounds: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.depthBounds = depth_bounds as u32;
         self
     }
 
-    pub fn wide_lines<'m>(&'m mut self, wide_lines: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn wide_lines<'m>(mut self, wide_lines: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.wideLines = wide_lines as u32;
         self
     }
 
-    pub fn large_points<'m>(&'m mut self, large_points: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn large_points<'m>(mut self, large_points: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.largePoints = large_points as u32;
         self
     }
 
-    pub fn alpha_to_one<'m>(&'m mut self, alpha_to_one: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn alpha_to_one<'m>(mut self, alpha_to_one: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.alphaToOne = alpha_to_one as u32;
         self
     }
 
-    pub fn multi_viewport<'m>(&'m mut self, multi_viewport: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn multi_viewport<'m>(mut self, multi_viewport: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.multiViewport = multi_viewport as u32;
         self
     }
 
-    pub fn sampler_anisotropy<'m>(&'m mut self, sampler_anisotropy: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn sampler_anisotropy<'m>(mut self, sampler_anisotropy: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.samplerAnisotropy = sampler_anisotropy as u32;
         self
     }
 
-    pub fn texture_compression_et_c2<'m>(&'m mut self, texture_compression_et_c2: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn texture_compression_et_c2<'m>(mut self, texture_compression_et_c2: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.textureCompressionETC2 = texture_compression_et_c2 as u32;
         self
     }
 
-    pub fn texture_compression_as_tc_ld_r<'m>(&'m mut self, texture_compression_as_tc_ld_r: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn texture_compression_as_tc_ld_r<'m>(mut self, texture_compression_as_tc_ld_r: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.textureCompressionASTC_LDR = texture_compression_as_tc_ld_r as u32;
         self
     }
 
-    pub fn texture_compression_bc<'m>(&'m mut self, texture_compression_bc: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn texture_compression_bc<'m>(mut self, texture_compression_bc: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.textureCompressionBC = texture_compression_bc as u32;
         self
     }
 
-    pub fn occlusion_query_precise<'m>(&'m mut self, occlusion_query_precise: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn occlusion_query_precise<'m>(mut self, occlusion_query_precise: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.occlusionQueryPrecise = occlusion_query_precise as u32;
         self
     }
 
-    pub fn pipeline_statistics_query<'m>(&'m mut self, pipeline_statistics_query: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn pipeline_statistics_query<'m>(mut self, pipeline_statistics_query: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.pipelineStatisticsQuery = pipeline_statistics_query as u32;
         self
     }
 
-    pub fn vertex_pipeline_stores_and_atomics<'m>(&'m mut self, vertex_pipeline_stores_and_atomics: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn vertex_pipeline_stores_and_atomics<'m>(mut self, vertex_pipeline_stores_and_atomics: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.vertexPipelineStoresAndAtomics = vertex_pipeline_stores_and_atomics as u32;
         self
     }
 
-    pub fn fragment_stores_and_atomics<'m>(&'m mut self, fragment_stores_and_atomics: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn fragment_stores_and_atomics<'m>(mut self, fragment_stores_and_atomics: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.fragmentStoresAndAtomics = fragment_stores_and_atomics as u32;
         self
     }
 
-    pub fn shader_tessellation_and_geometry_point_size<'m>(&'m mut self, shader_tessellation_and_geometry_point_size: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_tessellation_and_geometry_point_size<'m>(mut self, shader_tessellation_and_geometry_point_size: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderTessellationAndGeometryPointSize = shader_tessellation_and_geometry_point_size as u32;
         self
     }
 
-    pub fn shader_image_gather_extended<'m>(&'m mut self, shader_image_gather_extended: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_image_gather_extended<'m>(mut self, shader_image_gather_extended: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderImageGatherExtended = shader_image_gather_extended as u32;
         self
     }
 
-    pub fn shader_storage_image_extended_formats<'m>(&'m mut self, shader_storage_image_extended_formats: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_storage_image_extended_formats<'m>(mut self, shader_storage_image_extended_formats: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderStorageImageExtendedFormats = shader_storage_image_extended_formats as u32;
         self
     }
 
-    pub fn shader_storage_image_multisample<'m>(&'m mut self, shader_storage_image_multisample: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_storage_image_multisample<'m>(mut self, shader_storage_image_multisample: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderStorageImageMultisample = shader_storage_image_multisample as u32;
         self
     }
 
-    pub fn shader_storage_image_read_without_format<'m>(&'m mut self, shader_storage_image_read_without_format: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_storage_image_read_without_format<'m>(mut self, shader_storage_image_read_without_format: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderStorageImageReadWithoutFormat = shader_storage_image_read_without_format as u32;
         self
     }
 
-    pub fn shader_storage_image_write_without_format<'m>(&'m mut self, shader_storage_image_write_without_format: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_storage_image_write_without_format<'m>(mut self, shader_storage_image_write_without_format: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderStorageImageWriteWithoutFormat = shader_storage_image_write_without_format as u32;
         self
     }
 
-    pub fn shader_uniform_buffer_array_dynamic_indexing<'m>(&'m mut self, shader_uniform_buffer_array_dynamic_indexing: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_uniform_buffer_array_dynamic_indexing<'m>(mut self, shader_uniform_buffer_array_dynamic_indexing: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderUniformBufferArrayDynamicIndexing = shader_uniform_buffer_array_dynamic_indexing as u32;
         self
     }
 
-    pub fn shader_sampled_image_array_dynamic_indexing<'m>(&'m mut self, shader_sampled_image_array_dynamic_indexing: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_sampled_image_array_dynamic_indexing<'m>(mut self, shader_sampled_image_array_dynamic_indexing: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderSampledImageArrayDynamicIndexing = shader_sampled_image_array_dynamic_indexing as u32;
         self
     }
 
-    pub fn shader_storage_buffer_array_dynamic_indexing<'m>(&'m mut self, shader_storage_buffer_array_dynamic_indexing: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_storage_buffer_array_dynamic_indexing<'m>(mut self, shader_storage_buffer_array_dynamic_indexing: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderStorageBufferArrayDynamicIndexing = shader_storage_buffer_array_dynamic_indexing as u32;
         self
     }
 
-    pub fn shader_storage_image_array_dynamic_indexing<'m>(&'m mut self, shader_storage_image_array_dynamic_indexing: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_storage_image_array_dynamic_indexing<'m>(mut self, shader_storage_image_array_dynamic_indexing: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderStorageImageArrayDynamicIndexing = shader_storage_image_array_dynamic_indexing as u32;
         self
     }
 
-    pub fn shader_clip_distance<'m>(&'m mut self, shader_clip_distance: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_clip_distance<'m>(mut self, shader_clip_distance: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderClipDistance = shader_clip_distance as u32;
         self
     }
 
-    pub fn shader_cull_distance<'m>(&'m mut self, shader_cull_distance: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_cull_distance<'m>(mut self, shader_cull_distance: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderCullDistance = shader_cull_distance as u32;
         self
     }
 
-    pub fn shader_float_64<'m>(&'m mut self, shader_float_64: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_float_64<'m>(mut self, shader_float_64: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderFloat64 = shader_float_64 as u32;
         self
     }
 
-    pub fn shader_int_64<'m>(&'m mut self, shader_int_64: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_int_64<'m>(mut self, shader_int_64: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderInt64 = shader_int_64 as u32;
         self
     }
 
-    pub fn shader_int_16<'m>(&'m mut self, shader_int_16: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_int_16<'m>(mut self, shader_int_16: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderInt16 = shader_int_16 as u32;
         self
     }
 
-    pub fn shader_resource_residency<'m>(&'m mut self, shader_resource_residency: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_resource_residency<'m>(mut self, shader_resource_residency: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderResourceResidency = shader_resource_residency as u32;
         self
     }
 
-    pub fn shader_resource_min_lod<'m>(&'m mut self, shader_resource_min_lod: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn shader_resource_min_lod<'m>(mut self, shader_resource_min_lod: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.shaderResourceMinLod = shader_resource_min_lod as u32;
         self
     }
 
-    pub fn sparse_binding<'m>(&'m mut self, sparse_binding: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn sparse_binding<'m>(mut self, sparse_binding: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.sparseBinding = sparse_binding as u32;
         self
     }
 
-    pub fn sparse_residency_buffer<'m>(&'m mut self, sparse_residency_buffer: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn sparse_residency_buffer<'m>(mut self, sparse_residency_buffer: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.sparseResidencyBuffer = sparse_residency_buffer as u32;
         self
     }
 
-    pub fn sparse_residency_image_2d<'m>(&'m mut self, sparse_residency_image_2d: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn sparse_residency_image_2d<'m>(mut self, sparse_residency_image_2d: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.sparseResidencyImage2D = sparse_residency_image_2d as u32;
         self
     }
 
-    pub fn sparse_residency_image_3d<'m>(&'m mut self, sparse_residency_image_3d: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn sparse_residency_image_3d<'m>(mut self, sparse_residency_image_3d: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.sparseResidencyImage3D = sparse_residency_image_3d as u32;
         self
     }
 
-    pub fn sparse_residency_2samples<'m>(&'m mut self, sparse_residency_2samples: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn sparse_residency_2samples<'m>(mut self, sparse_residency_2samples: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.sparseResidency2Samples = sparse_residency_2samples as u32;
         self
     }
 
-    pub fn sparse_residency_4samples<'m>(&'m mut self, sparse_residency_4samples: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn sparse_residency_4samples<'m>(mut self, sparse_residency_4samples: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.sparseResidency4Samples = sparse_residency_4samples as u32;
         self
     }
 
-    pub fn sparse_residency_8samples<'m>(&'m mut self, sparse_residency_8samples: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn sparse_residency_8samples<'m>(mut self, sparse_residency_8samples: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.sparseResidency8Samples = sparse_residency_8samples as u32;
         self
     }
 
-    pub fn sparse_residency_16_samples<'m>(&'m mut self, sparse_residency_16_samples: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn sparse_residency_16_samples<'m>(mut self, sparse_residency_16_samples: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.sparseResidency16Samples = sparse_residency_16_samples as u32;
         self
     }
 
-    pub fn sparse_residency_aliased<'m>(&'m mut self, sparse_residency_aliased: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn sparse_residency_aliased<'m>(mut self, sparse_residency_aliased: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.sparseResidencyAliased = sparse_residency_aliased as u32;
         self
     }
 
-    pub fn variable_multisample_rate<'m>(&'m mut self, variable_multisample_rate: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn variable_multisample_rate<'m>(mut self, variable_multisample_rate: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.variableMultisampleRate = variable_multisample_rate as u32;
         self
     }
 
-    pub fn inherited_queries<'m>(&'m mut self, inherited_queries: bool) -> &'m mut PhysicalDeviceFeaturesBuilder {
+    pub fn inherited_queries<'m>(mut self, inherited_queries: bool) -> PhysicalDeviceFeaturesBuilder {
+        self.raw.inheritedQueries = inherited_queries as u32;
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceFeatures {
+        PhysicalDeviceFeatures {
+            raw: self.raw,
+        }
     }
 
 }
@@ -7213,7 +9002,7 @@ impl PhysicalDeviceFeaturesBuilder {
 
 /// A `VkPhysicalDeviceSparseProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceSparseProperties {
@@ -7238,6 +9027,13 @@ impl PhysicalDeviceSparseProperties {
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceSparseProperties {
         &self.raw
+    }
+}
+
+
+impl From<PhysicalDeviceSparseProperties> for vks::VkPhysicalDeviceSparseProperties {
+    fn from(f: PhysicalDeviceSparseProperties) -> vks::VkPhysicalDeviceSparseProperties {
+        f.raw
     }
 }
 
@@ -7576,9 +9372,16 @@ impl PhysicalDeviceLimits {
 }
 
 
+impl From<PhysicalDeviceLimits> for vks::VkPhysicalDeviceLimits {
+    fn from(f: PhysicalDeviceLimits) -> vks::VkPhysicalDeviceLimits {
+        f.raw
+    }
+}
+
+
 /// A `VkSemaphoreCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SemaphoreCreateInfo<'s> {
@@ -7603,9 +9406,16 @@ impl<'s> SemaphoreCreateInfo<'s> {
 }
 
 
+impl<'s> From<SemaphoreCreateInfo<'s>> for vks::VkSemaphoreCreateInfo {
+    fn from(f: SemaphoreCreateInfo<'s>) -> vks::VkSemaphoreCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSemaphoreCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SemaphoreCreateInfoBuilder<'b> {
     raw: vks::VkSemaphoreCreateInfo,
@@ -7620,12 +9430,21 @@ impl<'b> SemaphoreCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut SemaphoreCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> SemaphoreCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: SemaphoreCreateFlags) -> &'m mut SemaphoreCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: SemaphoreCreateFlags) -> SemaphoreCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
+    }
+
+    pub fn build(self) -> SemaphoreCreateInfo<'b> {
+        SemaphoreCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -7633,7 +9452,7 @@ impl<'b> SemaphoreCreateInfoBuilder<'b> {
 
 /// A `VkQueryPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct QueryPoolCreateInfo<'s> {
@@ -7667,9 +9486,16 @@ impl<'s> QueryPoolCreateInfo<'s> {
 }
 
 
+impl<'s> From<QueryPoolCreateInfo<'s>> for vks::VkQueryPoolCreateInfo {
+    fn from(f: QueryPoolCreateInfo<'s>) -> vks::VkQueryPoolCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkQueryPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct QueryPoolCreateInfoBuilder<'b> {
     raw: vks::VkQueryPoolCreateInfo,
@@ -7684,24 +9510,36 @@ impl<'b> QueryPoolCreateInfoBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut QueryPoolCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> QueryPoolCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: QueryPoolCreateFlags) -> &'m mut QueryPoolCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: QueryPoolCreateFlags) -> QueryPoolCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn query_type<'m>(&'m mut self, query_type: QueryType) -> &'m mut QueryPoolCreateInfoBuilder<'b> {
+    pub fn query_type<'m>(mut self, query_type: QueryType) -> QueryPoolCreateInfoBuilder<'b> {
+        self.raw.queryType = query_type.into();
         self
     }
 
-    pub fn query_count<'m>(&'m mut self, query_count: u32) -> &'m mut QueryPoolCreateInfoBuilder<'b> {
+    pub fn query_count<'m>(mut self, query_count: u32) -> QueryPoolCreateInfoBuilder<'b> {
+        self.raw.queryCount = query_count.into();
         self
     }
 
-    pub fn pipeline_statistics<'m>(&'m mut self, pipeline_statistics: QueryPipelineStatisticFlags) -> &'m mut QueryPoolCreateInfoBuilder<'b> {
+    pub fn pipeline_statistics<'m>(mut self, pipeline_statistics: QueryPipelineStatisticFlags) -> QueryPoolCreateInfoBuilder<'b> {
+        self.raw.pipelineStatistics = pipeline_statistics.bits();
         self
+    }
+
+    pub fn build(self) -> QueryPoolCreateInfo<'b> {
+        QueryPoolCreateInfo {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -7709,11 +9547,11 @@ impl<'b> QueryPoolCreateInfoBuilder<'b> {
 
 /// A `VkFramebufferCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct FramebufferCreateInfo<'s> {
     raw: vks::VkFramebufferCreateInfo,
+    attachments: Option<Vec<vks::VkImageView>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -7752,12 +9590,20 @@ impl<'s> FramebufferCreateInfo<'s> {
 }
 
 
+impl<'s> From<FramebufferCreateInfo<'s>> for vks::VkFramebufferCreateInfo {
+    fn from(f: FramebufferCreateInfo<'s>) -> vks::VkFramebufferCreateInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkFramebufferCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct FramebufferCreateInfoBuilder<'b> {
     raw: vks::VkFramebufferCreateInfo,
+    attachments: Option<Vec<vks::VkImageView>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -7765,40 +9611,58 @@ impl<'b> FramebufferCreateInfoBuilder<'b> {
     pub fn new() -> FramebufferCreateInfoBuilder<'b> {
         FramebufferCreateInfoBuilder {
             raw: vks::VkFramebufferCreateInfo::default(),
+            attachments: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut FramebufferCreateInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> FramebufferCreateInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: FramebufferCreateFlags) -> &'m mut FramebufferCreateInfoBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: FramebufferCreateFlags) -> FramebufferCreateInfoBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn render_pass<'m>(&'m mut self, render_pass: RenderPass) -> &'m mut FramebufferCreateInfoBuilder<'b> {
+    pub fn render_pass<'m, 'a>(mut self, render_pass: &'a RenderPass) -> FramebufferCreateInfoBuilder<'b> {
+        self.raw.renderPass = render_pass.handle();
         self
     }
 
-    pub fn attachment_count<'m>(&'m mut self, attachment_count: u32) -> &'m mut FramebufferCreateInfoBuilder<'b> {
+    pub fn attachment_count<'m>(mut self, attachment_count: u32) -> FramebufferCreateInfoBuilder<'b> {
+        self.raw.attachmentCount = attachment_count.into();
         self
     }
 
-    pub fn attachments<'m, 'a>(&'m mut self, attachments: &'a ImageView) -> &'m mut FramebufferCreateInfoBuilder<'b> {
+    pub fn attachments<'m, 'a>(mut self, attachments: &'a [ImageView]) -> FramebufferCreateInfoBuilder<'b> where 'a: 'b {
+        self.attachments = Some(attachments.iter().map(|h| h.handle()).collect());
+        self.raw.pAttachments = self.attachments.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn width<'m>(&'m mut self, width: u32) -> &'m mut FramebufferCreateInfoBuilder<'b> {
+    pub fn width<'m>(mut self, width: u32) -> FramebufferCreateInfoBuilder<'b> {
+        self.raw.width = width.into();
         self
     }
 
-    pub fn height<'m>(&'m mut self, height: u32) -> &'m mut FramebufferCreateInfoBuilder<'b> {
+    pub fn height<'m>(mut self, height: u32) -> FramebufferCreateInfoBuilder<'b> {
+        self.raw.height = height.into();
         self
     }
 
-    pub fn layers<'m>(&'m mut self, layers: u32) -> &'m mut FramebufferCreateInfoBuilder<'b> {
+    pub fn layers<'m>(mut self, layers: u32) -> FramebufferCreateInfoBuilder<'b> {
+        self.raw.layers = layers.into();
         self
+    }
+
+    pub fn build(self) -> FramebufferCreateInfo<'b> {
+        FramebufferCreateInfo {
+            raw: self.raw,
+            attachments: self.attachments,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -7806,7 +9670,7 @@ impl<'b> FramebufferCreateInfoBuilder<'b> {
 
 /// A `VkDrawIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DrawIndirectCommand {
@@ -7836,9 +9700,16 @@ impl DrawIndirectCommand {
 }
 
 
+impl From<DrawIndirectCommand> for vks::VkDrawIndirectCommand {
+    fn from(f: DrawIndirectCommand) -> vks::VkDrawIndirectCommand {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDrawIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DrawIndirectCommandBuilder {
     raw: vks::VkDrawIndirectCommand,
@@ -7851,20 +9722,30 @@ impl DrawIndirectCommandBuilder {
         }
     }
 
-    pub fn vertex_count<'m>(&'m mut self, vertex_count: u32) -> &'m mut DrawIndirectCommandBuilder {
+    pub fn vertex_count<'m>(mut self, vertex_count: u32) -> DrawIndirectCommandBuilder {
+        self.raw.vertexCount = vertex_count.into();
         self
     }
 
-    pub fn instance_count<'m>(&'m mut self, instance_count: u32) -> &'m mut DrawIndirectCommandBuilder {
+    pub fn instance_count<'m>(mut self, instance_count: u32) -> DrawIndirectCommandBuilder {
+        self.raw.instanceCount = instance_count.into();
         self
     }
 
-    pub fn first_vertex<'m>(&'m mut self, first_vertex: u32) -> &'m mut DrawIndirectCommandBuilder {
+    pub fn first_vertex<'m>(mut self, first_vertex: u32) -> DrawIndirectCommandBuilder {
+        self.raw.firstVertex = first_vertex.into();
         self
     }
 
-    pub fn first_instance<'m>(&'m mut self, first_instance: u32) -> &'m mut DrawIndirectCommandBuilder {
+    pub fn first_instance<'m>(mut self, first_instance: u32) -> DrawIndirectCommandBuilder {
+        self.raw.firstInstance = first_instance.into();
         self
+    }
+
+    pub fn build(self) -> DrawIndirectCommand {
+        DrawIndirectCommand {
+            raw: self.raw,
+        }
     }
 
 }
@@ -7872,7 +9753,7 @@ impl DrawIndirectCommandBuilder {
 
 /// A `VkDrawIndexedIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DrawIndexedIndirectCommand {
@@ -7905,9 +9786,16 @@ impl DrawIndexedIndirectCommand {
 }
 
 
+impl From<DrawIndexedIndirectCommand> for vks::VkDrawIndexedIndirectCommand {
+    fn from(f: DrawIndexedIndirectCommand) -> vks::VkDrawIndexedIndirectCommand {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDrawIndexedIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DrawIndexedIndirectCommandBuilder {
     raw: vks::VkDrawIndexedIndirectCommand,
@@ -7920,24 +9808,35 @@ impl DrawIndexedIndirectCommandBuilder {
         }
     }
 
-    pub fn index_count<'m>(&'m mut self, index_count: u32) -> &'m mut DrawIndexedIndirectCommandBuilder {
+    pub fn index_count<'m>(mut self, index_count: u32) -> DrawIndexedIndirectCommandBuilder {
+        self.raw.indexCount = index_count.into();
         self
     }
 
-    pub fn instance_count<'m>(&'m mut self, instance_count: u32) -> &'m mut DrawIndexedIndirectCommandBuilder {
+    pub fn instance_count<'m>(mut self, instance_count: u32) -> DrawIndexedIndirectCommandBuilder {
+        self.raw.instanceCount = instance_count.into();
         self
     }
 
-    pub fn first_index<'m>(&'m mut self, first_index: u32) -> &'m mut DrawIndexedIndirectCommandBuilder {
+    pub fn first_index<'m>(mut self, first_index: u32) -> DrawIndexedIndirectCommandBuilder {
+        self.raw.firstIndex = first_index.into();
         self
     }
 
-    pub fn vertex_offset<'m>(&'m mut self, vertex_offset: i32) -> &'m mut DrawIndexedIndirectCommandBuilder {
+    pub fn vertex_offset<'m>(mut self, vertex_offset: i32) -> DrawIndexedIndirectCommandBuilder {
+        self.raw.vertexOffset = vertex_offset.into();
         self
     }
 
-    pub fn first_instance<'m>(&'m mut self, first_instance: u32) -> &'m mut DrawIndexedIndirectCommandBuilder {
+    pub fn first_instance<'m>(mut self, first_instance: u32) -> DrawIndexedIndirectCommandBuilder {
+        self.raw.firstInstance = first_instance.into();
         self
+    }
+
+    pub fn build(self) -> DrawIndexedIndirectCommand {
+        DrawIndexedIndirectCommand {
+            raw: self.raw,
+        }
     }
 
 }
@@ -7945,7 +9844,7 @@ impl DrawIndexedIndirectCommandBuilder {
 
 /// A `VkDispatchIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DispatchIndirectCommand {
@@ -7972,9 +9871,16 @@ impl DispatchIndirectCommand {
 }
 
 
+impl From<DispatchIndirectCommand> for vks::VkDispatchIndirectCommand {
+    fn from(f: DispatchIndirectCommand) -> vks::VkDispatchIndirectCommand {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDispatchIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DispatchIndirectCommandBuilder {
     raw: vks::VkDispatchIndirectCommand,
@@ -7987,16 +9893,25 @@ impl DispatchIndirectCommandBuilder {
         }
     }
 
-    pub fn x<'m>(&'m mut self, x: u32) -> &'m mut DispatchIndirectCommandBuilder {
+    pub fn x<'m>(mut self, x: u32) -> DispatchIndirectCommandBuilder {
+        self.raw.x = x.into();
         self
     }
 
-    pub fn y<'m>(&'m mut self, y: u32) -> &'m mut DispatchIndirectCommandBuilder {
+    pub fn y<'m>(mut self, y: u32) -> DispatchIndirectCommandBuilder {
+        self.raw.y = y.into();
         self
     }
 
-    pub fn z<'m>(&'m mut self, z: u32) -> &'m mut DispatchIndirectCommandBuilder {
+    pub fn z<'m>(mut self, z: u32) -> DispatchIndirectCommandBuilder {
+        self.raw.z = z.into();
         self
+    }
+
+    pub fn build(self) -> DispatchIndirectCommand {
+        DispatchIndirectCommand {
+            raw: self.raw,
+        }
     }
 
 }
@@ -8004,11 +9919,13 @@ impl DispatchIndirectCommandBuilder {
 
 /// A `VkSubmitInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct SubmitInfo<'s> {
     raw: vks::VkSubmitInfo,
+    command_buffers: Option<Vec<vks::VkCommandBuffer>>,
+    signal_semaphores: Option<Vec<vks::VkSemaphore>>,
+    wait_semaphores: Option<Vec<vks::VkSemaphore>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -8047,12 +9964,22 @@ impl<'s> SubmitInfo<'s> {
 }
 
 
+impl<'s> From<SubmitInfo<'s>> for vks::VkSubmitInfo {
+    fn from(f: SubmitInfo<'s>) -> vks::VkSubmitInfo {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSubmitInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SubmitInfoBuilder<'b> {
     raw: vks::VkSubmitInfo,
+    command_buffers: Option<Vec<vks::VkCommandBuffer>>,
+    signal_semaphores: Option<Vec<vks::VkSemaphore>>,
+    wait_semaphores: Option<Vec<vks::VkSemaphore>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -8060,40 +9987,64 @@ impl<'b> SubmitInfoBuilder<'b> {
     pub fn new() -> SubmitInfoBuilder<'b> {
         SubmitInfoBuilder {
             raw: vks::VkSubmitInfo::default(),
+            command_buffers: None,
+            signal_semaphores: None,
+            wait_semaphores: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut SubmitInfoBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> SubmitInfoBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn wait_semaphore_count<'m>(&'m mut self, wait_semaphore_count: u32) -> &'m mut SubmitInfoBuilder<'b> {
+    pub fn wait_semaphore_count<'m>(mut self, wait_semaphore_count: u32) -> SubmitInfoBuilder<'b> {
+        self.raw.waitSemaphoreCount = wait_semaphore_count.into();
         self
     }
 
-    pub fn wait_semaphores<'m, 'a>(&'m mut self, wait_semaphores: &'a Semaphore) -> &'m mut SubmitInfoBuilder<'b> {
+    pub fn wait_semaphores<'m, 'a>(mut self, wait_semaphores: &'a [Semaphore]) -> SubmitInfoBuilder<'b> where 'a: 'b {
+        self.wait_semaphores = Some(wait_semaphores.iter().map(|h| h.handle()).collect());
+        self.raw.pWaitSemaphores = self.wait_semaphores.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn wait_dst_stage_mask<'m, 'a>(&'m mut self, wait_dst_stage_mask: &'a PipelineStageFlags) -> &'m mut SubmitInfoBuilder<'b> {
+    pub fn wait_dst_stage_mask<'m, 'a>(mut self, wait_dst_stage_mask: &'a PipelineStageFlags) -> SubmitInfoBuilder<'b> {
+        self.raw.pWaitDstStageMask = wait_dst_stage_mask as *const PipelineStageFlags as *const _;
         self
     }
 
-    pub fn command_buffer_count<'m>(&'m mut self, command_buffer_count: u32) -> &'m mut SubmitInfoBuilder<'b> {
+    pub fn command_buffer_count<'m>(mut self, command_buffer_count: u32) -> SubmitInfoBuilder<'b> {
+        self.raw.commandBufferCount = command_buffer_count.into();
         self
     }
 
-    pub fn command_buffers<'m, 'a>(&'m mut self, command_buffers: &'a CommandBuffer) -> &'m mut SubmitInfoBuilder<'b> {
+    pub fn command_buffers<'m, 'a>(mut self, command_buffers: &'a [CommandBuffer]) -> SubmitInfoBuilder<'b> where 'a: 'b {
+        self.command_buffers = Some(command_buffers.iter().map(|h| h.handle()).collect());
+        self.raw.pCommandBuffers = self.command_buffers.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn signal_semaphore_count<'m>(&'m mut self, signal_semaphore_count: u32) -> &'m mut SubmitInfoBuilder<'b> {
+    pub fn signal_semaphore_count<'m>(mut self, signal_semaphore_count: u32) -> SubmitInfoBuilder<'b> {
+        self.raw.signalSemaphoreCount = signal_semaphore_count.into();
         self
     }
 
-    pub fn signal_semaphores<'m, 'a>(&'m mut self, signal_semaphores: &'a Semaphore) -> &'m mut SubmitInfoBuilder<'b> {
+    pub fn signal_semaphores<'m, 'a>(mut self, signal_semaphores: &'a [Semaphore]) -> SubmitInfoBuilder<'b> where 'a: 'b {
+        self.signal_semaphores = Some(signal_semaphores.iter().map(|h| h.handle()).collect());
+        self.raw.pSignalSemaphores = self.signal_semaphores.as_ref().unwrap().as_ptr();
         self
+    }
+
+    pub fn build(self) -> SubmitInfo<'b> {
+        SubmitInfo {
+            raw: self.raw,
+            command_buffers: self.command_buffers,
+            signal_semaphores: self.signal_semaphores,
+            wait_semaphores: self.wait_semaphores,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -8101,11 +10052,11 @@ impl<'b> SubmitInfoBuilder<'b> {
 
 /// A `VkDisplayPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct DisplayPropertiesKhr<'s> {
     raw: vks::VkDisplayPropertiesKHR,
+    display_name: Option<CharStr<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -8137,9 +10088,16 @@ impl<'s> DisplayPropertiesKhr<'s> {
 }
 
 
+impl<'s> From<DisplayPropertiesKhr<'s>> for vks::VkDisplayPropertiesKHR {
+    fn from(f: DisplayPropertiesKhr<'s>) -> vks::VkDisplayPropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkDisplayPlanePropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayPlanePropertiesKhr {
@@ -8159,9 +10117,16 @@ impl DisplayPlanePropertiesKhr {
 }
 
 
+impl From<DisplayPlanePropertiesKhr> for vks::VkDisplayPlanePropertiesKHR {
+    fn from(f: DisplayPlanePropertiesKhr) -> vks::VkDisplayPlanePropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkDisplayModeParametersKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayModeParametersKhr {
@@ -8185,9 +10150,16 @@ impl DisplayModeParametersKhr {
 }
 
 
+impl From<DisplayModeParametersKhr> for vks::VkDisplayModeParametersKHR {
+    fn from(f: DisplayModeParametersKhr) -> vks::VkDisplayModeParametersKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDisplayModeParametersKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayModeParametersKhrBuilder {
     raw: vks::VkDisplayModeParametersKHR,
@@ -8200,12 +10172,20 @@ impl DisplayModeParametersKhrBuilder {
         }
     }
 
-    pub fn visible_region<'m>(&'m mut self, visible_region: Extent2d) -> &'m mut DisplayModeParametersKhrBuilder {
+    pub fn visible_region<'m>(mut self, visible_region: Extent2d) -> DisplayModeParametersKhrBuilder {
+        self.raw.visibleRegion = visible_region.raw;
         self
     }
 
-    pub fn refresh_rate<'m>(&'m mut self, refresh_rate: u32) -> &'m mut DisplayModeParametersKhrBuilder {
+    pub fn refresh_rate<'m>(mut self, refresh_rate: u32) -> DisplayModeParametersKhrBuilder {
+        self.raw.refreshRate = refresh_rate.into();
         self
+    }
+
+    pub fn build(self) -> DisplayModeParametersKhr {
+        DisplayModeParametersKhr {
+            raw: self.raw,
+        }
     }
 
 }
@@ -8213,7 +10193,7 @@ impl DisplayModeParametersKhrBuilder {
 
 /// A `VkDisplayModePropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayModePropertiesKhr {
@@ -8233,9 +10213,16 @@ impl DisplayModePropertiesKhr {
 }
 
 
+impl From<DisplayModePropertiesKhr> for vks::VkDisplayModePropertiesKHR {
+    fn from(f: DisplayModePropertiesKhr) -> vks::VkDisplayModePropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkDisplayModeCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayModeCreateInfoKhr<'s> {
@@ -8263,9 +10250,16 @@ impl<'s> DisplayModeCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<DisplayModeCreateInfoKhr<'s>> for vks::VkDisplayModeCreateInfoKHR {
+    fn from(f: DisplayModeCreateInfoKhr<'s>) -> vks::VkDisplayModeCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDisplayModeCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayModeCreateInfoKhrBuilder<'b> {
     raw: vks::VkDisplayModeCreateInfoKHR,
@@ -8280,16 +10274,26 @@ impl<'b> DisplayModeCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DisplayModeCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DisplayModeCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: DisplayModeCreateFlagsKhr) -> &'m mut DisplayModeCreateInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: DisplayModeCreateFlagsKhr) -> DisplayModeCreateInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn parameters<'m>(&'m mut self, parameters: DisplayModeParametersKhr) -> &'m mut DisplayModeCreateInfoKhrBuilder<'b> {
+    pub fn parameters<'m>(mut self, parameters: DisplayModeParametersKhr) -> DisplayModeCreateInfoKhrBuilder<'b> {
+        self.raw.parameters = parameters.raw;
         self
+    }
+
+    pub fn build(self) -> DisplayModeCreateInfoKhr<'b> {
+        DisplayModeCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -8297,7 +10301,7 @@ impl<'b> DisplayModeCreateInfoKhrBuilder<'b> {
 
 /// A `VkDisplayPlaneCapabilitiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayPlaneCapabilitiesKhr {
@@ -8338,9 +10342,16 @@ impl DisplayPlaneCapabilitiesKhr {
 }
 
 
+impl From<DisplayPlaneCapabilitiesKhr> for vks::VkDisplayPlaneCapabilitiesKHR {
+    fn from(f: DisplayPlaneCapabilitiesKhr) -> vks::VkDisplayPlaneCapabilitiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkDisplaySurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplaySurfaceCreateInfoKhr<'s> {
@@ -8386,9 +10397,16 @@ impl<'s> DisplaySurfaceCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<DisplaySurfaceCreateInfoKhr<'s>> for vks::VkDisplaySurfaceCreateInfoKHR {
+    fn from(f: DisplaySurfaceCreateInfoKhr<'s>) -> vks::VkDisplaySurfaceCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDisplaySurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplaySurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkDisplaySurfaceCreateInfoKHR,
@@ -8403,40 +10421,56 @@ impl<'b> DisplaySurfaceCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DisplaySurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DisplaySurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: DisplaySurfaceCreateFlagsKhr) -> &'m mut DisplaySurfaceCreateInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: DisplaySurfaceCreateFlagsKhr) -> DisplaySurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn display_mode<'m>(&'m mut self, display_mode: DisplayModeKhr) -> &'m mut DisplaySurfaceCreateInfoKhrBuilder<'b> {
+    pub fn display_mode<'m, 'a>(mut self, display_mode: &'a DisplayModeKhr) -> DisplaySurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.displayMode = display_mode.handle();
         self
     }
 
-    pub fn plane_index<'m>(&'m mut self, plane_index: u32) -> &'m mut DisplaySurfaceCreateInfoKhrBuilder<'b> {
+    pub fn plane_index<'m>(mut self, plane_index: u32) -> DisplaySurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.planeIndex = plane_index.into();
         self
     }
 
-    pub fn plane_stack_index<'m>(&'m mut self, plane_stack_index: u32) -> &'m mut DisplaySurfaceCreateInfoKhrBuilder<'b> {
+    pub fn plane_stack_index<'m>(mut self, plane_stack_index: u32) -> DisplaySurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.planeStackIndex = plane_stack_index.into();
         self
     }
 
-    pub fn transform<'m>(&'m mut self, transform: SurfaceTransformFlagsKhr) -> &'m mut DisplaySurfaceCreateInfoKhrBuilder<'b> {
+    pub fn transform<'m>(mut self, transform: SurfaceTransformFlagsKhr) -> DisplaySurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.transform = transform.bits();
         self
     }
 
-    pub fn global_alpha<'m>(&'m mut self, global_alpha: f32) -> &'m mut DisplaySurfaceCreateInfoKhrBuilder<'b> {
+    pub fn global_alpha<'m>(mut self, global_alpha: f32) -> DisplaySurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.globalAlpha = global_alpha.into();
         self
     }
 
-    pub fn alpha_mode<'m>(&'m mut self, alpha_mode: DisplayPlaneAlphaFlagsKhr) -> &'m mut DisplaySurfaceCreateInfoKhrBuilder<'b> {
+    pub fn alpha_mode<'m>(mut self, alpha_mode: DisplayPlaneAlphaFlagsKhr) -> DisplaySurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.alphaMode = alpha_mode.bits();
         self
     }
 
-    pub fn image_extent<'m>(&'m mut self, image_extent: Extent2d) -> &'m mut DisplaySurfaceCreateInfoKhrBuilder<'b> {
+    pub fn image_extent<'m>(mut self, image_extent: Extent2d) -> DisplaySurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.imageExtent = image_extent.raw;
         self
+    }
+
+    pub fn build(self) -> DisplaySurfaceCreateInfoKhr<'b> {
+        DisplaySurfaceCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -8444,7 +10478,7 @@ impl<'b> DisplaySurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkDisplayPresentInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayPresentInfoKhr<'s> {
@@ -8475,9 +10509,16 @@ impl<'s> DisplayPresentInfoKhr<'s> {
 }
 
 
+impl<'s> From<DisplayPresentInfoKhr<'s>> for vks::VkDisplayPresentInfoKHR {
+    fn from(f: DisplayPresentInfoKhr<'s>) -> vks::VkDisplayPresentInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDisplayPresentInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayPresentInfoKhrBuilder<'b> {
     raw: vks::VkDisplayPresentInfoKHR,
@@ -8492,20 +10533,31 @@ impl<'b> DisplayPresentInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DisplayPresentInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DisplayPresentInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn src_rect<'m>(&'m mut self, src_rect: Rect2d) -> &'m mut DisplayPresentInfoKhrBuilder<'b> {
+    pub fn src_rect<'m>(mut self, src_rect: Rect2d) -> DisplayPresentInfoKhrBuilder<'b> {
+        self.raw.srcRect = src_rect.raw;
         self
     }
 
-    pub fn dst_rect<'m>(&'m mut self, dst_rect: Rect2d) -> &'m mut DisplayPresentInfoKhrBuilder<'b> {
+    pub fn dst_rect<'m>(mut self, dst_rect: Rect2d) -> DisplayPresentInfoKhrBuilder<'b> {
+        self.raw.dstRect = dst_rect.raw;
         self
     }
 
-    pub fn persistent<'m>(&'m mut self, persistent: bool) -> &'m mut DisplayPresentInfoKhrBuilder<'b> {
+    pub fn persistent<'m>(mut self, persistent: bool) -> DisplayPresentInfoKhrBuilder<'b> {
+        self.raw.persistent = persistent as u32;
         self
+    }
+
+    pub fn build(self) -> DisplayPresentInfoKhr<'b> {
+        DisplayPresentInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -8513,7 +10565,7 @@ impl<'b> DisplayPresentInfoKhrBuilder<'b> {
 
 /// A `VkSurfaceCapabilitiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SurfaceCapabilitiesKhr {
@@ -8557,9 +10609,16 @@ impl SurfaceCapabilitiesKhr {
 }
 
 
+impl From<SurfaceCapabilitiesKhr> for vks::VkSurfaceCapabilitiesKHR {
+    fn from(f: SurfaceCapabilitiesKhr) -> vks::VkSurfaceCapabilitiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkAndroidSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct AndroidSurfaceCreateInfoKhr<'s> {
@@ -8578,7 +10637,7 @@ impl<'s> AndroidSurfaceCreateInfoKhr<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn window(&self) {
+    pub unsafe fn window(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkAndroidSurfaceCreateInfoKHR {
@@ -8587,9 +10646,16 @@ impl<'s> AndroidSurfaceCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<AndroidSurfaceCreateInfoKhr<'s>> for vks::VkAndroidSurfaceCreateInfoKHR {
+    fn from(f: AndroidSurfaceCreateInfoKhr<'s>) -> vks::VkAndroidSurfaceCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkAndroidSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct AndroidSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkAndroidSurfaceCreateInfoKHR,
@@ -8604,16 +10670,26 @@ impl<'b> AndroidSurfaceCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut AndroidSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> AndroidSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: AndroidSurfaceCreateFlagsKhr) -> &'m mut AndroidSurfaceCreateInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: AndroidSurfaceCreateFlagsKhr) -> AndroidSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn window<'m, 'a>(&'m mut self, window: &'a ANativeWindow) -> &'m mut AndroidSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn window<'m>(mut self, window: *mut ANativeWindow) -> AndroidSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.window = window;
         self
+    }
+
+    pub fn build(self) -> AndroidSurfaceCreateInfoKhr<'b> {
+        AndroidSurfaceCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -8621,7 +10697,7 @@ impl<'b> AndroidSurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkMirSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MirSurfaceCreateInfoKhr<'s> {
@@ -8640,10 +10716,10 @@ impl<'s> MirSurfaceCreateInfoKhr<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn connection(&self) {
+    pub unsafe fn connection(&self) {
     }
 
-    pub fn mir_surface(&self) {
+    pub unsafe fn mir_surface(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkMirSurfaceCreateInfoKHR {
@@ -8652,9 +10728,16 @@ impl<'s> MirSurfaceCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<MirSurfaceCreateInfoKhr<'s>> for vks::VkMirSurfaceCreateInfoKHR {
+    fn from(f: MirSurfaceCreateInfoKhr<'s>) -> vks::VkMirSurfaceCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkMirSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MirSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkMirSurfaceCreateInfoKHR,
@@ -8669,20 +10752,31 @@ impl<'b> MirSurfaceCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut MirSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> MirSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: MirSurfaceCreateFlagsKhr) -> &'m mut MirSurfaceCreateInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: MirSurfaceCreateFlagsKhr) -> MirSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn connection<'m, 'a>(&'m mut self, connection: &'a MirConnection) -> &'m mut MirSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn connection<'m>(mut self, connection: *mut MirConnection) -> MirSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.connection = connection;
         self
     }
 
-    pub fn mir_surface<'m, 'a>(&'m mut self, mir_surface: &'a MirSurface) -> &'m mut MirSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn mir_surface<'m>(mut self, mir_surface: *mut MirSurface) -> MirSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.mirSurface = mir_surface;
         self
+    }
+
+    pub fn build(self) -> MirSurfaceCreateInfoKhr<'b> {
+        MirSurfaceCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -8690,7 +10784,7 @@ impl<'b> MirSurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkViSurfaceCreateInfoNN`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ViSurfaceCreateInfoNn<'s> {
@@ -8709,7 +10803,7 @@ impl<'s> ViSurfaceCreateInfoNn<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn window(&self) {
+    pub unsafe fn window(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkViSurfaceCreateInfoNN {
@@ -8718,9 +10812,16 @@ impl<'s> ViSurfaceCreateInfoNn<'s> {
 }
 
 
+impl<'s> From<ViSurfaceCreateInfoNn<'s>> for vks::VkViSurfaceCreateInfoNN {
+    fn from(f: ViSurfaceCreateInfoNn<'s>) -> vks::VkViSurfaceCreateInfoNN {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkViSurfaceCreateInfoNN`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ViSurfaceCreateInfoNnBuilder<'b> {
     raw: vks::VkViSurfaceCreateInfoNN,
@@ -8735,16 +10836,26 @@ impl<'b> ViSurfaceCreateInfoNnBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ViSurfaceCreateInfoNnBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ViSurfaceCreateInfoNnBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: ViSurfaceCreateFlagsNn) -> &'m mut ViSurfaceCreateInfoNnBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: ViSurfaceCreateFlagsNn) -> ViSurfaceCreateInfoNnBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn window<'m, 'a>(&'m mut self, window: &'a ()) -> &'m mut ViSurfaceCreateInfoNnBuilder<'b> {
+    pub unsafe fn window<'m>(mut self, window: *mut c_void) -> ViSurfaceCreateInfoNnBuilder<'b> {
+        self.raw.window = window;
         self
+    }
+
+    pub fn build(self) -> ViSurfaceCreateInfoNn<'b> {
+        ViSurfaceCreateInfoNn {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -8752,7 +10863,7 @@ impl<'b> ViSurfaceCreateInfoNnBuilder<'b> {
 
 /// A `VkWaylandSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct WaylandSurfaceCreateInfoKhr<'s> {
@@ -8771,10 +10882,10 @@ impl<'s> WaylandSurfaceCreateInfoKhr<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn display(&self) {
+    pub unsafe fn display(&self) {
     }
 
-    pub fn surface(&self) {
+    pub unsafe fn surface(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkWaylandSurfaceCreateInfoKHR {
@@ -8783,9 +10894,16 @@ impl<'s> WaylandSurfaceCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<WaylandSurfaceCreateInfoKhr<'s>> for vks::VkWaylandSurfaceCreateInfoKHR {
+    fn from(f: WaylandSurfaceCreateInfoKhr<'s>) -> vks::VkWaylandSurfaceCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkWaylandSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct WaylandSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkWaylandSurfaceCreateInfoKHR,
@@ -8800,20 +10918,31 @@ impl<'b> WaylandSurfaceCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut WaylandSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> WaylandSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: WaylandSurfaceCreateFlagsKhr) -> &'m mut WaylandSurfaceCreateInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: WaylandSurfaceCreateFlagsKhr) -> WaylandSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn display<'m, 'a>(&'m mut self, display: &'a wl_display) -> &'m mut WaylandSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn display<'m>(mut self, display: *mut wl_display) -> WaylandSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.display = display;
         self
     }
 
-    pub fn surface<'m, 'a>(&'m mut self, surface: &'a wl_surface) -> &'m mut WaylandSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn surface<'m>(mut self, surface: *mut wl_surface) -> WaylandSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.surface = surface;
         self
+    }
+
+    pub fn build(self) -> WaylandSurfaceCreateInfoKhr<'b> {
+        WaylandSurfaceCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -8821,7 +10950,7 @@ impl<'b> WaylandSurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkWin32SurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Win32SurfaceCreateInfoKhr<'s> {
@@ -8852,9 +10981,16 @@ impl<'s> Win32SurfaceCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<Win32SurfaceCreateInfoKhr<'s>> for vks::VkWin32SurfaceCreateInfoKHR {
+    fn from(f: Win32SurfaceCreateInfoKhr<'s>) -> vks::VkWin32SurfaceCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkWin32SurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Win32SurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkWin32SurfaceCreateInfoKHR,
@@ -8869,20 +11005,31 @@ impl<'b> Win32SurfaceCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut Win32SurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> Win32SurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: Win32SurfaceCreateFlagsKhr) -> &'m mut Win32SurfaceCreateInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: Win32SurfaceCreateFlagsKhr) -> Win32SurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn hinstance<'m>(&'m mut self, hinstance: HINSTANCE) -> &'m mut Win32SurfaceCreateInfoKhrBuilder<'b> {
+    pub fn hinstance<'m>(mut self, hinstance: HINSTANCE) -> Win32SurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.hinstance = hinstance.into();
         self
     }
 
-    pub fn hwnd<'m>(&'m mut self, hwnd: HWND) -> &'m mut Win32SurfaceCreateInfoKhrBuilder<'b> {
+    pub fn hwnd<'m>(mut self, hwnd: HWND) -> Win32SurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.hwnd = hwnd.into();
         self
+    }
+
+    pub fn build(self) -> Win32SurfaceCreateInfoKhr<'b> {
+        Win32SurfaceCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -8890,7 +11037,7 @@ impl<'b> Win32SurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkXlibSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct XlibSurfaceCreateInfoKhr<'s> {
@@ -8909,10 +11056,10 @@ impl<'s> XlibSurfaceCreateInfoKhr<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn dpy(&self) {
+    pub unsafe fn dpy(&self) {
     }
 
-    pub fn window(&self) {
+    pub unsafe fn window(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkXlibSurfaceCreateInfoKHR {
@@ -8921,9 +11068,16 @@ impl<'s> XlibSurfaceCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<XlibSurfaceCreateInfoKhr<'s>> for vks::VkXlibSurfaceCreateInfoKHR {
+    fn from(f: XlibSurfaceCreateInfoKhr<'s>) -> vks::VkXlibSurfaceCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkXlibSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct XlibSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkXlibSurfaceCreateInfoKHR,
@@ -8938,20 +11092,31 @@ impl<'b> XlibSurfaceCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut XlibSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> XlibSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: XlibSurfaceCreateFlagsKhr) -> &'m mut XlibSurfaceCreateInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: XlibSurfaceCreateFlagsKhr) -> XlibSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn dpy<'m, 'a>(&'m mut self, dpy: &'a Display) -> &'m mut XlibSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn dpy<'m>(mut self, dpy: *mut Display) -> XlibSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.dpy = dpy;
         self
     }
 
-    pub fn window<'m>(&'m mut self, window: Window) -> &'m mut XlibSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn window<'m>(mut self, window: u32) -> XlibSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.window = window.into();
         self
+    }
+
+    pub fn build(self) -> XlibSurfaceCreateInfoKhr<'b> {
+        XlibSurfaceCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -8959,7 +11124,7 @@ impl<'b> XlibSurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkXcbSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct XcbSurfaceCreateInfoKhr<'s> {
@@ -8978,10 +11143,10 @@ impl<'s> XcbSurfaceCreateInfoKhr<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn connection(&self) {
+    pub unsafe fn connection(&self) {
     }
 
-    pub fn window(&self) {
+    pub unsafe fn window(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkXcbSurfaceCreateInfoKHR {
@@ -8990,9 +11155,16 @@ impl<'s> XcbSurfaceCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<XcbSurfaceCreateInfoKhr<'s>> for vks::VkXcbSurfaceCreateInfoKHR {
+    fn from(f: XcbSurfaceCreateInfoKhr<'s>) -> vks::VkXcbSurfaceCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkXcbSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct XcbSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkXcbSurfaceCreateInfoKHR,
@@ -9007,20 +11179,31 @@ impl<'b> XcbSurfaceCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut XcbSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> XcbSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: XcbSurfaceCreateFlagsKhr) -> &'m mut XcbSurfaceCreateInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: XcbSurfaceCreateFlagsKhr) -> XcbSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn connection<'m, 'a>(&'m mut self, connection: &'a xcb_connection_t) -> &'m mut XcbSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn connection<'m>(mut self, connection: *mut xcb_connection_t) -> XcbSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.connection = connection;
         self
     }
 
-    pub fn window<'m>(&'m mut self, window: xcb_window_t) -> &'m mut XcbSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn window<'m>(mut self, window: xcb_window_t) -> XcbSurfaceCreateInfoKhrBuilder<'b> {
+        self.raw.window = window.into();
         self
+    }
+
+    pub fn build(self) -> XcbSurfaceCreateInfoKhr<'b> {
+        XcbSurfaceCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9028,7 +11211,7 @@ impl<'b> XcbSurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkSurfaceFormatKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SurfaceFormatKhr {
@@ -9048,9 +11231,16 @@ impl SurfaceFormatKhr {
 }
 
 
+impl From<SurfaceFormatKhr> for vks::VkSurfaceFormatKHR {
+    fn from(f: SurfaceFormatKhr) -> vks::VkSurfaceFormatKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkSwapchainCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SwapchainCreateInfoKhr<'s> {
@@ -9120,9 +11310,16 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<SwapchainCreateInfoKhr<'s>> for vks::VkSwapchainCreateInfoKHR {
+    fn from(f: SwapchainCreateInfoKhr<'s>) -> vks::VkSwapchainCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSwapchainCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SwapchainCreateInfoKhrBuilder<'b> {
     raw: vks::VkSwapchainCreateInfoKHR,
@@ -9137,72 +11334,96 @@ impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: SwapchainCreateFlagsKhr) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: SwapchainCreateFlagsKhr) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn surface<'m>(&'m mut self, surface: SurfaceKhr) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn surface<'m, 'a>(mut self, surface: &'a Surface) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.surface = surface.handle();
         self
     }
 
-    pub fn min_image_count<'m>(&'m mut self, min_image_count: u32) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn min_image_count<'m>(mut self, min_image_count: u32) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.minImageCount = min_image_count.into();
         self
     }
 
-    pub fn image_format<'m>(&'m mut self, image_format: Format) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn image_format<'m>(mut self, image_format: Format) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.imageFormat = image_format.into();
         self
     }
 
-    pub fn image_color_space<'m>(&'m mut self, image_color_space: ColorSpaceKhr) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn image_color_space<'m>(mut self, image_color_space: ColorSpaceKhr) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.imageColorSpace = image_color_space.into();
         self
     }
 
-    pub fn image_extent<'m>(&'m mut self, image_extent: Extent2d) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn image_extent<'m>(mut self, image_extent: Extent2d) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.imageExtent = image_extent.raw;
         self
     }
 
-    pub fn image_array_layers<'m>(&'m mut self, image_array_layers: u32) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn image_array_layers<'m>(mut self, image_array_layers: u32) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.imageArrayLayers = image_array_layers.into();
         self
     }
 
-    pub fn image_usage<'m>(&'m mut self, image_usage: ImageUsageFlags) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn image_usage<'m>(mut self, image_usage: ImageUsageFlags) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.imageUsage = image_usage.bits();
         self
     }
 
-    pub fn image_sharing_mode<'m>(&'m mut self, image_sharing_mode: SharingMode) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn image_sharing_mode<'m>(mut self, image_sharing_mode: SharingMode) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.imageSharingMode = image_sharing_mode.into();
         self
     }
 
-    pub fn queue_family_index_count<'m>(&'m mut self, queue_family_index_count: u32) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn queue_family_index_count<'m>(mut self, queue_family_index_count: u32) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.queueFamilyIndexCount = queue_family_index_count.into();
         self
     }
 
-    pub fn queue_family_indices<'m, 'a>(&'m mut self, queue_family_indices: &'a u32) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const _;
         self
     }
 
-    pub fn pre_transform<'m>(&'m mut self, pre_transform: SurfaceTransformFlagsKhr) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn pre_transform<'m>(mut self, pre_transform: SurfaceTransformFlagsKhr) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.preTransform = pre_transform.bits();
         self
     }
 
-    pub fn composite_alpha<'m>(&'m mut self, composite_alpha: CompositeAlphaFlagsKhr) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn composite_alpha<'m>(mut self, composite_alpha: CompositeAlphaFlagsKhr) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.compositeAlpha = composite_alpha.bits();
         self
     }
 
-    pub fn present_mode<'m>(&'m mut self, present_mode: PresentModeKhr) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn present_mode<'m>(mut self, present_mode: PresentModeKhr) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.presentMode = present_mode.into();
         self
     }
 
-    pub fn clipped<'m>(&'m mut self, clipped: bool) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn clipped<'m>(mut self, clipped: bool) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.clipped = clipped as u32;
         self
     }
 
-    pub fn old_swapchain<'m>(&'m mut self, old_swapchain: SwapchainKhr) -> &'m mut SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn old_swapchain<'m, 'a>(mut self, old_swapchain: &'a Swapchain) -> SwapchainCreateInfoKhrBuilder<'b> {
+        self.raw.oldSwapchain = old_swapchain.handle();
         self
+    }
+
+    pub fn build(self) -> SwapchainCreateInfoKhr<'b> {
+        SwapchainCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9210,11 +11431,12 @@ impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
 
 /// A `VkPresentInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct PresentInfoKhr<'s> {
     raw: vks::VkPresentInfoKHR,
+    swapchains: Option<Vec<vks::VkSwapchainKHR>>,
+    wait_semaphores: Option<Vec<vks::VkSemaphore>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -9250,12 +11472,21 @@ impl<'s> PresentInfoKhr<'s> {
 }
 
 
+impl<'s> From<PresentInfoKhr<'s>> for vks::VkPresentInfoKHR {
+    fn from(f: PresentInfoKhr<'s>) -> vks::VkPresentInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPresentInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentInfoKhrBuilder<'b> {
     raw: vks::VkPresentInfoKHR,
+    swapchains: Option<Vec<vks::VkSwapchainKHR>>,
+    wait_semaphores: Option<Vec<vks::VkSemaphore>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -9263,36 +11494,56 @@ impl<'b> PresentInfoKhrBuilder<'b> {
     pub fn new() -> PresentInfoKhrBuilder<'b> {
         PresentInfoKhrBuilder {
             raw: vks::VkPresentInfoKHR::default(),
+            swapchains: None,
+            wait_semaphores: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PresentInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PresentInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn wait_semaphore_count<'m>(&'m mut self, wait_semaphore_count: u32) -> &'m mut PresentInfoKhrBuilder<'b> {
+    pub fn wait_semaphore_count<'m>(mut self, wait_semaphore_count: u32) -> PresentInfoKhrBuilder<'b> {
+        self.raw.waitSemaphoreCount = wait_semaphore_count.into();
         self
     }
 
-    pub fn wait_semaphores<'m, 'a>(&'m mut self, wait_semaphores: &'a Semaphore) -> &'m mut PresentInfoKhrBuilder<'b> {
+    pub fn wait_semaphores<'m, 'a>(mut self, wait_semaphores: &'a [Semaphore]) -> PresentInfoKhrBuilder<'b> where 'a: 'b {
+        self.wait_semaphores = Some(wait_semaphores.iter().map(|h| h.handle()).collect());
+        self.raw.pWaitSemaphores = self.wait_semaphores.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn swapchain_count<'m>(&'m mut self, swapchain_count: u32) -> &'m mut PresentInfoKhrBuilder<'b> {
+    pub fn swapchain_count<'m>(mut self, swapchain_count: u32) -> PresentInfoKhrBuilder<'b> {
+        self.raw.swapchainCount = swapchain_count.into();
         self
     }
 
-    pub fn swapchains<'m, 'a>(&'m mut self, swapchains: &'a SwapchainKhr) -> &'m mut PresentInfoKhrBuilder<'b> {
+    pub fn swapchains<'m, 'a>(mut self, swapchains: &'a [Swapchain]) -> PresentInfoKhrBuilder<'b> where 'a: 'b {
+        self.swapchains = Some(swapchains.iter().map(|h| h.handle()).collect());
+        self.raw.pSwapchains = self.swapchains.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn image_indices<'m, 'a>(&'m mut self, image_indices: &'a u32) -> &'m mut PresentInfoKhrBuilder<'b> {
+    pub fn image_indices<'m, 'a>(mut self, image_indices: &'a [u32]) -> PresentInfoKhrBuilder<'b> {
+        self.raw.pImageIndices = image_indices.as_ptr() as *const _;
         self
     }
 
-    pub fn results<'m, 'a>(&'m mut self, results: &'a ResultEnum) -> &'m mut PresentInfoKhrBuilder<'b> {
+    pub fn results<'m, 'a>(mut self, results: &'a mut [ResultEnum]) -> PresentInfoKhrBuilder<'b> {
+        self.raw.pResults = results.as_mut_ptr() as *mut _;
         self
+    }
+
+    pub fn build(self) -> PresentInfoKhr<'b> {
+        PresentInfoKhr {
+            raw: self.raw,
+            swapchains: self.swapchains,
+            wait_semaphores: self.wait_semaphores,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9300,7 +11551,7 @@ impl<'b> PresentInfoKhrBuilder<'b> {
 
 /// A `VkDebugReportCallbackCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DebugReportCallbackCreateInfoExt<'s> {
@@ -9322,7 +11573,7 @@ impl<'s> DebugReportCallbackCreateInfoExt<'s> {
     pub fn pfn_callback(&self) {
     }
 
-    pub fn user_data(&self) {
+    pub unsafe fn user_data(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkDebugReportCallbackCreateInfoEXT {
@@ -9331,9 +11582,16 @@ impl<'s> DebugReportCallbackCreateInfoExt<'s> {
 }
 
 
+impl<'s> From<DebugReportCallbackCreateInfoExt<'s>> for vks::VkDebugReportCallbackCreateInfoEXT {
+    fn from(f: DebugReportCallbackCreateInfoExt<'s>) -> vks::VkDebugReportCallbackCreateInfoEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDebugReportCallbackCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DebugReportCallbackCreateInfoExtBuilder<'b> {
     raw: vks::VkDebugReportCallbackCreateInfoEXT,
@@ -9348,20 +11606,31 @@ impl<'b> DebugReportCallbackCreateInfoExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DebugReportCallbackCreateInfoExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DebugReportCallbackCreateInfoExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: DebugReportFlagsExt) -> &'m mut DebugReportCallbackCreateInfoExtBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: DebugReportFlagsExt) -> DebugReportCallbackCreateInfoExtBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn pfn_callback<'m>(&'m mut self, pfn_callback: PFN_vkDebugReportCallbackEXT) -> &'m mut DebugReportCallbackCreateInfoExtBuilder<'b> {
+    pub fn pfn_callback<'m>(mut self, pfn_callback: PFN_vkDebugReportCallbackEXT) -> DebugReportCallbackCreateInfoExtBuilder<'b> {
+        self.raw.pfnCallback = pfn_callback.into();
         self
     }
 
-    pub fn user_data<'m, 'a>(&'m mut self, user_data: &'a ()) -> &'m mut DebugReportCallbackCreateInfoExtBuilder<'b> {
+    pub unsafe fn user_data<'m>(mut self, user_data: *mut c_void) -> DebugReportCallbackCreateInfoExtBuilder<'b> {
+        self.raw.pUserData = user_data;
         self
+    }
+
+    pub fn build(self) -> DebugReportCallbackCreateInfoExt<'b> {
+        DebugReportCallbackCreateInfoExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9369,7 +11638,7 @@ impl<'b> DebugReportCallbackCreateInfoExtBuilder<'b> {
 
 /// A `VkValidationFlagsEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ValidationFlagsExt<'s> {
@@ -9397,9 +11666,16 @@ impl<'s> ValidationFlagsExt<'s> {
 }
 
 
+impl<'s> From<ValidationFlagsExt<'s>> for vks::VkValidationFlagsEXT {
+    fn from(f: ValidationFlagsExt<'s>) -> vks::VkValidationFlagsEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkValidationFlagsEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ValidationFlagsExtBuilder<'b> {
     raw: vks::VkValidationFlagsEXT,
@@ -9414,16 +11690,26 @@ impl<'b> ValidationFlagsExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ValidationFlagsExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ValidationFlagsExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn disabled_validation_check_count<'m>(&'m mut self, disabled_validation_check_count: u32) -> &'m mut ValidationFlagsExtBuilder<'b> {
+    pub fn disabled_validation_check_count<'m>(mut self, disabled_validation_check_count: u32) -> ValidationFlagsExtBuilder<'b> {
+        self.raw.disabledValidationCheckCount = disabled_validation_check_count.into();
         self
     }
 
-    pub fn disabled_validation_checks<'m, 'a>(&'m mut self, disabled_validation_checks: &'a ValidationCheckExt) -> &'m mut ValidationFlagsExtBuilder<'b> {
+    pub fn disabled_validation_checks<'m, 'a>(mut self, disabled_validation_checks: &'a mut [ValidationCheckExt]) -> ValidationFlagsExtBuilder<'b> {
+        self.raw.pDisabledValidationChecks = disabled_validation_checks.as_mut_ptr() as *mut _;
         self
+    }
+
+    pub fn build(self) -> ValidationFlagsExt<'b> {
+        ValidationFlagsExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9431,7 +11717,7 @@ impl<'b> ValidationFlagsExtBuilder<'b> {
 
 /// A `VkPipelineRasterizationStateRasterizationOrderAMD`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineRasterizationStateRasterizationOrderAmd<'s> {
@@ -9456,9 +11742,16 @@ impl<'s> PipelineRasterizationStateRasterizationOrderAmd<'s> {
 }
 
 
+impl<'s> From<PipelineRasterizationStateRasterizationOrderAmd<'s>> for vks::VkPipelineRasterizationStateRasterizationOrderAMD {
+    fn from(f: PipelineRasterizationStateRasterizationOrderAmd<'s>) -> vks::VkPipelineRasterizationStateRasterizationOrderAMD {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineRasterizationStateRasterizationOrderAMD`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineRasterizationStateRasterizationOrderAmdBuilder<'b> {
     raw: vks::VkPipelineRasterizationStateRasterizationOrderAMD,
@@ -9473,12 +11766,21 @@ impl<'b> PipelineRasterizationStateRasterizationOrderAmdBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineRasterizationStateRasterizationOrderAmdBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineRasterizationStateRasterizationOrderAmdBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn rasterization_order<'m>(&'m mut self, rasterization_order: RasterizationOrderAmd) -> &'m mut PipelineRasterizationStateRasterizationOrderAmdBuilder<'b> {
+    pub fn rasterization_order<'m>(mut self, rasterization_order: RasterizationOrderAmd) -> PipelineRasterizationStateRasterizationOrderAmdBuilder<'b> {
+        self.raw.rasterizationOrder = rasterization_order.into();
         self
+    }
+
+    pub fn build(self) -> PipelineRasterizationStateRasterizationOrderAmd<'b> {
+        PipelineRasterizationStateRasterizationOrderAmd {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9486,11 +11788,11 @@ impl<'b> PipelineRasterizationStateRasterizationOrderAmdBuilder<'b> {
 
 /// A `VkDebugMarkerObjectNameInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct DebugMarkerObjectNameInfoExt<'s> {
     raw: vks::VkDebugMarkerObjectNameInfoEXT,
+    object_name: Option<CharStr<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -9517,12 +11819,20 @@ impl<'s> DebugMarkerObjectNameInfoExt<'s> {
 }
 
 
+impl<'s> From<DebugMarkerObjectNameInfoExt<'s>> for vks::VkDebugMarkerObjectNameInfoEXT {
+    fn from(f: DebugMarkerObjectNameInfoExt<'s>) -> vks::VkDebugMarkerObjectNameInfoEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDebugMarkerObjectNameInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DebugMarkerObjectNameInfoExtBuilder<'b> {
     raw: vks::VkDebugMarkerObjectNameInfoEXT,
+    object_name: Option<CharStr<'b>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -9530,24 +11840,38 @@ impl<'b> DebugMarkerObjectNameInfoExtBuilder<'b> {
     pub fn new() -> DebugMarkerObjectNameInfoExtBuilder<'b> {
         DebugMarkerObjectNameInfoExtBuilder {
             raw: vks::VkDebugMarkerObjectNameInfoEXT::default(),
+            object_name: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DebugMarkerObjectNameInfoExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DebugMarkerObjectNameInfoExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn object_type<'m>(&'m mut self, object_type: DebugReportObjectTypeExt) -> &'m mut DebugMarkerObjectNameInfoExtBuilder<'b> {
+    pub fn object_type<'m>(mut self, object_type: DebugReportObjectTypeExt) -> DebugMarkerObjectNameInfoExtBuilder<'b> {
+        self.raw.objectType = object_type.into();
         self
     }
 
-    pub fn object<'m>(&'m mut self, object: u64) -> &'m mut DebugMarkerObjectNameInfoExtBuilder<'b> {
+    pub fn object<'m>(mut self, object: u64) -> DebugMarkerObjectNameInfoExtBuilder<'b> {
+        self.raw.object = object.into();
         self
     }
 
-    pub fn object_name<'m, 'a>(&'m mut self, object_name: &'a i8) -> &'m mut DebugMarkerObjectNameInfoExtBuilder<'b> {
+    pub fn object_name<'m, 'a, T>(mut self, object_name: T) -> DebugMarkerObjectNameInfoExtBuilder<'b> where 'a: 'b, T: Into<CharStr<'a>> {
+        self.object_name = Some(object_name.into());
+        self.raw.pObjectName = self.object_name.as_ref().unwrap().as_ptr();
         self
+    }
+
+    pub fn build(self) -> DebugMarkerObjectNameInfoExt<'b> {
+        DebugMarkerObjectNameInfoExt {
+            raw: self.raw,
+            object_name: self.object_name,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9555,7 +11879,7 @@ impl<'b> DebugMarkerObjectNameInfoExtBuilder<'b> {
 
 /// A `VkDebugMarkerObjectTagInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DebugMarkerObjectTagInfoExt<'s> {
@@ -9583,7 +11907,7 @@ impl<'s> DebugMarkerObjectTagInfoExt<'s> {
     pub fn tag_size(&self) {
     }
 
-    pub fn tag(&self) {
+    pub unsafe fn tag(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkDebugMarkerObjectTagInfoEXT {
@@ -9592,9 +11916,16 @@ impl<'s> DebugMarkerObjectTagInfoExt<'s> {
 }
 
 
+impl<'s> From<DebugMarkerObjectTagInfoExt<'s>> for vks::VkDebugMarkerObjectTagInfoEXT {
+    fn from(f: DebugMarkerObjectTagInfoExt<'s>) -> vks::VkDebugMarkerObjectTagInfoEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDebugMarkerObjectTagInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DebugMarkerObjectTagInfoExtBuilder<'b> {
     raw: vks::VkDebugMarkerObjectTagInfoEXT,
@@ -9609,28 +11940,41 @@ impl<'b> DebugMarkerObjectTagInfoExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DebugMarkerObjectTagInfoExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DebugMarkerObjectTagInfoExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn object_type<'m>(&'m mut self, object_type: DebugReportObjectTypeExt) -> &'m mut DebugMarkerObjectTagInfoExtBuilder<'b> {
+    pub fn object_type<'m>(mut self, object_type: DebugReportObjectTypeExt) -> DebugMarkerObjectTagInfoExtBuilder<'b> {
+        self.raw.objectType = object_type.into();
         self
     }
 
-    pub fn object<'m>(&'m mut self, object: u64) -> &'m mut DebugMarkerObjectTagInfoExtBuilder<'b> {
+    pub fn object<'m>(mut self, object: u64) -> DebugMarkerObjectTagInfoExtBuilder<'b> {
+        self.raw.object = object.into();
         self
     }
 
-    pub fn tag_name<'m>(&'m mut self, tag_name: u64) -> &'m mut DebugMarkerObjectTagInfoExtBuilder<'b> {
+    pub fn tag_name<'m>(mut self, tag_name: u64) -> DebugMarkerObjectTagInfoExtBuilder<'b> {
+        self.raw.tagName = tag_name.into();
         self
     }
 
-    pub fn tag_size<'m>(&'m mut self, tag_size: usize) -> &'m mut DebugMarkerObjectTagInfoExtBuilder<'b> {
+    pub fn tag_size<'m>(mut self, tag_size: usize) -> DebugMarkerObjectTagInfoExtBuilder<'b> {
+        self.raw.tagSize = tag_size.into();
         self
     }
 
-    pub fn tag<'m, 'a>(&'m mut self, tag: &'a ()) -> &'m mut DebugMarkerObjectTagInfoExtBuilder<'b> {
+    pub unsafe fn tag<'m>(mut self, tag: *const c_void) -> DebugMarkerObjectTagInfoExtBuilder<'b> {
+        self.raw.pTag = tag;
         self
+    }
+
+    pub fn build(self) -> DebugMarkerObjectTagInfoExt<'b> {
+        DebugMarkerObjectTagInfoExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9638,11 +11982,11 @@ impl<'b> DebugMarkerObjectTagInfoExtBuilder<'b> {
 
 /// A `VkDebugMarkerMarkerInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct DebugMarkerMarkerInfoExt<'s> {
     raw: vks::VkDebugMarkerMarkerInfoEXT,
+    marker_name: Option<CharStr<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -9666,12 +12010,20 @@ impl<'s> DebugMarkerMarkerInfoExt<'s> {
 }
 
 
+impl<'s> From<DebugMarkerMarkerInfoExt<'s>> for vks::VkDebugMarkerMarkerInfoEXT {
+    fn from(f: DebugMarkerMarkerInfoExt<'s>) -> vks::VkDebugMarkerMarkerInfoEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDebugMarkerMarkerInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DebugMarkerMarkerInfoExtBuilder<'b> {
     raw: vks::VkDebugMarkerMarkerInfoEXT,
+    marker_name: Option<CharStr<'b>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -9679,20 +12031,33 @@ impl<'b> DebugMarkerMarkerInfoExtBuilder<'b> {
     pub fn new() -> DebugMarkerMarkerInfoExtBuilder<'b> {
         DebugMarkerMarkerInfoExtBuilder {
             raw: vks::VkDebugMarkerMarkerInfoEXT::default(),
+            marker_name: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DebugMarkerMarkerInfoExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DebugMarkerMarkerInfoExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn marker_name<'m, 'a>(&'m mut self, marker_name: &'a i8) -> &'m mut DebugMarkerMarkerInfoExtBuilder<'b> {
+    pub fn marker_name<'m, 'a, T>(mut self, marker_name: T) -> DebugMarkerMarkerInfoExtBuilder<'b> where 'a: 'b, T: Into<CharStr<'a>> {
+        self.marker_name = Some(marker_name.into());
+        self.raw.pMarkerName = self.marker_name.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn color<'m>(&'m mut self, color: f32) -> &'m mut DebugMarkerMarkerInfoExtBuilder<'b> {
+    pub fn color<'m>(mut self, color: [f32; 4]) -> DebugMarkerMarkerInfoExtBuilder<'b> {
+        self.raw.color = color;
         self
+    }
+
+    pub fn build(self) -> DebugMarkerMarkerInfoExt<'b> {
+        DebugMarkerMarkerInfoExt {
+            raw: self.raw,
+            marker_name: self.marker_name,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9700,7 +12065,7 @@ impl<'b> DebugMarkerMarkerInfoExtBuilder<'b> {
 
 /// A `VkDedicatedAllocationImageCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DedicatedAllocationImageCreateInfoNv<'s> {
@@ -9725,9 +12090,16 @@ impl<'s> DedicatedAllocationImageCreateInfoNv<'s> {
 }
 
 
+impl<'s> From<DedicatedAllocationImageCreateInfoNv<'s>> for vks::VkDedicatedAllocationImageCreateInfoNV {
+    fn from(f: DedicatedAllocationImageCreateInfoNv<'s>) -> vks::VkDedicatedAllocationImageCreateInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDedicatedAllocationImageCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DedicatedAllocationImageCreateInfoNvBuilder<'b> {
     raw: vks::VkDedicatedAllocationImageCreateInfoNV,
@@ -9742,12 +12114,21 @@ impl<'b> DedicatedAllocationImageCreateInfoNvBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DedicatedAllocationImageCreateInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DedicatedAllocationImageCreateInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn dedicated_allocation<'m>(&'m mut self, dedicated_allocation: bool) -> &'m mut DedicatedAllocationImageCreateInfoNvBuilder<'b> {
+    pub fn dedicated_allocation<'m>(mut self, dedicated_allocation: bool) -> DedicatedAllocationImageCreateInfoNvBuilder<'b> {
+        self.raw.dedicatedAllocation = dedicated_allocation as u32;
         self
+    }
+
+    pub fn build(self) -> DedicatedAllocationImageCreateInfoNv<'b> {
+        DedicatedAllocationImageCreateInfoNv {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9755,7 +12136,7 @@ impl<'b> DedicatedAllocationImageCreateInfoNvBuilder<'b> {
 
 /// A `VkDedicatedAllocationBufferCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DedicatedAllocationBufferCreateInfoNv<'s> {
@@ -9780,9 +12161,16 @@ impl<'s> DedicatedAllocationBufferCreateInfoNv<'s> {
 }
 
 
+impl<'s> From<DedicatedAllocationBufferCreateInfoNv<'s>> for vks::VkDedicatedAllocationBufferCreateInfoNV {
+    fn from(f: DedicatedAllocationBufferCreateInfoNv<'s>) -> vks::VkDedicatedAllocationBufferCreateInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDedicatedAllocationBufferCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DedicatedAllocationBufferCreateInfoNvBuilder<'b> {
     raw: vks::VkDedicatedAllocationBufferCreateInfoNV,
@@ -9797,12 +12185,21 @@ impl<'b> DedicatedAllocationBufferCreateInfoNvBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DedicatedAllocationBufferCreateInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DedicatedAllocationBufferCreateInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn dedicated_allocation<'m>(&'m mut self, dedicated_allocation: bool) -> &'m mut DedicatedAllocationBufferCreateInfoNvBuilder<'b> {
+    pub fn dedicated_allocation<'m>(mut self, dedicated_allocation: bool) -> DedicatedAllocationBufferCreateInfoNvBuilder<'b> {
+        self.raw.dedicatedAllocation = dedicated_allocation as u32;
         self
+    }
+
+    pub fn build(self) -> DedicatedAllocationBufferCreateInfoNv<'b> {
+        DedicatedAllocationBufferCreateInfoNv {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9810,7 +12207,7 @@ impl<'b> DedicatedAllocationBufferCreateInfoNvBuilder<'b> {
 
 /// A `VkDedicatedAllocationMemoryAllocateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DedicatedAllocationMemoryAllocateInfoNv<'s> {
@@ -9838,9 +12235,16 @@ impl<'s> DedicatedAllocationMemoryAllocateInfoNv<'s> {
 }
 
 
+impl<'s> From<DedicatedAllocationMemoryAllocateInfoNv<'s>> for vks::VkDedicatedAllocationMemoryAllocateInfoNV {
+    fn from(f: DedicatedAllocationMemoryAllocateInfoNv<'s>) -> vks::VkDedicatedAllocationMemoryAllocateInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDedicatedAllocationMemoryAllocateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
     raw: vks::VkDedicatedAllocationMemoryAllocateInfoNV,
@@ -9855,16 +12259,26 @@ impl<'b> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn image<'m>(&'m mut self, image: Image) -> &'m mut DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
+    pub fn image<'m, 'a>(mut self, image: &'a Image) -> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
+        self.raw.image = image.handle();
         self
     }
 
-    pub fn buffer<'m>(&'m mut self, buffer: Buffer) -> &'m mut DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
+    pub fn buffer<'m, 'a>(mut self, buffer: &'a Buffer) -> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
+        self.raw.buffer = buffer.handle();
         self
+    }
+
+    pub fn build(self) -> DedicatedAllocationMemoryAllocateInfoNv<'b> {
+        DedicatedAllocationMemoryAllocateInfoNv {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9872,7 +12286,7 @@ impl<'b> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
 
 /// A `VkExternalImageFormatPropertiesNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalImageFormatPropertiesNv {
@@ -9898,9 +12312,16 @@ impl ExternalImageFormatPropertiesNv {
 }
 
 
+impl From<ExternalImageFormatPropertiesNv> for vks::VkExternalImageFormatPropertiesNV {
+    fn from(f: ExternalImageFormatPropertiesNv) -> vks::VkExternalImageFormatPropertiesNV {
+        f.raw
+    }
+}
+
+
 /// A `VkExternalMemoryImageCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalMemoryImageCreateInfoNv<'s> {
@@ -9925,9 +12346,16 @@ impl<'s> ExternalMemoryImageCreateInfoNv<'s> {
 }
 
 
+impl<'s> From<ExternalMemoryImageCreateInfoNv<'s>> for vks::VkExternalMemoryImageCreateInfoNV {
+    fn from(f: ExternalMemoryImageCreateInfoNv<'s>) -> vks::VkExternalMemoryImageCreateInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExternalMemoryImageCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExternalMemoryImageCreateInfoNvBuilder<'b> {
     raw: vks::VkExternalMemoryImageCreateInfoNV,
@@ -9942,12 +12370,21 @@ impl<'b> ExternalMemoryImageCreateInfoNvBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ExternalMemoryImageCreateInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ExternalMemoryImageCreateInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_types<'m>(&'m mut self, handle_types: ExternalMemoryHandleTypeFlagsNv) -> &'m mut ExternalMemoryImageCreateInfoNvBuilder<'b> {
+    pub fn handle_types<'m>(mut self, handle_types: ExternalMemoryHandleTypeFlagsNv) -> ExternalMemoryImageCreateInfoNvBuilder<'b> {
+        self.raw.handleTypes = handle_types.bits();
         self
+    }
+
+    pub fn build(self) -> ExternalMemoryImageCreateInfoNv<'b> {
+        ExternalMemoryImageCreateInfoNv {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -9955,7 +12392,7 @@ impl<'b> ExternalMemoryImageCreateInfoNvBuilder<'b> {
 
 /// A `VkExportMemoryAllocateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportMemoryAllocateInfoNv<'s> {
@@ -9980,9 +12417,16 @@ impl<'s> ExportMemoryAllocateInfoNv<'s> {
 }
 
 
+impl<'s> From<ExportMemoryAllocateInfoNv<'s>> for vks::VkExportMemoryAllocateInfoNV {
+    fn from(f: ExportMemoryAllocateInfoNv<'s>) -> vks::VkExportMemoryAllocateInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExportMemoryAllocateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryAllocateInfoNvBuilder<'b> {
     raw: vks::VkExportMemoryAllocateInfoNV,
@@ -9997,12 +12441,21 @@ impl<'b> ExportMemoryAllocateInfoNvBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ExportMemoryAllocateInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ExportMemoryAllocateInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_types<'m>(&'m mut self, handle_types: ExternalMemoryHandleTypeFlagsNv) -> &'m mut ExportMemoryAllocateInfoNvBuilder<'b> {
+    pub fn handle_types<'m>(mut self, handle_types: ExternalMemoryHandleTypeFlagsNv) -> ExportMemoryAllocateInfoNvBuilder<'b> {
+        self.raw.handleTypes = handle_types.bits();
         self
+    }
+
+    pub fn build(self) -> ExportMemoryAllocateInfoNv<'b> {
+        ExportMemoryAllocateInfoNv {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -10010,7 +12463,7 @@ impl<'b> ExportMemoryAllocateInfoNvBuilder<'b> {
 
 /// A `VkImportMemoryWin32HandleInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportMemoryWin32HandleInfoNv<'s> {
@@ -10038,9 +12491,16 @@ impl<'s> ImportMemoryWin32HandleInfoNv<'s> {
 }
 
 
+impl<'s> From<ImportMemoryWin32HandleInfoNv<'s>> for vks::VkImportMemoryWin32HandleInfoNV {
+    fn from(f: ImportMemoryWin32HandleInfoNv<'s>) -> vks::VkImportMemoryWin32HandleInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImportMemoryWin32HandleInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportMemoryWin32HandleInfoNvBuilder<'b> {
     raw: vks::VkImportMemoryWin32HandleInfoNV,
@@ -10055,16 +12515,26 @@ impl<'b> ImportMemoryWin32HandleInfoNvBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImportMemoryWin32HandleInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImportMemoryWin32HandleInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalMemoryHandleTypeFlagsNv) -> &'m mut ImportMemoryWin32HandleInfoNvBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalMemoryHandleTypeFlagsNv) -> ImportMemoryWin32HandleInfoNvBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
     }
 
-    pub fn handle<'m>(&'m mut self, handle: HANDLE) -> &'m mut ImportMemoryWin32HandleInfoNvBuilder<'b> {
+    pub fn handle<'m>(mut self, handle: HANDLE) -> ImportMemoryWin32HandleInfoNvBuilder<'b> {
+        self.raw.handle = handle.into();
         self
+    }
+
+    pub fn build(self) -> ImportMemoryWin32HandleInfoNv<'b> {
+        ImportMemoryWin32HandleInfoNv {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -10072,7 +12542,7 @@ impl<'b> ImportMemoryWin32HandleInfoNvBuilder<'b> {
 
 /// A `VkExportMemoryWin32HandleInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportMemoryWin32HandleInfoNv<'s> {
@@ -10100,9 +12570,16 @@ impl<'s> ExportMemoryWin32HandleInfoNv<'s> {
 }
 
 
+impl<'s> From<ExportMemoryWin32HandleInfoNv<'s>> for vks::VkExportMemoryWin32HandleInfoNV {
+    fn from(f: ExportMemoryWin32HandleInfoNv<'s>) -> vks::VkExportMemoryWin32HandleInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExportMemoryWin32HandleInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryWin32HandleInfoNvBuilder<'b> {
     raw: vks::VkExportMemoryWin32HandleInfoNV,
@@ -10117,16 +12594,26 @@ impl<'b> ExportMemoryWin32HandleInfoNvBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ExportMemoryWin32HandleInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ExportMemoryWin32HandleInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn attributes<'m, 'a>(&'m mut self, attributes: &'a SECURITY_ATTRIBUTES) -> &'m mut ExportMemoryWin32HandleInfoNvBuilder<'b> {
+    pub fn attributes<'m, 'a>(mut self, attributes: &'a [SECURITY_ATTRIBUTES]) -> ExportMemoryWin32HandleInfoNvBuilder<'b> {
+        self.raw.pAttributes = attributes.as_ptr() as *const _;
         self
     }
 
-    pub fn dw_access<'m>(&'m mut self, dw_access: DWORD) -> &'m mut ExportMemoryWin32HandleInfoNvBuilder<'b> {
+    pub fn dw_access<'m>(mut self, dw_access: DWORD) -> ExportMemoryWin32HandleInfoNvBuilder<'b> {
+        self.raw.dwAccess = dw_access.into();
         self
+    }
+
+    pub fn build(self) -> ExportMemoryWin32HandleInfoNv<'b> {
+        ExportMemoryWin32HandleInfoNv {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -10134,11 +12621,12 @@ impl<'b> ExportMemoryWin32HandleInfoNvBuilder<'b> {
 
 /// A `VkWin32KeyedMutexAcquireReleaseInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct Win32KeyedMutexAcquireReleaseInfoNv<'s> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV,
+    acquire_syncs: Option<Vec<vks::VkDeviceMemory>>,
+    release_syncs: Option<Vec<vks::VkDeviceMemory>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -10177,12 +12665,21 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
 }
 
 
+impl<'s> From<Win32KeyedMutexAcquireReleaseInfoNv<'s>> for vks::VkWin32KeyedMutexAcquireReleaseInfoNV {
+    fn from(f: Win32KeyedMutexAcquireReleaseInfoNv<'s>) -> vks::VkWin32KeyedMutexAcquireReleaseInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkWin32KeyedMutexAcquireReleaseInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV,
+    acquire_syncs: Option<Vec<vks::VkDeviceMemory>>,
+    release_syncs: Option<Vec<vks::VkDeviceMemory>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -10190,40 +12687,61 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     pub fn new() -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
         Win32KeyedMutexAcquireReleaseInfoNvBuilder {
             raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV::default(),
+            acquire_syncs: None,
+            release_syncs: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn acquire_count<'m>(&'m mut self, acquire_count: u32) -> &'m mut Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+    pub fn acquire_count<'m>(mut self, acquire_count: u32) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+        self.raw.acquireCount = acquire_count.into();
         self
     }
 
-    pub fn acquire_syncs<'m, 'a>(&'m mut self, acquire_syncs: &'a DeviceMemory) -> &'m mut Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+    pub fn acquire_syncs<'m, 'a>(mut self, acquire_syncs: &'a [DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> where 'a: 'b {
+        self.acquire_syncs = Some(acquire_syncs.iter().map(|h| h.handle()).collect());
+        self.raw.pAcquireSyncs = self.acquire_syncs.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn acquire_keys<'m, 'a>(&'m mut self, acquire_keys: &'a u64) -> &'m mut Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+    pub fn acquire_keys<'m, 'a>(mut self, acquire_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+        self.raw.pAcquireKeys = acquire_keys.as_ptr() as *const _;
         self
     }
 
-    pub fn acquire_timeout_milliseconds<'m, 'a>(&'m mut self, acquire_timeout_milliseconds: &'a u32) -> &'m mut Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+    pub fn acquire_timeout_milliseconds<'m, 'a>(mut self, acquire_timeout_milliseconds: &'a [u32]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+        self.raw.pAcquireTimeoutMilliseconds = acquire_timeout_milliseconds.as_ptr() as *const _;
         self
     }
 
-    pub fn release_count<'m>(&'m mut self, release_count: u32) -> &'m mut Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+    pub fn release_count<'m>(mut self, release_count: u32) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+        self.raw.releaseCount = release_count.into();
         self
     }
 
-    pub fn release_syncs<'m, 'a>(&'m mut self, release_syncs: &'a DeviceMemory) -> &'m mut Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+    pub fn release_syncs<'m, 'a>(mut self, release_syncs: &'a [DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> where 'a: 'b {
+        self.release_syncs = Some(release_syncs.iter().map(|h| h.handle()).collect());
+        self.raw.pReleaseSyncs = self.release_syncs.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn release_keys<'m, 'a>(&'m mut self, release_keys: &'a u64) -> &'m mut Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+    pub fn release_keys<'m, 'a>(mut self, release_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+        self.raw.pReleaseKeys = release_keys.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> Win32KeyedMutexAcquireReleaseInfoNv<'b> {
+        Win32KeyedMutexAcquireReleaseInfoNv {
+            raw: self.raw,
+            acquire_syncs: self.acquire_syncs,
+            release_syncs: self.release_syncs,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -10231,7 +12749,7 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
 
 /// A `VkDeviceGeneratedCommandsFeaturesNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10258,9 +12776,17 @@ impl<'s> DeviceGeneratedCommandsFeaturesNvx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<DeviceGeneratedCommandsFeaturesNvx<'s>> for vks::VkDeviceGeneratedCommandsFeaturesNVX {
+    fn from(f: DeviceGeneratedCommandsFeaturesNvx<'s>) -> vks::VkDeviceGeneratedCommandsFeaturesNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceGeneratedCommandsFeaturesNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGeneratedCommandsFeaturesNvxBuilder<'b> {
@@ -10277,12 +12803,21 @@ impl<'b> DeviceGeneratedCommandsFeaturesNvxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceGeneratedCommandsFeaturesNvxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceGeneratedCommandsFeaturesNvxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn compute_binding_point_support<'m>(&'m mut self, compute_binding_point_support: bool) -> &'m mut DeviceGeneratedCommandsFeaturesNvxBuilder<'b> {
+    pub fn compute_binding_point_support<'m>(mut self, compute_binding_point_support: bool) -> DeviceGeneratedCommandsFeaturesNvxBuilder<'b> {
+        self.raw.computeBindingPointSupport = compute_binding_point_support as u32;
         self
+    }
+
+    pub fn build(self) -> DeviceGeneratedCommandsFeaturesNvx<'b> {
+        DeviceGeneratedCommandsFeaturesNvx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -10290,7 +12825,7 @@ impl<'b> DeviceGeneratedCommandsFeaturesNvxBuilder<'b> {
 
 /// A `VkDeviceGeneratedCommandsLimitsNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10329,9 +12864,17 @@ impl<'s> DeviceGeneratedCommandsLimitsNvx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<DeviceGeneratedCommandsLimitsNvx<'s>> for vks::VkDeviceGeneratedCommandsLimitsNVX {
+    fn from(f: DeviceGeneratedCommandsLimitsNvx<'s>) -> vks::VkDeviceGeneratedCommandsLimitsNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceGeneratedCommandsLimitsNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
@@ -10348,28 +12891,41 @@ impl<'b> DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn max_indirect_commands_layout_token_count<'m>(&'m mut self, max_indirect_commands_layout_token_count: u32) -> &'m mut DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+    pub fn max_indirect_commands_layout_token_count<'m>(mut self, max_indirect_commands_layout_token_count: u32) -> DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+        self.raw.maxIndirectCommandsLayoutTokenCount = max_indirect_commands_layout_token_count.into();
         self
     }
 
-    pub fn max_object_entry_counts<'m>(&'m mut self, max_object_entry_counts: u32) -> &'m mut DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+    pub fn max_object_entry_counts<'m>(mut self, max_object_entry_counts: u32) -> DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+        self.raw.maxObjectEntryCounts = max_object_entry_counts.into();
         self
     }
 
-    pub fn min_sequence_count_buffer_offset_alignment<'m>(&'m mut self, min_sequence_count_buffer_offset_alignment: u32) -> &'m mut DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+    pub fn min_sequence_count_buffer_offset_alignment<'m>(mut self, min_sequence_count_buffer_offset_alignment: u32) -> DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+        self.raw.minSequenceCountBufferOffsetAlignment = min_sequence_count_buffer_offset_alignment.into();
         self
     }
 
-    pub fn min_sequence_index_buffer_offset_alignment<'m>(&'m mut self, min_sequence_index_buffer_offset_alignment: u32) -> &'m mut DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+    pub fn min_sequence_index_buffer_offset_alignment<'m>(mut self, min_sequence_index_buffer_offset_alignment: u32) -> DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+        self.raw.minSequenceIndexBufferOffsetAlignment = min_sequence_index_buffer_offset_alignment.into();
         self
     }
 
-    pub fn min_commands_token_buffer_offset_alignment<'m>(&'m mut self, min_commands_token_buffer_offset_alignment: u32) -> &'m mut DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+    pub fn min_commands_token_buffer_offset_alignment<'m>(mut self, min_commands_token_buffer_offset_alignment: u32) -> DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
+        self.raw.minCommandsTokenBufferOffsetAlignment = min_commands_token_buffer_offset_alignment.into();
         self
+    }
+
+    pub fn build(self) -> DeviceGeneratedCommandsLimitsNvx<'b> {
+        DeviceGeneratedCommandsLimitsNvx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -10377,7 +12933,7 @@ impl<'b> DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
 
 /// A `VkIndirectCommandsTokenNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10406,9 +12962,17 @@ impl IndirectCommandsTokenNvx {
 }
 
 
+#[cfg(feature = "experimental")]
+impl From<IndirectCommandsTokenNvx> for vks::VkIndirectCommandsTokenNVX {
+    fn from(f: IndirectCommandsTokenNvx) -> vks::VkIndirectCommandsTokenNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkIndirectCommandsTokenNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct IndirectCommandsTokenNvxBuilder {
@@ -10423,16 +12987,25 @@ impl IndirectCommandsTokenNvxBuilder {
         }
     }
 
-    pub fn token_type<'m>(&'m mut self, token_type: IndirectCommandsTokenTypeNvx) -> &'m mut IndirectCommandsTokenNvxBuilder {
+    pub fn token_type<'m>(mut self, token_type: IndirectCommandsTokenTypeNvx) -> IndirectCommandsTokenNvxBuilder {
+        self.raw.tokenType = token_type.into();
         self
     }
 
-    pub fn buffer<'m>(&'m mut self, buffer: Buffer) -> &'m mut IndirectCommandsTokenNvxBuilder {
+    pub fn buffer<'m, 'a>(mut self, buffer: &'a Buffer) -> IndirectCommandsTokenNvxBuilder {
+        self.raw.buffer = buffer.handle();
         self
     }
 
-    pub fn offset<'m>(&'m mut self, offset: u64) -> &'m mut IndirectCommandsTokenNvxBuilder {
+    pub fn offset<'m>(mut self, offset: u64) -> IndirectCommandsTokenNvxBuilder {
+        self.raw.offset = offset.into();
         self
+    }
+
+    pub fn build(self) -> IndirectCommandsTokenNvx {
+        IndirectCommandsTokenNvx {
+            raw: self.raw,
+        }
     }
 
 }
@@ -10440,7 +13013,7 @@ impl IndirectCommandsTokenNvxBuilder {
 
 /// A `VkIndirectCommandsLayoutTokenNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10472,9 +13045,17 @@ impl IndirectCommandsLayoutTokenNvx {
 }
 
 
+#[cfg(feature = "experimental")]
+impl From<IndirectCommandsLayoutTokenNvx> for vks::VkIndirectCommandsLayoutTokenNVX {
+    fn from(f: IndirectCommandsLayoutTokenNvx) -> vks::VkIndirectCommandsLayoutTokenNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkIndirectCommandsLayoutTokenNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct IndirectCommandsLayoutTokenNvxBuilder {
@@ -10489,20 +13070,30 @@ impl IndirectCommandsLayoutTokenNvxBuilder {
         }
     }
 
-    pub fn token_type<'m>(&'m mut self, token_type: IndirectCommandsTokenTypeNvx) -> &'m mut IndirectCommandsLayoutTokenNvxBuilder {
+    pub fn token_type<'m>(mut self, token_type: IndirectCommandsTokenTypeNvx) -> IndirectCommandsLayoutTokenNvxBuilder {
+        self.raw.tokenType = token_type.into();
         self
     }
 
-    pub fn binding_unit<'m>(&'m mut self, binding_unit: u32) -> &'m mut IndirectCommandsLayoutTokenNvxBuilder {
+    pub fn binding_unit<'m>(mut self, binding_unit: u32) -> IndirectCommandsLayoutTokenNvxBuilder {
+        self.raw.bindingUnit = binding_unit.into();
         self
     }
 
-    pub fn dynamic_count<'m>(&'m mut self, dynamic_count: u32) -> &'m mut IndirectCommandsLayoutTokenNvxBuilder {
+    pub fn dynamic_count<'m>(mut self, dynamic_count: u32) -> IndirectCommandsLayoutTokenNvxBuilder {
+        self.raw.dynamicCount = dynamic_count.into();
         self
     }
 
-    pub fn divisor<'m>(&'m mut self, divisor: u32) -> &'m mut IndirectCommandsLayoutTokenNvxBuilder {
+    pub fn divisor<'m>(mut self, divisor: u32) -> IndirectCommandsLayoutTokenNvxBuilder {
+        self.raw.divisor = divisor.into();
         self
+    }
+
+    pub fn build(self) -> IndirectCommandsLayoutTokenNvx {
+        IndirectCommandsLayoutTokenNvx {
+            raw: self.raw,
+        }
     }
 
 }
@@ -10510,7 +13101,7 @@ impl IndirectCommandsLayoutTokenNvxBuilder {
 
 /// A `VkIndirectCommandsLayoutCreateInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10546,9 +13137,17 @@ impl<'s> IndirectCommandsLayoutCreateInfoNvx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<IndirectCommandsLayoutCreateInfoNvx<'s>> for vks::VkIndirectCommandsLayoutCreateInfoNVX {
+    fn from(f: IndirectCommandsLayoutCreateInfoNvx<'s>) -> vks::VkIndirectCommandsLayoutCreateInfoNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkIndirectCommandsLayoutCreateInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
@@ -10565,24 +13164,36 @@ impl<'b> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn pipeline_bind_point<'m>(&'m mut self, pipeline_bind_point: PipelineBindPoint) -> &'m mut IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
+    pub fn pipeline_bind_point<'m>(mut self, pipeline_bind_point: PipelineBindPoint) -> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
+        self.raw.pipelineBindPoint = pipeline_bind_point.into();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: IndirectCommandsLayoutUsageFlagsNvx) -> &'m mut IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: IndirectCommandsLayoutUsageFlagsNvx) -> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn token_count<'m>(&'m mut self, token_count: u32) -> &'m mut IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
+    pub fn token_count<'m>(mut self, token_count: u32) -> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
+        self.raw.tokenCount = token_count.into();
         self
     }
 
-    pub fn tokens<'m, 'a>(&'m mut self, tokens: &'a IndirectCommandsLayoutTokenNvx) -> &'m mut IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
+    pub fn tokens<'m, 'a>(mut self, tokens: &'a [IndirectCommandsLayoutTokenNvx]) -> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
+        self.raw.pTokens = tokens.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> IndirectCommandsLayoutCreateInfoNvx<'b> {
+        IndirectCommandsLayoutCreateInfoNvx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -10590,7 +13201,7 @@ impl<'b> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
 
 /// A `VkCmdProcessCommandsInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10644,9 +13255,17 @@ impl<'s> CmdProcessCommandsInfoNvx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<CmdProcessCommandsInfoNvx<'s>> for vks::VkCmdProcessCommandsInfoNVX {
+    fn from(f: CmdProcessCommandsInfoNvx<'s>) -> vks::VkCmdProcessCommandsInfoNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkCmdProcessCommandsInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct CmdProcessCommandsInfoNvxBuilder<'b> {
@@ -10663,48 +13282,66 @@ impl<'b> CmdProcessCommandsInfoNvxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn object_table<'m>(&'m mut self, object_table: ObjectTableNvx) -> &'m mut CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub fn object_table<'m, 'a>(mut self, object_table: &'a ObjectTableNvx) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+        self.raw.objectTable = object_table.handle();
         self
     }
 
-    pub fn indirect_commands_layout<'m>(&'m mut self, indirect_commands_layout: IndirectCommandsLayoutNvx) -> &'m mut CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub fn indirect_commands_layout<'m, 'a>(mut self, indirect_commands_layout: &'a IndirectCommandsLayoutNvx) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+        self.raw.indirectCommandsLayout = indirect_commands_layout.handle();
         self
     }
 
-    pub fn indirect_commands_token_count<'m>(&'m mut self, indirect_commands_token_count: u32) -> &'m mut CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub fn indirect_commands_token_count<'m>(mut self, indirect_commands_token_count: u32) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+        self.raw.indirectCommandsTokenCount = indirect_commands_token_count.into();
         self
     }
 
-    pub fn indirect_commands_tokens<'m, 'a>(&'m mut self, indirect_commands_tokens: &'a IndirectCommandsTokenNvx) -> &'m mut CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub fn indirect_commands_tokens<'m, 'a>(mut self, indirect_commands_tokens: &'a [IndirectCommandsTokenNvx]) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+        self.raw.pIndirectCommandsTokens = indirect_commands_tokens.as_ptr() as *const _;
         self
     }
 
-    pub fn max_sequences_count<'m>(&'m mut self, max_sequences_count: u32) -> &'m mut CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub fn max_sequences_count<'m>(mut self, max_sequences_count: u32) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+        self.raw.maxSequencesCount = max_sequences_count.into();
         self
     }
 
-    pub fn target_command_buffer<'m>(&'m mut self, target_command_buffer: CommandBuffer) -> &'m mut CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub fn target_command_buffer<'m, 'a>(mut self, target_command_buffer: &'a CommandBuffer) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+        self.raw.targetCommandBuffer = target_command_buffer.handle();
         self
     }
 
-    pub fn sequences_count_buffer<'m>(&'m mut self, sequences_count_buffer: Buffer) -> &'m mut CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub fn sequences_count_buffer<'m, 'a>(mut self, sequences_count_buffer: &'a Buffer) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+        self.raw.sequencesCountBuffer = sequences_count_buffer.handle();
         self
     }
 
-    pub fn sequences_count_offset<'m>(&'m mut self, sequences_count_offset: u64) -> &'m mut CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub fn sequences_count_offset<'m>(mut self, sequences_count_offset: u64) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+        self.raw.sequencesCountOffset = sequences_count_offset.into();
         self
     }
 
-    pub fn sequences_index_buffer<'m>(&'m mut self, sequences_index_buffer: Buffer) -> &'m mut CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub fn sequences_index_buffer<'m, 'a>(mut self, sequences_index_buffer: &'a Buffer) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+        self.raw.sequencesIndexBuffer = sequences_index_buffer.handle();
         self
     }
 
-    pub fn sequences_index_offset<'m>(&'m mut self, sequences_index_offset: u64) -> &'m mut CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub fn sequences_index_offset<'m>(mut self, sequences_index_offset: u64) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+        self.raw.sequencesIndexOffset = sequences_index_offset.into();
         self
+    }
+
+    pub fn build(self) -> CmdProcessCommandsInfoNvx<'b> {
+        CmdProcessCommandsInfoNvx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -10712,7 +13349,7 @@ impl<'b> CmdProcessCommandsInfoNvxBuilder<'b> {
 
 /// A `VkCmdReserveSpaceForCommandsInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10745,9 +13382,17 @@ impl<'s> CmdReserveSpaceForCommandsInfoNvx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<CmdReserveSpaceForCommandsInfoNvx<'s>> for vks::VkCmdReserveSpaceForCommandsInfoNVX {
+    fn from(f: CmdReserveSpaceForCommandsInfoNvx<'s>) -> vks::VkCmdReserveSpaceForCommandsInfoNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkCmdReserveSpaceForCommandsInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
@@ -10764,20 +13409,31 @@ impl<'b> CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn object_table<'m>(&'m mut self, object_table: ObjectTableNvx) -> &'m mut CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
+    pub fn object_table<'m, 'a>(mut self, object_table: &'a ObjectTableNvx) -> CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
+        self.raw.objectTable = object_table.handle();
         self
     }
 
-    pub fn indirect_commands_layout<'m>(&'m mut self, indirect_commands_layout: IndirectCommandsLayoutNvx) -> &'m mut CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
+    pub fn indirect_commands_layout<'m, 'a>(mut self, indirect_commands_layout: &'a IndirectCommandsLayoutNvx) -> CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
+        self.raw.indirectCommandsLayout = indirect_commands_layout.handle();
         self
     }
 
-    pub fn max_sequences_count<'m>(&'m mut self, max_sequences_count: u32) -> &'m mut CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
+    pub fn max_sequences_count<'m>(mut self, max_sequences_count: u32) -> CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
+        self.raw.maxSequencesCount = max_sequences_count.into();
         self
+    }
+
+    pub fn build(self) -> CmdReserveSpaceForCommandsInfoNvx<'b> {
+        CmdReserveSpaceForCommandsInfoNvx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -10785,7 +13441,7 @@ impl<'b> CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
 
 /// A `VkObjectTableCreateInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10836,9 +13492,17 @@ impl<'s> ObjectTableCreateInfoNvx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<ObjectTableCreateInfoNvx<'s>> for vks::VkObjectTableCreateInfoNVX {
+    fn from(f: ObjectTableCreateInfoNvx<'s>) -> vks::VkObjectTableCreateInfoNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkObjectTableCreateInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTableCreateInfoNvxBuilder<'b> {
@@ -10855,44 +13519,61 @@ impl<'b> ObjectTableCreateInfoNvxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ObjectTableCreateInfoNvxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ObjectTableCreateInfoNvxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn object_count<'m>(&'m mut self, object_count: u32) -> &'m mut ObjectTableCreateInfoNvxBuilder<'b> {
+    pub fn object_count<'m>(mut self, object_count: u32) -> ObjectTableCreateInfoNvxBuilder<'b> {
+        self.raw.objectCount = object_count.into();
         self
     }
 
-    pub fn object_entry_types<'m, 'a>(&'m mut self, object_entry_types: &'a ObjectEntryTypeNvx) -> &'m mut ObjectTableCreateInfoNvxBuilder<'b> {
+    pub fn object_entry_types<'m, 'a>(mut self, object_entry_types: &'a [ObjectEntryTypeNvx]) -> ObjectTableCreateInfoNvxBuilder<'b> {
+        self.raw.pObjectEntryTypes = object_entry_types.as_ptr() as *const _;
         self
     }
 
-    pub fn object_entry_counts<'m, 'a>(&'m mut self, object_entry_counts: &'a u32) -> &'m mut ObjectTableCreateInfoNvxBuilder<'b> {
+    pub fn object_entry_counts<'m, 'a>(mut self, object_entry_counts: &'a [u32]) -> ObjectTableCreateInfoNvxBuilder<'b> {
+        self.raw.pObjectEntryCounts = object_entry_counts.as_ptr() as *const _;
         self
     }
 
-    pub fn object_entry_usage_flags<'m, 'a>(&'m mut self, object_entry_usage_flags: &'a ObjectEntryUsageFlagsNvx) -> &'m mut ObjectTableCreateInfoNvxBuilder<'b> {
+    pub fn object_entry_usage_flags<'m>(mut self, object_entry_usage_flags: ObjectEntryUsageFlagsNvx) -> ObjectTableCreateInfoNvxBuilder<'b> {
+        self.raw.pObjectEntryUsageFlags = object_entry_usage_flags.bits();
         self
     }
 
-    pub fn max_uniform_buffers_per_descriptor<'m>(&'m mut self, max_uniform_buffers_per_descriptor: u32) -> &'m mut ObjectTableCreateInfoNvxBuilder<'b> {
+    pub fn max_uniform_buffers_per_descriptor<'m>(mut self, max_uniform_buffers_per_descriptor: u32) -> ObjectTableCreateInfoNvxBuilder<'b> {
+        self.raw.maxUniformBuffersPerDescriptor = max_uniform_buffers_per_descriptor.into();
         self
     }
 
-    pub fn max_storage_buffers_per_descriptor<'m>(&'m mut self, max_storage_buffers_per_descriptor: u32) -> &'m mut ObjectTableCreateInfoNvxBuilder<'b> {
+    pub fn max_storage_buffers_per_descriptor<'m>(mut self, max_storage_buffers_per_descriptor: u32) -> ObjectTableCreateInfoNvxBuilder<'b> {
+        self.raw.maxStorageBuffersPerDescriptor = max_storage_buffers_per_descriptor.into();
         self
     }
 
-    pub fn max_storage_images_per_descriptor<'m>(&'m mut self, max_storage_images_per_descriptor: u32) -> &'m mut ObjectTableCreateInfoNvxBuilder<'b> {
+    pub fn max_storage_images_per_descriptor<'m>(mut self, max_storage_images_per_descriptor: u32) -> ObjectTableCreateInfoNvxBuilder<'b> {
+        self.raw.maxStorageImagesPerDescriptor = max_storage_images_per_descriptor.into();
         self
     }
 
-    pub fn max_sampled_images_per_descriptor<'m>(&'m mut self, max_sampled_images_per_descriptor: u32) -> &'m mut ObjectTableCreateInfoNvxBuilder<'b> {
+    pub fn max_sampled_images_per_descriptor<'m>(mut self, max_sampled_images_per_descriptor: u32) -> ObjectTableCreateInfoNvxBuilder<'b> {
+        self.raw.maxSampledImagesPerDescriptor = max_sampled_images_per_descriptor.into();
         self
     }
 
-    pub fn max_pipeline_layouts<'m>(&'m mut self, max_pipeline_layouts: u32) -> &'m mut ObjectTableCreateInfoNvxBuilder<'b> {
+    pub fn max_pipeline_layouts<'m>(mut self, max_pipeline_layouts: u32) -> ObjectTableCreateInfoNvxBuilder<'b> {
+        self.raw.maxPipelineLayouts = max_pipeline_layouts.into();
         self
+    }
+
+    pub fn build(self) -> ObjectTableCreateInfoNvx<'b> {
+        ObjectTableCreateInfoNvx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -10900,7 +13581,7 @@ impl<'b> ObjectTableCreateInfoNvxBuilder<'b> {
 
 /// A `VkObjectTableEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10926,9 +13607,17 @@ impl ObjectTableEntryNvx {
 }
 
 
+#[cfg(feature = "experimental")]
+impl From<ObjectTableEntryNvx> for vks::VkObjectTableEntryNVX {
+    fn from(f: ObjectTableEntryNvx) -> vks::VkObjectTableEntryNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkObjectTableEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTableEntryNvxBuilder {
@@ -10943,12 +13632,20 @@ impl ObjectTableEntryNvxBuilder {
         }
     }
 
-    pub fn type_of<'m>(&'m mut self, type_of: ObjectEntryTypeNvx) -> &'m mut ObjectTableEntryNvxBuilder {
+    pub fn type_of<'m>(mut self, type_of: ObjectEntryTypeNvx) -> ObjectTableEntryNvxBuilder {
+        self.raw.type_ = type_of.into();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: ObjectEntryUsageFlagsNvx) -> &'m mut ObjectTableEntryNvxBuilder {
+    pub fn flags<'m>(mut self, flags: ObjectEntryUsageFlagsNvx) -> ObjectTableEntryNvxBuilder {
+        self.raw.flags = flags.bits();
         self
+    }
+
+    pub fn build(self) -> ObjectTableEntryNvx {
+        ObjectTableEntryNvx {
+            raw: self.raw,
+        }
     }
 
 }
@@ -10956,7 +13653,7 @@ impl ObjectTableEntryNvxBuilder {
 
 /// A `VkObjectTablePipelineEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10985,9 +13682,17 @@ impl ObjectTablePipelineEntryNvx {
 }
 
 
+#[cfg(feature = "experimental")]
+impl From<ObjectTablePipelineEntryNvx> for vks::VkObjectTablePipelineEntryNVX {
+    fn from(f: ObjectTablePipelineEntryNvx) -> vks::VkObjectTablePipelineEntryNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkObjectTablePipelineEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTablePipelineEntryNvxBuilder {
@@ -11002,16 +13707,25 @@ impl ObjectTablePipelineEntryNvxBuilder {
         }
     }
 
-    pub fn type_of<'m>(&'m mut self, type_of: ObjectEntryTypeNvx) -> &'m mut ObjectTablePipelineEntryNvxBuilder {
+    pub fn type_of<'m>(mut self, type_of: ObjectEntryTypeNvx) -> ObjectTablePipelineEntryNvxBuilder {
+        self.raw.type_ = type_of.into();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: ObjectEntryUsageFlagsNvx) -> &'m mut ObjectTablePipelineEntryNvxBuilder {
+    pub fn flags<'m>(mut self, flags: ObjectEntryUsageFlagsNvx) -> ObjectTablePipelineEntryNvxBuilder {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn pipeline<'m>(&'m mut self, pipeline: Pipeline) -> &'m mut ObjectTablePipelineEntryNvxBuilder {
+    pub fn pipeline<'m, 'a>(mut self, pipeline: &'a Pipeline) -> ObjectTablePipelineEntryNvxBuilder {
+        self.raw.pipeline = pipeline.handle();
         self
+    }
+
+    pub fn build(self) -> ObjectTablePipelineEntryNvx {
+        ObjectTablePipelineEntryNvx {
+            raw: self.raw,
+        }
     }
 
 }
@@ -11019,7 +13733,7 @@ impl ObjectTablePipelineEntryNvxBuilder {
 
 /// A `VkObjectTableDescriptorSetEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -11051,9 +13765,17 @@ impl ObjectTableDescriptorSetEntryNvx {
 }
 
 
+#[cfg(feature = "experimental")]
+impl From<ObjectTableDescriptorSetEntryNvx> for vks::VkObjectTableDescriptorSetEntryNVX {
+    fn from(f: ObjectTableDescriptorSetEntryNvx) -> vks::VkObjectTableDescriptorSetEntryNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkObjectTableDescriptorSetEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTableDescriptorSetEntryNvxBuilder {
@@ -11068,20 +13790,30 @@ impl ObjectTableDescriptorSetEntryNvxBuilder {
         }
     }
 
-    pub fn type_of<'m>(&'m mut self, type_of: ObjectEntryTypeNvx) -> &'m mut ObjectTableDescriptorSetEntryNvxBuilder {
+    pub fn type_of<'m>(mut self, type_of: ObjectEntryTypeNvx) -> ObjectTableDescriptorSetEntryNvxBuilder {
+        self.raw.type_ = type_of.into();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: ObjectEntryUsageFlagsNvx) -> &'m mut ObjectTableDescriptorSetEntryNvxBuilder {
+    pub fn flags<'m>(mut self, flags: ObjectEntryUsageFlagsNvx) -> ObjectTableDescriptorSetEntryNvxBuilder {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn pipeline_layout<'m>(&'m mut self, pipeline_layout: PipelineLayout) -> &'m mut ObjectTableDescriptorSetEntryNvxBuilder {
+    pub fn pipeline_layout<'m, 'a>(mut self, pipeline_layout: &'a PipelineLayout) -> ObjectTableDescriptorSetEntryNvxBuilder {
+        self.raw.pipelineLayout = pipeline_layout.handle();
         self
     }
 
-    pub fn descriptor_set<'m>(&'m mut self, descriptor_set: DescriptorSet) -> &'m mut ObjectTableDescriptorSetEntryNvxBuilder {
+    pub fn descriptor_set<'m, 'a>(mut self, descriptor_set: &'a DescriptorSet) -> ObjectTableDescriptorSetEntryNvxBuilder {
+        self.raw.descriptorSet = descriptor_set.handle();
         self
+    }
+
+    pub fn build(self) -> ObjectTableDescriptorSetEntryNvx {
+        ObjectTableDescriptorSetEntryNvx {
+            raw: self.raw,
+        }
     }
 
 }
@@ -11089,7 +13821,7 @@ impl ObjectTableDescriptorSetEntryNvxBuilder {
 
 /// A `VkObjectTableVertexBufferEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -11118,9 +13850,17 @@ impl ObjectTableVertexBufferEntryNvx {
 }
 
 
+#[cfg(feature = "experimental")]
+impl From<ObjectTableVertexBufferEntryNvx> for vks::VkObjectTableVertexBufferEntryNVX {
+    fn from(f: ObjectTableVertexBufferEntryNvx) -> vks::VkObjectTableVertexBufferEntryNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkObjectTableVertexBufferEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTableVertexBufferEntryNvxBuilder {
@@ -11135,16 +13875,25 @@ impl ObjectTableVertexBufferEntryNvxBuilder {
         }
     }
 
-    pub fn type_of<'m>(&'m mut self, type_of: ObjectEntryTypeNvx) -> &'m mut ObjectTableVertexBufferEntryNvxBuilder {
+    pub fn type_of<'m>(mut self, type_of: ObjectEntryTypeNvx) -> ObjectTableVertexBufferEntryNvxBuilder {
+        self.raw.type_ = type_of.into();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: ObjectEntryUsageFlagsNvx) -> &'m mut ObjectTableVertexBufferEntryNvxBuilder {
+    pub fn flags<'m>(mut self, flags: ObjectEntryUsageFlagsNvx) -> ObjectTableVertexBufferEntryNvxBuilder {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn buffer<'m>(&'m mut self, buffer: Buffer) -> &'m mut ObjectTableVertexBufferEntryNvxBuilder {
+    pub fn buffer<'m, 'a>(mut self, buffer: &'a Buffer) -> ObjectTableVertexBufferEntryNvxBuilder {
+        self.raw.buffer = buffer.handle();
         self
+    }
+
+    pub fn build(self) -> ObjectTableVertexBufferEntryNvx {
+        ObjectTableVertexBufferEntryNvx {
+            raw: self.raw,
+        }
     }
 
 }
@@ -11152,7 +13901,7 @@ impl ObjectTableVertexBufferEntryNvxBuilder {
 
 /// A `VkObjectTableIndexBufferEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -11184,9 +13933,17 @@ impl ObjectTableIndexBufferEntryNvx {
 }
 
 
+#[cfg(feature = "experimental")]
+impl From<ObjectTableIndexBufferEntryNvx> for vks::VkObjectTableIndexBufferEntryNVX {
+    fn from(f: ObjectTableIndexBufferEntryNvx) -> vks::VkObjectTableIndexBufferEntryNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkObjectTableIndexBufferEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTableIndexBufferEntryNvxBuilder {
@@ -11201,20 +13958,30 @@ impl ObjectTableIndexBufferEntryNvxBuilder {
         }
     }
 
-    pub fn type_of<'m>(&'m mut self, type_of: ObjectEntryTypeNvx) -> &'m mut ObjectTableIndexBufferEntryNvxBuilder {
+    pub fn type_of<'m>(mut self, type_of: ObjectEntryTypeNvx) -> ObjectTableIndexBufferEntryNvxBuilder {
+        self.raw.type_ = type_of.into();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: ObjectEntryUsageFlagsNvx) -> &'m mut ObjectTableIndexBufferEntryNvxBuilder {
+    pub fn flags<'m>(mut self, flags: ObjectEntryUsageFlagsNvx) -> ObjectTableIndexBufferEntryNvxBuilder {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn buffer<'m>(&'m mut self, buffer: Buffer) -> &'m mut ObjectTableIndexBufferEntryNvxBuilder {
+    pub fn buffer<'m, 'a>(mut self, buffer: &'a Buffer) -> ObjectTableIndexBufferEntryNvxBuilder {
+        self.raw.buffer = buffer.handle();
         self
     }
 
-    pub fn index_type<'m>(&'m mut self, index_type: IndexType) -> &'m mut ObjectTableIndexBufferEntryNvxBuilder {
+    pub fn index_type<'m>(mut self, index_type: IndexType) -> ObjectTableIndexBufferEntryNvxBuilder {
+        self.raw.indexType = index_type.into();
         self
+    }
+
+    pub fn build(self) -> ObjectTableIndexBufferEntryNvx {
+        ObjectTableIndexBufferEntryNvx {
+            raw: self.raw,
+        }
     }
 
 }
@@ -11222,7 +13989,7 @@ impl ObjectTableIndexBufferEntryNvxBuilder {
 
 /// A `VkObjectTablePushConstantEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -11254,9 +14021,17 @@ impl ObjectTablePushConstantEntryNvx {
 }
 
 
+#[cfg(feature = "experimental")]
+impl From<ObjectTablePushConstantEntryNvx> for vks::VkObjectTablePushConstantEntryNVX {
+    fn from(f: ObjectTablePushConstantEntryNvx) -> vks::VkObjectTablePushConstantEntryNVX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkObjectTablePushConstantEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTablePushConstantEntryNvxBuilder {
@@ -11271,20 +14046,30 @@ impl ObjectTablePushConstantEntryNvxBuilder {
         }
     }
 
-    pub fn type_of<'m>(&'m mut self, type_of: ObjectEntryTypeNvx) -> &'m mut ObjectTablePushConstantEntryNvxBuilder {
+    pub fn type_of<'m>(mut self, type_of: ObjectEntryTypeNvx) -> ObjectTablePushConstantEntryNvxBuilder {
+        self.raw.type_ = type_of.into();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: ObjectEntryUsageFlagsNvx) -> &'m mut ObjectTablePushConstantEntryNvxBuilder {
+    pub fn flags<'m>(mut self, flags: ObjectEntryUsageFlagsNvx) -> ObjectTablePushConstantEntryNvxBuilder {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn pipeline_layout<'m>(&'m mut self, pipeline_layout: PipelineLayout) -> &'m mut ObjectTablePushConstantEntryNvxBuilder {
+    pub fn pipeline_layout<'m, 'a>(mut self, pipeline_layout: &'a PipelineLayout) -> ObjectTablePushConstantEntryNvxBuilder {
+        self.raw.pipelineLayout = pipeline_layout.handle();
         self
     }
 
-    pub fn stage_flags<'m>(&'m mut self, stage_flags: ShaderStageFlags) -> &'m mut ObjectTablePushConstantEntryNvxBuilder {
+    pub fn stage_flags<'m>(mut self, stage_flags: ShaderStageFlags) -> ObjectTablePushConstantEntryNvxBuilder {
+        self.raw.stageFlags = stage_flags.bits();
         self
+    }
+
+    pub fn build(self) -> ObjectTablePushConstantEntryNvx {
+        ObjectTablePushConstantEntryNvx {
+            raw: self.raw,
+        }
     }
 
 }
@@ -11292,7 +14077,7 @@ impl ObjectTablePushConstantEntryNvxBuilder {
 
 /// A `VkPhysicalDeviceFeatures2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceFeatures2Khr<'s> {
@@ -11317,9 +14102,16 @@ impl<'s> PhysicalDeviceFeatures2Khr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceFeatures2Khr<'s>> for vks::VkPhysicalDeviceFeatures2KHR {
+    fn from(f: PhysicalDeviceFeatures2Khr<'s>) -> vks::VkPhysicalDeviceFeatures2KHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceFeatures2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceFeatures2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceFeatures2KHR,
@@ -11334,12 +14126,21 @@ impl<'b> PhysicalDeviceFeatures2KhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceFeatures2KhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *mut c_void) -> PhysicalDeviceFeatures2KhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn features<'m>(&'m mut self, features: PhysicalDeviceFeatures) -> &'m mut PhysicalDeviceFeatures2KhrBuilder<'b> {
+    pub fn features<'m>(mut self, features: PhysicalDeviceFeatures) -> PhysicalDeviceFeatures2KhrBuilder<'b> {
+        self.raw.features = features.raw;
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceFeatures2Khr<'b> {
+        PhysicalDeviceFeatures2Khr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -11347,7 +14148,7 @@ impl<'b> PhysicalDeviceFeatures2KhrBuilder<'b> {
 
 /// A `VkPhysicalDeviceProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceProperties2Khr<'s> {
@@ -11368,9 +14169,16 @@ impl<'s> PhysicalDeviceProperties2Khr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceProperties2Khr<'s>> for vks::VkPhysicalDeviceProperties2KHR {
+    fn from(f: PhysicalDeviceProperties2Khr<'s>) -> vks::VkPhysicalDeviceProperties2KHR {
+        f.raw
+    }
+}
+
+
 /// A `VkFormatProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct FormatProperties2Khr<'s> {
@@ -11391,9 +14199,16 @@ impl<'s> FormatProperties2Khr<'s> {
 }
 
 
+impl<'s> From<FormatProperties2Khr<'s>> for vks::VkFormatProperties2KHR {
+    fn from(f: FormatProperties2Khr<'s>) -> vks::VkFormatProperties2KHR {
+        f.raw
+    }
+}
+
+
 /// A `VkImageFormatProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageFormatProperties2Khr<'s> {
@@ -11414,9 +14229,16 @@ impl<'s> ImageFormatProperties2Khr<'s> {
 }
 
 
+impl<'s> From<ImageFormatProperties2Khr<'s>> for vks::VkImageFormatProperties2KHR {
+    fn from(f: ImageFormatProperties2Khr<'s>) -> vks::VkImageFormatProperties2KHR {
+        f.raw
+    }
+}
+
+
 /// A `VkPhysicalDeviceImageFormatInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceImageFormatInfo2Khr<'s> {
@@ -11453,9 +14275,16 @@ impl<'s> PhysicalDeviceImageFormatInfo2Khr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceImageFormatInfo2Khr<'s>> for vks::VkPhysicalDeviceImageFormatInfo2KHR {
+    fn from(f: PhysicalDeviceImageFormatInfo2Khr<'s>) -> vks::VkPhysicalDeviceImageFormatInfo2KHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceImageFormatInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceImageFormatInfo2KHR,
@@ -11470,28 +14299,41 @@ impl<'b> PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn format<'m>(&'m mut self, format: Format) -> &'m mut PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+    pub fn format<'m>(mut self, format: Format) -> PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+        self.raw.format = format.into();
         self
     }
 
-    pub fn type_of<'m>(&'m mut self, type_of: ImageType) -> &'m mut PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+    pub fn type_of<'m>(mut self, type_of: ImageType) -> PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+        self.raw.type_ = type_of.into();
         self
     }
 
-    pub fn tiling<'m>(&'m mut self, tiling: ImageTiling) -> &'m mut PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+    pub fn tiling<'m>(mut self, tiling: ImageTiling) -> PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+        self.raw.tiling = tiling.into();
         self
     }
 
-    pub fn usage<'m>(&'m mut self, usage: ImageUsageFlags) -> &'m mut PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+    pub fn usage<'m>(mut self, usage: ImageUsageFlags) -> PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+        self.raw.usage = usage.bits();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: ImageCreateFlags) -> &'m mut PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: ImageCreateFlags) -> PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceImageFormatInfo2Khr<'b> {
+        PhysicalDeviceImageFormatInfo2Khr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -11499,7 +14341,7 @@ impl<'b> PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
 
 /// A `VkQueueFamilyProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct QueueFamilyProperties2Khr<'s> {
@@ -11520,9 +14362,16 @@ impl<'s> QueueFamilyProperties2Khr<'s> {
 }
 
 
+impl<'s> From<QueueFamilyProperties2Khr<'s>> for vks::VkQueueFamilyProperties2KHR {
+    fn from(f: QueueFamilyProperties2Khr<'s>) -> vks::VkQueueFamilyProperties2KHR {
+        f.raw
+    }
+}
+
+
 /// A `VkPhysicalDeviceMemoryProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceMemoryProperties2Khr<'s> {
@@ -11543,9 +14392,16 @@ impl<'s> PhysicalDeviceMemoryProperties2Khr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceMemoryProperties2Khr<'s>> for vks::VkPhysicalDeviceMemoryProperties2KHR {
+    fn from(f: PhysicalDeviceMemoryProperties2Khr<'s>) -> vks::VkPhysicalDeviceMemoryProperties2KHR {
+        f.raw
+    }
+}
+
+
 /// A `VkSparseImageFormatProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageFormatProperties2Khr<'s> {
@@ -11566,9 +14422,16 @@ impl<'s> SparseImageFormatProperties2Khr<'s> {
 }
 
 
+impl<'s> From<SparseImageFormatProperties2Khr<'s>> for vks::VkSparseImageFormatProperties2KHR {
+    fn from(f: SparseImageFormatProperties2Khr<'s>) -> vks::VkSparseImageFormatProperties2KHR {
+        f.raw
+    }
+}
+
+
 /// A `VkPhysicalDeviceSparseImageFormatInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
@@ -11605,9 +14468,16 @@ impl<'s> PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceSparseImageFormatInfo2Khr<'s>> for vks::VkPhysicalDeviceSparseImageFormatInfo2KHR {
+    fn from(f: PhysicalDeviceSparseImageFormatInfo2Khr<'s>) -> vks::VkPhysicalDeviceSparseImageFormatInfo2KHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceSparseImageFormatInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceSparseImageFormatInfo2KHR,
@@ -11622,28 +14492,41 @@ impl<'b> PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn format<'m>(&'m mut self, format: Format) -> &'m mut PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+    pub fn format<'m>(mut self, format: Format) -> PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+        self.raw.format = format.into();
         self
     }
 
-    pub fn type_of<'m>(&'m mut self, type_of: ImageType) -> &'m mut PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+    pub fn type_of<'m>(mut self, type_of: ImageType) -> PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+        self.raw.type_ = type_of.into();
         self
     }
 
-    pub fn samples<'m>(&'m mut self, samples: SampleCountFlags) -> &'m mut PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+    pub fn samples<'m>(mut self, samples: SampleCountFlags) -> PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+        self.raw.samples = samples.bits();
         self
     }
 
-    pub fn usage<'m>(&'m mut self, usage: ImageUsageFlags) -> &'m mut PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+    pub fn usage<'m>(mut self, usage: ImageUsageFlags) -> PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+        self.raw.usage = usage.bits();
         self
     }
 
-    pub fn tiling<'m>(&'m mut self, tiling: ImageTiling) -> &'m mut PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+    pub fn tiling<'m>(mut self, tiling: ImageTiling) -> PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
+        self.raw.tiling = tiling.into();
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceSparseImageFormatInfo2Khr<'b> {
+        PhysicalDeviceSparseImageFormatInfo2Khr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -11651,7 +14534,7 @@ impl<'b> PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
 
 /// A `VkPhysicalDevicePushDescriptorPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDevicePushDescriptorPropertiesKhr<'s> {
@@ -11676,9 +14559,16 @@ impl<'s> PhysicalDevicePushDescriptorPropertiesKhr<'s> {
 }
 
 
+impl<'s> From<PhysicalDevicePushDescriptorPropertiesKhr<'s>> for vks::VkPhysicalDevicePushDescriptorPropertiesKHR {
+    fn from(f: PhysicalDevicePushDescriptorPropertiesKhr<'s>) -> vks::VkPhysicalDevicePushDescriptorPropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDevicePushDescriptorPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDevicePushDescriptorPropertiesKhrBuilder<'b> {
     raw: vks::VkPhysicalDevicePushDescriptorPropertiesKHR,
@@ -11693,12 +14583,21 @@ impl<'b> PhysicalDevicePushDescriptorPropertiesKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDevicePushDescriptorPropertiesKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *mut c_void) -> PhysicalDevicePushDescriptorPropertiesKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn max_push_descriptors<'m>(&'m mut self, max_push_descriptors: u32) -> &'m mut PhysicalDevicePushDescriptorPropertiesKhrBuilder<'b> {
+    pub fn max_push_descriptors<'m>(mut self, max_push_descriptors: u32) -> PhysicalDevicePushDescriptorPropertiesKhrBuilder<'b> {
+        self.raw.maxPushDescriptors = max_push_descriptors.into();
         self
+    }
+
+    pub fn build(self) -> PhysicalDevicePushDescriptorPropertiesKhr<'b> {
+        PhysicalDevicePushDescriptorPropertiesKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -11706,7 +14605,7 @@ impl<'b> PhysicalDevicePushDescriptorPropertiesKhrBuilder<'b> {
 
 /// A `VkPresentRegionsKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PresentRegionsKhr<'s> {
@@ -11734,9 +14633,16 @@ impl<'s> PresentRegionsKhr<'s> {
 }
 
 
+impl<'s> From<PresentRegionsKhr<'s>> for vks::VkPresentRegionsKHR {
+    fn from(f: PresentRegionsKhr<'s>) -> vks::VkPresentRegionsKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPresentRegionsKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentRegionsKhrBuilder<'b> {
     raw: vks::VkPresentRegionsKHR,
@@ -11751,16 +14657,26 @@ impl<'b> PresentRegionsKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PresentRegionsKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PresentRegionsKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn swapchain_count<'m>(&'m mut self, swapchain_count: u32) -> &'m mut PresentRegionsKhrBuilder<'b> {
+    pub fn swapchain_count<'m>(mut self, swapchain_count: u32) -> PresentRegionsKhrBuilder<'b> {
+        self.raw.swapchainCount = swapchain_count.into();
         self
     }
 
-    pub fn regions<'m, 'a>(&'m mut self, regions: &'a PresentRegionKhr) -> &'m mut PresentRegionsKhrBuilder<'b> {
+    pub fn regions<'m, 'a>(mut self, regions: &'a [PresentRegionKhr]) -> PresentRegionsKhrBuilder<'b> {
+        self.raw.pRegions = regions.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> PresentRegionsKhr<'b> {
+        PresentRegionsKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -11768,7 +14684,7 @@ impl<'b> PresentRegionsKhrBuilder<'b> {
 
 /// A `VkPresentRegionKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PresentRegionKhr<'s> {
@@ -11793,9 +14709,16 @@ impl<'s> PresentRegionKhr<'s> {
 }
 
 
+impl<'s> From<PresentRegionKhr<'s>> for vks::VkPresentRegionKHR {
+    fn from(f: PresentRegionKhr<'s>) -> vks::VkPresentRegionKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPresentRegionKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentRegionKhrBuilder<'b> {
     raw: vks::VkPresentRegionKHR,
@@ -11810,12 +14733,21 @@ impl<'b> PresentRegionKhrBuilder<'b> {
         }
     }
 
-    pub fn rectangle_count<'m>(&'m mut self, rectangle_count: u32) -> &'m mut PresentRegionKhrBuilder<'b> {
+    pub fn rectangle_count<'m>(mut self, rectangle_count: u32) -> PresentRegionKhrBuilder<'b> {
+        self.raw.rectangleCount = rectangle_count.into();
         self
     }
 
-    pub fn rectangles<'m, 'a>(&'m mut self, rectangles: &'a RectLayerKhr) -> &'m mut PresentRegionKhrBuilder<'b> {
+    pub fn rectangles<'m, 'a>(mut self, rectangles: &'a [RectLayerKhr]) -> PresentRegionKhrBuilder<'b> {
+        self.raw.pRectangles = rectangles.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> PresentRegionKhr<'b> {
+        PresentRegionKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -11823,7 +14755,7 @@ impl<'b> PresentRegionKhrBuilder<'b> {
 
 /// A `VkRectLayerKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct RectLayerKhr {
@@ -11850,9 +14782,16 @@ impl RectLayerKhr {
 }
 
 
+impl From<RectLayerKhr> for vks::VkRectLayerKHR {
+    fn from(f: RectLayerKhr) -> vks::VkRectLayerKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkRectLayerKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct RectLayerKhrBuilder {
     raw: vks::VkRectLayerKHR,
@@ -11865,16 +14804,25 @@ impl RectLayerKhrBuilder {
         }
     }
 
-    pub fn offset<'m>(&'m mut self, offset: Offset2d) -> &'m mut RectLayerKhrBuilder {
+    pub fn offset<'m>(mut self, offset: Offset2d) -> RectLayerKhrBuilder {
+        self.raw.offset = offset.raw;
         self
     }
 
-    pub fn extent<'m>(&'m mut self, extent: Extent2d) -> &'m mut RectLayerKhrBuilder {
+    pub fn extent<'m>(mut self, extent: Extent2d) -> RectLayerKhrBuilder {
+        self.raw.extent = extent.raw;
         self
     }
 
-    pub fn layer<'m>(&'m mut self, layer: u32) -> &'m mut RectLayerKhrBuilder {
+    pub fn layer<'m>(mut self, layer: u32) -> RectLayerKhrBuilder {
+        self.raw.layer = layer.into();
         self
+    }
+
+    pub fn build(self) -> RectLayerKhr {
+        RectLayerKhr {
+            raw: self.raw,
+        }
     }
 
 }
@@ -11882,7 +14830,7 @@ impl RectLayerKhrBuilder {
 
 /// A `VkPhysicalDeviceVariablePointerFeaturesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceVariablePointerFeaturesKhr<'s> {
@@ -11910,9 +14858,16 @@ impl<'s> PhysicalDeviceVariablePointerFeaturesKhr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceVariablePointerFeaturesKhr<'s>> for vks::VkPhysicalDeviceVariablePointerFeaturesKHR {
+    fn from(f: PhysicalDeviceVariablePointerFeaturesKhr<'s>) -> vks::VkPhysicalDeviceVariablePointerFeaturesKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceVariablePointerFeaturesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceVariablePointerFeaturesKHR,
@@ -11927,16 +14882,26 @@ impl<'b> PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *mut c_void) -> PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn variable_pointers_storage_buffer<'m>(&'m mut self, variable_pointers_storage_buffer: bool) -> &'m mut PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
+    pub fn variable_pointers_storage_buffer<'m>(mut self, variable_pointers_storage_buffer: bool) -> PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
+        self.raw.variablePointersStorageBuffer = variable_pointers_storage_buffer as u32;
         self
     }
 
-    pub fn variable_pointers<'m>(&'m mut self, variable_pointers: bool) -> &'m mut PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
+    pub fn variable_pointers<'m>(mut self, variable_pointers: bool) -> PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
+        self.raw.variablePointers = variable_pointers as u32;
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceVariablePointerFeaturesKhr<'b> {
+        PhysicalDeviceVariablePointerFeaturesKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -11944,7 +14909,7 @@ impl<'b> PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
 
 /// A `VkExternalMemoryPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalMemoryPropertiesKhr {
@@ -11967,9 +14932,16 @@ impl ExternalMemoryPropertiesKhr {
 }
 
 
+impl From<ExternalMemoryPropertiesKhr> for vks::VkExternalMemoryPropertiesKHR {
+    fn from(f: ExternalMemoryPropertiesKhr) -> vks::VkExternalMemoryPropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkPhysicalDeviceExternalImageFormatInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceExternalImageFormatInfoKhr<'s> {
@@ -11994,9 +14966,16 @@ impl<'s> PhysicalDeviceExternalImageFormatInfoKhr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceExternalImageFormatInfoKhr<'s>> for vks::VkPhysicalDeviceExternalImageFormatInfoKHR {
+    fn from(f: PhysicalDeviceExternalImageFormatInfoKhr<'s>) -> vks::VkPhysicalDeviceExternalImageFormatInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceExternalImageFormatInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalImageFormatInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalImageFormatInfoKHR,
@@ -12011,12 +14990,21 @@ impl<'b> PhysicalDeviceExternalImageFormatInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceExternalImageFormatInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PhysicalDeviceExternalImageFormatInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> &'m mut PhysicalDeviceExternalImageFormatInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> PhysicalDeviceExternalImageFormatInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceExternalImageFormatInfoKhr<'b> {
+        PhysicalDeviceExternalImageFormatInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12024,7 +15012,7 @@ impl<'b> PhysicalDeviceExternalImageFormatInfoKhrBuilder<'b> {
 
 /// A `VkExternalImageFormatPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalImageFormatPropertiesKhr<'s> {
@@ -12045,9 +15033,16 @@ impl<'s> ExternalImageFormatPropertiesKhr<'s> {
 }
 
 
+impl<'s> From<ExternalImageFormatPropertiesKhr<'s>> for vks::VkExternalImageFormatPropertiesKHR {
+    fn from(f: ExternalImageFormatPropertiesKhr<'s>) -> vks::VkExternalImageFormatPropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkPhysicalDeviceExternalBufferInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceExternalBufferInfoKhr<'s> {
@@ -12078,9 +15073,16 @@ impl<'s> PhysicalDeviceExternalBufferInfoKhr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceExternalBufferInfoKhr<'s>> for vks::VkPhysicalDeviceExternalBufferInfoKHR {
+    fn from(f: PhysicalDeviceExternalBufferInfoKhr<'s>) -> vks::VkPhysicalDeviceExternalBufferInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceExternalBufferInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalBufferInfoKHR,
@@ -12095,20 +15097,31 @@ impl<'b> PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: BufferCreateFlags) -> &'m mut PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: BufferCreateFlags) -> PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn usage<'m>(&'m mut self, usage: BufferUsageFlags) -> &'m mut PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
+    pub fn usage<'m>(mut self, usage: BufferUsageFlags) -> PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
+        self.raw.usage = usage.bits();
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> &'m mut PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceExternalBufferInfoKhr<'b> {
+        PhysicalDeviceExternalBufferInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12116,7 +15129,7 @@ impl<'b> PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
 
 /// A `VkExternalBufferPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalBufferPropertiesKhr<'s> {
@@ -12137,9 +15150,16 @@ impl<'s> ExternalBufferPropertiesKhr<'s> {
 }
 
 
+impl<'s> From<ExternalBufferPropertiesKhr<'s>> for vks::VkExternalBufferPropertiesKHR {
+    fn from(f: ExternalBufferPropertiesKhr<'s>) -> vks::VkExternalBufferPropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkPhysicalDeviceIDPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceIDPropertiesKhr<'s> {
@@ -12172,9 +15192,16 @@ impl<'s> PhysicalDeviceIDPropertiesKhr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceIDPropertiesKhr<'s>> for vks::VkPhysicalDeviceIDPropertiesKHR {
+    fn from(f: PhysicalDeviceIDPropertiesKhr<'s>) -> vks::VkPhysicalDeviceIDPropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkExternalMemoryImageCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalMemoryImageCreateInfoKhr<'s> {
@@ -12199,9 +15226,16 @@ impl<'s> ExternalMemoryImageCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<ExternalMemoryImageCreateInfoKhr<'s>> for vks::VkExternalMemoryImageCreateInfoKHR {
+    fn from(f: ExternalMemoryImageCreateInfoKhr<'s>) -> vks::VkExternalMemoryImageCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExternalMemoryImageCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExternalMemoryImageCreateInfoKhrBuilder<'b> {
     raw: vks::VkExternalMemoryImageCreateInfoKHR,
@@ -12216,12 +15250,21 @@ impl<'b> ExternalMemoryImageCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ExternalMemoryImageCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ExternalMemoryImageCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_types<'m>(&'m mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) -> &'m mut ExternalMemoryImageCreateInfoKhrBuilder<'b> {
+    pub fn handle_types<'m>(mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) -> ExternalMemoryImageCreateInfoKhrBuilder<'b> {
+        self.raw.handleTypes = handle_types.bits();
         self
+    }
+
+    pub fn build(self) -> ExternalMemoryImageCreateInfoKhr<'b> {
+        ExternalMemoryImageCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12229,7 +15272,7 @@ impl<'b> ExternalMemoryImageCreateInfoKhrBuilder<'b> {
 
 /// A `VkExternalMemoryBufferCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalMemoryBufferCreateInfoKhr<'s> {
@@ -12254,9 +15297,16 @@ impl<'s> ExternalMemoryBufferCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<ExternalMemoryBufferCreateInfoKhr<'s>> for vks::VkExternalMemoryBufferCreateInfoKHR {
+    fn from(f: ExternalMemoryBufferCreateInfoKhr<'s>) -> vks::VkExternalMemoryBufferCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExternalMemoryBufferCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExternalMemoryBufferCreateInfoKhrBuilder<'b> {
     raw: vks::VkExternalMemoryBufferCreateInfoKHR,
@@ -12271,12 +15321,21 @@ impl<'b> ExternalMemoryBufferCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ExternalMemoryBufferCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ExternalMemoryBufferCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_types<'m>(&'m mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) -> &'m mut ExternalMemoryBufferCreateInfoKhrBuilder<'b> {
+    pub fn handle_types<'m>(mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) -> ExternalMemoryBufferCreateInfoKhrBuilder<'b> {
+        self.raw.handleTypes = handle_types.bits();
         self
+    }
+
+    pub fn build(self) -> ExternalMemoryBufferCreateInfoKhr<'b> {
+        ExternalMemoryBufferCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12284,7 +15343,7 @@ impl<'b> ExternalMemoryBufferCreateInfoKhrBuilder<'b> {
 
 /// A `VkExportMemoryAllocateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportMemoryAllocateInfoKhr<'s> {
@@ -12309,9 +15368,16 @@ impl<'s> ExportMemoryAllocateInfoKhr<'s> {
 }
 
 
+impl<'s> From<ExportMemoryAllocateInfoKhr<'s>> for vks::VkExportMemoryAllocateInfoKHR {
+    fn from(f: ExportMemoryAllocateInfoKhr<'s>) -> vks::VkExportMemoryAllocateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExportMemoryAllocateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryAllocateInfoKhrBuilder<'b> {
     raw: vks::VkExportMemoryAllocateInfoKHR,
@@ -12326,12 +15392,21 @@ impl<'b> ExportMemoryAllocateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ExportMemoryAllocateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ExportMemoryAllocateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_types<'m>(&'m mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) -> &'m mut ExportMemoryAllocateInfoKhrBuilder<'b> {
+    pub fn handle_types<'m>(mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) -> ExportMemoryAllocateInfoKhrBuilder<'b> {
+        self.raw.handleTypes = handle_types.bits();
         self
+    }
+
+    pub fn build(self) -> ExportMemoryAllocateInfoKhr<'b> {
+        ExportMemoryAllocateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12339,7 +15414,7 @@ impl<'b> ExportMemoryAllocateInfoKhrBuilder<'b> {
 
 /// A `VkImportMemoryWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportMemoryWin32HandleInfoKhr<'s> {
@@ -12370,9 +15445,16 @@ impl<'s> ImportMemoryWin32HandleInfoKhr<'s> {
 }
 
 
+impl<'s> From<ImportMemoryWin32HandleInfoKhr<'s>> for vks::VkImportMemoryWin32HandleInfoKHR {
+    fn from(f: ImportMemoryWin32HandleInfoKhr<'s>) -> vks::VkImportMemoryWin32HandleInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImportMemoryWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportMemoryWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkImportMemoryWin32HandleInfoKHR,
@@ -12387,20 +15469,31 @@ impl<'b> ImportMemoryWin32HandleInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImportMemoryWin32HandleInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImportMemoryWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> &'m mut ImportMemoryWin32HandleInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> ImportMemoryWin32HandleInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
     }
 
-    pub fn handle<'m>(&'m mut self, handle: HANDLE) -> &'m mut ImportMemoryWin32HandleInfoKhrBuilder<'b> {
+    pub fn handle<'m>(mut self, handle: HANDLE) -> ImportMemoryWin32HandleInfoKhrBuilder<'b> {
+        self.raw.handle = handle.into();
         self
     }
 
-    pub fn name<'m>(&'m mut self, name: LPCWSTR) -> &'m mut ImportMemoryWin32HandleInfoKhrBuilder<'b> {
+    pub fn name<'m>(mut self, name: LPCWSTR) -> ImportMemoryWin32HandleInfoKhrBuilder<'b> {
+        self.raw.name = name.into();
         self
+    }
+
+    pub fn build(self) -> ImportMemoryWin32HandleInfoKhr<'b> {
+        ImportMemoryWin32HandleInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12408,7 +15501,7 @@ impl<'b> ImportMemoryWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkExportMemoryWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportMemoryWin32HandleInfoKhr<'s> {
@@ -12439,9 +15532,16 @@ impl<'s> ExportMemoryWin32HandleInfoKhr<'s> {
 }
 
 
+impl<'s> From<ExportMemoryWin32HandleInfoKhr<'s>> for vks::VkExportMemoryWin32HandleInfoKHR {
+    fn from(f: ExportMemoryWin32HandleInfoKhr<'s>) -> vks::VkExportMemoryWin32HandleInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExportMemoryWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkExportMemoryWin32HandleInfoKHR,
@@ -12456,20 +15556,31 @@ impl<'b> ExportMemoryWin32HandleInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ExportMemoryWin32HandleInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ExportMemoryWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn attributes<'m, 'a>(&'m mut self, attributes: &'a SECURITY_ATTRIBUTES) -> &'m mut ExportMemoryWin32HandleInfoKhrBuilder<'b> {
+    pub fn attributes<'m, 'a>(mut self, attributes: &'a [SECURITY_ATTRIBUTES]) -> ExportMemoryWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pAttributes = attributes.as_ptr() as *const _;
         self
     }
 
-    pub fn dw_access<'m>(&'m mut self, dw_access: DWORD) -> &'m mut ExportMemoryWin32HandleInfoKhrBuilder<'b> {
+    pub fn dw_access<'m>(mut self, dw_access: DWORD) -> ExportMemoryWin32HandleInfoKhrBuilder<'b> {
+        self.raw.dwAccess = dw_access.into();
         self
     }
 
-    pub fn name<'m>(&'m mut self, name: LPCWSTR) -> &'m mut ExportMemoryWin32HandleInfoKhrBuilder<'b> {
+    pub fn name<'m>(mut self, name: LPCWSTR) -> ExportMemoryWin32HandleInfoKhrBuilder<'b> {
+        self.raw.name = name.into();
         self
+    }
+
+    pub fn build(self) -> ExportMemoryWin32HandleInfoKhr<'b> {
+        ExportMemoryWin32HandleInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12477,7 +15588,7 @@ impl<'b> ExportMemoryWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkMemoryWin32HandlePropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryWin32HandlePropertiesKhr<'s> {
@@ -12498,9 +15609,16 @@ impl<'s> MemoryWin32HandlePropertiesKhr<'s> {
 }
 
 
+impl<'s> From<MemoryWin32HandlePropertiesKhr<'s>> for vks::VkMemoryWin32HandlePropertiesKHR {
+    fn from(f: MemoryWin32HandlePropertiesKhr<'s>) -> vks::VkMemoryWin32HandlePropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkMemoryGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryGetWin32HandleInfoKhr<'s> {
@@ -12528,9 +15646,16 @@ impl<'s> MemoryGetWin32HandleInfoKhr<'s> {
 }
 
 
+impl<'s> From<MemoryGetWin32HandleInfoKhr<'s>> for vks::VkMemoryGetWin32HandleInfoKHR {
+    fn from(f: MemoryGetWin32HandleInfoKhr<'s>) -> vks::VkMemoryGetWin32HandleInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkMemoryGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryGetWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkMemoryGetWin32HandleInfoKHR,
@@ -12545,16 +15670,26 @@ impl<'b> MemoryGetWin32HandleInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut MemoryGetWin32HandleInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> MemoryGetWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn memory<'m>(&'m mut self, memory: DeviceMemory) -> &'m mut MemoryGetWin32HandleInfoKhrBuilder<'b> {
+    pub fn memory<'m, 'a>(mut self, memory: &'a DeviceMemory) -> MemoryGetWin32HandleInfoKhrBuilder<'b> {
+        self.raw.memory = memory.handle();
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> &'m mut MemoryGetWin32HandleInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> MemoryGetWin32HandleInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
+    }
+
+    pub fn build(self) -> MemoryGetWin32HandleInfoKhr<'b> {
+        MemoryGetWin32HandleInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12562,7 +15697,7 @@ impl<'b> MemoryGetWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkImportMemoryFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportMemoryFdInfoKhr<'s> {
@@ -12590,9 +15725,16 @@ impl<'s> ImportMemoryFdInfoKhr<'s> {
 }
 
 
+impl<'s> From<ImportMemoryFdInfoKhr<'s>> for vks::VkImportMemoryFdInfoKHR {
+    fn from(f: ImportMemoryFdInfoKhr<'s>) -> vks::VkImportMemoryFdInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImportMemoryFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportMemoryFdInfoKhrBuilder<'b> {
     raw: vks::VkImportMemoryFdInfoKHR,
@@ -12607,16 +15749,26 @@ impl<'b> ImportMemoryFdInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImportMemoryFdInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImportMemoryFdInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> &'m mut ImportMemoryFdInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> ImportMemoryFdInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
     }
 
-    pub fn fd<'m>(&'m mut self, fd: i32) -> &'m mut ImportMemoryFdInfoKhrBuilder<'b> {
+    pub fn fd<'m>(mut self, fd: i32) -> ImportMemoryFdInfoKhrBuilder<'b> {
+        self.raw.fd = fd.into();
         self
+    }
+
+    pub fn build(self) -> ImportMemoryFdInfoKhr<'b> {
+        ImportMemoryFdInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12624,7 +15776,7 @@ impl<'b> ImportMemoryFdInfoKhrBuilder<'b> {
 
 /// A `VkMemoryFdPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryFdPropertiesKhr<'s> {
@@ -12645,9 +15797,16 @@ impl<'s> MemoryFdPropertiesKhr<'s> {
 }
 
 
+impl<'s> From<MemoryFdPropertiesKhr<'s>> for vks::VkMemoryFdPropertiesKHR {
+    fn from(f: MemoryFdPropertiesKhr<'s>) -> vks::VkMemoryFdPropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkMemoryGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryGetFdInfoKhr<'s> {
@@ -12675,9 +15834,16 @@ impl<'s> MemoryGetFdInfoKhr<'s> {
 }
 
 
+impl<'s> From<MemoryGetFdInfoKhr<'s>> for vks::VkMemoryGetFdInfoKHR {
+    fn from(f: MemoryGetFdInfoKhr<'s>) -> vks::VkMemoryGetFdInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkMemoryGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryGetFdInfoKhrBuilder<'b> {
     raw: vks::VkMemoryGetFdInfoKHR,
@@ -12692,16 +15858,26 @@ impl<'b> MemoryGetFdInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut MemoryGetFdInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> MemoryGetFdInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn memory<'m>(&'m mut self, memory: DeviceMemory) -> &'m mut MemoryGetFdInfoKhrBuilder<'b> {
+    pub fn memory<'m, 'a>(mut self, memory: &'a DeviceMemory) -> MemoryGetFdInfoKhrBuilder<'b> {
+        self.raw.memory = memory.handle();
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> &'m mut MemoryGetFdInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) -> MemoryGetFdInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
+    }
+
+    pub fn build(self) -> MemoryGetFdInfoKhr<'b> {
+        MemoryGetFdInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12709,11 +15885,12 @@ impl<'b> MemoryGetFdInfoKhrBuilder<'b> {
 
 /// A `VkWin32KeyedMutexAcquireReleaseInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoKHR,
+    acquire_syncs: Option<Vec<vks::VkDeviceMemory>>,
+    release_syncs: Option<Vec<vks::VkDeviceMemory>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -12752,12 +15929,21 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
 }
 
 
+impl<'s> From<Win32KeyedMutexAcquireReleaseInfoKhr<'s>> for vks::VkWin32KeyedMutexAcquireReleaseInfoKHR {
+    fn from(f: Win32KeyedMutexAcquireReleaseInfoKhr<'s>) -> vks::VkWin32KeyedMutexAcquireReleaseInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkWin32KeyedMutexAcquireReleaseInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoKHR,
+    acquire_syncs: Option<Vec<vks::VkDeviceMemory>>,
+    release_syncs: Option<Vec<vks::VkDeviceMemory>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -12765,40 +15951,61 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
     pub fn new() -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
         Win32KeyedMutexAcquireReleaseInfoKhrBuilder {
             raw: vks::VkWin32KeyedMutexAcquireReleaseInfoKHR::default(),
+            acquire_syncs: None,
+            release_syncs: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn acquire_count<'m>(&'m mut self, acquire_count: u32) -> &'m mut Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+    pub fn acquire_count<'m>(mut self, acquire_count: u32) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+        self.raw.acquireCount = acquire_count.into();
         self
     }
 
-    pub fn acquire_syncs<'m, 'a>(&'m mut self, acquire_syncs: &'a DeviceMemory) -> &'m mut Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+    pub fn acquire_syncs<'m, 'a>(mut self, acquire_syncs: &'a [DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> where 'a: 'b {
+        self.acquire_syncs = Some(acquire_syncs.iter().map(|h| h.handle()).collect());
+        self.raw.pAcquireSyncs = self.acquire_syncs.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn acquire_keys<'m, 'a>(&'m mut self, acquire_keys: &'a u64) -> &'m mut Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+    pub fn acquire_keys<'m, 'a>(mut self, acquire_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+        self.raw.pAcquireKeys = acquire_keys.as_ptr() as *const _;
         self
     }
 
-    pub fn acquire_timeouts<'m, 'a>(&'m mut self, acquire_timeouts: &'a u32) -> &'m mut Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+    pub fn acquire_timeouts<'m, 'a>(mut self, acquire_timeouts: &'a [u32]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+        self.raw.pAcquireTimeouts = acquire_timeouts.as_ptr() as *const _;
         self
     }
 
-    pub fn release_count<'m>(&'m mut self, release_count: u32) -> &'m mut Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+    pub fn release_count<'m>(mut self, release_count: u32) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+        self.raw.releaseCount = release_count.into();
         self
     }
 
-    pub fn release_syncs<'m, 'a>(&'m mut self, release_syncs: &'a DeviceMemory) -> &'m mut Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+    pub fn release_syncs<'m, 'a>(mut self, release_syncs: &'a [DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> where 'a: 'b {
+        self.release_syncs = Some(release_syncs.iter().map(|h| h.handle()).collect());
+        self.raw.pReleaseSyncs = self.release_syncs.as_ref().unwrap().as_ptr();
         self
     }
 
-    pub fn release_keys<'m, 'a>(&'m mut self, release_keys: &'a u64) -> &'m mut Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+    pub fn release_keys<'m, 'a>(mut self, release_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+        self.raw.pReleaseKeys = release_keys.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> Win32KeyedMutexAcquireReleaseInfoKhr<'b> {
+        Win32KeyedMutexAcquireReleaseInfoKhr {
+            raw: self.raw,
+            acquire_syncs: self.acquire_syncs,
+            release_syncs: self.release_syncs,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12806,7 +16013,7 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
 
 /// A `VkPhysicalDeviceExternalSemaphoreInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
@@ -12831,9 +16038,16 @@ impl<'s> PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceExternalSemaphoreInfoKhr<'s>> for vks::VkPhysicalDeviceExternalSemaphoreInfoKHR {
+    fn from(f: PhysicalDeviceExternalSemaphoreInfoKhr<'s>) -> vks::VkPhysicalDeviceExternalSemaphoreInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceExternalSemaphoreInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalSemaphoreInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalSemaphoreInfoKHR,
@@ -12848,12 +16062,21 @@ impl<'b> PhysicalDeviceExternalSemaphoreInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceExternalSemaphoreInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PhysicalDeviceExternalSemaphoreInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) -> &'m mut PhysicalDeviceExternalSemaphoreInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) -> PhysicalDeviceExternalSemaphoreInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceExternalSemaphoreInfoKhr<'b> {
+        PhysicalDeviceExternalSemaphoreInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12861,7 +16084,7 @@ impl<'b> PhysicalDeviceExternalSemaphoreInfoKhrBuilder<'b> {
 
 /// A `VkExternalSemaphorePropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalSemaphorePropertiesKhr<'s> {
@@ -12888,9 +16111,16 @@ impl<'s> ExternalSemaphorePropertiesKhr<'s> {
 }
 
 
+impl<'s> From<ExternalSemaphorePropertiesKhr<'s>> for vks::VkExternalSemaphorePropertiesKHR {
+    fn from(f: ExternalSemaphorePropertiesKhr<'s>) -> vks::VkExternalSemaphorePropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkExportSemaphoreCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportSemaphoreCreateInfoKhr<'s> {
@@ -12915,9 +16145,16 @@ impl<'s> ExportSemaphoreCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<ExportSemaphoreCreateInfoKhr<'s>> for vks::VkExportSemaphoreCreateInfoKHR {
+    fn from(f: ExportSemaphoreCreateInfoKhr<'s>) -> vks::VkExportSemaphoreCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExportSemaphoreCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportSemaphoreCreateInfoKhrBuilder<'b> {
     raw: vks::VkExportSemaphoreCreateInfoKHR,
@@ -12932,12 +16169,21 @@ impl<'b> ExportSemaphoreCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ExportSemaphoreCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ExportSemaphoreCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_types<'m>(&'m mut self, handle_types: ExternalSemaphoreHandleTypeFlagsKhr) -> &'m mut ExportSemaphoreCreateInfoKhrBuilder<'b> {
+    pub fn handle_types<'m>(mut self, handle_types: ExternalSemaphoreHandleTypeFlagsKhr) -> ExportSemaphoreCreateInfoKhrBuilder<'b> {
+        self.raw.handleTypes = handle_types.bits();
         self
+    }
+
+    pub fn build(self) -> ExportSemaphoreCreateInfoKhr<'b> {
+        ExportSemaphoreCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -12945,7 +16191,7 @@ impl<'b> ExportSemaphoreCreateInfoKhrBuilder<'b> {
 
 /// A `VkImportSemaphoreWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportSemaphoreWin32HandleInfoKhr<'s> {
@@ -12982,9 +16228,16 @@ impl<'s> ImportSemaphoreWin32HandleInfoKhr<'s> {
 }
 
 
+impl<'s> From<ImportSemaphoreWin32HandleInfoKhr<'s>> for vks::VkImportSemaphoreWin32HandleInfoKHR {
+    fn from(f: ImportSemaphoreWin32HandleInfoKhr<'s>) -> vks::VkImportSemaphoreWin32HandleInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImportSemaphoreWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkImportSemaphoreWin32HandleInfoKHR,
@@ -12999,28 +16252,41 @@ impl<'b> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn semaphore<'m>(&'m mut self, semaphore: Semaphore) -> &'m mut ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+    pub fn semaphore<'m, 'a>(mut self, semaphore: &'a Semaphore) -> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+        self.raw.semaphore = semaphore.handle();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: SemaphoreImportFlagsKhr) -> &'m mut ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: SemaphoreImportFlagsKhr) -> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) -> &'m mut ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) -> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
     }
 
-    pub fn handle<'m>(&'m mut self, handle: HANDLE) -> &'m mut ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+    pub fn handle<'m>(mut self, handle: HANDLE) -> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+        self.raw.handle = handle.into();
         self
     }
 
-    pub fn name<'m>(&'m mut self, name: LPCWSTR) -> &'m mut ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+    pub fn name<'m>(mut self, name: LPCWSTR) -> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+        self.raw.name = name.into();
         self
+    }
+
+    pub fn build(self) -> ImportSemaphoreWin32HandleInfoKhr<'b> {
+        ImportSemaphoreWin32HandleInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13028,7 +16294,7 @@ impl<'b> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkExportSemaphoreWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportSemaphoreWin32HandleInfoKhr<'s> {
@@ -13059,9 +16325,16 @@ impl<'s> ExportSemaphoreWin32HandleInfoKhr<'s> {
 }
 
 
+impl<'s> From<ExportSemaphoreWin32HandleInfoKhr<'s>> for vks::VkExportSemaphoreWin32HandleInfoKHR {
+    fn from(f: ExportSemaphoreWin32HandleInfoKhr<'s>) -> vks::VkExportSemaphoreWin32HandleInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExportSemaphoreWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkExportSemaphoreWin32HandleInfoKHR,
@@ -13076,20 +16349,31 @@ impl<'b> ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn attributes<'m, 'a>(&'m mut self, attributes: &'a SECURITY_ATTRIBUTES) -> &'m mut ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+    pub fn attributes<'m, 'a>(mut self, attributes: &'a [SECURITY_ATTRIBUTES]) -> ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pAttributes = attributes.as_ptr() as *const _;
         self
     }
 
-    pub fn dw_access<'m>(&'m mut self, dw_access: DWORD) -> &'m mut ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+    pub fn dw_access<'m>(mut self, dw_access: DWORD) -> ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+        self.raw.dwAccess = dw_access.into();
         self
     }
 
-    pub fn name<'m>(&'m mut self, name: LPCWSTR) -> &'m mut ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+    pub fn name<'m>(mut self, name: LPCWSTR) -> ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+        self.raw.name = name.into();
         self
+    }
+
+    pub fn build(self) -> ExportSemaphoreWin32HandleInfoKhr<'b> {
+        ExportSemaphoreWin32HandleInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13097,7 +16381,7 @@ impl<'b> ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkD3D12FenceSubmitInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct D3d12FenceSubmitInfoKHR<'s> {
@@ -13131,9 +16415,16 @@ impl<'s> D3d12FenceSubmitInfoKHR<'s> {
 }
 
 
+impl<'s> From<D3d12FenceSubmitInfoKHR<'s>> for vks::VkD3D12FenceSubmitInfoKHR {
+    fn from(f: D3d12FenceSubmitInfoKHR<'s>) -> vks::VkD3D12FenceSubmitInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkD3D12FenceSubmitInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct D3d12FenceSubmitInfoKHRBuilder<'b> {
     raw: vks::VkD3D12FenceSubmitInfoKHR,
@@ -13148,24 +16439,36 @@ impl<'b> D3d12FenceSubmitInfoKHRBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut D3d12FenceSubmitInfoKHRBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> D3d12FenceSubmitInfoKHRBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn wait_semaphore_values_count<'m>(&'m mut self, wait_semaphore_values_count: u32) -> &'m mut D3d12FenceSubmitInfoKHRBuilder<'b> {
+    pub fn wait_semaphore_values_count<'m>(mut self, wait_semaphore_values_count: u32) -> D3d12FenceSubmitInfoKHRBuilder<'b> {
+        self.raw.waitSemaphoreValuesCount = wait_semaphore_values_count.into();
         self
     }
 
-    pub fn wait_semaphore_values<'m, 'a>(&'m mut self, wait_semaphore_values: &'a u64) -> &'m mut D3d12FenceSubmitInfoKHRBuilder<'b> {
+    pub fn wait_semaphore_values<'m, 'a>(mut self, wait_semaphore_values: &'a [u64]) -> D3d12FenceSubmitInfoKHRBuilder<'b> {
+        self.raw.pWaitSemaphoreValues = wait_semaphore_values.as_ptr() as *const _;
         self
     }
 
-    pub fn signal_semaphore_values_count<'m>(&'m mut self, signal_semaphore_values_count: u32) -> &'m mut D3d12FenceSubmitInfoKHRBuilder<'b> {
+    pub fn signal_semaphore_values_count<'m>(mut self, signal_semaphore_values_count: u32) -> D3d12FenceSubmitInfoKHRBuilder<'b> {
+        self.raw.signalSemaphoreValuesCount = signal_semaphore_values_count.into();
         self
     }
 
-    pub fn signal_semaphore_values<'m, 'a>(&'m mut self, signal_semaphore_values: &'a u64) -> &'m mut D3d12FenceSubmitInfoKHRBuilder<'b> {
+    pub fn signal_semaphore_values<'m, 'a>(mut self, signal_semaphore_values: &'a [u64]) -> D3d12FenceSubmitInfoKHRBuilder<'b> {
+        self.raw.pSignalSemaphoreValues = signal_semaphore_values.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> D3d12FenceSubmitInfoKHR<'b> {
+        D3d12FenceSubmitInfoKHR {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13173,7 +16476,7 @@ impl<'b> D3d12FenceSubmitInfoKHRBuilder<'b> {
 
 /// A `VkSemaphoreGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SemaphoreGetWin32HandleInfoKhr<'s> {
@@ -13201,9 +16504,16 @@ impl<'s> SemaphoreGetWin32HandleInfoKhr<'s> {
 }
 
 
+impl<'s> From<SemaphoreGetWin32HandleInfoKhr<'s>> for vks::VkSemaphoreGetWin32HandleInfoKHR {
+    fn from(f: SemaphoreGetWin32HandleInfoKhr<'s>) -> vks::VkSemaphoreGetWin32HandleInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSemaphoreGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkSemaphoreGetWin32HandleInfoKHR,
@@ -13218,16 +16528,26 @@ impl<'b> SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn semaphore<'m>(&'m mut self, semaphore: Semaphore) -> &'m mut SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
+    pub fn semaphore<'m, 'a>(mut self, semaphore: &'a Semaphore) -> SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
+        self.raw.semaphore = semaphore.handle();
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) -> &'m mut SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) -> SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
+    }
+
+    pub fn build(self) -> SemaphoreGetWin32HandleInfoKhr<'b> {
+        SemaphoreGetWin32HandleInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13235,7 +16555,7 @@ impl<'b> SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkImportSemaphoreFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportSemaphoreFdInfoKhr<'s> {
@@ -13269,9 +16589,16 @@ impl<'s> ImportSemaphoreFdInfoKhr<'s> {
 }
 
 
+impl<'s> From<ImportSemaphoreFdInfoKhr<'s>> for vks::VkImportSemaphoreFdInfoKHR {
+    fn from(f: ImportSemaphoreFdInfoKhr<'s>) -> vks::VkImportSemaphoreFdInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImportSemaphoreFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportSemaphoreFdInfoKhrBuilder<'b> {
     raw: vks::VkImportSemaphoreFdInfoKHR,
@@ -13286,24 +16613,36 @@ impl<'b> ImportSemaphoreFdInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImportSemaphoreFdInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImportSemaphoreFdInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn semaphore<'m>(&'m mut self, semaphore: Semaphore) -> &'m mut ImportSemaphoreFdInfoKhrBuilder<'b> {
+    pub fn semaphore<'m, 'a>(mut self, semaphore: &'a Semaphore) -> ImportSemaphoreFdInfoKhrBuilder<'b> {
+        self.raw.semaphore = semaphore.handle();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: SemaphoreImportFlagsKhr) -> &'m mut ImportSemaphoreFdInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: SemaphoreImportFlagsKhr) -> ImportSemaphoreFdInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) -> &'m mut ImportSemaphoreFdInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) -> ImportSemaphoreFdInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
     }
 
-    pub fn fd<'m>(&'m mut self, fd: i32) -> &'m mut ImportSemaphoreFdInfoKhrBuilder<'b> {
+    pub fn fd<'m>(mut self, fd: i32) -> ImportSemaphoreFdInfoKhrBuilder<'b> {
+        self.raw.fd = fd.into();
         self
+    }
+
+    pub fn build(self) -> ImportSemaphoreFdInfoKhr<'b> {
+        ImportSemaphoreFdInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13311,7 +16650,7 @@ impl<'b> ImportSemaphoreFdInfoKhrBuilder<'b> {
 
 /// A `VkSemaphoreGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SemaphoreGetFdInfoKhr<'s> {
@@ -13339,9 +16678,16 @@ impl<'s> SemaphoreGetFdInfoKhr<'s> {
 }
 
 
+impl<'s> From<SemaphoreGetFdInfoKhr<'s>> for vks::VkSemaphoreGetFdInfoKHR {
+    fn from(f: SemaphoreGetFdInfoKhr<'s>) -> vks::VkSemaphoreGetFdInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSemaphoreGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SemaphoreGetFdInfoKhrBuilder<'b> {
     raw: vks::VkSemaphoreGetFdInfoKHR,
@@ -13356,16 +16702,26 @@ impl<'b> SemaphoreGetFdInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut SemaphoreGetFdInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> SemaphoreGetFdInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn semaphore<'m>(&'m mut self, semaphore: Semaphore) -> &'m mut SemaphoreGetFdInfoKhrBuilder<'b> {
+    pub fn semaphore<'m, 'a>(mut self, semaphore: &'a Semaphore) -> SemaphoreGetFdInfoKhrBuilder<'b> {
+        self.raw.semaphore = semaphore.handle();
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) -> &'m mut SemaphoreGetFdInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) -> SemaphoreGetFdInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
+    }
+
+    pub fn build(self) -> SemaphoreGetFdInfoKhr<'b> {
+        SemaphoreGetFdInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13373,7 +16729,7 @@ impl<'b> SemaphoreGetFdInfoKhrBuilder<'b> {
 
 /// A `VkPhysicalDeviceExternalFenceInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceExternalFenceInfoKhr<'s> {
@@ -13398,9 +16754,16 @@ impl<'s> PhysicalDeviceExternalFenceInfoKhr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceExternalFenceInfoKhr<'s>> for vks::VkPhysicalDeviceExternalFenceInfoKHR {
+    fn from(f: PhysicalDeviceExternalFenceInfoKhr<'s>) -> vks::VkPhysicalDeviceExternalFenceInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceExternalFenceInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalFenceInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalFenceInfoKHR,
@@ -13415,12 +16778,21 @@ impl<'b> PhysicalDeviceExternalFenceInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceExternalFenceInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PhysicalDeviceExternalFenceInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) -> &'m mut PhysicalDeviceExternalFenceInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) -> PhysicalDeviceExternalFenceInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceExternalFenceInfoKhr<'b> {
+        PhysicalDeviceExternalFenceInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13428,7 +16800,7 @@ impl<'b> PhysicalDeviceExternalFenceInfoKhrBuilder<'b> {
 
 /// A `VkExternalFencePropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalFencePropertiesKhr<'s> {
@@ -13455,9 +16827,16 @@ impl<'s> ExternalFencePropertiesKhr<'s> {
 }
 
 
+impl<'s> From<ExternalFencePropertiesKhr<'s>> for vks::VkExternalFencePropertiesKHR {
+    fn from(f: ExternalFencePropertiesKhr<'s>) -> vks::VkExternalFencePropertiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkExportFenceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportFenceCreateInfoKhr<'s> {
@@ -13482,9 +16861,16 @@ impl<'s> ExportFenceCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<ExportFenceCreateInfoKhr<'s>> for vks::VkExportFenceCreateInfoKHR {
+    fn from(f: ExportFenceCreateInfoKhr<'s>) -> vks::VkExportFenceCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExportFenceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportFenceCreateInfoKhrBuilder<'b> {
     raw: vks::VkExportFenceCreateInfoKHR,
@@ -13499,12 +16885,21 @@ impl<'b> ExportFenceCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ExportFenceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ExportFenceCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn handle_types<'m>(&'m mut self, handle_types: ExternalFenceHandleTypeFlagsKhr) -> &'m mut ExportFenceCreateInfoKhrBuilder<'b> {
+    pub fn handle_types<'m>(mut self, handle_types: ExternalFenceHandleTypeFlagsKhr) -> ExportFenceCreateInfoKhrBuilder<'b> {
+        self.raw.handleTypes = handle_types.bits();
         self
+    }
+
+    pub fn build(self) -> ExportFenceCreateInfoKhr<'b> {
+        ExportFenceCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13512,7 +16907,7 @@ impl<'b> ExportFenceCreateInfoKhrBuilder<'b> {
 
 /// A `VkImportFenceWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportFenceWin32HandleInfoKhr<'s> {
@@ -13549,9 +16944,16 @@ impl<'s> ImportFenceWin32HandleInfoKhr<'s> {
 }
 
 
+impl<'s> From<ImportFenceWin32HandleInfoKhr<'s>> for vks::VkImportFenceWin32HandleInfoKHR {
+    fn from(f: ImportFenceWin32HandleInfoKhr<'s>) -> vks::VkImportFenceWin32HandleInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImportFenceWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportFenceWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkImportFenceWin32HandleInfoKHR,
@@ -13566,28 +16968,41 @@ impl<'b> ImportFenceWin32HandleInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImportFenceWin32HandleInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImportFenceWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn fence<'m>(&'m mut self, fence: Fence) -> &'m mut ImportFenceWin32HandleInfoKhrBuilder<'b> {
+    pub fn fence<'m, 'a>(mut self, fence: &'a Fence) -> ImportFenceWin32HandleInfoKhrBuilder<'b> {
+        self.raw.fence = fence.handle();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: FenceImportFlagsKhr) -> &'m mut ImportFenceWin32HandleInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: FenceImportFlagsKhr) -> ImportFenceWin32HandleInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) -> &'m mut ImportFenceWin32HandleInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) -> ImportFenceWin32HandleInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
     }
 
-    pub fn handle<'m>(&'m mut self, handle: HANDLE) -> &'m mut ImportFenceWin32HandleInfoKhrBuilder<'b> {
+    pub fn handle<'m>(mut self, handle: HANDLE) -> ImportFenceWin32HandleInfoKhrBuilder<'b> {
+        self.raw.handle = handle.into();
         self
     }
 
-    pub fn name<'m>(&'m mut self, name: LPCWSTR) -> &'m mut ImportFenceWin32HandleInfoKhrBuilder<'b> {
+    pub fn name<'m>(mut self, name: LPCWSTR) -> ImportFenceWin32HandleInfoKhrBuilder<'b> {
+        self.raw.name = name.into();
         self
+    }
+
+    pub fn build(self) -> ImportFenceWin32HandleInfoKhr<'b> {
+        ImportFenceWin32HandleInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13595,7 +17010,7 @@ impl<'b> ImportFenceWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkExportFenceWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportFenceWin32HandleInfoKhr<'s> {
@@ -13626,9 +17041,16 @@ impl<'s> ExportFenceWin32HandleInfoKhr<'s> {
 }
 
 
+impl<'s> From<ExportFenceWin32HandleInfoKhr<'s>> for vks::VkExportFenceWin32HandleInfoKHR {
+    fn from(f: ExportFenceWin32HandleInfoKhr<'s>) -> vks::VkExportFenceWin32HandleInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkExportFenceWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportFenceWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkExportFenceWin32HandleInfoKHR,
@@ -13643,20 +17065,31 @@ impl<'b> ExportFenceWin32HandleInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ExportFenceWin32HandleInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ExportFenceWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn attributes<'m, 'a>(&'m mut self, attributes: &'a SECURITY_ATTRIBUTES) -> &'m mut ExportFenceWin32HandleInfoKhrBuilder<'b> {
+    pub fn attributes<'m, 'a>(mut self, attributes: &'a [SECURITY_ATTRIBUTES]) -> ExportFenceWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pAttributes = attributes.as_ptr() as *const _;
         self
     }
 
-    pub fn dw_access<'m>(&'m mut self, dw_access: DWORD) -> &'m mut ExportFenceWin32HandleInfoKhrBuilder<'b> {
+    pub fn dw_access<'m>(mut self, dw_access: DWORD) -> ExportFenceWin32HandleInfoKhrBuilder<'b> {
+        self.raw.dwAccess = dw_access.into();
         self
     }
 
-    pub fn name<'m>(&'m mut self, name: LPCWSTR) -> &'m mut ExportFenceWin32HandleInfoKhrBuilder<'b> {
+    pub fn name<'m>(mut self, name: LPCWSTR) -> ExportFenceWin32HandleInfoKhrBuilder<'b> {
+        self.raw.name = name.into();
         self
+    }
+
+    pub fn build(self) -> ExportFenceWin32HandleInfoKhr<'b> {
+        ExportFenceWin32HandleInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13664,7 +17097,7 @@ impl<'b> ExportFenceWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkFenceGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct FenceGetWin32HandleInfoKhr<'s> {
@@ -13692,9 +17125,16 @@ impl<'s> FenceGetWin32HandleInfoKhr<'s> {
 }
 
 
+impl<'s> From<FenceGetWin32HandleInfoKhr<'s>> for vks::VkFenceGetWin32HandleInfoKHR {
+    fn from(f: FenceGetWin32HandleInfoKhr<'s>) -> vks::VkFenceGetWin32HandleInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkFenceGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct FenceGetWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkFenceGetWin32HandleInfoKHR,
@@ -13709,16 +17149,26 @@ impl<'b> FenceGetWin32HandleInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut FenceGetWin32HandleInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> FenceGetWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn fence<'m>(&'m mut self, fence: Fence) -> &'m mut FenceGetWin32HandleInfoKhrBuilder<'b> {
+    pub fn fence<'m, 'a>(mut self, fence: &'a Fence) -> FenceGetWin32HandleInfoKhrBuilder<'b> {
+        self.raw.fence = fence.handle();
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) -> &'m mut FenceGetWin32HandleInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) -> FenceGetWin32HandleInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
+    }
+
+    pub fn build(self) -> FenceGetWin32HandleInfoKhr<'b> {
+        FenceGetWin32HandleInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13726,7 +17176,7 @@ impl<'b> FenceGetWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkImportFenceFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportFenceFdInfoKhr<'s> {
@@ -13760,9 +17210,16 @@ impl<'s> ImportFenceFdInfoKhr<'s> {
 }
 
 
+impl<'s> From<ImportFenceFdInfoKhr<'s>> for vks::VkImportFenceFdInfoKHR {
+    fn from(f: ImportFenceFdInfoKhr<'s>) -> vks::VkImportFenceFdInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImportFenceFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportFenceFdInfoKhrBuilder<'b> {
     raw: vks::VkImportFenceFdInfoKHR,
@@ -13777,24 +17234,36 @@ impl<'b> ImportFenceFdInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImportFenceFdInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImportFenceFdInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn fence<'m>(&'m mut self, fence: Fence) -> &'m mut ImportFenceFdInfoKhrBuilder<'b> {
+    pub fn fence<'m, 'a>(mut self, fence: &'a Fence) -> ImportFenceFdInfoKhrBuilder<'b> {
+        self.raw.fence = fence.handle();
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: FenceImportFlagsKhr) -> &'m mut ImportFenceFdInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: FenceImportFlagsKhr) -> ImportFenceFdInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) -> &'m mut ImportFenceFdInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) -> ImportFenceFdInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
     }
 
-    pub fn fd<'m>(&'m mut self, fd: i32) -> &'m mut ImportFenceFdInfoKhrBuilder<'b> {
+    pub fn fd<'m>(mut self, fd: i32) -> ImportFenceFdInfoKhrBuilder<'b> {
+        self.raw.fd = fd.into();
         self
+    }
+
+    pub fn build(self) -> ImportFenceFdInfoKhr<'b> {
+        ImportFenceFdInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13802,7 +17271,7 @@ impl<'b> ImportFenceFdInfoKhrBuilder<'b> {
 
 /// A `VkFenceGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct FenceGetFdInfoKhr<'s> {
@@ -13830,9 +17299,16 @@ impl<'s> FenceGetFdInfoKhr<'s> {
 }
 
 
+impl<'s> From<FenceGetFdInfoKhr<'s>> for vks::VkFenceGetFdInfoKHR {
+    fn from(f: FenceGetFdInfoKhr<'s>) -> vks::VkFenceGetFdInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkFenceGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct FenceGetFdInfoKhrBuilder<'b> {
     raw: vks::VkFenceGetFdInfoKHR,
@@ -13847,16 +17323,26 @@ impl<'b> FenceGetFdInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut FenceGetFdInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> FenceGetFdInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn fence<'m>(&'m mut self, fence: Fence) -> &'m mut FenceGetFdInfoKhrBuilder<'b> {
+    pub fn fence<'m, 'a>(mut self, fence: &'a Fence) -> FenceGetFdInfoKhrBuilder<'b> {
+        self.raw.fence = fence.handle();
         self
     }
 
-    pub fn handle_type<'m>(&'m mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) -> &'m mut FenceGetFdInfoKhrBuilder<'b> {
+    pub fn handle_type<'m>(mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) -> FenceGetFdInfoKhrBuilder<'b> {
+        self.raw.handleType = handle_type.bits();
         self
+    }
+
+    pub fn build(self) -> FenceGetFdInfoKhr<'b> {
+        FenceGetFdInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13864,7 +17350,7 @@ impl<'b> FenceGetFdInfoKhrBuilder<'b> {
 
 /// A `VkPhysicalDeviceMultiviewFeaturesKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -13897,9 +17383,17 @@ impl<'s> PhysicalDeviceMultiviewFeaturesKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<PhysicalDeviceMultiviewFeaturesKhx<'s>> for vks::VkPhysicalDeviceMultiviewFeaturesKHX {
+    fn from(f: PhysicalDeviceMultiviewFeaturesKhx<'s>) -> vks::VkPhysicalDeviceMultiviewFeaturesKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceMultiviewFeaturesKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
@@ -13916,20 +17410,31 @@ impl<'b> PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *mut c_void) -> PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn multiview<'m>(&'m mut self, multiview: bool) -> &'m mut PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
+    pub fn multiview<'m>(mut self, multiview: bool) -> PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
+        self.raw.multiview = multiview as u32;
         self
     }
 
-    pub fn multiview_geometry_shader<'m>(&'m mut self, multiview_geometry_shader: bool) -> &'m mut PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
+    pub fn multiview_geometry_shader<'m>(mut self, multiview_geometry_shader: bool) -> PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
+        self.raw.multiviewGeometryShader = multiview_geometry_shader as u32;
         self
     }
 
-    pub fn multiview_tessellation_shader<'m>(&'m mut self, multiview_tessellation_shader: bool) -> &'m mut PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
+    pub fn multiview_tessellation_shader<'m>(mut self, multiview_tessellation_shader: bool) -> PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
+        self.raw.multiviewTessellationShader = multiview_tessellation_shader as u32;
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceMultiviewFeaturesKhx<'b> {
+        PhysicalDeviceMultiviewFeaturesKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -13937,7 +17442,7 @@ impl<'b> PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
 
 /// A `VkPhysicalDeviceMultiviewPropertiesKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -13963,9 +17468,17 @@ impl<'s> PhysicalDeviceMultiviewPropertiesKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<PhysicalDeviceMultiviewPropertiesKhx<'s>> for vks::VkPhysicalDeviceMultiviewPropertiesKHX {
+    fn from(f: PhysicalDeviceMultiviewPropertiesKhx<'s>) -> vks::VkPhysicalDeviceMultiviewPropertiesKHX {
+        f.raw
+    }
+}
+
+
 /// A `VkRenderPassMultiviewCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14007,9 +17520,17 @@ impl<'s> RenderPassMultiviewCreateInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<RenderPassMultiviewCreateInfoKhx<'s>> for vks::VkRenderPassMultiviewCreateInfoKHX {
+    fn from(f: RenderPassMultiviewCreateInfoKhx<'s>) -> vks::VkRenderPassMultiviewCreateInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkRenderPassMultiviewCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct RenderPassMultiviewCreateInfoKhxBuilder<'b> {
@@ -14026,32 +17547,46 @@ impl<'b> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn subpass_count<'m>(&'m mut self, subpass_count: u32) -> &'m mut RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+    pub fn subpass_count<'m>(mut self, subpass_count: u32) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+        self.raw.subpassCount = subpass_count.into();
         self
     }
 
-    pub fn view_masks<'m, 'a>(&'m mut self, view_masks: &'a u32) -> &'m mut RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+    pub fn view_masks<'m, 'a>(mut self, view_masks: &'a [u32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+        self.raw.pViewMasks = view_masks.as_ptr() as *const _;
         self
     }
 
-    pub fn dependency_count<'m>(&'m mut self, dependency_count: u32) -> &'m mut RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+    pub fn dependency_count<'m>(mut self, dependency_count: u32) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+        self.raw.dependencyCount = dependency_count.into();
         self
     }
 
-    pub fn view_offsets<'m, 'a>(&'m mut self, view_offsets: &'a i32) -> &'m mut RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+    pub fn view_offsets<'m, 'a>(mut self, view_offsets: &'a [i32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+        self.raw.pViewOffsets = view_offsets.as_ptr() as *const _;
         self
     }
 
-    pub fn correlation_mask_count<'m>(&'m mut self, correlation_mask_count: u32) -> &'m mut RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+    pub fn correlation_mask_count<'m>(mut self, correlation_mask_count: u32) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+        self.raw.correlationMaskCount = correlation_mask_count.into();
         self
     }
 
-    pub fn correlation_masks<'m, 'a>(&'m mut self, correlation_masks: &'a u32) -> &'m mut RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+    pub fn correlation_masks<'m, 'a>(mut self, correlation_masks: &'a [u32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+        self.raw.pCorrelationMasks = correlation_masks.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> RenderPassMultiviewCreateInfoKhx<'b> {
+        RenderPassMultiviewCreateInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14059,7 +17594,7 @@ impl<'b> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
 
 /// A `VkSurfaceCapabilities2EXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SurfaceCapabilities2Ext<'s> {
@@ -14110,9 +17645,16 @@ impl<'s> SurfaceCapabilities2Ext<'s> {
 }
 
 
+impl<'s> From<SurfaceCapabilities2Ext<'s>> for vks::VkSurfaceCapabilities2EXT {
+    fn from(f: SurfaceCapabilities2Ext<'s>) -> vks::VkSurfaceCapabilities2EXT {
+        f.raw
+    }
+}
+
+
 /// A `VkDisplayPowerInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayPowerInfoExt<'s> {
@@ -14137,9 +17679,16 @@ impl<'s> DisplayPowerInfoExt<'s> {
 }
 
 
+impl<'s> From<DisplayPowerInfoExt<'s>> for vks::VkDisplayPowerInfoEXT {
+    fn from(f: DisplayPowerInfoExt<'s>) -> vks::VkDisplayPowerInfoEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDisplayPowerInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayPowerInfoExtBuilder<'b> {
     raw: vks::VkDisplayPowerInfoEXT,
@@ -14154,12 +17703,21 @@ impl<'b> DisplayPowerInfoExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DisplayPowerInfoExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DisplayPowerInfoExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn power_state<'m>(&'m mut self, power_state: DisplayPowerStateExt) -> &'m mut DisplayPowerInfoExtBuilder<'b> {
+    pub fn power_state<'m>(mut self, power_state: DisplayPowerStateExt) -> DisplayPowerInfoExtBuilder<'b> {
+        self.raw.powerState = power_state.into();
         self
+    }
+
+    pub fn build(self) -> DisplayPowerInfoExt<'b> {
+        DisplayPowerInfoExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14167,7 +17725,7 @@ impl<'b> DisplayPowerInfoExtBuilder<'b> {
 
 /// A `VkDeviceEventInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DeviceEventInfoExt<'s> {
@@ -14192,9 +17750,16 @@ impl<'s> DeviceEventInfoExt<'s> {
 }
 
 
+impl<'s> From<DeviceEventInfoExt<'s>> for vks::VkDeviceEventInfoEXT {
+    fn from(f: DeviceEventInfoExt<'s>) -> vks::VkDeviceEventInfoEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceEventInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DeviceEventInfoExtBuilder<'b> {
     raw: vks::VkDeviceEventInfoEXT,
@@ -14209,12 +17774,21 @@ impl<'b> DeviceEventInfoExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceEventInfoExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceEventInfoExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn device_event<'m>(&'m mut self, device_event: DeviceEventTypeExt) -> &'m mut DeviceEventInfoExtBuilder<'b> {
+    pub fn device_event<'m>(mut self, device_event: DeviceEventTypeExt) -> DeviceEventInfoExtBuilder<'b> {
+        self.raw.deviceEvent = device_event.into();
         self
+    }
+
+    pub fn build(self) -> DeviceEventInfoExt<'b> {
+        DeviceEventInfoExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14222,7 +17796,7 @@ impl<'b> DeviceEventInfoExtBuilder<'b> {
 
 /// A `VkDisplayEventInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayEventInfoExt<'s> {
@@ -14247,9 +17821,16 @@ impl<'s> DisplayEventInfoExt<'s> {
 }
 
 
+impl<'s> From<DisplayEventInfoExt<'s>> for vks::VkDisplayEventInfoEXT {
+    fn from(f: DisplayEventInfoExt<'s>) -> vks::VkDisplayEventInfoEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDisplayEventInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayEventInfoExtBuilder<'b> {
     raw: vks::VkDisplayEventInfoEXT,
@@ -14264,12 +17845,21 @@ impl<'b> DisplayEventInfoExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DisplayEventInfoExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DisplayEventInfoExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn display_event<'m>(&'m mut self, display_event: DisplayEventTypeExt) -> &'m mut DisplayEventInfoExtBuilder<'b> {
+    pub fn display_event<'m>(mut self, display_event: DisplayEventTypeExt) -> DisplayEventInfoExtBuilder<'b> {
+        self.raw.displayEvent = display_event.into();
         self
+    }
+
+    pub fn build(self) -> DisplayEventInfoExt<'b> {
+        DisplayEventInfoExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14277,7 +17867,7 @@ impl<'b> DisplayEventInfoExtBuilder<'b> {
 
 /// A `VkSwapchainCounterCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SwapchainCounterCreateInfoExt<'s> {
@@ -14302,9 +17892,16 @@ impl<'s> SwapchainCounterCreateInfoExt<'s> {
 }
 
 
+impl<'s> From<SwapchainCounterCreateInfoExt<'s>> for vks::VkSwapchainCounterCreateInfoEXT {
+    fn from(f: SwapchainCounterCreateInfoExt<'s>) -> vks::VkSwapchainCounterCreateInfoEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSwapchainCounterCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SwapchainCounterCreateInfoExtBuilder<'b> {
     raw: vks::VkSwapchainCounterCreateInfoEXT,
@@ -14319,12 +17916,21 @@ impl<'b> SwapchainCounterCreateInfoExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut SwapchainCounterCreateInfoExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> SwapchainCounterCreateInfoExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn surface_counters<'m>(&'m mut self, surface_counters: SurfaceCounterFlagsExt) -> &'m mut SwapchainCounterCreateInfoExtBuilder<'b> {
+    pub fn surface_counters<'m>(mut self, surface_counters: SurfaceCounterFlagsExt) -> SwapchainCounterCreateInfoExtBuilder<'b> {
+        self.raw.surfaceCounters = surface_counters.bits();
         self
+    }
+
+    pub fn build(self) -> SwapchainCounterCreateInfoExt<'b> {
+        SwapchainCounterCreateInfoExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14332,7 +17938,7 @@ impl<'b> SwapchainCounterCreateInfoExtBuilder<'b> {
 
 /// A `VkPhysicalDeviceGroupPropertiesKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14361,9 +17967,17 @@ impl<'s> PhysicalDeviceGroupPropertiesKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<PhysicalDeviceGroupPropertiesKhx<'s>> for vks::VkPhysicalDeviceGroupPropertiesKHX {
+    fn from(f: PhysicalDeviceGroupPropertiesKhx<'s>) -> vks::VkPhysicalDeviceGroupPropertiesKHX {
+        f.raw
+    }
+}
+
+
 /// A `VkMemoryAllocateFlagsInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14393,9 +18007,17 @@ impl<'s> MemoryAllocateFlagsInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<MemoryAllocateFlagsInfoKhx<'s>> for vks::VkMemoryAllocateFlagsInfoKHX {
+    fn from(f: MemoryAllocateFlagsInfoKhx<'s>) -> vks::VkMemoryAllocateFlagsInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkMemoryAllocateFlagsInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct MemoryAllocateFlagsInfoKhxBuilder<'b> {
@@ -14412,16 +18034,26 @@ impl<'b> MemoryAllocateFlagsInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut MemoryAllocateFlagsInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> MemoryAllocateFlagsInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: MemoryAllocateFlagsKhx) -> &'m mut MemoryAllocateFlagsInfoKhxBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: MemoryAllocateFlagsKhx) -> MemoryAllocateFlagsInfoKhxBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn device_mask<'m>(&'m mut self, device_mask: u32) -> &'m mut MemoryAllocateFlagsInfoKhxBuilder<'b> {
+    pub fn device_mask<'m>(mut self, device_mask: u32) -> MemoryAllocateFlagsInfoKhxBuilder<'b> {
+        self.raw.deviceMask = device_mask.into();
         self
+    }
+
+    pub fn build(self) -> MemoryAllocateFlagsInfoKhx<'b> {
+        MemoryAllocateFlagsInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14429,7 +18061,7 @@ impl<'b> MemoryAllocateFlagsInfoKhxBuilder<'b> {
 
 /// A `VkBindBufferMemoryDeviceGroupInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14459,9 +18091,17 @@ impl<'s> BindBufferMemoryDeviceGroupInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<BindBufferMemoryDeviceGroupInfoKhx<'s>> for vks::VkBindBufferMemoryDeviceGroupInfoKHX {
+    fn from(f: BindBufferMemoryDeviceGroupInfoKhx<'s>) -> vks::VkBindBufferMemoryDeviceGroupInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkBindBufferMemoryDeviceGroupInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
@@ -14478,16 +18118,26 @@ impl<'b> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn device_index_count<'m>(&'m mut self, device_index_count: u32) -> &'m mut BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
+    pub fn device_index_count<'m>(mut self, device_index_count: u32) -> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
+        self.raw.deviceIndexCount = device_index_count.into();
         self
     }
 
-    pub fn device_indices<'m, 'a>(&'m mut self, device_indices: &'a u32) -> &'m mut BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
+    pub fn device_indices<'m, 'a>(mut self, device_indices: &'a [u32]) -> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
+        self.raw.pDeviceIndices = device_indices.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> BindBufferMemoryDeviceGroupInfoKhx<'b> {
+        BindBufferMemoryDeviceGroupInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14495,7 +18145,7 @@ impl<'b> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
 
 /// A `VkBindImageMemoryDeviceGroupInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14531,9 +18181,17 @@ impl<'s> BindImageMemoryDeviceGroupInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<BindImageMemoryDeviceGroupInfoKhx<'s>> for vks::VkBindImageMemoryDeviceGroupInfoKHX {
+    fn from(f: BindImageMemoryDeviceGroupInfoKhx<'s>) -> vks::VkBindImageMemoryDeviceGroupInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkBindImageMemoryDeviceGroupInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
@@ -14550,24 +18208,36 @@ impl<'b> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn device_index_count<'m>(&'m mut self, device_index_count: u32) -> &'m mut BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+    pub fn device_index_count<'m>(mut self, device_index_count: u32) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+        self.raw.deviceIndexCount = device_index_count.into();
         self
     }
 
-    pub fn device_indices<'m, 'a>(&'m mut self, device_indices: &'a u32) -> &'m mut BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+    pub fn device_indices<'m, 'a>(mut self, device_indices: &'a [u32]) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+        self.raw.pDeviceIndices = device_indices.as_ptr() as *const _;
         self
     }
 
-    pub fn s_fr_rect_count<'m>(&'m mut self, s_fr_rect_count: u32) -> &'m mut BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+    pub fn s_fr_rect_count<'m>(mut self, s_fr_rect_count: u32) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+        self.raw.SFRRectCount = s_fr_rect_count.into();
         self
     }
 
-    pub fn s_fr_rects<'m, 'a>(&'m mut self, s_fr_rects: &'a Rect2d) -> &'m mut BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+    pub fn s_fr_rects<'m, 'a>(mut self, s_fr_rects: &'a [Rect2d]) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+        self.raw.pSFRRects = s_fr_rects.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> BindImageMemoryDeviceGroupInfoKhx<'b> {
+        BindImageMemoryDeviceGroupInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14575,7 +18245,7 @@ impl<'b> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupRenderPassBeginInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14608,9 +18278,17 @@ impl<'s> DeviceGroupRenderPassBeginInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<DeviceGroupRenderPassBeginInfoKhx<'s>> for vks::VkDeviceGroupRenderPassBeginInfoKHX {
+    fn from(f: DeviceGroupRenderPassBeginInfoKhx<'s>) -> vks::VkDeviceGroupRenderPassBeginInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceGroupRenderPassBeginInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
@@ -14627,20 +18305,31 @@ impl<'b> DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn device_mask<'m>(&'m mut self, device_mask: u32) -> &'m mut DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
+    pub fn device_mask<'m>(mut self, device_mask: u32) -> DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
+        self.raw.deviceMask = device_mask.into();
         self
     }
 
-    pub fn device_render_area_count<'m>(&'m mut self, device_render_area_count: u32) -> &'m mut DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
+    pub fn device_render_area_count<'m>(mut self, device_render_area_count: u32) -> DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
+        self.raw.deviceRenderAreaCount = device_render_area_count.into();
         self
     }
 
-    pub fn device_render_areas<'m, 'a>(&'m mut self, device_render_areas: &'a Rect2d) -> &'m mut DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
+    pub fn device_render_areas<'m, 'a>(mut self, device_render_areas: &'a [Rect2d]) -> DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
+        self.raw.pDeviceRenderAreas = device_render_areas.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> DeviceGroupRenderPassBeginInfoKhx<'b> {
+        DeviceGroupRenderPassBeginInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14648,7 +18337,7 @@ impl<'b> DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupCommandBufferBeginInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14675,9 +18364,17 @@ impl<'s> DeviceGroupCommandBufferBeginInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<DeviceGroupCommandBufferBeginInfoKhx<'s>> for vks::VkDeviceGroupCommandBufferBeginInfoKHX {
+    fn from(f: DeviceGroupCommandBufferBeginInfoKhx<'s>) -> vks::VkDeviceGroupCommandBufferBeginInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceGroupCommandBufferBeginInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupCommandBufferBeginInfoKhxBuilder<'b> {
@@ -14694,12 +18391,21 @@ impl<'b> DeviceGroupCommandBufferBeginInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceGroupCommandBufferBeginInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceGroupCommandBufferBeginInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn device_mask<'m>(&'m mut self, device_mask: u32) -> &'m mut DeviceGroupCommandBufferBeginInfoKhxBuilder<'b> {
+    pub fn device_mask<'m>(mut self, device_mask: u32) -> DeviceGroupCommandBufferBeginInfoKhxBuilder<'b> {
+        self.raw.deviceMask = device_mask.into();
         self
+    }
+
+    pub fn build(self) -> DeviceGroupCommandBufferBeginInfoKhx<'b> {
+        DeviceGroupCommandBufferBeginInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14707,7 +18413,7 @@ impl<'b> DeviceGroupCommandBufferBeginInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupSubmitInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14749,9 +18455,17 @@ impl<'s> DeviceGroupSubmitInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<DeviceGroupSubmitInfoKhx<'s>> for vks::VkDeviceGroupSubmitInfoKHX {
+    fn from(f: DeviceGroupSubmitInfoKhx<'s>) -> vks::VkDeviceGroupSubmitInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceGroupSubmitInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupSubmitInfoKhxBuilder<'b> {
@@ -14768,32 +18482,46 @@ impl<'b> DeviceGroupSubmitInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceGroupSubmitInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn wait_semaphore_count<'m>(&'m mut self, wait_semaphore_count: u32) -> &'m mut DeviceGroupSubmitInfoKhxBuilder<'b> {
+    pub fn wait_semaphore_count<'m>(mut self, wait_semaphore_count: u32) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
+        self.raw.waitSemaphoreCount = wait_semaphore_count.into();
         self
     }
 
-    pub fn wait_semaphore_device_indices<'m, 'a>(&'m mut self, wait_semaphore_device_indices: &'a u32) -> &'m mut DeviceGroupSubmitInfoKhxBuilder<'b> {
+    pub fn wait_semaphore_device_indices<'m, 'a>(mut self, wait_semaphore_device_indices: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
+        self.raw.pWaitSemaphoreDeviceIndices = wait_semaphore_device_indices.as_ptr() as *const _;
         self
     }
 
-    pub fn command_buffer_count<'m>(&'m mut self, command_buffer_count: u32) -> &'m mut DeviceGroupSubmitInfoKhxBuilder<'b> {
+    pub fn command_buffer_count<'m>(mut self, command_buffer_count: u32) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
+        self.raw.commandBufferCount = command_buffer_count.into();
         self
     }
 
-    pub fn command_buffer_device_masks<'m, 'a>(&'m mut self, command_buffer_device_masks: &'a u32) -> &'m mut DeviceGroupSubmitInfoKhxBuilder<'b> {
+    pub fn command_buffer_device_masks<'m, 'a>(mut self, command_buffer_device_masks: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
+        self.raw.pCommandBufferDeviceMasks = command_buffer_device_masks.as_ptr() as *const _;
         self
     }
 
-    pub fn signal_semaphore_count<'m>(&'m mut self, signal_semaphore_count: u32) -> &'m mut DeviceGroupSubmitInfoKhxBuilder<'b> {
+    pub fn signal_semaphore_count<'m>(mut self, signal_semaphore_count: u32) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
+        self.raw.signalSemaphoreCount = signal_semaphore_count.into();
         self
     }
 
-    pub fn signal_semaphore_device_indices<'m, 'a>(&'m mut self, signal_semaphore_device_indices: &'a u32) -> &'m mut DeviceGroupSubmitInfoKhxBuilder<'b> {
+    pub fn signal_semaphore_device_indices<'m, 'a>(mut self, signal_semaphore_device_indices: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
+        self.raw.pSignalSemaphoreDeviceIndices = signal_semaphore_device_indices.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> DeviceGroupSubmitInfoKhx<'b> {
+        DeviceGroupSubmitInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14801,7 +18529,7 @@ impl<'b> DeviceGroupSubmitInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupBindSparseInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14831,9 +18559,17 @@ impl<'s> DeviceGroupBindSparseInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<DeviceGroupBindSparseInfoKhx<'s>> for vks::VkDeviceGroupBindSparseInfoKHX {
+    fn from(f: DeviceGroupBindSparseInfoKhx<'s>) -> vks::VkDeviceGroupBindSparseInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceGroupBindSparseInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupBindSparseInfoKhxBuilder<'b> {
@@ -14850,16 +18586,26 @@ impl<'b> DeviceGroupBindSparseInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceGroupBindSparseInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceGroupBindSparseInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn resource_device_index<'m>(&'m mut self, resource_device_index: u32) -> &'m mut DeviceGroupBindSparseInfoKhxBuilder<'b> {
+    pub fn resource_device_index<'m>(mut self, resource_device_index: u32) -> DeviceGroupBindSparseInfoKhxBuilder<'b> {
+        self.raw.resourceDeviceIndex = resource_device_index.into();
         self
     }
 
-    pub fn memory_device_index<'m>(&'m mut self, memory_device_index: u32) -> &'m mut DeviceGroupBindSparseInfoKhxBuilder<'b> {
+    pub fn memory_device_index<'m>(mut self, memory_device_index: u32) -> DeviceGroupBindSparseInfoKhxBuilder<'b> {
+        self.raw.memoryDeviceIndex = memory_device_index.into();
         self
+    }
+
+    pub fn build(self) -> DeviceGroupBindSparseInfoKhx<'b> {
+        DeviceGroupBindSparseInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14867,7 +18613,7 @@ impl<'b> DeviceGroupBindSparseInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupPresentCapabilitiesKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14893,9 +18639,17 @@ impl<'s> DeviceGroupPresentCapabilitiesKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<DeviceGroupPresentCapabilitiesKhx<'s>> for vks::VkDeviceGroupPresentCapabilitiesKHX {
+    fn from(f: DeviceGroupPresentCapabilitiesKhx<'s>) -> vks::VkDeviceGroupPresentCapabilitiesKHX {
+        f.raw
+    }
+}
+
+
 /// A `VkImageSwapchainCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14922,9 +18676,17 @@ impl<'s> ImageSwapchainCreateInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<ImageSwapchainCreateInfoKhx<'s>> for vks::VkImageSwapchainCreateInfoKHX {
+    fn from(f: ImageSwapchainCreateInfoKhx<'s>) -> vks::VkImageSwapchainCreateInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageSwapchainCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ImageSwapchainCreateInfoKhxBuilder<'b> {
@@ -14941,12 +18703,21 @@ impl<'b> ImageSwapchainCreateInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImageSwapchainCreateInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImageSwapchainCreateInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn swapchain<'m>(&'m mut self, swapchain: SwapchainKhr) -> &'m mut ImageSwapchainCreateInfoKhxBuilder<'b> {
+    pub fn swapchain<'m, 'a>(mut self, swapchain: &'a Swapchain) -> ImageSwapchainCreateInfoKhxBuilder<'b> {
+        self.raw.swapchain = swapchain.handle();
         self
+    }
+
+    pub fn build(self) -> ImageSwapchainCreateInfoKhx<'b> {
+        ImageSwapchainCreateInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -14954,7 +18725,7 @@ impl<'b> ImageSwapchainCreateInfoKhxBuilder<'b> {
 
 /// A `VkBindImageMemorySwapchainInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14984,9 +18755,17 @@ impl<'s> BindImageMemorySwapchainInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<BindImageMemorySwapchainInfoKhx<'s>> for vks::VkBindImageMemorySwapchainInfoKHX {
+    fn from(f: BindImageMemorySwapchainInfoKhx<'s>) -> vks::VkBindImageMemorySwapchainInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkBindImageMemorySwapchainInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct BindImageMemorySwapchainInfoKhxBuilder<'b> {
@@ -15003,16 +18782,26 @@ impl<'b> BindImageMemorySwapchainInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut BindImageMemorySwapchainInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> BindImageMemorySwapchainInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn swapchain<'m>(&'m mut self, swapchain: SwapchainKhr) -> &'m mut BindImageMemorySwapchainInfoKhxBuilder<'b> {
+    pub fn swapchain<'m, 'a>(mut self, swapchain: &'a Swapchain) -> BindImageMemorySwapchainInfoKhxBuilder<'b> {
+        self.raw.swapchain = swapchain.handle();
         self
     }
 
-    pub fn image_index<'m>(&'m mut self, image_index: u32) -> &'m mut BindImageMemorySwapchainInfoKhxBuilder<'b> {
+    pub fn image_index<'m>(mut self, image_index: u32) -> BindImageMemorySwapchainInfoKhxBuilder<'b> {
+        self.raw.imageIndex = image_index.into();
         self
+    }
+
+    pub fn build(self) -> BindImageMemorySwapchainInfoKhx<'b> {
+        BindImageMemorySwapchainInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -15020,7 +18809,7 @@ impl<'b> BindImageMemorySwapchainInfoKhxBuilder<'b> {
 
 /// A `VkAcquireNextImageInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -15059,9 +18848,17 @@ impl<'s> AcquireNextImageInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<AcquireNextImageInfoKhx<'s>> for vks::VkAcquireNextImageInfoKHX {
+    fn from(f: AcquireNextImageInfoKhx<'s>) -> vks::VkAcquireNextImageInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkAcquireNextImageInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct AcquireNextImageInfoKhxBuilder<'b> {
@@ -15078,28 +18875,41 @@ impl<'b> AcquireNextImageInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut AcquireNextImageInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> AcquireNextImageInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn swapchain<'m>(&'m mut self, swapchain: SwapchainKhr) -> &'m mut AcquireNextImageInfoKhxBuilder<'b> {
+    pub fn swapchain<'m, 'a>(mut self, swapchain: &'a Swapchain) -> AcquireNextImageInfoKhxBuilder<'b> {
+        self.raw.swapchain = swapchain.handle();
         self
     }
 
-    pub fn timeout<'m>(&'m mut self, timeout: u64) -> &'m mut AcquireNextImageInfoKhxBuilder<'b> {
+    pub fn timeout<'m>(mut self, timeout: u64) -> AcquireNextImageInfoKhxBuilder<'b> {
+        self.raw.timeout = timeout.into();
         self
     }
 
-    pub fn semaphore<'m>(&'m mut self, semaphore: Semaphore) -> &'m mut AcquireNextImageInfoKhxBuilder<'b> {
+    pub fn semaphore<'m, 'a>(mut self, semaphore: &'a Semaphore) -> AcquireNextImageInfoKhxBuilder<'b> {
+        self.raw.semaphore = semaphore.handle();
         self
     }
 
-    pub fn fence<'m>(&'m mut self, fence: Fence) -> &'m mut AcquireNextImageInfoKhxBuilder<'b> {
+    pub fn fence<'m, 'a>(mut self, fence: &'a Fence) -> AcquireNextImageInfoKhxBuilder<'b> {
+        self.raw.fence = fence.handle();
         self
     }
 
-    pub fn device_mask<'m>(&'m mut self, device_mask: u32) -> &'m mut AcquireNextImageInfoKhxBuilder<'b> {
+    pub fn device_mask<'m>(mut self, device_mask: u32) -> AcquireNextImageInfoKhxBuilder<'b> {
+        self.raw.deviceMask = device_mask.into();
         self
+    }
+
+    pub fn build(self) -> AcquireNextImageInfoKhx<'b> {
+        AcquireNextImageInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -15107,7 +18917,7 @@ impl<'b> AcquireNextImageInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupPresentInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -15140,9 +18950,17 @@ impl<'s> DeviceGroupPresentInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<DeviceGroupPresentInfoKhx<'s>> for vks::VkDeviceGroupPresentInfoKHX {
+    fn from(f: DeviceGroupPresentInfoKhx<'s>) -> vks::VkDeviceGroupPresentInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceGroupPresentInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupPresentInfoKhxBuilder<'b> {
@@ -15159,20 +18977,31 @@ impl<'b> DeviceGroupPresentInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceGroupPresentInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceGroupPresentInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn swapchain_count<'m>(&'m mut self, swapchain_count: u32) -> &'m mut DeviceGroupPresentInfoKhxBuilder<'b> {
+    pub fn swapchain_count<'m>(mut self, swapchain_count: u32) -> DeviceGroupPresentInfoKhxBuilder<'b> {
+        self.raw.swapchainCount = swapchain_count.into();
         self
     }
 
-    pub fn device_masks<'m, 'a>(&'m mut self, device_masks: &'a u32) -> &'m mut DeviceGroupPresentInfoKhxBuilder<'b> {
+    pub fn device_masks<'m, 'a>(mut self, device_masks: &'a [u32]) -> DeviceGroupPresentInfoKhxBuilder<'b> {
+        self.raw.pDeviceMasks = device_masks.as_ptr() as *const _;
         self
     }
 
-    pub fn mode<'m>(&'m mut self, mode: DeviceGroupPresentModeFlagsKhx) -> &'m mut DeviceGroupPresentInfoKhxBuilder<'b> {
+    pub fn mode<'m>(mut self, mode: DeviceGroupPresentModeFlagsKhx) -> DeviceGroupPresentInfoKhxBuilder<'b> {
+        self.raw.mode = mode.bits();
         self
+    }
+
+    pub fn build(self) -> DeviceGroupPresentInfoKhx<'b> {
+        DeviceGroupPresentInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -15180,12 +19009,12 @@ impl<'b> DeviceGroupPresentInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupDeviceCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
-#[repr(C)]
 pub struct DeviceGroupDeviceCreateInfoKhx<'s> {
     raw: vks::VkDeviceGroupDeviceCreateInfoKHX,
+    physical_devices: Option<Vec<vks::VkPhysicalDevice>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -15210,13 +19039,22 @@ impl<'s> DeviceGroupDeviceCreateInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<DeviceGroupDeviceCreateInfoKhx<'s>> for vks::VkDeviceGroupDeviceCreateInfoKHX {
+    fn from(f: DeviceGroupDeviceCreateInfoKhx<'s>) -> vks::VkDeviceGroupDeviceCreateInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceGroupDeviceCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
     raw: vks::VkDeviceGroupDeviceCreateInfoKHX,
+    physical_devices: Option<Vec<vks::VkPhysicalDevice>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -15225,20 +19063,33 @@ impl<'b> DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
     pub fn new() -> DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
         DeviceGroupDeviceCreateInfoKhxBuilder {
             raw: vks::VkDeviceGroupDeviceCreateInfoKHX::default(),
+            physical_devices: None,
             _p: PhantomData,
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn physical_device_count<'m>(&'m mut self, physical_device_count: u32) -> &'m mut DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
+    pub fn physical_device_count<'m>(mut self, physical_device_count: u32) -> DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
+        self.raw.physicalDeviceCount = physical_device_count.into();
         self
     }
 
-    pub fn physical_devices<'m, 'a>(&'m mut self, physical_devices: &'a PhysicalDevice) -> &'m mut DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
+    pub fn physical_devices<'m, 'a>(mut self, physical_devices: &'a [PhysicalDevice]) -> DeviceGroupDeviceCreateInfoKhxBuilder<'b> where 'a: 'b {
+        self.physical_devices = Some(physical_devices.iter().map(|h| h.handle()).collect());
+        self.raw.pPhysicalDevices = self.physical_devices.as_ref().unwrap().as_ptr();
         self
+    }
+
+    pub fn build(self) -> DeviceGroupDeviceCreateInfoKhx<'b> {
+        DeviceGroupDeviceCreateInfoKhx {
+            raw: self.raw,
+            physical_devices: self.physical_devices,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -15246,7 +19097,7 @@ impl<'b> DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupSwapchainCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -15273,9 +19124,17 @@ impl<'s> DeviceGroupSwapchainCreateInfoKhx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<DeviceGroupSwapchainCreateInfoKhx<'s>> for vks::VkDeviceGroupSwapchainCreateInfoKHX {
+    fn from(f: DeviceGroupSwapchainCreateInfoKhx<'s>) -> vks::VkDeviceGroupSwapchainCreateInfoKHX {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDeviceGroupSwapchainCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupSwapchainCreateInfoKhxBuilder<'b> {
@@ -15292,12 +19151,21 @@ impl<'b> DeviceGroupSwapchainCreateInfoKhxBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DeviceGroupSwapchainCreateInfoKhxBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> DeviceGroupSwapchainCreateInfoKhxBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn modes<'m>(&'m mut self, modes: DeviceGroupPresentModeFlagsKhx) -> &'m mut DeviceGroupSwapchainCreateInfoKhxBuilder<'b> {
+    pub fn modes<'m>(mut self, modes: DeviceGroupPresentModeFlagsKhx) -> DeviceGroupSwapchainCreateInfoKhxBuilder<'b> {
+        self.raw.modes = modes.bits();
         self
+    }
+
+    pub fn build(self) -> DeviceGroupSwapchainCreateInfoKhx<'b> {
+        DeviceGroupSwapchainCreateInfoKhx {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -15305,7 +19173,7 @@ impl<'b> DeviceGroupSwapchainCreateInfoKhxBuilder<'b> {
 
 /// A `VkDescriptorUpdateTemplateEntryKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorUpdateTemplateEntryKhr {
@@ -15341,9 +19209,16 @@ impl DescriptorUpdateTemplateEntryKhr {
 }
 
 
+impl From<DescriptorUpdateTemplateEntryKhr> for vks::VkDescriptorUpdateTemplateEntryKHR {
+    fn from(f: DescriptorUpdateTemplateEntryKhr) -> vks::VkDescriptorUpdateTemplateEntryKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDescriptorUpdateTemplateEntryKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorUpdateTemplateEntryKhrBuilder {
     raw: vks::VkDescriptorUpdateTemplateEntryKHR,
@@ -15356,28 +19231,40 @@ impl DescriptorUpdateTemplateEntryKhrBuilder {
         }
     }
 
-    pub fn dst_binding<'m>(&'m mut self, dst_binding: u32) -> &'m mut DescriptorUpdateTemplateEntryKhrBuilder {
+    pub fn dst_binding<'m>(mut self, dst_binding: u32) -> DescriptorUpdateTemplateEntryKhrBuilder {
+        self.raw.dstBinding = dst_binding.into();
         self
     }
 
-    pub fn dst_array_element<'m>(&'m mut self, dst_array_element: u32) -> &'m mut DescriptorUpdateTemplateEntryKhrBuilder {
+    pub fn dst_array_element<'m>(mut self, dst_array_element: u32) -> DescriptorUpdateTemplateEntryKhrBuilder {
+        self.raw.dstArrayElement = dst_array_element.into();
         self
     }
 
-    pub fn descriptor_count<'m>(&'m mut self, descriptor_count: u32) -> &'m mut DescriptorUpdateTemplateEntryKhrBuilder {
+    pub fn descriptor_count<'m>(mut self, descriptor_count: u32) -> DescriptorUpdateTemplateEntryKhrBuilder {
+        self.raw.descriptorCount = descriptor_count.into();
         self
     }
 
-    pub fn descriptor_type<'m>(&'m mut self, descriptor_type: DescriptorType) -> &'m mut DescriptorUpdateTemplateEntryKhrBuilder {
+    pub fn descriptor_type<'m>(mut self, descriptor_type: DescriptorType) -> DescriptorUpdateTemplateEntryKhrBuilder {
+        self.raw.descriptorType = descriptor_type.into();
         self
     }
 
-    pub fn offset<'m>(&'m mut self, offset: usize) -> &'m mut DescriptorUpdateTemplateEntryKhrBuilder {
+    pub fn offset<'m>(mut self, offset: usize) -> DescriptorUpdateTemplateEntryKhrBuilder {
+        self.raw.offset = offset.into();
         self
     }
 
-    pub fn stride<'m>(&'m mut self, stride: usize) -> &'m mut DescriptorUpdateTemplateEntryKhrBuilder {
+    pub fn stride<'m>(mut self, stride: usize) -> DescriptorUpdateTemplateEntryKhrBuilder {
+        self.raw.stride = stride.into();
         self
+    }
+
+    pub fn build(self) -> DescriptorUpdateTemplateEntryKhr {
+        DescriptorUpdateTemplateEntryKhr {
+            raw: self.raw,
+        }
     }
 
 }
@@ -15385,7 +19272,7 @@ impl DescriptorUpdateTemplateEntryKhrBuilder {
 
 /// A `VkDescriptorUpdateTemplateCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorUpdateTemplateCreateInfoKhr<'s> {
@@ -15431,9 +19318,16 @@ impl<'s> DescriptorUpdateTemplateCreateInfoKhr<'s> {
 }
 
 
+impl<'s> From<DescriptorUpdateTemplateCreateInfoKhr<'s>> for vks::VkDescriptorUpdateTemplateCreateInfoKHR {
+    fn from(f: DescriptorUpdateTemplateCreateInfoKhr<'s>) -> vks::VkDescriptorUpdateTemplateCreateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkDescriptorUpdateTemplateCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
     raw: vks::VkDescriptorUpdateTemplateCreateInfoKHR,
@@ -15448,40 +19342,56 @@ impl<'b> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *mut c_void) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: DescriptorUpdateTemplateCreateFlagsKhr) -> &'m mut DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: DescriptorUpdateTemplateCreateFlagsKhr) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn descriptor_update_entry_count<'m>(&'m mut self, descriptor_update_entry_count: u32) -> &'m mut DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+    pub fn descriptor_update_entry_count<'m>(mut self, descriptor_update_entry_count: u32) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+        self.raw.descriptorUpdateEntryCount = descriptor_update_entry_count.into();
         self
     }
 
-    pub fn descriptor_update_entries<'m, 'a>(&'m mut self, descriptor_update_entries: &'a DescriptorUpdateTemplateEntryKhr) -> &'m mut DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+    pub fn descriptor_update_entries<'m, 'a>(mut self, descriptor_update_entries: &'a [DescriptorUpdateTemplateEntryKhr]) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+        self.raw.pDescriptorUpdateEntries = descriptor_update_entries.as_ptr() as *const _;
         self
     }
 
-    pub fn template_type<'m>(&'m mut self, template_type: DescriptorUpdateTemplateTypeKhr) -> &'m mut DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+    pub fn template_type<'m>(mut self, template_type: DescriptorUpdateTemplateTypeKhr) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+        self.raw.templateType = template_type.into();
         self
     }
 
-    pub fn descriptor_set_layout<'m>(&'m mut self, descriptor_set_layout: DescriptorSetLayout) -> &'m mut DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+    pub fn descriptor_set_layout<'m, 'a>(mut self, descriptor_set_layout: &'a DescriptorSetLayout) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+        self.raw.descriptorSetLayout = descriptor_set_layout.handle();
         self
     }
 
-    pub fn pipeline_bind_point<'m>(&'m mut self, pipeline_bind_point: PipelineBindPoint) -> &'m mut DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+    pub fn pipeline_bind_point<'m>(mut self, pipeline_bind_point: PipelineBindPoint) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+        self.raw.pipelineBindPoint = pipeline_bind_point.into();
         self
     }
 
-    pub fn pipeline_layout<'m>(&'m mut self, pipeline_layout: PipelineLayout) -> &'m mut DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+    pub fn pipeline_layout<'m, 'a>(mut self, pipeline_layout: &'a PipelineLayout) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+        self.raw.pipelineLayout = pipeline_layout.handle();
         self
     }
 
-    pub fn set<'m>(&'m mut self, set: u32) -> &'m mut DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+    pub fn set<'m>(mut self, set: u32) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+        self.raw.set = set.into();
         self
+    }
+
+    pub fn build(self) -> DescriptorUpdateTemplateCreateInfoKhr<'b> {
+        DescriptorUpdateTemplateCreateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -15513,6 +19423,13 @@ impl XYColorExt {
 }
 
 
+impl From<XYColorExt> for vks::VkXYColorEXT {
+    fn from(f: XYColorExt) -> vks::VkXYColorEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkXYColorEXT`.
 ///
 /// Chromaticity coordinate
@@ -15528,12 +19445,20 @@ impl XYColorExtBuilder {
         }
     }
 
-    pub fn x<'m>(&'m mut self, x: f32) -> &'m mut XYColorExtBuilder {
+    pub fn x<'m>(mut self, x: f32) -> XYColorExtBuilder {
+        self.raw.x = x.into();
         self
     }
 
-    pub fn y<'m>(&'m mut self, y: f32) -> &'m mut XYColorExtBuilder {
+    pub fn y<'m>(mut self, y: f32) -> XYColorExtBuilder {
+        self.raw.y = y.into();
         self
+    }
+
+    pub fn build(self) -> XYColorExt {
+        XYColorExt {
+            raw: self.raw,
+        }
     }
 
 }
@@ -15587,6 +19512,13 @@ impl<'s> HdrMetadataExt<'s> {
 }
 
 
+impl<'s> From<HdrMetadataExt<'s>> for vks::VkHdrMetadataEXT {
+    fn from(f: HdrMetadataExt<'s>) -> vks::VkHdrMetadataEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkHdrMetadataEXT`.
 ///
 ///  From CTA 861.3
@@ -15604,40 +19536,56 @@ impl<'b> HdrMetadataExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut HdrMetadataExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> HdrMetadataExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn display_primary_red<'m>(&'m mut self, display_primary_red: XYColorExt) -> &'m mut HdrMetadataExtBuilder<'b> {
+    pub fn display_primary_red<'m>(mut self, display_primary_red: XYColorExt) -> HdrMetadataExtBuilder<'b> {
+        self.raw.displayPrimaryRed = display_primary_red.raw;
         self
     }
 
-    pub fn display_primary_green<'m>(&'m mut self, display_primary_green: XYColorExt) -> &'m mut HdrMetadataExtBuilder<'b> {
+    pub fn display_primary_green<'m>(mut self, display_primary_green: XYColorExt) -> HdrMetadataExtBuilder<'b> {
+        self.raw.displayPrimaryGreen = display_primary_green.raw;
         self
     }
 
-    pub fn display_primary_blue<'m>(&'m mut self, display_primary_blue: XYColorExt) -> &'m mut HdrMetadataExtBuilder<'b> {
+    pub fn display_primary_blue<'m>(mut self, display_primary_blue: XYColorExt) -> HdrMetadataExtBuilder<'b> {
+        self.raw.displayPrimaryBlue = display_primary_blue.raw;
         self
     }
 
-    pub fn white_point<'m>(&'m mut self, white_point: XYColorExt) -> &'m mut HdrMetadataExtBuilder<'b> {
+    pub fn white_point<'m>(mut self, white_point: XYColorExt) -> HdrMetadataExtBuilder<'b> {
+        self.raw.whitePoint = white_point.raw;
         self
     }
 
-    pub fn max_luminance<'m>(&'m mut self, max_luminance: f32) -> &'m mut HdrMetadataExtBuilder<'b> {
+    pub fn max_luminance<'m>(mut self, max_luminance: f32) -> HdrMetadataExtBuilder<'b> {
+        self.raw.maxLuminance = max_luminance.into();
         self
     }
 
-    pub fn min_luminance<'m>(&'m mut self, min_luminance: f32) -> &'m mut HdrMetadataExtBuilder<'b> {
+    pub fn min_luminance<'m>(mut self, min_luminance: f32) -> HdrMetadataExtBuilder<'b> {
+        self.raw.minLuminance = min_luminance.into();
         self
     }
 
-    pub fn max_content_light_level<'m>(&'m mut self, max_content_light_level: f32) -> &'m mut HdrMetadataExtBuilder<'b> {
+    pub fn max_content_light_level<'m>(mut self, max_content_light_level: f32) -> HdrMetadataExtBuilder<'b> {
+        self.raw.maxContentLightLevel = max_content_light_level.into();
         self
     }
 
-    pub fn max_frame_average_light_level<'m>(&'m mut self, max_frame_average_light_level: f32) -> &'m mut HdrMetadataExtBuilder<'b> {
+    pub fn max_frame_average_light_level<'m>(mut self, max_frame_average_light_level: f32) -> HdrMetadataExtBuilder<'b> {
+        self.raw.maxFrameAverageLightLevel = max_frame_average_light_level.into();
         self
+    }
+
+    pub fn build(self) -> HdrMetadataExt<'b> {
+        HdrMetadataExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -15645,7 +19593,7 @@ impl<'b> HdrMetadataExtBuilder<'b> {
 
 /// A `VkRefreshCycleDurationGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct RefreshCycleDurationGoogle {
@@ -15666,9 +19614,16 @@ impl RefreshCycleDurationGoogle {
 }
 
 
+impl From<RefreshCycleDurationGoogle> for vks::VkRefreshCycleDurationGOOGLE {
+    fn from(f: RefreshCycleDurationGoogle) -> vks::VkRefreshCycleDurationGOOGLE {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkRefreshCycleDurationGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct RefreshCycleDurationGoogleBuilder {
     raw: vks::VkRefreshCycleDurationGOOGLE,
@@ -15681,8 +19636,15 @@ impl RefreshCycleDurationGoogleBuilder {
         }
     }
 
-    pub fn refresh_duration<'m>(&'m mut self, refresh_duration: u64) -> &'m mut RefreshCycleDurationGoogleBuilder {
+    pub fn refresh_duration<'m>(mut self, refresh_duration: u64) -> RefreshCycleDurationGoogleBuilder {
+        self.raw.refreshDuration = refresh_duration.into();
         self
+    }
+
+    pub fn build(self) -> RefreshCycleDurationGoogle {
+        RefreshCycleDurationGoogle {
+            raw: self.raw,
+        }
     }
 
 }
@@ -15690,7 +19652,7 @@ impl RefreshCycleDurationGoogleBuilder {
 
 /// A `VkPastPresentationTimingGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PastPresentationTimingGoogle {
@@ -15723,9 +19685,16 @@ impl PastPresentationTimingGoogle {
 }
 
 
+impl From<PastPresentationTimingGoogle> for vks::VkPastPresentationTimingGOOGLE {
+    fn from(f: PastPresentationTimingGoogle) -> vks::VkPastPresentationTimingGOOGLE {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPastPresentationTimingGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PastPresentationTimingGoogleBuilder {
     raw: vks::VkPastPresentationTimingGOOGLE,
@@ -15738,24 +19707,35 @@ impl PastPresentationTimingGoogleBuilder {
         }
     }
 
-    pub fn present_id<'m>(&'m mut self, present_id: u32) -> &'m mut PastPresentationTimingGoogleBuilder {
+    pub fn present_id<'m>(mut self, present_id: u32) -> PastPresentationTimingGoogleBuilder {
+        self.raw.presentID = present_id.into();
         self
     }
 
-    pub fn desired_present_time<'m>(&'m mut self, desired_present_time: u64) -> &'m mut PastPresentationTimingGoogleBuilder {
+    pub fn desired_present_time<'m>(mut self, desired_present_time: u64) -> PastPresentationTimingGoogleBuilder {
+        self.raw.desiredPresentTime = desired_present_time.into();
         self
     }
 
-    pub fn actual_present_time<'m>(&'m mut self, actual_present_time: u64) -> &'m mut PastPresentationTimingGoogleBuilder {
+    pub fn actual_present_time<'m>(mut self, actual_present_time: u64) -> PastPresentationTimingGoogleBuilder {
+        self.raw.actualPresentTime = actual_present_time.into();
         self
     }
 
-    pub fn earliest_present_time<'m>(&'m mut self, earliest_present_time: u64) -> &'m mut PastPresentationTimingGoogleBuilder {
+    pub fn earliest_present_time<'m>(mut self, earliest_present_time: u64) -> PastPresentationTimingGoogleBuilder {
+        self.raw.earliestPresentTime = earliest_present_time.into();
         self
     }
 
-    pub fn present_margin<'m>(&'m mut self, present_margin: u64) -> &'m mut PastPresentationTimingGoogleBuilder {
+    pub fn present_margin<'m>(mut self, present_margin: u64) -> PastPresentationTimingGoogleBuilder {
+        self.raw.presentMargin = present_margin.into();
         self
+    }
+
+    pub fn build(self) -> PastPresentationTimingGoogle {
+        PastPresentationTimingGoogle {
+            raw: self.raw,
+        }
     }
 
 }
@@ -15763,7 +19743,7 @@ impl PastPresentationTimingGoogleBuilder {
 
 /// A `VkPresentTimesInfoGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PresentTimesInfoGoogle<'s> {
@@ -15791,9 +19771,16 @@ impl<'s> PresentTimesInfoGoogle<'s> {
 }
 
 
+impl<'s> From<PresentTimesInfoGoogle<'s>> for vks::VkPresentTimesInfoGOOGLE {
+    fn from(f: PresentTimesInfoGoogle<'s>) -> vks::VkPresentTimesInfoGOOGLE {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPresentTimesInfoGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentTimesInfoGoogleBuilder<'b> {
     raw: vks::VkPresentTimesInfoGOOGLE,
@@ -15808,16 +19795,26 @@ impl<'b> PresentTimesInfoGoogleBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PresentTimesInfoGoogleBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PresentTimesInfoGoogleBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn swapchain_count<'m>(&'m mut self, swapchain_count: u32) -> &'m mut PresentTimesInfoGoogleBuilder<'b> {
+    pub fn swapchain_count<'m>(mut self, swapchain_count: u32) -> PresentTimesInfoGoogleBuilder<'b> {
+        self.raw.swapchainCount = swapchain_count.into();
         self
     }
 
-    pub fn times<'m, 'a>(&'m mut self, times: &'a PresentTimeGoogle) -> &'m mut PresentTimesInfoGoogleBuilder<'b> {
+    pub fn times<'m, 'a>(mut self, times: &'a [PresentTimeGoogle]) -> PresentTimesInfoGoogleBuilder<'b> {
+        self.raw.pTimes = times.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> PresentTimesInfoGoogle<'b> {
+        PresentTimesInfoGoogle {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -15825,7 +19822,7 @@ impl<'b> PresentTimesInfoGoogleBuilder<'b> {
 
 /// A `VkPresentTimeGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PresentTimeGoogle {
@@ -15849,9 +19846,16 @@ impl PresentTimeGoogle {
 }
 
 
+impl From<PresentTimeGoogle> for vks::VkPresentTimeGOOGLE {
+    fn from(f: PresentTimeGoogle) -> vks::VkPresentTimeGOOGLE {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPresentTimeGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentTimeGoogleBuilder {
     raw: vks::VkPresentTimeGOOGLE,
@@ -15864,12 +19868,20 @@ impl PresentTimeGoogleBuilder {
         }
     }
 
-    pub fn present_id<'m>(&'m mut self, present_id: u32) -> &'m mut PresentTimeGoogleBuilder {
+    pub fn present_id<'m>(mut self, present_id: u32) -> PresentTimeGoogleBuilder {
+        self.raw.presentID = present_id.into();
         self
     }
 
-    pub fn desired_present_time<'m>(&'m mut self, desired_present_time: u64) -> &'m mut PresentTimeGoogleBuilder {
+    pub fn desired_present_time<'m>(mut self, desired_present_time: u64) -> PresentTimeGoogleBuilder {
+        self.raw.desiredPresentTime = desired_present_time.into();
         self
+    }
+
+    pub fn build(self) -> PresentTimeGoogle {
+        PresentTimeGoogle {
+            raw: self.raw,
+        }
     }
 
 }
@@ -15877,7 +19889,7 @@ impl PresentTimeGoogleBuilder {
 
 /// A `VkIOSSurfaceCreateInfoMVK`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct IosSurfaceCreateInfoMvk<'s> {
@@ -15896,7 +19908,7 @@ impl<'s> IosSurfaceCreateInfoMvk<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn view(&self) {
+    pub unsafe fn view(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkIOSSurfaceCreateInfoMVK {
@@ -15905,9 +19917,16 @@ impl<'s> IosSurfaceCreateInfoMvk<'s> {
 }
 
 
+impl<'s> From<IosSurfaceCreateInfoMvk<'s>> for vks::VkIOSSurfaceCreateInfoMVK {
+    fn from(f: IosSurfaceCreateInfoMvk<'s>) -> vks::VkIOSSurfaceCreateInfoMVK {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkIOSSurfaceCreateInfoMVK`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct IosSurfaceCreateInfoMvkBuilder<'b> {
     raw: vks::VkIOSSurfaceCreateInfoMVK,
@@ -15922,16 +19941,26 @@ impl<'b> IosSurfaceCreateInfoMvkBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut IosSurfaceCreateInfoMvkBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> IosSurfaceCreateInfoMvkBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: IosSurfaceCreateFlagsMvk) -> &'m mut IosSurfaceCreateInfoMvkBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: IosSurfaceCreateFlagsMvk) -> IosSurfaceCreateInfoMvkBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn view<'m, 'a>(&'m mut self, view: &'a ()) -> &'m mut IosSurfaceCreateInfoMvkBuilder<'b> {
+    pub unsafe fn view<'m>(mut self, view: *const c_void) -> IosSurfaceCreateInfoMvkBuilder<'b> {
+        self.raw.pView = view;
         self
+    }
+
+    pub fn build(self) -> IosSurfaceCreateInfoMvk<'b> {
+        IosSurfaceCreateInfoMvk {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -15939,7 +19968,7 @@ impl<'b> IosSurfaceCreateInfoMvkBuilder<'b> {
 
 /// A `VkMacOSSurfaceCreateInfoMVK`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MacOsSurfaceCreateInfoMvk<'s> {
@@ -15958,7 +19987,7 @@ impl<'s> MacOsSurfaceCreateInfoMvk<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn view(&self) {
+    pub unsafe fn view(&self) {
     }
 
     pub fn raw(&self) -> &vks::VkMacOSSurfaceCreateInfoMVK {
@@ -15967,9 +19996,16 @@ impl<'s> MacOsSurfaceCreateInfoMvk<'s> {
 }
 
 
+impl<'s> From<MacOsSurfaceCreateInfoMvk<'s>> for vks::VkMacOSSurfaceCreateInfoMVK {
+    fn from(f: MacOsSurfaceCreateInfoMvk<'s>) -> vks::VkMacOSSurfaceCreateInfoMVK {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkMacOSSurfaceCreateInfoMVK`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MacOsSurfaceCreateInfoMvkBuilder<'b> {
     raw: vks::VkMacOSSurfaceCreateInfoMVK,
@@ -15984,16 +20020,26 @@ impl<'b> MacOsSurfaceCreateInfoMvkBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut MacOsSurfaceCreateInfoMvkBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> MacOsSurfaceCreateInfoMvkBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: MacOsSurfaceCreateFlagsMvk) -> &'m mut MacOsSurfaceCreateInfoMvkBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: MacOsSurfaceCreateFlagsMvk) -> MacOsSurfaceCreateInfoMvkBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn view<'m, 'a>(&'m mut self, view: &'a ()) -> &'m mut MacOsSurfaceCreateInfoMvkBuilder<'b> {
+    pub unsafe fn view<'m>(mut self, view: *const c_void) -> MacOsSurfaceCreateInfoMvkBuilder<'b> {
+        self.raw.pView = view;
         self
+    }
+
+    pub fn build(self) -> MacOsSurfaceCreateInfoMvk<'b> {
+        MacOsSurfaceCreateInfoMvk {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -16001,7 +20047,7 @@ impl<'b> MacOsSurfaceCreateInfoMvkBuilder<'b> {
 
 /// A `VkViewportWScalingNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ViewportWScalingNv {
@@ -16025,9 +20071,16 @@ impl ViewportWScalingNv {
 }
 
 
+impl From<ViewportWScalingNv> for vks::VkViewportWScalingNV {
+    fn from(f: ViewportWScalingNv) -> vks::VkViewportWScalingNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkViewportWScalingNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ViewportWScalingNvBuilder {
     raw: vks::VkViewportWScalingNV,
@@ -16040,12 +20093,20 @@ impl ViewportWScalingNvBuilder {
         }
     }
 
-    pub fn xcoeff<'m>(&'m mut self, xcoeff: f32) -> &'m mut ViewportWScalingNvBuilder {
+    pub fn xcoeff<'m>(mut self, xcoeff: f32) -> ViewportWScalingNvBuilder {
+        self.raw.xcoeff = xcoeff.into();
         self
     }
 
-    pub fn ycoeff<'m>(&'m mut self, ycoeff: f32) -> &'m mut ViewportWScalingNvBuilder {
+    pub fn ycoeff<'m>(mut self, ycoeff: f32) -> ViewportWScalingNvBuilder {
+        self.raw.ycoeff = ycoeff.into();
         self
+    }
+
+    pub fn build(self) -> ViewportWScalingNv {
+        ViewportWScalingNv {
+            raw: self.raw,
+        }
     }
 
 }
@@ -16053,7 +20114,7 @@ impl ViewportWScalingNvBuilder {
 
 /// A `VkPipelineViewportWScalingStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineViewportWScalingStateCreateInfoNv<'s> {
@@ -16084,9 +20145,16 @@ impl<'s> PipelineViewportWScalingStateCreateInfoNv<'s> {
 }
 
 
+impl<'s> From<PipelineViewportWScalingStateCreateInfoNv<'s>> for vks::VkPipelineViewportWScalingStateCreateInfoNV {
+    fn from(f: PipelineViewportWScalingStateCreateInfoNv<'s>) -> vks::VkPipelineViewportWScalingStateCreateInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineViewportWScalingStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineViewportWScalingStateCreateInfoNV,
@@ -16101,20 +20169,31 @@ impl<'b> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn viewport_wscaling_enable<'m>(&'m mut self, viewport_wscaling_enable: bool) -> &'m mut PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
+    pub fn viewport_wscaling_enable<'m>(mut self, viewport_wscaling_enable: bool) -> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
+        self.raw.viewportWScalingEnable = viewport_wscaling_enable as u32;
         self
     }
 
-    pub fn viewport_count<'m>(&'m mut self, viewport_count: u32) -> &'m mut PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
+    pub fn viewport_count<'m>(mut self, viewport_count: u32) -> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
+        self.raw.viewportCount = viewport_count.into();
         self
     }
 
-    pub fn viewport_wscalings<'m, 'a>(&'m mut self, viewport_wscalings: &'a ViewportWScalingNv) -> &'m mut PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
+    pub fn viewport_wscalings<'m, 'a>(mut self, viewport_wscalings: &'a [ViewportWScalingNv]) -> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
+        self.raw.pViewportWScalings = viewport_wscalings.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> PipelineViewportWScalingStateCreateInfoNv<'b> {
+        PipelineViewportWScalingStateCreateInfoNv {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -16122,7 +20201,7 @@ impl<'b> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
 
 /// A `VkViewportSwizzleNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ViewportSwizzleNv {
@@ -16152,9 +20231,16 @@ impl ViewportSwizzleNv {
 }
 
 
+impl From<ViewportSwizzleNv> for vks::VkViewportSwizzleNV {
+    fn from(f: ViewportSwizzleNv) -> vks::VkViewportSwizzleNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkViewportSwizzleNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ViewportSwizzleNvBuilder {
     raw: vks::VkViewportSwizzleNV,
@@ -16167,20 +20253,30 @@ impl ViewportSwizzleNvBuilder {
         }
     }
 
-    pub fn x<'m>(&'m mut self, x: ViewportCoordinateSwizzleNv) -> &'m mut ViewportSwizzleNvBuilder {
+    pub fn x<'m>(mut self, x: ViewportCoordinateSwizzleNv) -> ViewportSwizzleNvBuilder {
+        self.raw.x = x.into();
         self
     }
 
-    pub fn y<'m>(&'m mut self, y: ViewportCoordinateSwizzleNv) -> &'m mut ViewportSwizzleNvBuilder {
+    pub fn y<'m>(mut self, y: ViewportCoordinateSwizzleNv) -> ViewportSwizzleNvBuilder {
+        self.raw.y = y.into();
         self
     }
 
-    pub fn z<'m>(&'m mut self, z: ViewportCoordinateSwizzleNv) -> &'m mut ViewportSwizzleNvBuilder {
+    pub fn z<'m>(mut self, z: ViewportCoordinateSwizzleNv) -> ViewportSwizzleNvBuilder {
+        self.raw.z = z.into();
         self
     }
 
-    pub fn w<'m>(&'m mut self, w: ViewportCoordinateSwizzleNv) -> &'m mut ViewportSwizzleNvBuilder {
+    pub fn w<'m>(mut self, w: ViewportCoordinateSwizzleNv) -> ViewportSwizzleNvBuilder {
+        self.raw.w = w.into();
         self
+    }
+
+    pub fn build(self) -> ViewportSwizzleNv {
+        ViewportSwizzleNv {
+            raw: self.raw,
+        }
     }
 
 }
@@ -16188,7 +20284,7 @@ impl ViewportSwizzleNvBuilder {
 
 /// A `VkPipelineViewportSwizzleStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineViewportSwizzleStateCreateInfoNv<'s> {
@@ -16219,9 +20315,16 @@ impl<'s> PipelineViewportSwizzleStateCreateInfoNv<'s> {
 }
 
 
+impl<'s> From<PipelineViewportSwizzleStateCreateInfoNv<'s>> for vks::VkPipelineViewportSwizzleStateCreateInfoNV {
+    fn from(f: PipelineViewportSwizzleStateCreateInfoNv<'s>) -> vks::VkPipelineViewportSwizzleStateCreateInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineViewportSwizzleStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineViewportSwizzleStateCreateInfoNV,
@@ -16236,20 +20339,31 @@ impl<'b> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineViewportSwizzleStateCreateFlagsNv) -> &'m mut PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineViewportSwizzleStateCreateFlagsNv) -> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn viewport_count<'m>(&'m mut self, viewport_count: u32) -> &'m mut PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
+    pub fn viewport_count<'m>(mut self, viewport_count: u32) -> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
+        self.raw.viewportCount = viewport_count.into();
         self
     }
 
-    pub fn viewport_swizzles<'m, 'a>(&'m mut self, viewport_swizzles: &'a ViewportSwizzleNv) -> &'m mut PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
+    pub fn viewport_swizzles<'m, 'a>(mut self, viewport_swizzles: &'a [ViewportSwizzleNv]) -> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
+        self.raw.pViewportSwizzles = viewport_swizzles.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> PipelineViewportSwizzleStateCreateInfoNv<'b> {
+        PipelineViewportSwizzleStateCreateInfoNv {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -16257,7 +20371,7 @@ impl<'b> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
 
 /// A `VkPhysicalDeviceDiscardRectanglePropertiesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
@@ -16282,9 +20396,16 @@ impl<'s> PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceDiscardRectanglePropertiesExt<'s>> for vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT {
+    fn from(f: PhysicalDeviceDiscardRectanglePropertiesExt<'s>) -> vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceDiscardRectanglePropertiesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceDiscardRectanglePropertiesExtBuilder<'b> {
     raw: vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT,
@@ -16299,12 +20420,21 @@ impl<'b> PhysicalDeviceDiscardRectanglePropertiesExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceDiscardRectanglePropertiesExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *mut c_void) -> PhysicalDeviceDiscardRectanglePropertiesExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn max_discard_rectangles<'m>(&'m mut self, max_discard_rectangles: u32) -> &'m mut PhysicalDeviceDiscardRectanglePropertiesExtBuilder<'b> {
+    pub fn max_discard_rectangles<'m>(mut self, max_discard_rectangles: u32) -> PhysicalDeviceDiscardRectanglePropertiesExtBuilder<'b> {
+        self.raw.maxDiscardRectangles = max_discard_rectangles.into();
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceDiscardRectanglePropertiesExt<'b> {
+        PhysicalDeviceDiscardRectanglePropertiesExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -16312,7 +20442,7 @@ impl<'b> PhysicalDeviceDiscardRectanglePropertiesExtBuilder<'b> {
 
 /// A `VkPipelineDiscardRectangleStateCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineDiscardRectangleStateCreateInfoExt<'s> {
@@ -16346,9 +20476,16 @@ impl<'s> PipelineDiscardRectangleStateCreateInfoExt<'s> {
 }
 
 
+impl<'s> From<PipelineDiscardRectangleStateCreateInfoExt<'s>> for vks::VkPipelineDiscardRectangleStateCreateInfoEXT {
+    fn from(f: PipelineDiscardRectangleStateCreateInfoExt<'s>) -> vks::VkPipelineDiscardRectangleStateCreateInfoEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineDiscardRectangleStateCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
     raw: vks::VkPipelineDiscardRectangleStateCreateInfoEXT,
@@ -16363,24 +20500,36 @@ impl<'b> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineDiscardRectangleStateCreateFlagsExt) -> &'m mut PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineDiscardRectangleStateCreateFlagsExt) -> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn discard_rectangle_mode<'m>(&'m mut self, discard_rectangle_mode: DiscardRectangleModeExt) -> &'m mut PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
+    pub fn discard_rectangle_mode<'m>(mut self, discard_rectangle_mode: DiscardRectangleModeExt) -> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
+        self.raw.discardRectangleMode = discard_rectangle_mode.into();
         self
     }
 
-    pub fn discard_rectangle_count<'m>(&'m mut self, discard_rectangle_count: u32) -> &'m mut PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
+    pub fn discard_rectangle_count<'m>(mut self, discard_rectangle_count: u32) -> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
+        self.raw.discardRectangleCount = discard_rectangle_count.into();
         self
     }
 
-    pub fn discard_rectangles<'m, 'a>(&'m mut self, discard_rectangles: &'a Rect2d) -> &'m mut PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
+    pub fn discard_rectangles<'m, 'a>(mut self, discard_rectangles: &'a [Rect2d]) -> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
+        self.raw.pDiscardRectangles = discard_rectangles.as_ptr() as *const _;
         self
+    }
+
+    pub fn build(self) -> PipelineDiscardRectangleStateCreateInfoExt<'b> {
+        PipelineDiscardRectangleStateCreateInfoExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -16388,7 +20537,7 @@ impl<'b> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
 
 /// A `VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -16411,9 +20560,17 @@ impl<'s> PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s>> for vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
+    fn from(f: PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s>) -> vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
+        f.raw
+    }
+}
+
+
 /// A `VkPhysicalDeviceSurfaceInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceSurfaceInfo2Khr<'s> {
@@ -16438,9 +20595,16 @@ impl<'s> PhysicalDeviceSurfaceInfo2Khr<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceSurfaceInfo2Khr<'s>> for vks::VkPhysicalDeviceSurfaceInfo2KHR {
+    fn from(f: PhysicalDeviceSurfaceInfo2Khr<'s>) -> vks::VkPhysicalDeviceSurfaceInfo2KHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceSurfaceInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceSurfaceInfo2KHR,
@@ -16455,12 +20619,21 @@ impl<'b> PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn surface<'m>(&'m mut self, surface: SurfaceKhr) -> &'m mut PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
+    pub fn surface<'m, 'a>(mut self, surface: &'a Surface) -> PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
+        self.raw.surface = surface.handle();
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceSurfaceInfo2Khr<'b> {
+        PhysicalDeviceSurfaceInfo2Khr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -16468,7 +20641,7 @@ impl<'b> PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
 
 /// A `VkSurfaceCapabilities2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SurfaceCapabilities2Khr<'s> {
@@ -16489,9 +20662,16 @@ impl<'s> SurfaceCapabilities2Khr<'s> {
 }
 
 
+impl<'s> From<SurfaceCapabilities2Khr<'s>> for vks::VkSurfaceCapabilities2KHR {
+    fn from(f: SurfaceCapabilities2Khr<'s>) -> vks::VkSurfaceCapabilities2KHR {
+        f.raw
+    }
+}
+
+
 /// A `VkSurfaceFormat2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SurfaceFormat2Khr<'s> {
@@ -16512,9 +20692,16 @@ impl<'s> SurfaceFormat2Khr<'s> {
 }
 
 
+impl<'s> From<SurfaceFormat2Khr<'s>> for vks::VkSurfaceFormat2KHR {
+    fn from(f: SurfaceFormat2Khr<'s>) -> vks::VkSurfaceFormat2KHR {
+        f.raw
+    }
+}
+
+
 /// A `VkSharedPresentSurfaceCapabilitiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SharedPresentSurfaceCapabilitiesKhr<'s> {
@@ -16535,9 +20722,16 @@ impl<'s> SharedPresentSurfaceCapabilitiesKhr<'s> {
 }
 
 
+impl<'s> From<SharedPresentSurfaceCapabilitiesKhr<'s>> for vks::VkSharedPresentSurfaceCapabilitiesKHR {
+    fn from(f: SharedPresentSurfaceCapabilitiesKhr<'s>) -> vks::VkSharedPresentSurfaceCapabilitiesKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkPhysicalDevice16BitStorageFeaturesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDevice16BitStorageFeaturesKhr<'s> {
@@ -16571,9 +20765,16 @@ impl<'s> PhysicalDevice16BitStorageFeaturesKhr<'s> {
 }
 
 
+impl<'s> From<PhysicalDevice16BitStorageFeaturesKhr<'s>> for vks::VkPhysicalDevice16BitStorageFeaturesKHR {
+    fn from(f: PhysicalDevice16BitStorageFeaturesKhr<'s>) -> vks::VkPhysicalDevice16BitStorageFeaturesKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDevice16BitStorageFeaturesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
     raw: vks::VkPhysicalDevice16BitStorageFeaturesKHR,
@@ -16588,24 +20789,36 @@ impl<'b> PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *mut c_void) -> PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn storage_buffer_16_bit_access<'m>(&'m mut self, storage_buffer_16_bit_access: bool) -> &'m mut PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
+    pub fn storage_buffer_16_bit_access<'m>(mut self, storage_buffer_16_bit_access: bool) -> PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
+        self.raw.storageBuffer16BitAccess = storage_buffer_16_bit_access as u32;
         self
     }
 
-    pub fn uniform_and_storage_buffer_16_bit_access<'m>(&'m mut self, uniform_and_storage_buffer_16_bit_access: bool) -> &'m mut PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
+    pub fn uniform_and_storage_buffer_16_bit_access<'m>(mut self, uniform_and_storage_buffer_16_bit_access: bool) -> PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
+        self.raw.uniformAndStorageBuffer16BitAccess = uniform_and_storage_buffer_16_bit_access as u32;
         self
     }
 
-    pub fn storage_push_constant_16<'m>(&'m mut self, storage_push_constant_16: bool) -> &'m mut PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
+    pub fn storage_push_constant_16<'m>(mut self, storage_push_constant_16: bool) -> PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
+        self.raw.storagePushConstant16 = storage_push_constant_16 as u32;
         self
     }
 
-    pub fn storage_input_output_16<'m>(&'m mut self, storage_input_output_16: bool) -> &'m mut PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
+    pub fn storage_input_output_16<'m>(mut self, storage_input_output_16: bool) -> PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
+        self.raw.storageInputOutput16 = storage_input_output_16 as u32;
         self
+    }
+
+    pub fn build(self) -> PhysicalDevice16BitStorageFeaturesKhr<'b> {
+        PhysicalDevice16BitStorageFeaturesKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -16613,7 +20826,7 @@ impl<'b> PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
 
 /// A `VkBufferMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferMemoryRequirementsInfo2Khr<'s> {
@@ -16638,9 +20851,16 @@ impl<'s> BufferMemoryRequirementsInfo2Khr<'s> {
 }
 
 
+impl<'s> From<BufferMemoryRequirementsInfo2Khr<'s>> for vks::VkBufferMemoryRequirementsInfo2KHR {
+    fn from(f: BufferMemoryRequirementsInfo2Khr<'s>) -> vks::VkBufferMemoryRequirementsInfo2KHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkBufferMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferMemoryRequirementsInfo2KhrBuilder<'b> {
     raw: vks::VkBufferMemoryRequirementsInfo2KHR,
@@ -16655,12 +20875,21 @@ impl<'b> BufferMemoryRequirementsInfo2KhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut BufferMemoryRequirementsInfo2KhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> BufferMemoryRequirementsInfo2KhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn buffer<'m>(&'m mut self, buffer: Buffer) -> &'m mut BufferMemoryRequirementsInfo2KhrBuilder<'b> {
+    pub fn buffer<'m, 'a>(mut self, buffer: &'a Buffer) -> BufferMemoryRequirementsInfo2KhrBuilder<'b> {
+        self.raw.buffer = buffer.handle();
         self
+    }
+
+    pub fn build(self) -> BufferMemoryRequirementsInfo2Khr<'b> {
+        BufferMemoryRequirementsInfo2Khr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -16668,7 +20897,7 @@ impl<'b> BufferMemoryRequirementsInfo2KhrBuilder<'b> {
 
 /// A `VkImageMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageMemoryRequirementsInfo2Khr<'s> {
@@ -16693,9 +20922,16 @@ impl<'s> ImageMemoryRequirementsInfo2Khr<'s> {
 }
 
 
+impl<'s> From<ImageMemoryRequirementsInfo2Khr<'s>> for vks::VkImageMemoryRequirementsInfo2KHR {
+    fn from(f: ImageMemoryRequirementsInfo2Khr<'s>) -> vks::VkImageMemoryRequirementsInfo2KHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageMemoryRequirementsInfo2KhrBuilder<'b> {
     raw: vks::VkImageMemoryRequirementsInfo2KHR,
@@ -16710,12 +20946,21 @@ impl<'b> ImageMemoryRequirementsInfo2KhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImageMemoryRequirementsInfo2KhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImageMemoryRequirementsInfo2KhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn image<'m>(&'m mut self, image: Image) -> &'m mut ImageMemoryRequirementsInfo2KhrBuilder<'b> {
+    pub fn image<'m, 'a>(mut self, image: &'a Image) -> ImageMemoryRequirementsInfo2KhrBuilder<'b> {
+        self.raw.image = image.handle();
         self
+    }
+
+    pub fn build(self) -> ImageMemoryRequirementsInfo2Khr<'b> {
+        ImageMemoryRequirementsInfo2Khr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -16723,7 +20968,7 @@ impl<'b> ImageMemoryRequirementsInfo2KhrBuilder<'b> {
 
 /// A `VkImageSparseMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageSparseMemoryRequirementsInfo2Khr<'s> {
@@ -16748,9 +20993,16 @@ impl<'s> ImageSparseMemoryRequirementsInfo2Khr<'s> {
 }
 
 
+impl<'s> From<ImageSparseMemoryRequirementsInfo2Khr<'s>> for vks::VkImageSparseMemoryRequirementsInfo2KHR {
+    fn from(f: ImageSparseMemoryRequirementsInfo2Khr<'s>) -> vks::VkImageSparseMemoryRequirementsInfo2KHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkImageSparseMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
     raw: vks::VkImageSparseMemoryRequirementsInfo2KHR,
@@ -16765,12 +21017,21 @@ impl<'b> ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn image<'m>(&'m mut self, image: Image) -> &'m mut ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
+    pub fn image<'m, 'a>(mut self, image: &'a Image) -> ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
+        self.raw.image = image.handle();
         self
+    }
+
+    pub fn build(self) -> ImageSparseMemoryRequirementsInfo2Khr<'b> {
+        ImageSparseMemoryRequirementsInfo2Khr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -16778,7 +21039,7 @@ impl<'b> ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
 
 /// A `VkMemoryRequirements2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryRequirements2Khr<'s> {
@@ -16799,9 +21060,16 @@ impl<'s> MemoryRequirements2Khr<'s> {
 }
 
 
+impl<'s> From<MemoryRequirements2Khr<'s>> for vks::VkMemoryRequirements2KHR {
+    fn from(f: MemoryRequirements2Khr<'s>) -> vks::VkMemoryRequirements2KHR {
+        f.raw
+    }
+}
+
+
 /// A `VkSparseImageMemoryRequirements2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageMemoryRequirements2Khr<'s> {
@@ -16822,9 +21090,16 @@ impl<'s> SparseImageMemoryRequirements2Khr<'s> {
 }
 
 
+impl<'s> From<SparseImageMemoryRequirements2Khr<'s>> for vks::VkSparseImageMemoryRequirements2KHR {
+    fn from(f: SparseImageMemoryRequirements2Khr<'s>) -> vks::VkSparseImageMemoryRequirements2KHR {
+        f.raw
+    }
+}
+
+
 /// A `VkMemoryDedicatedRequirementsKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryDedicatedRequirementsKhr<'s> {
@@ -16848,9 +21123,16 @@ impl<'s> MemoryDedicatedRequirementsKhr<'s> {
 }
 
 
+impl<'s> From<MemoryDedicatedRequirementsKhr<'s>> for vks::VkMemoryDedicatedRequirementsKHR {
+    fn from(f: MemoryDedicatedRequirementsKhr<'s>) -> vks::VkMemoryDedicatedRequirementsKHR {
+        f.raw
+    }
+}
+
+
 /// A `VkMemoryDedicatedAllocateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryDedicatedAllocateInfoKhr<'s> {
@@ -16878,9 +21160,16 @@ impl<'s> MemoryDedicatedAllocateInfoKhr<'s> {
 }
 
 
+impl<'s> From<MemoryDedicatedAllocateInfoKhr<'s>> for vks::VkMemoryDedicatedAllocateInfoKHR {
+    fn from(f: MemoryDedicatedAllocateInfoKhr<'s>) -> vks::VkMemoryDedicatedAllocateInfoKHR {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkMemoryDedicatedAllocateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryDedicatedAllocateInfoKhrBuilder<'b> {
     raw: vks::VkMemoryDedicatedAllocateInfoKHR,
@@ -16895,16 +21184,26 @@ impl<'b> MemoryDedicatedAllocateInfoKhrBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut MemoryDedicatedAllocateInfoKhrBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> MemoryDedicatedAllocateInfoKhrBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn image<'m>(&'m mut self, image: Image) -> &'m mut MemoryDedicatedAllocateInfoKhrBuilder<'b> {
+    pub fn image<'m, 'a>(mut self, image: &'a Image) -> MemoryDedicatedAllocateInfoKhrBuilder<'b> {
+        self.raw.image = image.handle();
         self
     }
 
-    pub fn buffer<'m>(&'m mut self, buffer: Buffer) -> &'m mut MemoryDedicatedAllocateInfoKhrBuilder<'b> {
+    pub fn buffer<'m, 'a>(mut self, buffer: &'a Buffer) -> MemoryDedicatedAllocateInfoKhrBuilder<'b> {
+        self.raw.buffer = buffer.handle();
         self
+    }
+
+    pub fn build(self) -> MemoryDedicatedAllocateInfoKhr<'b> {
+        MemoryDedicatedAllocateInfoKhr {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -16912,7 +21211,7 @@ impl<'b> MemoryDedicatedAllocateInfoKhrBuilder<'b> {
 
 /// A `VkTextureLODGatherFormatPropertiesAMD`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct TextureLODGatherFormatPropertiesAmd<'s> {
@@ -16933,9 +21232,16 @@ impl<'s> TextureLODGatherFormatPropertiesAmd<'s> {
 }
 
 
+impl<'s> From<TextureLODGatherFormatPropertiesAmd<'s>> for vks::VkTextureLODGatherFormatPropertiesAMD {
+    fn from(f: TextureLODGatherFormatPropertiesAmd<'s>) -> vks::VkTextureLODGatherFormatPropertiesAMD {
+        f.raw
+    }
+}
+
+
 /// A `VkPipelineCoverageToColorStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineCoverageToColorStateCreateInfoNv<'s> {
@@ -16966,9 +21272,16 @@ impl<'s> PipelineCoverageToColorStateCreateInfoNv<'s> {
 }
 
 
+impl<'s> From<PipelineCoverageToColorStateCreateInfoNv<'s>> for vks::VkPipelineCoverageToColorStateCreateInfoNV {
+    fn from(f: PipelineCoverageToColorStateCreateInfoNv<'s>) -> vks::VkPipelineCoverageToColorStateCreateInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineCoverageToColorStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineCoverageToColorStateCreateInfoNV,
@@ -16983,20 +21296,31 @@ impl<'b> PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineCoverageToColorStateCreateFlagsNv) -> &'m mut PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineCoverageToColorStateCreateFlagsNv) -> PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn coverage_to_color_enable<'m>(&'m mut self, coverage_to_color_enable: bool) -> &'m mut PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
+    pub fn coverage_to_color_enable<'m>(mut self, coverage_to_color_enable: bool) -> PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
+        self.raw.coverageToColorEnable = coverage_to_color_enable as u32;
         self
     }
 
-    pub fn coverage_to_color_location<'m>(&'m mut self, coverage_to_color_location: u32) -> &'m mut PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
+    pub fn coverage_to_color_location<'m>(mut self, coverage_to_color_location: u32) -> PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
+        self.raw.coverageToColorLocation = coverage_to_color_location.into();
         self
+    }
+
+    pub fn build(self) -> PipelineCoverageToColorStateCreateInfoNv<'b> {
+        PipelineCoverageToColorStateCreateInfoNv {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -17004,7 +21328,7 @@ impl<'b> PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
 
 /// A `VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
@@ -17028,9 +21352,16 @@ impl<'s> PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s>> for vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
+    fn from(f: PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s>) -> vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
+        f.raw
+    }
+}
+
+
 /// A `VkSamplerReductionModeCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SamplerReductionModeCreateInfoExt<'s> {
@@ -17055,9 +21386,16 @@ impl<'s> SamplerReductionModeCreateInfoExt<'s> {
 }
 
 
+impl<'s> From<SamplerReductionModeCreateInfoExt<'s>> for vks::VkSamplerReductionModeCreateInfoEXT {
+    fn from(f: SamplerReductionModeCreateInfoExt<'s>) -> vks::VkSamplerReductionModeCreateInfoEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkSamplerReductionModeCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SamplerReductionModeCreateInfoExtBuilder<'b> {
     raw: vks::VkSamplerReductionModeCreateInfoEXT,
@@ -17072,12 +21410,21 @@ impl<'b> SamplerReductionModeCreateInfoExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut SamplerReductionModeCreateInfoExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> SamplerReductionModeCreateInfoExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn reduction_mode<'m>(&'m mut self, reduction_mode: SamplerReductionModeExt) -> &'m mut SamplerReductionModeCreateInfoExtBuilder<'b> {
+    pub fn reduction_mode<'m>(mut self, reduction_mode: SamplerReductionModeExt) -> SamplerReductionModeCreateInfoExtBuilder<'b> {
+        self.raw.reductionMode = reduction_mode.into();
         self
+    }
+
+    pub fn build(self) -> SamplerReductionModeCreateInfoExt<'b> {
+        SamplerReductionModeCreateInfoExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -17085,7 +21432,7 @@ impl<'b> SamplerReductionModeCreateInfoExtBuilder<'b> {
 
 /// A `VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
@@ -17110,9 +21457,16 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s>> for vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT {
+    fn from(f: PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s>) -> vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder<'b> {
     raw: vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT,
@@ -17127,12 +21481,21 @@ impl<'b> PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *mut c_void) -> PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn advanced_blend_coherent_operations<'m>(&'m mut self, advanced_blend_coherent_operations: bool) -> &'m mut PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder<'b> {
+    pub fn advanced_blend_coherent_operations<'m>(mut self, advanced_blend_coherent_operations: bool) -> PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder<'b> {
+        self.raw.advancedBlendCoherentOperations = advanced_blend_coherent_operations as u32;
         self
+    }
+
+    pub fn build(self) -> PhysicalDeviceBlendOperationAdvancedFeaturesExt<'b> {
+        PhysicalDeviceBlendOperationAdvancedFeaturesExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -17140,7 +21503,7 @@ impl<'b> PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder<'b> {
 
 /// A `VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
@@ -17176,9 +21539,16 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
 }
 
 
+impl<'s> From<PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s>> for vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
+    fn from(f: PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s>) -> vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
+        f.raw
+    }
+}
+
+
 /// A `VkPipelineColorBlendAdvancedStateCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
@@ -17209,9 +21579,16 @@ impl<'s> PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
 }
 
 
+impl<'s> From<PipelineColorBlendAdvancedStateCreateInfoExt<'s>> for vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT {
+    fn from(f: PipelineColorBlendAdvancedStateCreateInfoExt<'s>) -> vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineColorBlendAdvancedStateCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
     raw: vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT,
@@ -17226,20 +21603,31 @@ impl<'b> PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn src_premultiplied<'m>(&'m mut self, src_premultiplied: bool) -> &'m mut PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
+    pub fn src_premultiplied<'m>(mut self, src_premultiplied: bool) -> PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
+        self.raw.srcPremultiplied = src_premultiplied as u32;
         self
     }
 
-    pub fn dst_premultiplied<'m>(&'m mut self, dst_premultiplied: bool) -> &'m mut PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
+    pub fn dst_premultiplied<'m>(mut self, dst_premultiplied: bool) -> PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
+        self.raw.dstPremultiplied = dst_premultiplied as u32;
         self
     }
 
-    pub fn blend_overlap<'m>(&'m mut self, blend_overlap: BlendOverlapExt) -> &'m mut PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
+    pub fn blend_overlap<'m>(mut self, blend_overlap: BlendOverlapExt) -> PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
+        self.raw.blendOverlap = blend_overlap.into();
         self
+    }
+
+    pub fn build(self) -> PipelineColorBlendAdvancedStateCreateInfoExt<'b> {
+        PipelineColorBlendAdvancedStateCreateInfoExt {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }
@@ -17247,7 +21635,7 @@ impl<'b> PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
 
 /// A `VkPipelineCoverageModulationStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineCoverageModulationStateCreateInfoNv<'s> {
@@ -17284,9 +21672,16 @@ impl<'s> PipelineCoverageModulationStateCreateInfoNv<'s> {
 }
 
 
+impl<'s> From<PipelineCoverageModulationStateCreateInfoNv<'s>> for vks::VkPipelineCoverageModulationStateCreateInfoNV {
+    fn from(f: PipelineCoverageModulationStateCreateInfoNv<'s>) -> vks::VkPipelineCoverageModulationStateCreateInfoNV {
+        f.raw
+    }
+}
+
+
 /// A builder for `VkPipelineCoverageModulationStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineCoverageModulationStateCreateInfoNV,
@@ -17301,28 +21696,41 @@ impl<'b> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
         }
     }
 
-    pub unsafe fn next<'m, 'a>(&'m mut self, next: &'a ()) -> &'m mut PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+    pub unsafe fn next<'m>(mut self, next: *const c_void) -> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+        self.raw.pNext = next;
         self
     }
 
-    pub fn flags<'m>(&'m mut self, flags: PipelineCoverageModulationStateCreateFlagsNv) -> &'m mut PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+    pub fn flags<'m>(mut self, flags: PipelineCoverageModulationStateCreateFlagsNv) -> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+        self.raw.flags = flags.bits();
         self
     }
 
-    pub fn coverage_modulation_mode<'m>(&'m mut self, coverage_modulation_mode: CoverageModulationModeNv) -> &'m mut PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+    pub fn coverage_modulation_mode<'m>(mut self, coverage_modulation_mode: CoverageModulationModeNv) -> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+        self.raw.coverageModulationMode = coverage_modulation_mode.into();
         self
     }
 
-    pub fn coverage_modulation_table_enable<'m>(&'m mut self, coverage_modulation_table_enable: bool) -> &'m mut PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+    pub fn coverage_modulation_table_enable<'m>(mut self, coverage_modulation_table_enable: bool) -> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+        self.raw.coverageModulationTableEnable = coverage_modulation_table_enable as u32;
         self
     }
 
-    pub fn coverage_modulation_table_count<'m>(&'m mut self, coverage_modulation_table_count: u32) -> &'m mut PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+    pub fn coverage_modulation_table_count<'m>(mut self, coverage_modulation_table_count: u32) -> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+        self.raw.coverageModulationTableCount = coverage_modulation_table_count.into();
         self
     }
 
-    pub fn coverage_modulation_table<'m, 'a>(&'m mut self, coverage_modulation_table: &'a f32) -> &'m mut PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+    pub fn coverage_modulation_table<'m, 'a>(mut self, coverage_modulation_table: &'a f32) -> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+        self.raw.pCoverageModulationTable = coverage_modulation_table;
         self
+    }
+
+    pub fn build(self) -> PipelineCoverageModulationStateCreateInfoNv<'b> {
+        PipelineCoverageModulationStateCreateInfoNv {
+            raw: self.raw,
+            _p: PhantomData,
+        }
     }
 
 }

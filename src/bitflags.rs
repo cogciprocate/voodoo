@@ -1,3 +1,5 @@
+use vks;
+
 
 
 bitflags! {
@@ -707,7 +709,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct SurfaceTransformFlagsKHR: u32 {
+    pub struct SurfaceTransformFlagsKhr: u32 {
         const IDENTITY = 1;
         const ROTATE_90 = 2;
         const ROTATE_180 = 4;
@@ -721,12 +723,12 @@ bitflags! {
     }
 }
 
-// pub type SurfaceTransformFlagsKHR = u32;
+
 
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct CompositeAlphaFlagsKHR: u32 {
+    pub struct CompositeAlphaFlagsKhr: u32 {
         const OPAQUE = 1;
         const PRE_MULTIPLIED = 2;
         const POST_MULTIPLIED = 4;
@@ -735,12 +737,12 @@ bitflags! {
     }
 }
 
-// pub type CompositeAlphaFlagsKHR = u32;
+
 
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct SwapchainCreateFlagsKHR: u32 {
+    pub struct SwapchainCreateFlagsKhr: u32 {
         const BIND_SFR = 1;
         const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
     }
@@ -749,7 +751,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct DisplayPlaneAlphaFlagsKHR: u32 {
+    pub struct DisplayPlaneAlphaFlagsKhr: u32 {
         const OPAQUE = 1;
         const GLOBAL = 2;
         const PER_PIXEL = 4;
@@ -762,7 +764,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct ExternalMemoryHandleTypeFlagsKHR: u32 {
+    pub struct ExternalMemoryHandleTypeFlagsKhr: u32 {
         const OPAQUE_FD = 1;
         const OPAQUE_WIN32 = 2;
         const OPAQUE_WIN32_KMT = 4;
@@ -777,7 +779,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct ExternalMemoryFeatureFlagsKHR: u32 {
+    pub struct ExternalMemoryFeatureFlagsKhr: u32 {
         const DEDICATED_ONLY = 1;
         const EXPORTABLE = 2;
         const IMPORTABLE = 4;
@@ -788,7 +790,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct ExternalSemaphoreHandleTypeFlagsKHR: u32 {
+    pub struct ExternalSemaphoreHandleTypeFlagsKhr: u32 {
         const OPAQUE_FD = 1;
         const OPAQUE_WIN32 = 2;
         const OPAQUE_WIN32_KMT = 4;
@@ -801,7 +803,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct ExternalSemaphoreFeatureFlagsKHR: u32 {
+    pub struct ExternalSemaphoreFeatureFlagsKhr: u32 {
         const EXPORTABLE = 1;
         const IMPORTABLE = 2;
         const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
@@ -811,7 +813,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct SemaphoreImportFlagsKHR: u32 {
+    pub struct SemaphoreImportFlagsKhr: u32 {
         const TEMPORARY = 1;
         const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
     }
@@ -820,7 +822,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct ExternalFenceHandleTypeFlagsKHR: u32 {
+    pub struct ExternalFenceHandleTypeFlagsKhr: u32 {
         const OPAQUE_FD = 1;
         const OPAQUE_WIN32 = 2;
         const OPAQUE_WIN32_KMT = 4;
@@ -832,7 +834,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct ExternalFenceFeatureFlagsKHR: u32 {
+    pub struct ExternalFenceFeatureFlagsKhr: u32 {
         const EXPORTABLE = 1;
         const IMPORTABLE = 2;
         const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
@@ -842,7 +844,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct FenceImportFlagsKHR: u32 {
+    pub struct FenceImportFlagsKhr: u32 {
         const TEMPORARY = 1;
         const FLAG_BITS_MAX_ENUM_KHR = 2147483647;
     }
@@ -851,7 +853,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct DebugReportFlagsEXT: u32 {
+    pub struct DebugReportFlagsExt:  u32 {
         const INFORMATION = 1;
         const WARNING = 2;
         const PERFORMANCE_WARNING = 4;
@@ -864,7 +866,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct ExternalMemoryHandleTypeFlagsNV: u32 {
+    pub struct ExternalMemoryHandleTypeFlagsNv:  u32 {
         const OPAQUE_WIN32 = 1;
         const OPAQUE_WIN32_KMT = 2;
         const D3D11_IMAGE = 4;
@@ -876,7 +878,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct ExternalMemoryFeatureFlagsNV: u32 {
+    pub struct ExternalMemoryFeatureFlagsNv:  u32 {
         const DEDICATED_ONLY = 1;
         const EXPORTABLE = 2;
         const IMPORTABLE = 4;
@@ -887,7 +889,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct PeerMemoryFeatureFlagsKHX: u32 {
+    pub struct PeerMemoryFeatureFlagsKhx:  u32 {
         const COPY_SRC = 1;
         const COPY_DST = 2;
         const GENERIC_SRC = 4;
@@ -899,7 +901,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct MemoryAllocateFlagsKHX: u32 {
+    pub struct MemoryAllocateFlagsKhx:  u32 {
         const DEVICE_MASK = 1;
         const FLAG_BITS_MAX_ENUM_KHX = 2147483647;
     }
@@ -908,7 +910,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct DeviceGroupPresentModeFlagsKHX: u32 {
+    pub struct DeviceGroupPresentModeFlagsKhx:  u32 {
         const LOCAL = 1;
         const REMOTE = 2;
         const SUM = 4;
@@ -920,7 +922,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct IndirectCommandsLayoutUsageFlagsNVX: u32 {
+    pub struct IndirectCommandsLayoutUsageFlagsNvx:  u32 {
         const UNORDERED_SEQUENCES = 1;
         const SPARSE_SEQUENCES = 2;
         const EMPTY_EXECUTIONS = 4;
@@ -932,7 +934,7 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct ObjectEntryUsageFlagsNVX: u32 {
+    pub struct ObjectEntryUsageFlagsNvx:  u32 {
         const GRAPHICS = 1;
         const COMPUTE = 2;
         const FLAG_BITS_MAX_ENUM_NVX = 2147483647;
@@ -942,8 +944,161 @@ bitflags! {
 bitflags! {
     #[repr(C)]
     #[derive(Default)]
-    pub struct SurfaceCounterFlagsEXT: u32 {
+    pub struct SurfaceCounterFlagsExt:  u32 {
         const VBLANK_EXT = 1;
         const FLAG_BITS_MAX_ENUM_EXT = 2147483647;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct DisplaySurfaceCreateFlagsKhr: u32 {
+        const FLAG_BITS_MAX_ENUM_KHR = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct DisplayModeCreateFlagsKhr: u32 {
+        const FLAG_BITS_MAX_ENUM_KHR = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct AndroidSurfaceCreateFlagsKhr: u32 {
+        const FLAG_BITS_MAX_ENUM_KHR = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct MirSurfaceCreateFlagsKhr: u32 {
+        const FLAG_BITS_MAX_ENUM_KHR = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ViSurfaceCreateFlagsNN: u32 {
+        const FLAG_BITS_MAX_ENUM_NN = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct WaylandSurfaceCreateFlagsKhr: u32 {
+        const FLAG_BITS_MAX_ENUM_KHR = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct Win32SurfaceCreateFlagsKhr: u32 {
+        const FLAG_BITS_MAX_ENUM_KHR = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct XlibSurfaceCreateFlagsKhr: u32 {
+        const FLAG_BITS_MAX_ENUM_KHR = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct XcbSurfaceCreateFlagsKhr: u32 {
+        const FLAG_BITS_MAX_ENUM_KHR = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct ViSurfaceCreateFlagsNn: u32 {
+        const FLAG_BITS_MAX_ENUM_NN = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct DescriptorUpdateTemplateCreateFlagsKhr: u32 {
+        const FLAG_BITS_MAX_ENUM_KHR = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct IosSurfaceCreateFlagsMvk: u32 {
+        const FLAG_BITS_MAX_ENUM_MVK = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct MacOsSurfaceCreateFlagsMvk: u32 {
+        const FLAG_BITS_MAX_ENUM_MVK = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct PipelineViewportSwizzleStateCreateFlagsNv: u32 {
+        const FLAG_BITS_MAX_ENUM_NV = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct PipelineDiscardRectangleStateCreateFlagsExt: u32 {
+        const FLAG_BITS_MAX_ENUM_EXT = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct PipelineCoverageToColorStateCreateFlagsNv: u32 {
+        const FLAG_BITS_MAX_ENUM_NV = 0x7fffffff;
+    }
+}
+
+
+bitflags! {
+    #[repr(C)]
+    #[derive(Default)]
+    pub struct PipelineCoverageModulationStateCreateFlagsNv: u32 {
+        const FLAG_BITS_MAX_ENUM_NV = 0x7fffffff;
     }
 }

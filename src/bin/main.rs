@@ -100,7 +100,8 @@ fn init_instance() -> VooResult<Instance> {
         .application_version((1, 0, 0))
         .engine_name("No Engine")
         .engine_version((1, 0, 0))
-        .api_version((1, 0, 0));
+        .api_version((1, 0, 0))
+        .build();
 
     let loader = Loader::new()?;
 
@@ -166,7 +167,8 @@ fn create_device(instance: Instance, surface: &Surface, physical_device: Physica
 
     let queue_create_info = voo::DeviceQueueCreateInfo::builder()
         .queue_family_index(queue_family_idx)
-        .queue_priorities(&[1.0]);
+        .queue_priorities(&[1.0])
+        .build();
 
     let features = PhysicalDeviceFeatures::new()
         .sampler_anisotropy(true);

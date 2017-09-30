@@ -6,8 +6,10 @@
 
 extern crate xml;
 
+use std::mem;
 use std::fs::{File, OpenOptions};
 use std::io::{self, Write, BufReader, BufWriter};
+use std::collections::HashMap;
 use xml::reader::{EventReader, XmlEvent};
 use xml::attribute::OwnedAttribute;
 
@@ -16,6 +18,13 @@ const INDENT: &'static str = "    ";
 const PRINT: bool = false;
 const ORIG_USE: &str = "vks";
 const ORIG_PRE: &str = "vks::";
+
+
+fn filter_member_name(orig: &mut String) {
+    if orig == "type" {
+        mem::replace(orig, "type_".to_string());
+    }
+}
 
 
 fn pascal_to_snake_case(orig: &str, prune_p: bool) -> (String, bool, bool) {
@@ -109,7 +118,7 @@ fn convert_type_name(orig_type: &str) -> String {
         "uint32_t" => "u32".to_string(),
         "char" => "i8".to_string(),
         "uint8_t" => "u8".to_string(),
-        "void" => "()".to_string(),
+        "void" => "c_void".to_string(),
         "size_t" => "usize".to_string(),
         "uint64_t" => "u64".to_string(),
         "int" => "i32".to_string(),
@@ -118,6 +127,9 @@ fn convert_type_name(orig_type: &str) -> String {
         "VkDeviceSize" => "u64".to_string(),
         "VkSampleMask" => "u32".to_string(),
         "VkResult" => "ResultEnum".to_string(),
+        "VkSurfaceKHR" => "Surface".to_string(),
+        "VkSwapchainKHR" => "Swapchain".to_string(),
+        "Window" => "u32".to_string(),
         other @ _ => {
             if other.len() > 2 && other.split_at(2).0 == "Vk" {
                 let mut out_str = replace_suffix(other.split_at(2).1);
@@ -153,6 +165,49 @@ fn convert_type_name(orig_type: &str) -> String {
 }
 
 
+// What's a hashmap?
+fn struct_is_handle_type(orig_name: &str) -> bool {
+    match orig_name {
+        "VkInstance" => true,
+        "VkPhysicalDevice" => true,
+        "VkDevice" => true,
+        "VkQueue" => true,
+        "VkSemaphore" => true,
+        "VkCommandBuffer" => true,
+        "VkFence" => true,
+        "VkDeviceMemory" => true,
+        "VkBuffer" => true,
+        "VkImage" => true,
+        "VkEvent" => true,
+        "VkQueryPool" => true,
+        "VkBufferView" => true,
+        "VkImageView" => true,
+        "VkShaderModule" => true,
+        "VkPipelineCache" => true,
+        "VkPipelineLayout" => true,
+        "VkRenderPass" => true,
+        "VkPipeline" => true,
+        "VkDescriptorSetLayout" => true,
+        "VkSampler" => true,
+        "VkDescriptorPool" => true,
+        "VkDescriptorSet" => true,
+        "VkFramebuffer" => true,
+        "VkCommandPool" => true,
+        "VkSurfaceKHR" => true,
+        "VkSwapchainKHR" => true,
+        "VkDisplayKHR" => true,
+        "VkDisplayModeKHR" => true,
+        "VkDescriptorUpdateTemplateKHR" => true,
+        "VkSamplerYcbcrConversionKHR" => true,
+        "VkDebugReportCallbackEXT" => true,
+        "VkObjectTableNVX" => true,
+        "VkIndirectCommandsLayoutNVX" => true,
+        "VkValidationCacheEXT" => true,
+        _ => false,
+    }
+}
+
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum TypeCategory {
     None,
@@ -165,7 +220,8 @@ enum TypeCategory {
 
 #[derive(Clone, Debug)]
 struct Member {
-    ty: String,
+    orig_type: String,
+    voodoo_type: String,
     orig_name: String,
     voodoo_name: String,
     is_ptr: bool,
@@ -173,6 +229,8 @@ struct Member {
     is_const: bool,
     is_const_const: bool,
     is_struct: bool,
+    is_handle_type: bool,
+    // type_is_voodoo_struct: bool,
     optional: bool,
     noautovalidity: bool,
     externsync: bool,
@@ -186,7 +244,8 @@ struct Member {
 impl Member {
     fn new(attribs: &[OwnedAttribute]) -> Member {
         let mut member = Member {
-            ty: String::new(),
+            orig_type: String::new(),
+            voodoo_type: String::new(),
             orig_name: String::new(),
             voodoo_name: String::new(),
             is_ptr: false,
@@ -194,6 +253,8 @@ impl Member {
             is_const: false,
             is_const_const: false,
             is_struct: false,
+            is_handle_type: false,
+            // type_is_voodoo_struct: false,
             optional: false,
             noautovalidity: false,
             externsync: false,
@@ -220,9 +281,10 @@ impl Member {
         member
     }
 
-    fn set_name(&mut self, orig_name: String) {
+    fn set_name(&mut self, mut orig_name: String) {
         assert!(self.orig_name.is_empty());
         assert!(self.voodoo_name.is_empty());
+        filter_member_name(&mut orig_name);
         let (voodoo_name, p_was_pruned, pp_was_pruned) = pascal_to_snake_case(&orig_name, true);
         assert!((p_was_pruned && self.is_ptr) || !p_was_pruned);
         assert!((pp_was_pruned && self.is_ptr_ptr) || !pp_was_pruned);
@@ -230,10 +292,67 @@ impl Member {
         self.orig_name = orig_name;
     }
 
-    fn set_type(&mut self, orig_type: &str) {
-        assert!(self.ty.is_empty());
-        self.ty = convert_type_name(orig_type);
+    fn set_type(&mut self, orig_type: String) {
+        assert!(self.orig_type.is_empty() && self.voodoo_type.is_empty());
+        self.is_handle_type = struct_is_handle_type(&orig_type);
+        self.voodoo_type = convert_type_name(&orig_type);
+        self.orig_type = orig_type;
     }
+}
+
+
+#[derive(Clone, Debug)]
+struct SpecialField {
+    name: String,
+    ty_struct: String,
+    ty_builder: String,
+    default_val: String,
+}
+
+fn special_field(m: &Member) -> Option<SpecialField> {
+    if member_is_excluded(&m.orig_name) { return None; }
+
+    match m.voodoo_type.as_str() {
+         "i8" => {
+            if m.is_ptr {
+                return Some(SpecialField {
+                    name: m.voodoo_name.clone(),
+                    ty_struct: "Option<CharStr<'s>>".to_string(),
+                    ty_builder: "Option<CharStr<'b>>".to_string(),
+                    default_val: "None".to_string(),
+                });
+            } else if m.is_ptr_ptr {
+                return Some(SpecialField {
+                    name: m.voodoo_name.clone(),
+                    ty_struct: "Option<CharStrs<'s>>".to_string(),
+                    ty_builder: "Option<CharStrs<'b>>".to_string(),
+                    default_val: "None".to_string(),
+                });
+            }
+        },
+        "PipelineShaderStageCreateInfo" |
+        "DescriptorSetLayoutBinding" |
+        "PhysicalDevice" |
+        "DeviceMemory" |
+        "DescriptorSetLayout" |
+        "CommandBuffer" |
+        "ImageView" |
+        "Semaphore" |
+        "Swapchain" |
+        "Sampler" => {
+            assert!(!m.is_ptr_ptr);
+            if m.is_ptr {
+                return Some(SpecialField {
+                    name: m.voodoo_name.clone(),
+                    ty_struct: format!("Option<Vec<{}{}>>", ORIG_PRE, m.orig_type),
+                    ty_builder: format!("Option<Vec<{}{}>>", ORIG_PRE, m.orig_type),
+                    default_val: "None".to_string(),
+                });
+            }
+        },
+        _ => (),
+    }
+    None
 }
 
 
@@ -246,6 +365,8 @@ struct Struct {
     comment: String,
     members: Vec<Member>,
     contains_ptr: bool,
+    is_handle_type: bool,
+    special_fields: HashMap<String, SpecialField>,
 }
 
 impl Struct {
@@ -255,6 +376,7 @@ impl Struct {
         let mut returnedonly = false;
         let mut structextends = None;
         let mut comment = String::new();
+        let mut is_handle_type = false;
 
         for attrib in attribs {
             match attrib.name.local_name.as_str() {
@@ -262,6 +384,7 @@ impl Struct {
                 "name" => {
                     let name = attrib.value.clone();
                     voodoo_name = Some(convert_type_name(&name));
+                    is_handle_type = struct_is_handle_type(&name);
                     orig_name = Some(name);
                 },
                 "returnedonly" => returnedonly |= attrib.value == "true",
@@ -280,7 +403,25 @@ impl Struct {
             comment,
             members: Vec::with_capacity(16),
             contains_ptr: false,
+            is_handle_type,
+            special_fields: HashMap::new(),
         }
+    }
+
+    fn add_member(&mut self, m: Member) {
+        if let Some(sf) = special_field(&m) {
+            self.special_fields.reserve(4);
+            self.special_fields.insert(m.voodoo_name.clone(), sf);
+        }
+        self.members.push(m);
+    }
+
+    fn special_field(&self, member_voodoo_name: &str) -> Option<&SpecialField> {
+        self.special_fields.get(member_voodoo_name)
+    }
+
+    fn is_repr_c(&self) -> bool {
+        self.special_fields.len() == 0
     }
 }
 
@@ -294,36 +435,36 @@ fn category(s: &str) -> TypeCategory {
     }
 }
 
-fn parse_stray_text(s: &str, current_member: &mut Member) {
+fn parse_stray_text(s: &str, m: &mut Member) {
     match s {
         // Brackets alone will have sizes set by a value wrapped in an <enum> tag.
         "[" => (),
         "]" => (),
         _ => {
             if s.starts_with("* const*") {
-                assert!(!current_member.is_ptr);
-                current_member.is_ptr_ptr = true;
-                if current_member.is_const {
-                    current_member.is_const = false;
-                    current_member.is_const_const = true;
+                assert!(!m.is_ptr);
+                m.is_ptr_ptr = true;
+                if m.is_const {
+                    m.is_const = false;
+                    m.is_const_const = true;
                 } else {
-                    current_member.is_const = true;
+                    m.is_const = true;
                 }
             } else if s.starts_with("const") {
-                assert!(!current_member.is_const);
-                assert!(!current_member.is_const_const);
-                if current_member.is_const {
-                    current_member.is_const = false;
-                    current_member.is_const_const = true;
+                assert!(!m.is_const);
+                assert!(!m.is_const_const);
+                if m.is_const {
+                    m.is_const = false;
+                    m.is_const_const = true;
                 } else {
-                    current_member.is_const = true;
+                    m.is_const = true;
                 }
             } else if s.starts_with("struct") {
-                assert!(!current_member.is_struct);
-                current_member.is_struct = true;
+                assert!(!m.is_struct);
+                m.is_struct = true;
             } else if s.starts_with("*") {
-                assert!(!current_member.is_ptr);
-                current_member.is_ptr = true;
+                assert!(!m.is_ptr);
+                m.is_ptr = true;
             } else if s.starts_with("[") {
                 let mut array_size = String::with_capacity(4);
                 for (char_idx, c) in s.chars().enumerate() {
@@ -338,7 +479,7 @@ fn parse_stray_text(s: &str, current_member: &mut Member) {
                         },
                     }
                 }
-
+                m.array_size = Some(array_size);
             } else {
                 panic!("unknown characters present: {}", s)
             }
@@ -351,12 +492,13 @@ fn indent(size: usize) -> String {
         .fold(String::with_capacity(size*INDENT.len()), |r, s| r + s)
 }
 
-fn parse_structs() -> Vec<Struct> {
+fn parse_structs() -> (HashMap<String, Struct>, Vec<String>) {
     let file = File::open(concat!(env!("CARGO_MANIFEST_DIR"), "/gen_src/vk.xml")).unwrap();
     let reader = BufReader::new(file);
     let parser = EventReader::new(reader);
 
-    let mut structs: Vec<Struct> = Vec::with_capacity(400);
+    let mut structs = HashMap::with_capacity(300);
+    let mut struct_order = Vec::with_capacity(300);
 
     let mut current_struct: Option<Struct> = None;
     let mut struct_start_depth = 0;
@@ -428,16 +570,20 @@ fn parse_structs() -> Vec<Struct> {
                 }
                 if name.local_name == "member" && current_struct.is_some() {
                     if depth == member_start_depth {
-                        let st = current_struct.as_mut().expect("no current struct");
+                        let s = current_struct.as_mut().expect("no current struct");
                         let new_member = current_member.take().expect("no current member");
                         // new_member.validate();
-                        st.members.push(new_member);
+                        // s.members.push(new_member);
+                        s.add_member(new_member)
                     }
                 } else if name.local_name == "type" && current_struct.is_some() {
                     if depth == struct_start_depth {
                         assert!(current_struct.is_some());
-                        if let Some(st) = current_struct.take() {
-                            structs.push(st);;
+                        if let Some(s) = current_struct.take() {
+                            let key = s.voodoo_name.clone();
+                            struct_order.push(key.clone());
+                            structs.insert(key, s);
+
                         }
                     }
                 }
@@ -449,7 +595,7 @@ fn parse_structs() -> Vec<Struct> {
                 if let Some(ref mut cur_mem) = current_member {
                     if s.len() > 0 {
                         if parsing_member_type {
-                            cur_mem.set_type(&s);
+                            cur_mem.set_type(s);
                             parsing_member_type = false;
                         } else if parsing_member_name {
                             cur_mem.set_name(s);
@@ -485,9 +631,8 @@ fn parse_structs() -> Vec<Struct> {
         }
     }
 
-    // println!("Structs: \n\n{:#?}", structs);
     println!("{} structs parsed", structs.len());
-    structs
+    (structs, struct_order)
 }
 
 fn struct_is_excluded(orig_name: &str) -> bool {
@@ -528,16 +673,28 @@ fn member_is_excluded(orig_name: &str) -> bool {
     }
 }
 
-fn function_is_unsafe(orig_name: &str) -> bool {
-    match orig_name {
+fn function_is_unsafe(m: &Member) -> bool {
+    match m.orig_name.as_str() {
         "pNext" => true,
+        "pTag" => true,
+        "pUserData" => true,
+        "window" => true,
+        "pData" => m.is_ptr,
+        "connection" => m.is_ptr,
+        "mir_surface" => m.is_ptr,
+        "pInitialData" => m.is_ptr,
+        "mirSurface" => m.is_ptr,
+        "display" => m.is_ptr,
+        "surface" => m.is_ptr,
+        "dpy" => m.is_ptr,
+        "pView" => m.is_ptr,
         _ => false,
     }
 }
 
-fn fixup_function_name(orig_name: &str) -> Option<String> {
+fn filter_function_name(orig_name: &str) -> Option<String> {
     match orig_name {
-        "type" => Some("type_of".to_string()),
+        "type_" => Some("type_of".to_string()),
         _ => None,
     }
 }
@@ -546,45 +703,193 @@ fn is_experimental(orig_name: &str) -> bool {
     orig_name.contains("KHX") || orig_name.contains("NVX")
 }
 
-fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_params: &str) -> io::Result<()> {
+fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_params: &str,
+        structs: &HashMap<String, Struct>) -> io::Result<()> {
     let t = INDENT;
     if member_is_excluded(&m.orig_name) { return Ok(()); }
-    let unsafe_str = if function_is_unsafe(&m.orig_name) { " unsafe" } else { "" };
-    let fixed_fn_name = fixup_function_name(&m.orig_name);
-    let fn_name = match fixed_fn_name {
+    let fn_is_unsafe = function_is_unsafe(&m);
+    let unsafe_str = if fn_is_unsafe { " unsafe" } else { "" };
+    let filtered_fn_name = filter_function_name(&m.orig_name);
+    let fn_name = match filtered_fn_name {
         Some(ref n) => n.as_str(),
         None => m.voodoo_name.as_str(),
     };
 
-    let mut arg_is_generic = false;
-    let mut arg_type = String::new();
-    let mut fn_type_params = "'m".to_string();
     let arg_lifetime = "'a";
+    // let mut arg_is_generic = false;
+    let mut arg_is_slice = false;
+    let mut arg_is_struct = structs.contains_key(&m.voodoo_type);
+    let mut convert_arg = false;
+    let mut double_convert_arg = false;
+    let mut convert_to_bits = false;
+    // let mut is_repr_c =
+    let mut arg_type = String::new();
+    let mut where_clause = String::new();
+    let mut fn_type_params = "'m".to_string();
 
-    match m.ty {
-        _ => {
-            if arg_is_generic {
-                // Push lifetime param just in case.
+    // Type signature:
+    if let Some(ref size) = m.array_size {
+        arg_type.push_str("[");
+        arg_type.push_str(&m.voodoo_type);
+        arg_type.push_str("; ");
+        arg_type.push_str(size);
+        arg_type.push_str("]");
+    } else if m.voodoo_type == "i8" {
+        assert!(s.special_field(&m.voodoo_name).is_some());
+        convert_arg = true;
+        fn_type_params.push_str(", ");
+        fn_type_params.push_str(arg_lifetime);
+        fn_type_params.push_str(", T");
+        arg_type.push_str("T");
+        if m.is_ptr {
+            assert!(bldr_type_params.contains("'b"));
+            where_clause = format!(" where {a}: 'b, T: Into<CharStr<{a}>>", a=arg_lifetime);
+        } else if m.is_ptr_ptr {
+            assert!(bldr_type_params.contains("'b"));
+            where_clause = format!(" where {a}: 'b, T: Into<CharStrs<{a}>>", a=arg_lifetime);
+        }
+    } else if m.voodoo_type == "u32" && m.orig_name.contains("Version") {
+        convert_arg = true;
+        double_convert_arg = true;
+        fn_type_params.push_str(", T");
+        arg_type.push_str("T");
+        where_clause = format!(" where T: Into<Version>");
+    } else if m.voodoo_type.contains("Flags") {
+        if m.voodoo_type == "PipelineStageFlags" {
+            if !m.is_ptr {
+                convert_to_bits = true;
+            } else {
                 fn_type_params.push_str(", ");
                 fn_type_params.push_str(arg_lifetime);
-                fn_type_params.push_str(", T");
-                arg_type.push_str("T");
-            } else {
-                if m.is_ptr {
-                    fn_type_params.push_str(", ");
-                    fn_type_params.push_str(arg_lifetime);
-                    arg_type.push_str("&");
-                    arg_type.push_str(arg_lifetime);
-                    arg_type.push_str(" ");
-                }
-                arg_type.push_str(&m.ty);
+                arg_type.push_str("&");
+                arg_type.push_str(arg_lifetime);
+                arg_type.push_str(" ");
             }
-        },
+        } else {
+            convert_to_bits = true;
+        }
+        arg_type.push_str(&m.voodoo_type);
+    } else if m.is_ptr && (fn_name.ends_with("s") || fn_name == "code") {
+        arg_is_slice = true;
+        fn_type_params.push_str(", ");
+        fn_type_params.push_str(arg_lifetime);
+        arg_type.push_str("&");
+        arg_type.push_str(arg_lifetime);
+        arg_type.push_str(" ");
+        assert!(!m.is_const_const);
+        if !m.is_const {
+            arg_type.push_str("mut ");
+        }
+        arg_type.push_str("[");
+        arg_type.push_str(&m.voodoo_type);
+        arg_type.push_str("]");
+        if m.is_handle_type {
+            assert!(bldr_type_params.contains("'b"));
+            where_clause = format!(" where {a}: 'b", a=arg_lifetime);
+        }
+    } else if m.is_ptr && fn_is_unsafe {
+        if m.is_const {
+            arg_type.push_str("*const ");
+        } else {
+            arg_type.push_str("*mut ");
+        }
+        // arg_type.push_str("c_void");
+        arg_type.push_str(&m.voodoo_type);
+    } else {
+        if m.is_ptr || m.is_handle_type {
+            fn_type_params.push_str(", ");
+            fn_type_params.push_str(arg_lifetime);
+            arg_type.push_str("&");
+            arg_type.push_str(arg_lifetime);
+            arg_type.push_str(" ");
+        }
+        arg_type.push_str(&m.voodoo_type);
+        if !m.is_handle_type {
+            if m.orig_name != "pSampleMask" &&
+                m.orig_name != "pCoverageModulationTable" {
+                convert_arg = true;
+            }
+        }
     }
 
-    writeln!(o, "{t}pub{} fn {}<{}>(&'m mut self, {}: {}) -> &'m mut {}Builder{} {{",
-        unsafe_str, fn_name, fn_type_params, fn_name, arg_type, s.voodoo_name, bldr_type_params, t=t)?;
+    writeln!(o, "{t}pub{} fn {}<{}>(mut self, {}: {}) -> {}Builder{}{} {{",
+        unsafe_str, fn_name, fn_type_params, fn_name, arg_type,
+        s.voodoo_name, bldr_type_params, where_clause, t=t)?;
 
+    if s.special_field(&m.voodoo_name).is_some() {
+        write!(o, "{t}{t}self.{} = Some({}", m.voodoo_name, fn_name, t=t)?;
+        if arg_is_slice {
+            if m.is_handle_type {
+                write!(o, ".iter().map(|h| h.handle()).collect()")?;
+            } else if arg_is_struct {
+                write!(o, ".iter().map(|h| h.raw).collect()")?;
+            }
+        } else if convert_arg {
+            write!(o, ".into()")?;
+        }
+        writeln!(o, ");")?;
+        writeln!(o, "{t}{t}self.raw.{} = self.{}.as_ref().unwrap().as_ptr();",
+            m.orig_name, m.voodoo_name, t=t)?;
+    } else {
+        write!(o, "{t}{t}self.raw.{} = ", m.orig_name, t=t)?;
+        if arg_is_struct {
+            if m.is_ptr {
+                if arg_is_slice && structs[&m.voodoo_type].is_repr_c() {
+                    if m.is_const {
+                        write!(o, "{}.as_ptr() as *const _", fn_name)?;
+                    } else {
+                        write!(o, "{}.as_mut_ptr() as *mut _", fn_name)?;
+                    }
+                } else {
+                    write!(o, "{}.raw()", fn_name)?;
+                }
+            } else {
+                if let Some(ref size) = m.array_size {
+                    write!(o, "[")?;
+                    for idx in 0..size.parse::<u32>().unwrap() {
+                        write!(o, "{}[{}].raw, ", fn_name, idx)?;
+                    }
+                    write!(o, "]")?;
+                } else {
+                    write!(o, "{}.raw", fn_name)?;
+                }
+            }
+        } else {
+            if m.is_handle_type {
+                if arg_is_slice {
+                    assert!(s.special_fields.contains_key(&m.voodoo_name),
+                        "\"{}\" is lacking a special field for {{ {}: {} }}",
+                        s.voodoo_name, fn_name, arg_type);
+                    write!(o, "{}", fn_name)?;
+                } else {
+                    if m.is_ptr {
+                        write!(o, "&")?;
+                    }
+                    write!(o, "{}.handle()", fn_name)?;
+                }
+            } else if m.voodoo_type.as_str() == "bool" {
+                write!(o, "{} as u32", fn_name)?;
+            } else if convert_to_bits {
+                write!(o, "{}.bits()", fn_name)?;
+            } else if arg_is_slice {
+                if m.is_const {
+                    write!(o, "{}.as_ptr() as *const _", fn_name)?;
+                } else {
+                    write!(o, "{}.as_mut_ptr() as *mut _", fn_name)?;
+                }
+            } else if convert_arg {
+                write!(o, "{}.into()", fn_name)?;
+                if double_convert_arg {
+                    write!(o, ".into()")?;
+                }
+            } else if m.voodoo_type == "PipelineStageFlags" && m.is_ptr {
+                write!(o, "{} as *const PipelineStageFlags as *const _", fn_name)?;
+            } else {
+                write!(o, "{}", fn_name)?;
+            }
+        }
+        writeln!(o, ";")?;
+    }
     writeln!(o, "{t}{t}self", t=t)?;
 
     write!(o, "{t}}}\n\n", t=t)?;
@@ -592,8 +897,9 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
     Ok(())
 }
 
-fn write_structs(structs: &[Struct]) -> io::Result<()> {
-    let output_file_path = concat!(env!("CARGO_MANIFEST_DIR"), "/output/structs.rs");
+fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> io::Result<()> {
+    // let output_file_path = concat!(env!("CARGO_MANIFEST_DIR"), "/output/structs.rs");
+    let output_file_path = "/src/voodoo/src/structs.rs";
     let output_file = OpenOptions::new()
         .write(true)
         .truncate(true)
@@ -607,9 +913,13 @@ fn write_structs(structs: &[Struct]) -> io::Result<()> {
     let t = INDENT;
     writeln!(o, "//! Structs.")?;
     write!(o, "\n")?;
+    writeln!(o, "#![allow(unused_mut)]")?;
+    write!(o, "\n")?;
     writeln!(o, "use std::ptr;")?;
     writeln!(o, "use std::ffi::{{CString, CStr}};")?;
     writeln!(o, "use std::marker::PhantomData;")?;
+    writeln!(o, "use libc::c_void;")?;
+    writeln!(o, "use num_traits::ToPrimitive;")?;
     writeln!(o, "use ::*;")?;
     writeln!(o, "use {};", ORIG_USE)?;
     writeln!(o, "use {}::{{PFN_vkAllocationFunction, PFN_vkReallocationFunction, \
@@ -617,19 +927,13 @@ fn write_structs(structs: &[Struct]) -> io::Result<()> {
         PFN_vkInternalFreeNotification, \n{t}PFN_vkDebugReportCallbackEXT}};", ORIG_USE, t=t)?;
     write!(o, "\n\n")?;
 
-    // writeln!(o, "type DeviceSize = u64;")?;
-
     writeln!(o, "")?;
 
-    for s in structs {
+    for s_key in struct_order {
+        let s = structs.get(s_key).unwrap();
         if struct_is_excluded(&s.orig_name) { continue; }
 
-        // BEGIN STRUCT
-        // if s.comment.is_empty() {
-        //     writeln!(o, "/// A `{}`.", s.orig_name)?;
-        // } else {
-        //     writeln!(o, "/// {}.", s.comment)?;
-        // }
+        // ################## STRUCT ####################
         writeln!(o, "/// A `{}`.", s.orig_name)?;
         writeln!(o, "///")?;
         writeln!(o, "/// {}", s.comment)?;
@@ -637,36 +941,40 @@ fn write_structs(structs: &[Struct]) -> io::Result<()> {
             writeln!(o, "#[cfg(feature = \"experimental\")]")?;
         }
         writeln!(o, "#[derive(Debug, Clone, Default)]")?;
-        writeln!(o, "#[repr(C)]")?;
+        if s.is_repr_c() {
+            writeln!(o, "#[repr(C)]")?;
+        }
         write!(o, "pub struct {}", s.voodoo_name)?;
         if s.contains_ptr { write!(o, "<'s>")?; }
         writeln!(o, " {{")?;
 
+        // Raw:
         writeln!(o, "{t}raw: {}{},", ORIG_PRE, s.orig_name, t=t)?;
+
+        // Special fields:
+        for (_, field) in &s.special_fields {
+            writeln!(o, "{t}{}: {},", field.name, field.ty_struct, t=t)?;
+        }
+
+        // Phantom data:
         if s.contains_ptr {
             writeln!(o, "{t}_p: PhantomData<&'s ()>,", t=t)?;
         }
-        write!(o, "}}\n\n")?;
-        // END STRUCT
 
-        // BEGIN IMPL
+        write!(o, "}}\n\n")?;
+
+        // ################# STRUCT IMPL #################
         if is_experimental(&s.orig_name) {
             writeln!(o, "#[cfg(feature = \"experimental\")]")?;
         }
-        // let type_params = if s.contains_ptr { "<'s>" } else { "" };
-        // write!(o, "impl")?;
-        // if s.contains_ptr { write!(o, "<'s>")?; }
-        // write!(o, " {}", s.voodoo_name)?;
-        // if s.contains_ptr { write!(o, "<'s>")?; }
-        // writeln!(o, " {{")?;
 
-        let type_params = if s.contains_ptr { "<'s>" } else { "" };
-        write!(o, "impl{} {}{}", type_params, s.voodoo_name, type_params)?;
+        let struct_type_param = if s.contains_ptr { "<'s>" } else { "" };
+        let bldr_type_param = if s.contains_ptr { "<'b>" } else { "" };
+        write!(o, "impl{} {}{}", struct_type_param, s.voodoo_name, struct_type_param)?;
         writeln!(o, " {{")?;
 
         if !s.returnedonly {
-            let type_params = if s.contains_ptr { "<'b>" } else { "" };
-            write!(o, "{t}pub fn builder{tp}() -> {}Builder{tp}", s.voodoo_name, tp=type_params, t=t)?;
+            write!(o, "{t}pub fn builder{tp}() -> {}Builder{tp}", s.voodoo_name, tp=bldr_type_param, t=t)?;
             writeln!(o, " {{")?;
             writeln!(o, "{t}{t}{}Builder::new()", s.voodoo_name, t=t)?;
             write!(o, "{t}}}\n\n", t=t)?;
@@ -674,9 +982,9 @@ fn write_structs(structs: &[Struct]) -> io::Result<()> {
 
         for m in &s.members {
             if member_is_excluded(&m.orig_name) { continue; }
-            let unsafe_str = if function_is_unsafe(&m.orig_name) { " unsafe" } else { "" };
-            let fixed_fn_name = fixup_function_name(&m.orig_name);
-            let fn_name = match fixed_fn_name {
+            let unsafe_str = if function_is_unsafe(&m) { " unsafe" } else { "" };
+            let filtered_fn_name = filter_function_name(&m.orig_name);
+            let fn_name = match filtered_fn_name {
                 Some(ref n) => n.as_str(),
                 None => m.voodoo_name.as_str(),
             };
@@ -690,7 +998,22 @@ fn write_structs(structs: &[Struct]) -> io::Result<()> {
         writeln!(o, "{t}}}", t=t)?;
 
         write!(o, "}}\n\n\n")?;
-        // END IMPL
+
+        // ################ IMPL FROM/INTO STRUCT ################
+
+        if is_experimental(&s.orig_name) {
+            writeln!(o, "#[cfg(feature = \"experimental\")]")?;
+        }
+        write!(o, "impl{} From<{}{}> for {}{}", struct_type_param, s.voodoo_name, struct_type_param,
+            ORIG_PRE, s.orig_name,)?;
+        writeln!(o, " {{")?;
+
+        writeln!(o, "{t}fn from(f: {}{}) -> {}{} {{", s.voodoo_name, struct_type_param,
+            ORIG_PRE, s.orig_name, t=t)?;
+        writeln!(o, "{t}{t}f.raw", t=t)?;
+        writeln!(o, "{t}}}", t=t)?;
+
+        write!(o, "}}\n\n\n")?;
 
         // BEGIN BUILDER STRUCT
         if !s.returnedonly {
@@ -704,26 +1027,39 @@ fn write_structs(structs: &[Struct]) -> io::Result<()> {
             write!(o, "pub struct {}Builder", s.voodoo_name)?;
             if s.contains_ptr { write!(o, "<'b>")?; }
             writeln!(o, " {{")?;
+
+            // Raw:
             writeln!(o, "{t}raw: {}{},", ORIG_PRE, s.orig_name, t=t)?;
+            // Special fields:
+            for (_, field) in &s.special_fields {
+                writeln!(o, "{t}{}: {},", field.name, field.ty_builder, t=t)?;
+            }
+            // Phantom data:
             if s.contains_ptr {
                 writeln!(o, "{t}_p: PhantomData<&'b ()>,", t=t)?;
             }
             write!(o, "}}\n\n")?;
         }
-        // END BUILDER STRUCT
 
-        // BEGIN BUILDER IMPL
+        // ############## BUILDER IMPL ##############
         if !s.returnedonly {
             if is_experimental(&s.orig_name) {
                 writeln!(o, "#[cfg(feature = \"experimental\")]")?;
             }
 
-            let bldr_type_param = if s.contains_ptr { "<'b>" } else { "" };
+            // let bldr_type_param = if s.contains_ptr { "<'b>" } else { "" };
             write!(o, "impl{} {}Builder{}", bldr_type_param, s.voodoo_name, bldr_type_param)?;
             writeln!(o, " {{")?;
+            // NEW:
             writeln!(o, "{t}pub fn new() -> {}Builder{} {{", s.voodoo_name, bldr_type_param, t=t)?;
             writeln!(o, "{t}{t}{}Builder {{", s.voodoo_name, t=t)?;
+            // Raw:
             writeln!(o, "{t}{t}{t}raw: {}{}::default(),", ORIG_PRE, s.orig_name, t=t)?;
+            // Special fields:
+            for (_, field) in &s.special_fields {
+                writeln!(o, "{t}{t}{t}{}: {},", field.name, field.default_val, t=t)?;
+            }
+            // Phantom data:
             if s.contains_ptr {
                 writeln!(o, "{t}{t}{t}_p: PhantomData,", t=t)?;
             }
@@ -731,22 +1067,36 @@ fn write_structs(structs: &[Struct]) -> io::Result<()> {
             write!(o, "{t}}}\n\n", t=t)?;
 
             for m in &s.members {
-                write_builder_set_fn(o, s, m, bldr_type_param)?
+                write_builder_set_fn(o, s, m, bldr_type_param, &structs)?
             }
 
-
+            // BUILD:
+            write!(o, "{t}pub fn build(self) -> {}{p}", s.voodoo_name, p=bldr_type_param, t=t)?;
+            writeln!(o," {{")?;
+            writeln!(o, "{t}{t}{} {{", s.voodoo_name, t=t)?;
+            // Raw:
+            writeln!(o, "{t}{t}{t}raw: self.raw,", t=t)?;
+            // Special fields:
+            for (_, field) in &s.special_fields {
+                writeln!(o, "{t}{t}{t}{fn}: self.{fn},", fn=field.name, t=t)?;
+            }
+            // Phantom data:
+            if s.contains_ptr {
+                writeln!(o, "{t}{t}{t}_p: PhantomData,", t=t)?;
+            }
+            writeln!(o, "{t}{t}}}", t=t)?;
+            write!(o, "{t}}}\n\n", t=t)?;
 
             write!(o, "}}\n\n\n")?;
         }
-        // END BUILDER IMPL
     }
 
     Ok(())
 }
 
 fn main() {
-    let structs: Vec<Struct> = parse_structs();
-    write_structs(&structs).unwrap();
+    let (structs, struct_order) = parse_structs();
+    write_structs(&structs, &struct_order).unwrap();
 
 }
 
