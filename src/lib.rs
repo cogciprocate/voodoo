@@ -1,6 +1,7 @@
 //! vkc - Vulkan Compute
 
 #![allow(unused_extern_crates, unused_imports, dead_code, unused_variables)]
+#[allow(non_camel_case_types)]
 
 extern crate libloading as lib;
 extern crate smallvec;
@@ -187,6 +188,73 @@ pub use descriptor_pool::DescriptorPool;
 pub use structs::*;
 pub use enums::*;
 pub use bitflags::*;
+
+/////////////// TEMP /////////////////
+pub type DescriptorSet = vks::VkDescriptorSet;
+pub type BufferView = vks::VkBufferView;
+pub type Pipeline = vks::VkPipeline;
+pub type CommandBuffer = vks::VkCommandBuffer;
+pub type Fence = vks::VkFence;
+pub type SurfaceKhr = vks::VkSurfaceKHR;
+pub type SwapchainKhr = vks::VkSwapchainKHR;
+pub type DebugReportFlagsExt = vks::VkDebugReportFlagsEXT;
+pub type DisplaySurfaceCreateFlagsKhr = vks::VkDisplaySurfaceCreateFlagsKHR;
+pub type DisplayModeCreateFlagsKhr = vks::VkDisplayModeCreateFlagsKHR;
+pub type DisplayModeKhr = vks::VkDisplayModeKHR;
+pub type SurfaceTransformFlagsKhr = vks::VkSurfaceTransformFlagsKHR;
+pub type DisplayPlaneAlphaFlagsKhr = vks::VkDisplayPlaneAlphaFlagsKHR;
+pub type AndroidSurfaceCreateFlagsKhr = vks::VkAndroidSurfaceCreateFlagsKHR;
+pub type MirSurfaceCreateFlagsKhr = vks::VkMirSurfaceCreateFlagsKHR;
+pub type ViSurfaceCreateFlagsNN = vks::VkViSurfaceCreateFlagsNN;
+pub type WaylandSurfaceCreateFlagsKhr = vks::VkWaylandSurfaceCreateFlagsKHR;
+pub type Win32SurfaceCreateFlagsKhr = vks::VkWin32SurfaceCreateFlagsKHR;
+pub type XlibSurfaceCreateFlagsKhr = vks::VkXlibSurfaceCreateFlagsKHR;
+pub type XcbSurfaceCreateFlagsKhr = vks::VkXcbSurfaceCreateFlagsKHR;
+pub type SwapchainCreateFlagsKhr = vks::VkSwapchainCreateFlagsKHR;
+pub type CompositeAlphaFlagsKhr = vks::VkCompositeAlphaFlagsKHR;
+pub type ViSurfaceCreateFlagsNn = vks::VkViSurfaceCreateFlagsNN;
+pub type ExternalMemoryHandleTypeFlagsNv = vks::VkExternalMemoryHandleTypeFlagsNV;
+pub type ExternalMemoryHandleTypeFlagsKhr = vks::VkExternalMemoryHandleTypeFlagsKHR;
+pub type ExternalSemaphoreHandleTypeFlagsKhr = vks::VkExternalSemaphoreHandleTypeFlagsKHR;
+pub type SemaphoreImportFlagsKhr = vks::VkSemaphoreImportFlagsKHR;
+pub type ExternalFenceHandleTypeFlagsKhr = vks::VkExternalFenceHandleTypeFlagsKHR;
+pub type FenceImportFlagsKhr = vks::VkFenceImportFlagsKHR;
+pub type SurfaceCounterFlagsExt = vks::VkSurfaceCounterFlagsEXT;
+pub type DescriptorUpdateTemplateCreateFlagsKhr = vks::VkDescriptorUpdateTemplateCreateFlagsKHR;
+pub type IosSurfaceCreateFlagsMvk = vks::VkIOSSurfaceCreateFlagsMVK;
+pub type MacOsSurfaceCreateFlagsMvk = vks::VkMacOSSurfaceCreateFlagsMVK;
+pub type PipelineViewportSwizzleStateCreateFlagsNv =
+    vks::VkPipelineViewportSwizzleStateCreateFlagsNV;
+pub type PipelineDiscardRectangleStateCreateFlagsExt =
+    vks::VkPipelineDiscardRectangleStateCreateFlagsEXT;
+pub type PipelineCoverageToColorStateCreateFlagsNv =
+    vks::VkPipelineCoverageToColorStateCreateFlagsNV;
+pub type PipelineCoverageModulationStateCreateFlagsNv =
+    vks::VkPipelineCoverageModulationStateCreateFlagsNV;
+pub type Display = vks::Display;
+pub type wl_display = vks::wl_display;
+pub type wl_surface = vks::wl_surface;
+pub type MirConnection = vks::MirConnection;
+pub type MirSurface = vks::MirSurface;
+pub type ANativeWindow = vks::ANativeWindow;
+pub type HINSTANCE = vks::HINSTANCE;
+pub type HWND = vks::HWND;
+pub type xcb_connection_t = vks::xcb_connection_t;
+pub type xcb_window_t = vks::xcb_window_t;
+pub type HANDLE = vks::HANDLE;
+pub type SECURITY_ATTRIBUTES = vks::SECURITY_ATTRIBUTES;
+pub type DWORD = vks::DWORD;
+pub type LPCWSTR = vks::LPCWSTR;
+
+
+
+
+
+// TODO: MAKE THESE UNIONS ENUMS:
+pub type ClearValue = vks::VkClearValue;
+
+
+//////////////////////////////////////
 
 const PRINT: bool = false;
 

@@ -95,7 +95,7 @@ fn enabled_layer_names<'ln>(loader: &Loader)
 
 /// Initializes a loader and returns a new instance.
 fn init_instance() -> VooResult<Instance> {
-    let app_info = voo::ApplicationInfo::new()
+    let app_info = voo::ApplicationInfo::builder()
         .application_name("Hello Triangle")
         .application_version((1, 0, 0))
         .engine_name("No Engine")
@@ -164,7 +164,7 @@ fn create_device(instance: Instance, surface: &Surface, physical_device: Physica
     let queue_family_idx = queue::queue_families(&instance, surface,
         &physical_device, queue_familiy_flags).family_idxs()[0] as u32;
 
-    let queue_create_info = voo::DeviceQueueCreateInfo::new()
+    let queue_create_info = voo::DeviceQueueCreateInfo::builder()
         .queue_family_index(queue_family_idx)
         .queue_priorities(&[1.0]);
 

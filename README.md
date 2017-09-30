@@ -1,6 +1,7 @@
 ## Voodoo - A high-performance Vulkan® API for Rust
 
-##### Features:
+
+#### Features:
 
 * An intuitive and idiomatic interface
 * Zero additional overhead
@@ -13,15 +14,17 @@
 * Useful documentation
 
 
+##### Other Vulkan libraries in Rust
 
-#### Other Vulkan Libraries in Rust
+For a higher level, more opinionated Vulkan API (that does more for you) see
+the [Vulkano] project.
 
-If this library is too low-level, please see the
-[Vulkano](https://github.com/vulkano-rs/vulkano) project. Also see the
-excellent
-[dacite](https://gitlab.com/dennis-hamester/dacite/tree/master/dacite) (by the
-author of [vks](https://gitlab.com/dennis-hamester/vks), which this library is
-built on) and [ash](https://github.com/MaikKlein/ash) projects.
+Other similar libraries include [dacite] (by the author of [vks], which this
+library is also built on) and [ash].
 
+[Vulkano](https://github.com/vulkano-rs/vulkano)
+[dacite](https://gitlab.com/dennis-hamester/dacite/tree/master/dacite)
+[vks](https://gitlab.com/dennis-hamester/vks)
+[ash](https://github.com/MaikKlein/ash)
 
 <br/>*“Vulkan and the Vulkan logo are registered trademarks of the Khronos Group Inc.”*

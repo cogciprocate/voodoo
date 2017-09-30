@@ -5,15 +5,15 @@ use std::ffi::{CString, CStr};
 use std::marker::PhantomData;
 use ::*;
 use vks;
-use vks::{PFN_vkAllocationFunction, PFN_vkReallocationFunction, PFN_vkFreeFunction,
-    PFN_vkInternalAllocationNotification, PFN_vkInternalFreeNotification,
+use vks::{PFN_vkAllocationFunction, PFN_vkReallocationFunction, PFN_vkFreeFunction, 
+    PFN_vkInternalAllocationNotification, PFN_vkInternalFreeNotification, 
     PFN_vkDebugReportCallbackEXT};
 
 
 
 /// A `VkOffset2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Offset2d {
@@ -39,7 +39,7 @@ impl Offset2d {
 
 /// A builder for `VkOffset2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Offset2dBuilder {
     raw: vks::VkOffset2D,
@@ -65,7 +65,7 @@ impl Offset2dBuilder {
 
 /// A `VkOffset3D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Offset3d {
@@ -94,7 +94,7 @@ impl Offset3d {
 
 /// A builder for `VkOffset3D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Offset3dBuilder {
     raw: vks::VkOffset3D,
@@ -124,7 +124,7 @@ impl Offset3dBuilder {
 
 /// A `VkExtent2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Extent2d {
@@ -150,7 +150,7 @@ impl Extent2d {
 
 /// A builder for `VkExtent2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Extent2dBuilder {
     raw: vks::VkExtent2D,
@@ -176,7 +176,7 @@ impl Extent2dBuilder {
 
 /// A `VkExtent3D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Extent3d {
@@ -205,7 +205,7 @@ impl Extent3d {
 
 /// A builder for `VkExtent3D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Extent3dBuilder {
     raw: vks::VkExtent3D,
@@ -235,7 +235,7 @@ impl Extent3dBuilder {
 
 /// A `VkViewport`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Viewport {
@@ -273,7 +273,7 @@ impl Viewport {
 
 /// A builder for `VkViewport`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ViewportBuilder {
     raw: vks::VkViewport,
@@ -315,7 +315,7 @@ impl ViewportBuilder {
 
 /// A `VkRect2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Rect2d {
@@ -341,7 +341,7 @@ impl Rect2d {
 
 /// A builder for `VkRect2D`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Rect2dBuilder {
     raw: vks::VkRect2D,
@@ -367,7 +367,7 @@ impl Rect2dBuilder {
 
 /// A `VkClearRect`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ClearRect {
@@ -396,7 +396,7 @@ impl ClearRect {
 
 /// A builder for `VkClearRect`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ClearRectBuilder {
     raw: vks::VkClearRect,
@@ -426,7 +426,7 @@ impl ClearRectBuilder {
 
 /// A `VkComponentMapping`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ComponentMapping {
@@ -458,7 +458,7 @@ impl ComponentMapping {
 
 /// A builder for `VkComponentMapping`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ComponentMappingBuilder {
     raw: vks::VkComponentMapping,
@@ -492,7 +492,7 @@ impl ComponentMappingBuilder {
 
 /// A `VkPhysicalDeviceProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceProperties {
@@ -535,7 +535,7 @@ impl PhysicalDeviceProperties {
 
 /// A `VkExtensionProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExtensionProperties {
@@ -557,7 +557,7 @@ impl ExtensionProperties {
 
 /// A `VkLayerProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct LayerProperties {
@@ -585,7 +585,7 @@ impl LayerProperties {
 
 /// A `VkApplicationInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ApplicationInfo<'s> {
@@ -624,7 +624,7 @@ impl<'s> ApplicationInfo<'s> {
 
 /// A builder for `VkApplicationInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ApplicationInfoBuilder<'b> {
     raw: vks::VkApplicationInfo,
@@ -668,7 +668,7 @@ impl<'b> ApplicationInfoBuilder<'b> {
 
 /// A `VkAllocationCallbacks`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct AllocationCallbacks<'s> {
@@ -707,7 +707,7 @@ impl<'s> AllocationCallbacks<'s> {
 
 /// A builder for `VkAllocationCallbacks`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct AllocationCallbacksBuilder<'b> {
     raw: vks::VkAllocationCallbacks,
@@ -751,7 +751,7 @@ impl<'b> AllocationCallbacksBuilder<'b> {
 
 /// A `VkDeviceQueueCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DeviceQueueCreateInfo<'s> {
@@ -787,7 +787,7 @@ impl<'s> DeviceQueueCreateInfo<'s> {
 
 /// A builder for `VkDeviceQueueCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DeviceQueueCreateInfoBuilder<'b> {
     raw: vks::VkDeviceQueueCreateInfo,
@@ -827,7 +827,7 @@ impl<'b> DeviceQueueCreateInfoBuilder<'b> {
 
 /// A `VkDeviceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DeviceCreateInfo<'s> {
@@ -875,7 +875,7 @@ impl<'s> DeviceCreateInfo<'s> {
 
 /// A builder for `VkDeviceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DeviceCreateInfoBuilder<'b> {
     raw: vks::VkDeviceCreateInfo,
@@ -931,7 +931,7 @@ impl<'b> DeviceCreateInfoBuilder<'b> {
 
 /// A `VkInstanceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct InstanceCreateInfo<'s> {
@@ -973,7 +973,7 @@ impl<'s> InstanceCreateInfo<'s> {
 
 /// A builder for `VkInstanceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct InstanceCreateInfoBuilder<'b> {
     raw: vks::VkInstanceCreateInfo,
@@ -1021,7 +1021,7 @@ impl<'b> InstanceCreateInfoBuilder<'b> {
 
 /// A `VkQueueFamilyProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct QueueFamilyProperties {
@@ -1049,7 +1049,7 @@ impl QueueFamilyProperties {
 
 /// A `VkPhysicalDeviceMemoryProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceMemoryProperties {
@@ -1077,7 +1077,7 @@ impl PhysicalDeviceMemoryProperties {
 
 /// A `VkMemoryAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryAllocateInfo<'s> {
@@ -1107,7 +1107,7 @@ impl<'s> MemoryAllocateInfo<'s> {
 
 /// A builder for `VkMemoryAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryAllocateInfoBuilder<'b> {
     raw: vks::VkMemoryAllocateInfo,
@@ -1139,7 +1139,7 @@ impl<'b> MemoryAllocateInfoBuilder<'b> {
 
 /// A `VkMemoryRequirements`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryRequirements {
@@ -1164,7 +1164,7 @@ impl MemoryRequirements {
 
 /// A `VkSparseImageFormatProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageFormatProperties {
@@ -1189,7 +1189,7 @@ impl SparseImageFormatProperties {
 
 /// A `VkSparseImageMemoryRequirements`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageMemoryRequirements {
@@ -1220,7 +1220,7 @@ impl SparseImageMemoryRequirements {
 
 /// A `VkMemoryType`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryType {
@@ -1242,7 +1242,7 @@ impl MemoryType {
 
 /// A `VkMemoryHeap`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryHeap {
@@ -1264,7 +1264,7 @@ impl MemoryHeap {
 
 /// A `VkMappedMemoryRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MappedMemoryRange<'s> {
@@ -1297,7 +1297,7 @@ impl<'s> MappedMemoryRange<'s> {
 
 /// A builder for `VkMappedMemoryRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MappedMemoryRangeBuilder<'b> {
     raw: vks::VkMappedMemoryRange,
@@ -1333,7 +1333,7 @@ impl<'b> MappedMemoryRangeBuilder<'b> {
 
 /// A `VkFormatProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct FormatProperties {
@@ -1358,7 +1358,7 @@ impl FormatProperties {
 
 /// A `VkImageFormatProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageFormatProperties {
@@ -1389,7 +1389,7 @@ impl ImageFormatProperties {
 
 /// A `VkDescriptorBufferInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorBufferInfo {
@@ -1418,7 +1418,7 @@ impl DescriptorBufferInfo {
 
 /// A builder for `VkDescriptorBufferInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorBufferInfoBuilder {
     raw: vks::VkDescriptorBufferInfo,
@@ -1448,7 +1448,7 @@ impl DescriptorBufferInfoBuilder {
 
 /// A `VkDescriptorImageInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorImageInfo {
@@ -1477,7 +1477,7 @@ impl DescriptorImageInfo {
 
 /// A builder for `VkDescriptorImageInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorImageInfoBuilder {
     raw: vks::VkDescriptorImageInfo,
@@ -1507,7 +1507,7 @@ impl DescriptorImageInfoBuilder {
 
 /// A `VkWriteDescriptorSet`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct WriteDescriptorSet<'s> {
@@ -1555,7 +1555,7 @@ impl<'s> WriteDescriptorSet<'s> {
 
 /// A builder for `VkWriteDescriptorSet`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct WriteDescriptorSetBuilder<'b> {
     raw: vks::VkWriteDescriptorSet,
@@ -1611,7 +1611,7 @@ impl<'b> WriteDescriptorSetBuilder<'b> {
 
 /// A `VkCopyDescriptorSet`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct CopyDescriptorSet<'s> {
@@ -1656,7 +1656,7 @@ impl<'s> CopyDescriptorSet<'s> {
 
 /// A builder for `VkCopyDescriptorSet`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct CopyDescriptorSetBuilder<'b> {
     raw: vks::VkCopyDescriptorSet,
@@ -1708,7 +1708,7 @@ impl<'b> CopyDescriptorSetBuilder<'b> {
 
 /// A `VkBufferCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferCreateInfo<'s> {
@@ -1750,7 +1750,7 @@ impl<'s> BufferCreateInfo<'s> {
 
 /// A builder for `VkBufferCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferCreateInfoBuilder<'b> {
     raw: vks::VkBufferCreateInfo,
@@ -1798,7 +1798,7 @@ impl<'b> BufferCreateInfoBuilder<'b> {
 
 /// A `VkBufferViewCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferViewCreateInfo<'s> {
@@ -1837,7 +1837,7 @@ impl<'s> BufferViewCreateInfo<'s> {
 
 /// A builder for `VkBufferViewCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferViewCreateInfoBuilder<'b> {
     raw: vks::VkBufferViewCreateInfo,
@@ -1881,7 +1881,7 @@ impl<'b> BufferViewCreateInfoBuilder<'b> {
 
 /// A `VkImageSubresource`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageSubresource {
@@ -1910,7 +1910,7 @@ impl ImageSubresource {
 
 /// A builder for `VkImageSubresource`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageSubresourceBuilder {
     raw: vks::VkImageSubresource,
@@ -1940,7 +1940,7 @@ impl ImageSubresourceBuilder {
 
 /// A `VkImageSubresourceLayers`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageSubresourceLayers {
@@ -1972,7 +1972,7 @@ impl ImageSubresourceLayers {
 
 /// A builder for `VkImageSubresourceLayers`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageSubresourceLayersBuilder {
     raw: vks::VkImageSubresourceLayers,
@@ -2006,7 +2006,7 @@ impl ImageSubresourceLayersBuilder {
 
 /// A `VkImageSubresourceRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageSubresourceRange {
@@ -2041,7 +2041,7 @@ impl ImageSubresourceRange {
 
 /// A builder for `VkImageSubresourceRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageSubresourceRangeBuilder {
     raw: vks::VkImageSubresourceRange,
@@ -2079,7 +2079,7 @@ impl ImageSubresourceRangeBuilder {
 
 /// A `VkMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryBarrier<'s> {
@@ -2109,7 +2109,7 @@ impl<'s> MemoryBarrier<'s> {
 
 /// A builder for `VkMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryBarrierBuilder<'b> {
     raw: vks::VkMemoryBarrier,
@@ -2141,7 +2141,7 @@ impl<'b> MemoryBarrierBuilder<'b> {
 
 /// A `VkBufferMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferMemoryBarrier<'s> {
@@ -2186,7 +2186,7 @@ impl<'s> BufferMemoryBarrier<'s> {
 
 /// A builder for `VkBufferMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferMemoryBarrierBuilder<'b> {
     raw: vks::VkBufferMemoryBarrier,
@@ -2238,7 +2238,7 @@ impl<'b> BufferMemoryBarrierBuilder<'b> {
 
 /// A `VkImageMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageMemoryBarrier<'s> {
@@ -2286,7 +2286,7 @@ impl<'s> ImageMemoryBarrier<'s> {
 
 /// A builder for `VkImageMemoryBarrier`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageMemoryBarrierBuilder<'b> {
     raw: vks::VkImageMemoryBarrier,
@@ -2342,7 +2342,7 @@ impl<'b> ImageMemoryBarrierBuilder<'b> {
 
 /// A `VkImageCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageCreateInfo<'s> {
@@ -2405,7 +2405,7 @@ impl<'s> ImageCreateInfo<'s> {
 
 /// A builder for `VkImageCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageCreateInfoBuilder<'b> {
     raw: vks::VkImageCreateInfo,
@@ -2481,7 +2481,7 @@ impl<'b> ImageCreateInfoBuilder<'b> {
 
 /// A `VkSubresourceLayout`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SubresourceLayout {
@@ -2512,7 +2512,7 @@ impl SubresourceLayout {
 
 /// A `VkImageViewCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageViewCreateInfo<'s> {
@@ -2554,7 +2554,7 @@ impl<'s> ImageViewCreateInfo<'s> {
 
 /// A builder for `VkImageViewCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageViewCreateInfoBuilder<'b> {
     raw: vks::VkImageViewCreateInfo,
@@ -2602,7 +2602,7 @@ impl<'b> ImageViewCreateInfoBuilder<'b> {
 
 /// A `VkBufferCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferCopy {
@@ -2631,7 +2631,7 @@ impl BufferCopy {
 
 /// A builder for `VkBufferCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferCopyBuilder {
     raw: vks::VkBufferCopy,
@@ -2661,7 +2661,7 @@ impl BufferCopyBuilder {
 
 /// A `VkSparseMemoryBind`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseMemoryBind {
@@ -2696,7 +2696,7 @@ impl SparseMemoryBind {
 
 /// A builder for `VkSparseMemoryBind`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseMemoryBindBuilder {
     raw: vks::VkSparseMemoryBind,
@@ -2734,7 +2734,7 @@ impl SparseMemoryBindBuilder {
 
 /// A `VkSparseImageMemoryBind`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageMemoryBind {
@@ -2772,7 +2772,7 @@ impl SparseImageMemoryBind {
 
 /// A builder for `VkSparseImageMemoryBind`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseImageMemoryBindBuilder {
     raw: vks::VkSparseImageMemoryBind,
@@ -2814,7 +2814,7 @@ impl SparseImageMemoryBindBuilder {
 
 /// A `VkSparseBufferMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseBufferMemoryBindInfo<'s> {
@@ -2844,7 +2844,7 @@ impl<'s> SparseBufferMemoryBindInfo<'s> {
 
 /// A builder for `VkSparseBufferMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseBufferMemoryBindInfoBuilder<'b> {
     raw: vks::VkSparseBufferMemoryBindInfo,
@@ -2876,7 +2876,7 @@ impl<'b> SparseBufferMemoryBindInfoBuilder<'b> {
 
 /// A `VkSparseImageOpaqueMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageOpaqueMemoryBindInfo<'s> {
@@ -2906,7 +2906,7 @@ impl<'s> SparseImageOpaqueMemoryBindInfo<'s> {
 
 /// A builder for `VkSparseImageOpaqueMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseImageOpaqueMemoryBindInfoBuilder<'b> {
     raw: vks::VkSparseImageOpaqueMemoryBindInfo,
@@ -2938,7 +2938,7 @@ impl<'b> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
 
 /// A `VkSparseImageMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageMemoryBindInfo<'s> {
@@ -2968,7 +2968,7 @@ impl<'s> SparseImageMemoryBindInfo<'s> {
 
 /// A builder for `VkSparseImageMemoryBindInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseImageMemoryBindInfoBuilder<'b> {
     raw: vks::VkSparseImageMemoryBindInfo,
@@ -3000,7 +3000,7 @@ impl<'b> SparseImageMemoryBindInfoBuilder<'b> {
 
 /// A `VkBindSparseInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BindSparseInfo<'s> {
@@ -3054,7 +3054,7 @@ impl<'s> BindSparseInfo<'s> {
 
 /// A builder for `VkBindSparseInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BindSparseInfoBuilder<'b> {
     raw: vks::VkBindSparseInfo,
@@ -3118,7 +3118,7 @@ impl<'b> BindSparseInfoBuilder<'b> {
 
 /// A `VkImageCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageCopy {
@@ -3153,7 +3153,7 @@ impl ImageCopy {
 
 /// A builder for `VkImageCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageCopyBuilder {
     raw: vks::VkImageCopy,
@@ -3191,7 +3191,7 @@ impl ImageCopyBuilder {
 
 /// A `VkImageBlit`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageBlit {
@@ -3223,7 +3223,7 @@ impl ImageBlit {
 
 /// A builder for `VkImageBlit`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageBlitBuilder {
     raw: vks::VkImageBlit,
@@ -3257,7 +3257,7 @@ impl ImageBlitBuilder {
 
 /// A `VkBufferImageCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferImageCopy {
@@ -3295,7 +3295,7 @@ impl BufferImageCopy {
 
 /// A builder for `VkBufferImageCopy`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferImageCopyBuilder {
     raw: vks::VkBufferImageCopy,
@@ -3337,7 +3337,7 @@ impl BufferImageCopyBuilder {
 
 /// A `VkImageResolve`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageResolve {
@@ -3372,7 +3372,7 @@ impl ImageResolve {
 
 /// A builder for `VkImageResolve`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageResolveBuilder {
     raw: vks::VkImageResolve,
@@ -3410,7 +3410,7 @@ impl ImageResolveBuilder {
 
 /// A `VkShaderModuleCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ShaderModuleCreateInfo<'s> {
@@ -3443,7 +3443,7 @@ impl<'s> ShaderModuleCreateInfo<'s> {
 
 /// A builder for `VkShaderModuleCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ShaderModuleCreateInfoBuilder<'b> {
     raw: vks::VkShaderModuleCreateInfo,
@@ -3479,7 +3479,7 @@ impl<'b> ShaderModuleCreateInfoBuilder<'b> {
 
 /// A `VkDescriptorSetLayoutBinding`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorSetLayoutBinding<'s> {
@@ -3515,7 +3515,7 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
 
 /// A builder for `VkDescriptorSetLayoutBinding`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorSetLayoutBindingBuilder<'b> {
     raw: vks::VkDescriptorSetLayoutBinding,
@@ -3555,7 +3555,7 @@ impl<'b> DescriptorSetLayoutBindingBuilder<'b> {
 
 /// A `VkDescriptorSetLayoutCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorSetLayoutCreateInfo<'s> {
@@ -3588,7 +3588,7 @@ impl<'s> DescriptorSetLayoutCreateInfo<'s> {
 
 /// A builder for `VkDescriptorSetLayoutCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorSetLayoutCreateInfoBuilder<'b> {
     raw: vks::VkDescriptorSetLayoutCreateInfo,
@@ -3624,7 +3624,7 @@ impl<'b> DescriptorSetLayoutCreateInfoBuilder<'b> {
 
 /// A `VkDescriptorPoolSize`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorPoolSize {
@@ -3650,7 +3650,7 @@ impl DescriptorPoolSize {
 
 /// A builder for `VkDescriptorPoolSize`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorPoolSizeBuilder {
     raw: vks::VkDescriptorPoolSize,
@@ -3676,7 +3676,7 @@ impl DescriptorPoolSizeBuilder {
 
 /// A `VkDescriptorPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorPoolCreateInfo<'s> {
@@ -3712,7 +3712,7 @@ impl<'s> DescriptorPoolCreateInfo<'s> {
 
 /// A builder for `VkDescriptorPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorPoolCreateInfoBuilder<'b> {
     raw: vks::VkDescriptorPoolCreateInfo,
@@ -3752,7 +3752,7 @@ impl<'b> DescriptorPoolCreateInfoBuilder<'b> {
 
 /// A `VkDescriptorSetAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorSetAllocateInfo<'s> {
@@ -3785,7 +3785,7 @@ impl<'s> DescriptorSetAllocateInfo<'s> {
 
 /// A builder for `VkDescriptorSetAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorSetAllocateInfoBuilder<'b> {
     raw: vks::VkDescriptorSetAllocateInfo,
@@ -3821,7 +3821,7 @@ impl<'b> DescriptorSetAllocateInfoBuilder<'b> {
 
 /// A `VkSpecializationMapEntry`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SpecializationMapEntry {
@@ -3850,7 +3850,7 @@ impl SpecializationMapEntry {
 
 /// A builder for `VkSpecializationMapEntry`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SpecializationMapEntryBuilder {
     raw: vks::VkSpecializationMapEntry,
@@ -3880,7 +3880,7 @@ impl SpecializationMapEntryBuilder {
 
 /// A `VkSpecializationInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SpecializationInfo<'s> {
@@ -3913,7 +3913,7 @@ impl<'s> SpecializationInfo<'s> {
 
 /// A builder for `VkSpecializationInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SpecializationInfoBuilder<'b> {
     raw: vks::VkSpecializationInfo,
@@ -3949,7 +3949,7 @@ impl<'b> SpecializationInfoBuilder<'b> {
 
 /// A `VkPipelineShaderStageCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineShaderStageCreateInfo<'s> {
@@ -3988,7 +3988,7 @@ impl<'s> PipelineShaderStageCreateInfo<'s> {
 
 /// A builder for `VkPipelineShaderStageCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineShaderStageCreateInfoBuilder<'b> {
     raw: vks::VkPipelineShaderStageCreateInfo,
@@ -4032,7 +4032,7 @@ impl<'b> PipelineShaderStageCreateInfoBuilder<'b> {
 
 /// A `VkComputePipelineCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ComputePipelineCreateInfo<'s> {
@@ -4071,7 +4071,7 @@ impl<'s> ComputePipelineCreateInfo<'s> {
 
 /// A builder for `VkComputePipelineCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ComputePipelineCreateInfoBuilder<'b> {
     raw: vks::VkComputePipelineCreateInfo,
@@ -4115,7 +4115,7 @@ impl<'b> ComputePipelineCreateInfoBuilder<'b> {
 
 /// A `VkVertexInputBindingDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct VertexInputBindingDescription {
@@ -4144,7 +4144,7 @@ impl VertexInputBindingDescription {
 
 /// A builder for `VkVertexInputBindingDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct VertexInputBindingDescriptionBuilder {
     raw: vks::VkVertexInputBindingDescription,
@@ -4174,7 +4174,7 @@ impl VertexInputBindingDescriptionBuilder {
 
 /// A `VkVertexInputAttributeDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct VertexInputAttributeDescription {
@@ -4206,7 +4206,7 @@ impl VertexInputAttributeDescription {
 
 /// A builder for `VkVertexInputAttributeDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct VertexInputAttributeDescriptionBuilder {
     raw: vks::VkVertexInputAttributeDescription,
@@ -4240,7 +4240,7 @@ impl VertexInputAttributeDescriptionBuilder {
 
 /// A `VkPipelineVertexInputStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineVertexInputStateCreateInfo<'s> {
@@ -4279,7 +4279,7 @@ impl<'s> PipelineVertexInputStateCreateInfo<'s> {
 
 /// A builder for `VkPipelineVertexInputStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineVertexInputStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineVertexInputStateCreateInfo,
@@ -4323,7 +4323,7 @@ impl<'b> PipelineVertexInputStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineInputAssemblyStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineInputAssemblyStateCreateInfo<'s> {
@@ -4356,7 +4356,7 @@ impl<'s> PipelineInputAssemblyStateCreateInfo<'s> {
 
 /// A builder for `VkPipelineInputAssemblyStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineInputAssemblyStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineInputAssemblyStateCreateInfo,
@@ -4392,7 +4392,7 @@ impl<'b> PipelineInputAssemblyStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineTessellationStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineTessellationStateCreateInfo<'s> {
@@ -4422,7 +4422,7 @@ impl<'s> PipelineTessellationStateCreateInfo<'s> {
 
 /// A builder for `VkPipelineTessellationStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineTessellationStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineTessellationStateCreateInfo,
@@ -4454,7 +4454,7 @@ impl<'b> PipelineTessellationStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineViewportStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineViewportStateCreateInfo<'s> {
@@ -4493,7 +4493,7 @@ impl<'s> PipelineViewportStateCreateInfo<'s> {
 
 /// A builder for `VkPipelineViewportStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineViewportStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineViewportStateCreateInfo,
@@ -4537,7 +4537,7 @@ impl<'b> PipelineViewportStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineRasterizationStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineRasterizationStateCreateInfo<'s> {
@@ -4594,7 +4594,7 @@ impl<'s> PipelineRasterizationStateCreateInfo<'s> {
 
 /// A builder for `VkPipelineRasterizationStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineRasterizationStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineRasterizationStateCreateInfo,
@@ -4662,7 +4662,7 @@ impl<'b> PipelineRasterizationStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineMultisampleStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineMultisampleStateCreateInfo<'s> {
@@ -4707,7 +4707,7 @@ impl<'s> PipelineMultisampleStateCreateInfo<'s> {
 
 /// A builder for `VkPipelineMultisampleStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineMultisampleStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineMultisampleStateCreateInfo,
@@ -4759,7 +4759,7 @@ impl<'b> PipelineMultisampleStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineColorBlendAttachmentState`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineColorBlendAttachmentState {
@@ -4803,7 +4803,7 @@ impl PipelineColorBlendAttachmentState {
 
 /// A builder for `VkPipelineColorBlendAttachmentState`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineColorBlendAttachmentStateBuilder {
     raw: vks::VkPipelineColorBlendAttachmentState,
@@ -4853,7 +4853,7 @@ impl PipelineColorBlendAttachmentStateBuilder {
 
 /// A `VkPipelineColorBlendStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineColorBlendStateCreateInfo<'s> {
@@ -4895,7 +4895,7 @@ impl<'s> PipelineColorBlendStateCreateInfo<'s> {
 
 /// A builder for `VkPipelineColorBlendStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineColorBlendStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineColorBlendStateCreateInfo,
@@ -4943,7 +4943,7 @@ impl<'b> PipelineColorBlendStateCreateInfoBuilder<'b> {
 
 /// A `VkPipelineDynamicStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineDynamicStateCreateInfo<'s> {
@@ -4976,7 +4976,7 @@ impl<'s> PipelineDynamicStateCreateInfo<'s> {
 
 /// A builder for `VkPipelineDynamicStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineDynamicStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineDynamicStateCreateInfo,
@@ -5012,7 +5012,7 @@ impl<'b> PipelineDynamicStateCreateInfoBuilder<'b> {
 
 /// A `VkStencilOpState`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct StencilOpState {
@@ -5053,7 +5053,7 @@ impl StencilOpState {
 
 /// A builder for `VkStencilOpState`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct StencilOpStateBuilder {
     raw: vks::VkStencilOpState,
@@ -5099,7 +5099,7 @@ impl StencilOpStateBuilder {
 
 /// A `VkPipelineDepthStencilStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineDepthStencilStateCreateInfo<'s> {
@@ -5153,7 +5153,7 @@ impl<'s> PipelineDepthStencilStateCreateInfo<'s> {
 
 /// A builder for `VkPipelineDepthStencilStateCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineDepthStencilStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineDepthStencilStateCreateInfo,
@@ -5217,7 +5217,7 @@ impl<'b> PipelineDepthStencilStateCreateInfoBuilder<'b> {
 
 /// A `VkGraphicsPipelineCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct GraphicsPipelineCreateInfo<'s> {
@@ -5292,7 +5292,7 @@ impl<'s> GraphicsPipelineCreateInfo<'s> {
 
 /// A builder for `VkGraphicsPipelineCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct GraphicsPipelineCreateInfoBuilder<'b> {
     raw: vks::VkGraphicsPipelineCreateInfo,
@@ -5384,7 +5384,7 @@ impl<'b> GraphicsPipelineCreateInfoBuilder<'b> {
 
 /// A `VkPipelineCacheCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineCacheCreateInfo<'s> {
@@ -5417,7 +5417,7 @@ impl<'s> PipelineCacheCreateInfo<'s> {
 
 /// A builder for `VkPipelineCacheCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineCacheCreateInfoBuilder<'b> {
     raw: vks::VkPipelineCacheCreateInfo,
@@ -5453,7 +5453,7 @@ impl<'b> PipelineCacheCreateInfoBuilder<'b> {
 
 /// A `VkPushConstantRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PushConstantRange {
@@ -5482,7 +5482,7 @@ impl PushConstantRange {
 
 /// A builder for `VkPushConstantRange`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PushConstantRangeBuilder {
     raw: vks::VkPushConstantRange,
@@ -5512,7 +5512,7 @@ impl PushConstantRangeBuilder {
 
 /// A `VkPipelineLayoutCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineLayoutCreateInfo<'s> {
@@ -5551,7 +5551,7 @@ impl<'s> PipelineLayoutCreateInfo<'s> {
 
 /// A builder for `VkPipelineLayoutCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineLayoutCreateInfoBuilder<'b> {
     raw: vks::VkPipelineLayoutCreateInfo,
@@ -5595,7 +5595,7 @@ impl<'b> PipelineLayoutCreateInfoBuilder<'b> {
 
 /// A `VkSamplerCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SamplerCreateInfo<'s> {
@@ -5667,7 +5667,7 @@ impl<'s> SamplerCreateInfo<'s> {
 
 /// A builder for `VkSamplerCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SamplerCreateInfoBuilder<'b> {
     raw: vks::VkSamplerCreateInfo,
@@ -5755,7 +5755,7 @@ impl<'b> SamplerCreateInfoBuilder<'b> {
 
 /// A `VkCommandPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct CommandPoolCreateInfo<'s> {
@@ -5785,7 +5785,7 @@ impl<'s> CommandPoolCreateInfo<'s> {
 
 /// A builder for `VkCommandPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandPoolCreateInfoBuilder<'b> {
     raw: vks::VkCommandPoolCreateInfo,
@@ -5817,7 +5817,7 @@ impl<'b> CommandPoolCreateInfoBuilder<'b> {
 
 /// A `VkCommandBufferAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct CommandBufferAllocateInfo<'s> {
@@ -5850,7 +5850,7 @@ impl<'s> CommandBufferAllocateInfo<'s> {
 
 /// A builder for `VkCommandBufferAllocateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandBufferAllocateInfoBuilder<'b> {
     raw: vks::VkCommandBufferAllocateInfo,
@@ -5886,7 +5886,7 @@ impl<'b> CommandBufferAllocateInfoBuilder<'b> {
 
 /// A `VkCommandBufferInheritanceInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct CommandBufferInheritanceInfo<'s> {
@@ -5928,7 +5928,7 @@ impl<'s> CommandBufferInheritanceInfo<'s> {
 
 /// A builder for `VkCommandBufferInheritanceInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandBufferInheritanceInfoBuilder<'b> {
     raw: vks::VkCommandBufferInheritanceInfo,
@@ -5976,7 +5976,7 @@ impl<'b> CommandBufferInheritanceInfoBuilder<'b> {
 
 /// A `VkCommandBufferBeginInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct CommandBufferBeginInfo<'s> {
@@ -6006,7 +6006,7 @@ impl<'s> CommandBufferBeginInfo<'s> {
 
 /// A builder for `VkCommandBufferBeginInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandBufferBeginInfoBuilder<'b> {
     raw: vks::VkCommandBufferBeginInfo,
@@ -6038,7 +6038,7 @@ impl<'b> CommandBufferBeginInfoBuilder<'b> {
 
 /// A `VkRenderPassBeginInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct RenderPassBeginInfo<'s> {
@@ -6077,7 +6077,7 @@ impl<'s> RenderPassBeginInfo<'s> {
 
 /// A builder for `VkRenderPassBeginInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct RenderPassBeginInfoBuilder<'b> {
     raw: vks::VkRenderPassBeginInfo,
@@ -6121,7 +6121,7 @@ impl<'b> RenderPassBeginInfoBuilder<'b> {
 
 /// A `VkClearDepthStencilValue`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ClearDepthStencilValue {
@@ -6147,7 +6147,7 @@ impl ClearDepthStencilValue {
 
 /// A builder for `VkClearDepthStencilValue`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ClearDepthStencilValueBuilder {
     raw: vks::VkClearDepthStencilValue,
@@ -6173,7 +6173,7 @@ impl ClearDepthStencilValueBuilder {
 
 /// A `VkClearAttachment`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ClearAttachment {
@@ -6202,7 +6202,7 @@ impl ClearAttachment {
 
 /// A builder for `VkClearAttachment`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ClearAttachmentBuilder {
     raw: vks::VkClearAttachment,
@@ -6232,7 +6232,7 @@ impl ClearAttachmentBuilder {
 
 /// A `VkAttachmentDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct AttachmentDescription {
@@ -6279,7 +6279,7 @@ impl AttachmentDescription {
 
 /// A builder for `VkAttachmentDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct AttachmentDescriptionBuilder {
     raw: vks::VkAttachmentDescription,
@@ -6333,7 +6333,7 @@ impl AttachmentDescriptionBuilder {
 
 /// A `VkAttachmentReference`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct AttachmentReference {
@@ -6359,7 +6359,7 @@ impl AttachmentReference {
 
 /// A builder for `VkAttachmentReference`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct AttachmentReferenceBuilder {
     raw: vks::VkAttachmentReference,
@@ -6385,7 +6385,7 @@ impl AttachmentReferenceBuilder {
 
 /// A `VkSubpassDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SubpassDescription<'s> {
@@ -6436,7 +6436,7 @@ impl<'s> SubpassDescription<'s> {
 
 /// A builder for `VkSubpassDescription`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SubpassDescriptionBuilder<'b> {
     raw: vks::VkSubpassDescription,
@@ -6496,7 +6496,7 @@ impl<'b> SubpassDescriptionBuilder<'b> {
 
 /// A `VkSubpassDependency`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SubpassDependency {
@@ -6537,7 +6537,7 @@ impl SubpassDependency {
 
 /// A builder for `VkSubpassDependency`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SubpassDependencyBuilder {
     raw: vks::VkSubpassDependency,
@@ -6583,7 +6583,7 @@ impl SubpassDependencyBuilder {
 
 /// A `VkRenderPassCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct RenderPassCreateInfo<'s> {
@@ -6628,7 +6628,7 @@ impl<'s> RenderPassCreateInfo<'s> {
 
 /// A builder for `VkRenderPassCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct RenderPassCreateInfoBuilder<'b> {
     raw: vks::VkRenderPassCreateInfo,
@@ -6680,7 +6680,7 @@ impl<'b> RenderPassCreateInfoBuilder<'b> {
 
 /// A `VkEventCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct EventCreateInfo<'s> {
@@ -6707,7 +6707,7 @@ impl<'s> EventCreateInfo<'s> {
 
 /// A builder for `VkEventCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct EventCreateInfoBuilder<'b> {
     raw: vks::VkEventCreateInfo,
@@ -6735,7 +6735,7 @@ impl<'b> EventCreateInfoBuilder<'b> {
 
 /// A `VkFenceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct FenceCreateInfo<'s> {
@@ -6762,7 +6762,7 @@ impl<'s> FenceCreateInfo<'s> {
 
 /// A builder for `VkFenceCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct FenceCreateInfoBuilder<'b> {
     raw: vks::VkFenceCreateInfo,
@@ -6790,7 +6790,7 @@ impl<'b> FenceCreateInfoBuilder<'b> {
 
 /// A `VkPhysicalDeviceFeatures`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceFeatures {
@@ -6975,7 +6975,7 @@ impl PhysicalDeviceFeatures {
 
 /// A builder for `VkPhysicalDeviceFeatures`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceFeaturesBuilder {
     raw: vks::VkPhysicalDeviceFeatures,
@@ -7213,7 +7213,7 @@ impl PhysicalDeviceFeaturesBuilder {
 
 /// A `VkPhysicalDeviceSparseProperties`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceSparseProperties {
@@ -7578,7 +7578,7 @@ impl PhysicalDeviceLimits {
 
 /// A `VkSemaphoreCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SemaphoreCreateInfo<'s> {
@@ -7605,7 +7605,7 @@ impl<'s> SemaphoreCreateInfo<'s> {
 
 /// A builder for `VkSemaphoreCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SemaphoreCreateInfoBuilder<'b> {
     raw: vks::VkSemaphoreCreateInfo,
@@ -7633,7 +7633,7 @@ impl<'b> SemaphoreCreateInfoBuilder<'b> {
 
 /// A `VkQueryPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct QueryPoolCreateInfo<'s> {
@@ -7669,7 +7669,7 @@ impl<'s> QueryPoolCreateInfo<'s> {
 
 /// A builder for `VkQueryPoolCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct QueryPoolCreateInfoBuilder<'b> {
     raw: vks::VkQueryPoolCreateInfo,
@@ -7709,7 +7709,7 @@ impl<'b> QueryPoolCreateInfoBuilder<'b> {
 
 /// A `VkFramebufferCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct FramebufferCreateInfo<'s> {
@@ -7754,7 +7754,7 @@ impl<'s> FramebufferCreateInfo<'s> {
 
 /// A builder for `VkFramebufferCreateInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct FramebufferCreateInfoBuilder<'b> {
     raw: vks::VkFramebufferCreateInfo,
@@ -7806,7 +7806,7 @@ impl<'b> FramebufferCreateInfoBuilder<'b> {
 
 /// A `VkDrawIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DrawIndirectCommand {
@@ -7838,7 +7838,7 @@ impl DrawIndirectCommand {
 
 /// A builder for `VkDrawIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DrawIndirectCommandBuilder {
     raw: vks::VkDrawIndirectCommand,
@@ -7872,7 +7872,7 @@ impl DrawIndirectCommandBuilder {
 
 /// A `VkDrawIndexedIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DrawIndexedIndirectCommand {
@@ -7907,7 +7907,7 @@ impl DrawIndexedIndirectCommand {
 
 /// A builder for `VkDrawIndexedIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DrawIndexedIndirectCommandBuilder {
     raw: vks::VkDrawIndexedIndirectCommand,
@@ -7945,7 +7945,7 @@ impl DrawIndexedIndirectCommandBuilder {
 
 /// A `VkDispatchIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DispatchIndirectCommand {
@@ -7974,7 +7974,7 @@ impl DispatchIndirectCommand {
 
 /// A builder for `VkDispatchIndirectCommand`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DispatchIndirectCommandBuilder {
     raw: vks::VkDispatchIndirectCommand,
@@ -8004,7 +8004,7 @@ impl DispatchIndirectCommandBuilder {
 
 /// A `VkSubmitInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SubmitInfo<'s> {
@@ -8049,7 +8049,7 @@ impl<'s> SubmitInfo<'s> {
 
 /// A builder for `VkSubmitInfo`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SubmitInfoBuilder<'b> {
     raw: vks::VkSubmitInfo,
@@ -8101,7 +8101,7 @@ impl<'b> SubmitInfoBuilder<'b> {
 
 /// A `VkDisplayPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayPropertiesKhr<'s> {
@@ -8139,7 +8139,7 @@ impl<'s> DisplayPropertiesKhr<'s> {
 
 /// A `VkDisplayPlanePropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayPlanePropertiesKhr {
@@ -8161,7 +8161,7 @@ impl DisplayPlanePropertiesKhr {
 
 /// A `VkDisplayModeParametersKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayModeParametersKhr {
@@ -8187,7 +8187,7 @@ impl DisplayModeParametersKhr {
 
 /// A builder for `VkDisplayModeParametersKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayModeParametersKhrBuilder {
     raw: vks::VkDisplayModeParametersKHR,
@@ -8213,7 +8213,7 @@ impl DisplayModeParametersKhrBuilder {
 
 /// A `VkDisplayModePropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayModePropertiesKhr {
@@ -8235,7 +8235,7 @@ impl DisplayModePropertiesKhr {
 
 /// A `VkDisplayModeCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayModeCreateInfoKhr<'s> {
@@ -8265,7 +8265,7 @@ impl<'s> DisplayModeCreateInfoKhr<'s> {
 
 /// A builder for `VkDisplayModeCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayModeCreateInfoKhrBuilder<'b> {
     raw: vks::VkDisplayModeCreateInfoKHR,
@@ -8297,7 +8297,7 @@ impl<'b> DisplayModeCreateInfoKhrBuilder<'b> {
 
 /// A `VkDisplayPlaneCapabilitiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayPlaneCapabilitiesKhr {
@@ -8340,7 +8340,7 @@ impl DisplayPlaneCapabilitiesKhr {
 
 /// A `VkDisplaySurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplaySurfaceCreateInfoKhr<'s> {
@@ -8388,7 +8388,7 @@ impl<'s> DisplaySurfaceCreateInfoKhr<'s> {
 
 /// A builder for `VkDisplaySurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplaySurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkDisplaySurfaceCreateInfoKHR,
@@ -8444,7 +8444,7 @@ impl<'b> DisplaySurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkDisplayPresentInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayPresentInfoKhr<'s> {
@@ -8477,7 +8477,7 @@ impl<'s> DisplayPresentInfoKhr<'s> {
 
 /// A builder for `VkDisplayPresentInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayPresentInfoKhrBuilder<'b> {
     raw: vks::VkDisplayPresentInfoKHR,
@@ -8513,7 +8513,7 @@ impl<'b> DisplayPresentInfoKhrBuilder<'b> {
 
 /// A `VkSurfaceCapabilitiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SurfaceCapabilitiesKhr {
@@ -8559,7 +8559,7 @@ impl SurfaceCapabilitiesKhr {
 
 /// A `VkAndroidSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct AndroidSurfaceCreateInfoKhr<'s> {
@@ -8589,7 +8589,7 @@ impl<'s> AndroidSurfaceCreateInfoKhr<'s> {
 
 /// A builder for `VkAndroidSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct AndroidSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkAndroidSurfaceCreateInfoKHR,
@@ -8621,7 +8621,7 @@ impl<'b> AndroidSurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkMirSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MirSurfaceCreateInfoKhr<'s> {
@@ -8654,7 +8654,7 @@ impl<'s> MirSurfaceCreateInfoKhr<'s> {
 
 /// A builder for `VkMirSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MirSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkMirSurfaceCreateInfoKHR,
@@ -8690,7 +8690,7 @@ impl<'b> MirSurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkViSurfaceCreateInfoNN`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ViSurfaceCreateInfoNn<'s> {
@@ -8720,7 +8720,7 @@ impl<'s> ViSurfaceCreateInfoNn<'s> {
 
 /// A builder for `VkViSurfaceCreateInfoNN`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ViSurfaceCreateInfoNnBuilder<'b> {
     raw: vks::VkViSurfaceCreateInfoNN,
@@ -8752,7 +8752,7 @@ impl<'b> ViSurfaceCreateInfoNnBuilder<'b> {
 
 /// A `VkWaylandSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct WaylandSurfaceCreateInfoKhr<'s> {
@@ -8785,7 +8785,7 @@ impl<'s> WaylandSurfaceCreateInfoKhr<'s> {
 
 /// A builder for `VkWaylandSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct WaylandSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkWaylandSurfaceCreateInfoKHR,
@@ -8821,7 +8821,7 @@ impl<'b> WaylandSurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkWin32SurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Win32SurfaceCreateInfoKhr<'s> {
@@ -8854,7 +8854,7 @@ impl<'s> Win32SurfaceCreateInfoKhr<'s> {
 
 /// A builder for `VkWin32SurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Win32SurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkWin32SurfaceCreateInfoKHR,
@@ -8890,7 +8890,7 @@ impl<'b> Win32SurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkXlibSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct XlibSurfaceCreateInfoKhr<'s> {
@@ -8923,7 +8923,7 @@ impl<'s> XlibSurfaceCreateInfoKhr<'s> {
 
 /// A builder for `VkXlibSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct XlibSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkXlibSurfaceCreateInfoKHR,
@@ -8959,7 +8959,7 @@ impl<'b> XlibSurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkXcbSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct XcbSurfaceCreateInfoKhr<'s> {
@@ -8992,7 +8992,7 @@ impl<'s> XcbSurfaceCreateInfoKhr<'s> {
 
 /// A builder for `VkXcbSurfaceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct XcbSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkXcbSurfaceCreateInfoKHR,
@@ -9028,7 +9028,7 @@ impl<'b> XcbSurfaceCreateInfoKhrBuilder<'b> {
 
 /// A `VkSurfaceFormatKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SurfaceFormatKhr {
@@ -9050,7 +9050,7 @@ impl SurfaceFormatKhr {
 
 /// A `VkSwapchainCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SwapchainCreateInfoKhr<'s> {
@@ -9122,7 +9122,7 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
 
 /// A builder for `VkSwapchainCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SwapchainCreateInfoKhrBuilder<'b> {
     raw: vks::VkSwapchainCreateInfoKHR,
@@ -9210,7 +9210,7 @@ impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
 
 /// A `VkPresentInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PresentInfoKhr<'s> {
@@ -9252,7 +9252,7 @@ impl<'s> PresentInfoKhr<'s> {
 
 /// A builder for `VkPresentInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentInfoKhrBuilder<'b> {
     raw: vks::VkPresentInfoKHR,
@@ -9300,7 +9300,7 @@ impl<'b> PresentInfoKhrBuilder<'b> {
 
 /// A `VkDebugReportCallbackCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DebugReportCallbackCreateInfoExt<'s> {
@@ -9333,7 +9333,7 @@ impl<'s> DebugReportCallbackCreateInfoExt<'s> {
 
 /// A builder for `VkDebugReportCallbackCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DebugReportCallbackCreateInfoExtBuilder<'b> {
     raw: vks::VkDebugReportCallbackCreateInfoEXT,
@@ -9369,7 +9369,7 @@ impl<'b> DebugReportCallbackCreateInfoExtBuilder<'b> {
 
 /// A `VkValidationFlagsEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ValidationFlagsExt<'s> {
@@ -9399,7 +9399,7 @@ impl<'s> ValidationFlagsExt<'s> {
 
 /// A builder for `VkValidationFlagsEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ValidationFlagsExtBuilder<'b> {
     raw: vks::VkValidationFlagsEXT,
@@ -9431,7 +9431,7 @@ impl<'b> ValidationFlagsExtBuilder<'b> {
 
 /// A `VkPipelineRasterizationStateRasterizationOrderAMD`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineRasterizationStateRasterizationOrderAmd<'s> {
@@ -9458,7 +9458,7 @@ impl<'s> PipelineRasterizationStateRasterizationOrderAmd<'s> {
 
 /// A builder for `VkPipelineRasterizationStateRasterizationOrderAMD`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineRasterizationStateRasterizationOrderAmdBuilder<'b> {
     raw: vks::VkPipelineRasterizationStateRasterizationOrderAMD,
@@ -9486,7 +9486,7 @@ impl<'b> PipelineRasterizationStateRasterizationOrderAmdBuilder<'b> {
 
 /// A `VkDebugMarkerObjectNameInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DebugMarkerObjectNameInfoExt<'s> {
@@ -9519,7 +9519,7 @@ impl<'s> DebugMarkerObjectNameInfoExt<'s> {
 
 /// A builder for `VkDebugMarkerObjectNameInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DebugMarkerObjectNameInfoExtBuilder<'b> {
     raw: vks::VkDebugMarkerObjectNameInfoEXT,
@@ -9555,7 +9555,7 @@ impl<'b> DebugMarkerObjectNameInfoExtBuilder<'b> {
 
 /// A `VkDebugMarkerObjectTagInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DebugMarkerObjectTagInfoExt<'s> {
@@ -9594,7 +9594,7 @@ impl<'s> DebugMarkerObjectTagInfoExt<'s> {
 
 /// A builder for `VkDebugMarkerObjectTagInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DebugMarkerObjectTagInfoExtBuilder<'b> {
     raw: vks::VkDebugMarkerObjectTagInfoEXT,
@@ -9638,7 +9638,7 @@ impl<'b> DebugMarkerObjectTagInfoExtBuilder<'b> {
 
 /// A `VkDebugMarkerMarkerInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DebugMarkerMarkerInfoExt<'s> {
@@ -9668,7 +9668,7 @@ impl<'s> DebugMarkerMarkerInfoExt<'s> {
 
 /// A builder for `VkDebugMarkerMarkerInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DebugMarkerMarkerInfoExtBuilder<'b> {
     raw: vks::VkDebugMarkerMarkerInfoEXT,
@@ -9700,7 +9700,7 @@ impl<'b> DebugMarkerMarkerInfoExtBuilder<'b> {
 
 /// A `VkDedicatedAllocationImageCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DedicatedAllocationImageCreateInfoNv<'s> {
@@ -9727,7 +9727,7 @@ impl<'s> DedicatedAllocationImageCreateInfoNv<'s> {
 
 /// A builder for `VkDedicatedAllocationImageCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DedicatedAllocationImageCreateInfoNvBuilder<'b> {
     raw: vks::VkDedicatedAllocationImageCreateInfoNV,
@@ -9755,7 +9755,7 @@ impl<'b> DedicatedAllocationImageCreateInfoNvBuilder<'b> {
 
 /// A `VkDedicatedAllocationBufferCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DedicatedAllocationBufferCreateInfoNv<'s> {
@@ -9782,7 +9782,7 @@ impl<'s> DedicatedAllocationBufferCreateInfoNv<'s> {
 
 /// A builder for `VkDedicatedAllocationBufferCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DedicatedAllocationBufferCreateInfoNvBuilder<'b> {
     raw: vks::VkDedicatedAllocationBufferCreateInfoNV,
@@ -9810,7 +9810,7 @@ impl<'b> DedicatedAllocationBufferCreateInfoNvBuilder<'b> {
 
 /// A `VkDedicatedAllocationMemoryAllocateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DedicatedAllocationMemoryAllocateInfoNv<'s> {
@@ -9840,7 +9840,7 @@ impl<'s> DedicatedAllocationMemoryAllocateInfoNv<'s> {
 
 /// A builder for `VkDedicatedAllocationMemoryAllocateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
     raw: vks::VkDedicatedAllocationMemoryAllocateInfoNV,
@@ -9872,7 +9872,7 @@ impl<'b> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
 
 /// A `VkExternalImageFormatPropertiesNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalImageFormatPropertiesNv {
@@ -9900,7 +9900,7 @@ impl ExternalImageFormatPropertiesNv {
 
 /// A `VkExternalMemoryImageCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalMemoryImageCreateInfoNv<'s> {
@@ -9927,7 +9927,7 @@ impl<'s> ExternalMemoryImageCreateInfoNv<'s> {
 
 /// A builder for `VkExternalMemoryImageCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExternalMemoryImageCreateInfoNvBuilder<'b> {
     raw: vks::VkExternalMemoryImageCreateInfoNV,
@@ -9955,7 +9955,7 @@ impl<'b> ExternalMemoryImageCreateInfoNvBuilder<'b> {
 
 /// A `VkExportMemoryAllocateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportMemoryAllocateInfoNv<'s> {
@@ -9982,7 +9982,7 @@ impl<'s> ExportMemoryAllocateInfoNv<'s> {
 
 /// A builder for `VkExportMemoryAllocateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryAllocateInfoNvBuilder<'b> {
     raw: vks::VkExportMemoryAllocateInfoNV,
@@ -10010,7 +10010,7 @@ impl<'b> ExportMemoryAllocateInfoNvBuilder<'b> {
 
 /// A `VkImportMemoryWin32HandleInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportMemoryWin32HandleInfoNv<'s> {
@@ -10040,7 +10040,7 @@ impl<'s> ImportMemoryWin32HandleInfoNv<'s> {
 
 /// A builder for `VkImportMemoryWin32HandleInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportMemoryWin32HandleInfoNvBuilder<'b> {
     raw: vks::VkImportMemoryWin32HandleInfoNV,
@@ -10072,7 +10072,7 @@ impl<'b> ImportMemoryWin32HandleInfoNvBuilder<'b> {
 
 /// A `VkExportMemoryWin32HandleInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportMemoryWin32HandleInfoNv<'s> {
@@ -10102,7 +10102,7 @@ impl<'s> ExportMemoryWin32HandleInfoNv<'s> {
 
 /// A builder for `VkExportMemoryWin32HandleInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryWin32HandleInfoNvBuilder<'b> {
     raw: vks::VkExportMemoryWin32HandleInfoNV,
@@ -10134,7 +10134,7 @@ impl<'b> ExportMemoryWin32HandleInfoNvBuilder<'b> {
 
 /// A `VkWin32KeyedMutexAcquireReleaseInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Win32KeyedMutexAcquireReleaseInfoNv<'s> {
@@ -10179,7 +10179,7 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
 
 /// A builder for `VkWin32KeyedMutexAcquireReleaseInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV,
@@ -10231,7 +10231,7 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
 
 /// A `VkDeviceGeneratedCommandsFeaturesNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10260,7 +10260,7 @@ impl<'s> DeviceGeneratedCommandsFeaturesNvx<'s> {
 
 /// A builder for `VkDeviceGeneratedCommandsFeaturesNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGeneratedCommandsFeaturesNvxBuilder<'b> {
@@ -10290,7 +10290,7 @@ impl<'b> DeviceGeneratedCommandsFeaturesNvxBuilder<'b> {
 
 /// A `VkDeviceGeneratedCommandsLimitsNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10331,7 +10331,7 @@ impl<'s> DeviceGeneratedCommandsLimitsNvx<'s> {
 
 /// A builder for `VkDeviceGeneratedCommandsLimitsNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
@@ -10377,7 +10377,7 @@ impl<'b> DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
 
 /// A `VkIndirectCommandsTokenNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10408,7 +10408,7 @@ impl IndirectCommandsTokenNvx {
 
 /// A builder for `VkIndirectCommandsTokenNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct IndirectCommandsTokenNvxBuilder {
@@ -10440,7 +10440,7 @@ impl IndirectCommandsTokenNvxBuilder {
 
 /// A `VkIndirectCommandsLayoutTokenNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10474,7 +10474,7 @@ impl IndirectCommandsLayoutTokenNvx {
 
 /// A builder for `VkIndirectCommandsLayoutTokenNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct IndirectCommandsLayoutTokenNvxBuilder {
@@ -10510,7 +10510,7 @@ impl IndirectCommandsLayoutTokenNvxBuilder {
 
 /// A `VkIndirectCommandsLayoutCreateInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10548,7 +10548,7 @@ impl<'s> IndirectCommandsLayoutCreateInfoNvx<'s> {
 
 /// A builder for `VkIndirectCommandsLayoutCreateInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
@@ -10590,7 +10590,7 @@ impl<'b> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
 
 /// A `VkCmdProcessCommandsInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10646,7 +10646,7 @@ impl<'s> CmdProcessCommandsInfoNvx<'s> {
 
 /// A builder for `VkCmdProcessCommandsInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct CmdProcessCommandsInfoNvxBuilder<'b> {
@@ -10712,7 +10712,7 @@ impl<'b> CmdProcessCommandsInfoNvxBuilder<'b> {
 
 /// A `VkCmdReserveSpaceForCommandsInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10747,7 +10747,7 @@ impl<'s> CmdReserveSpaceForCommandsInfoNvx<'s> {
 
 /// A builder for `VkCmdReserveSpaceForCommandsInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
@@ -10785,7 +10785,7 @@ impl<'b> CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
 
 /// A `VkObjectTableCreateInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10838,7 +10838,7 @@ impl<'s> ObjectTableCreateInfoNvx<'s> {
 
 /// A builder for `VkObjectTableCreateInfoNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTableCreateInfoNvxBuilder<'b> {
@@ -10900,7 +10900,7 @@ impl<'b> ObjectTableCreateInfoNvxBuilder<'b> {
 
 /// A `VkObjectTableEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10928,7 +10928,7 @@ impl ObjectTableEntryNvx {
 
 /// A builder for `VkObjectTableEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTableEntryNvxBuilder {
@@ -10956,7 +10956,7 @@ impl ObjectTableEntryNvxBuilder {
 
 /// A `VkObjectTablePipelineEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -10987,7 +10987,7 @@ impl ObjectTablePipelineEntryNvx {
 
 /// A builder for `VkObjectTablePipelineEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTablePipelineEntryNvxBuilder {
@@ -11019,7 +11019,7 @@ impl ObjectTablePipelineEntryNvxBuilder {
 
 /// A `VkObjectTableDescriptorSetEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -11053,7 +11053,7 @@ impl ObjectTableDescriptorSetEntryNvx {
 
 /// A builder for `VkObjectTableDescriptorSetEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTableDescriptorSetEntryNvxBuilder {
@@ -11089,7 +11089,7 @@ impl ObjectTableDescriptorSetEntryNvxBuilder {
 
 /// A `VkObjectTableVertexBufferEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -11120,7 +11120,7 @@ impl ObjectTableVertexBufferEntryNvx {
 
 /// A builder for `VkObjectTableVertexBufferEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTableVertexBufferEntryNvxBuilder {
@@ -11152,7 +11152,7 @@ impl ObjectTableVertexBufferEntryNvxBuilder {
 
 /// A `VkObjectTableIndexBufferEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -11186,7 +11186,7 @@ impl ObjectTableIndexBufferEntryNvx {
 
 /// A builder for `VkObjectTableIndexBufferEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTableIndexBufferEntryNvxBuilder {
@@ -11222,7 +11222,7 @@ impl ObjectTableIndexBufferEntryNvxBuilder {
 
 /// A `VkObjectTablePushConstantEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -11256,7 +11256,7 @@ impl ObjectTablePushConstantEntryNvx {
 
 /// A builder for `VkObjectTablePushConstantEntryNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTablePushConstantEntryNvxBuilder {
@@ -11292,7 +11292,7 @@ impl ObjectTablePushConstantEntryNvxBuilder {
 
 /// A `VkPhysicalDeviceFeatures2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceFeatures2Khr<'s> {
@@ -11319,7 +11319,7 @@ impl<'s> PhysicalDeviceFeatures2Khr<'s> {
 
 /// A builder for `VkPhysicalDeviceFeatures2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceFeatures2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceFeatures2KHR,
@@ -11347,7 +11347,7 @@ impl<'b> PhysicalDeviceFeatures2KhrBuilder<'b> {
 
 /// A `VkPhysicalDeviceProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceProperties2Khr<'s> {
@@ -11370,7 +11370,7 @@ impl<'s> PhysicalDeviceProperties2Khr<'s> {
 
 /// A `VkFormatProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct FormatProperties2Khr<'s> {
@@ -11393,7 +11393,7 @@ impl<'s> FormatProperties2Khr<'s> {
 
 /// A `VkImageFormatProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageFormatProperties2Khr<'s> {
@@ -11416,7 +11416,7 @@ impl<'s> ImageFormatProperties2Khr<'s> {
 
 /// A `VkPhysicalDeviceImageFormatInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceImageFormatInfo2Khr<'s> {
@@ -11455,7 +11455,7 @@ impl<'s> PhysicalDeviceImageFormatInfo2Khr<'s> {
 
 /// A builder for `VkPhysicalDeviceImageFormatInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceImageFormatInfo2KHR,
@@ -11499,7 +11499,7 @@ impl<'b> PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
 
 /// A `VkQueueFamilyProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct QueueFamilyProperties2Khr<'s> {
@@ -11522,7 +11522,7 @@ impl<'s> QueueFamilyProperties2Khr<'s> {
 
 /// A `VkPhysicalDeviceMemoryProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceMemoryProperties2Khr<'s> {
@@ -11545,7 +11545,7 @@ impl<'s> PhysicalDeviceMemoryProperties2Khr<'s> {
 
 /// A `VkSparseImageFormatProperties2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageFormatProperties2Khr<'s> {
@@ -11568,7 +11568,7 @@ impl<'s> SparseImageFormatProperties2Khr<'s> {
 
 /// A `VkPhysicalDeviceSparseImageFormatInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
@@ -11607,7 +11607,7 @@ impl<'s> PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
 
 /// A builder for `VkPhysicalDeviceSparseImageFormatInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceSparseImageFormatInfo2KHR,
@@ -11651,7 +11651,7 @@ impl<'b> PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
 
 /// A `VkPhysicalDevicePushDescriptorPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDevicePushDescriptorPropertiesKhr<'s> {
@@ -11678,7 +11678,7 @@ impl<'s> PhysicalDevicePushDescriptorPropertiesKhr<'s> {
 
 /// A builder for `VkPhysicalDevicePushDescriptorPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDevicePushDescriptorPropertiesKhrBuilder<'b> {
     raw: vks::VkPhysicalDevicePushDescriptorPropertiesKHR,
@@ -11706,7 +11706,7 @@ impl<'b> PhysicalDevicePushDescriptorPropertiesKhrBuilder<'b> {
 
 /// A `VkPresentRegionsKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PresentRegionsKhr<'s> {
@@ -11736,7 +11736,7 @@ impl<'s> PresentRegionsKhr<'s> {
 
 /// A builder for `VkPresentRegionsKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentRegionsKhrBuilder<'b> {
     raw: vks::VkPresentRegionsKHR,
@@ -11768,7 +11768,7 @@ impl<'b> PresentRegionsKhrBuilder<'b> {
 
 /// A `VkPresentRegionKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PresentRegionKhr<'s> {
@@ -11795,7 +11795,7 @@ impl<'s> PresentRegionKhr<'s> {
 
 /// A builder for `VkPresentRegionKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentRegionKhrBuilder<'b> {
     raw: vks::VkPresentRegionKHR,
@@ -11823,7 +11823,7 @@ impl<'b> PresentRegionKhrBuilder<'b> {
 
 /// A `VkRectLayerKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct RectLayerKhr {
@@ -11852,7 +11852,7 @@ impl RectLayerKhr {
 
 /// A builder for `VkRectLayerKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct RectLayerKhrBuilder {
     raw: vks::VkRectLayerKHR,
@@ -11882,7 +11882,7 @@ impl RectLayerKhrBuilder {
 
 /// A `VkPhysicalDeviceVariablePointerFeaturesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceVariablePointerFeaturesKhr<'s> {
@@ -11912,7 +11912,7 @@ impl<'s> PhysicalDeviceVariablePointerFeaturesKhr<'s> {
 
 /// A builder for `VkPhysicalDeviceVariablePointerFeaturesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceVariablePointerFeaturesKHR,
@@ -11944,7 +11944,7 @@ impl<'b> PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
 
 /// A `VkExternalMemoryPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalMemoryPropertiesKhr {
@@ -11969,7 +11969,7 @@ impl ExternalMemoryPropertiesKhr {
 
 /// A `VkPhysicalDeviceExternalImageFormatInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceExternalImageFormatInfoKhr<'s> {
@@ -11996,7 +11996,7 @@ impl<'s> PhysicalDeviceExternalImageFormatInfoKhr<'s> {
 
 /// A builder for `VkPhysicalDeviceExternalImageFormatInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalImageFormatInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalImageFormatInfoKHR,
@@ -12024,7 +12024,7 @@ impl<'b> PhysicalDeviceExternalImageFormatInfoKhrBuilder<'b> {
 
 /// A `VkExternalImageFormatPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalImageFormatPropertiesKhr<'s> {
@@ -12047,7 +12047,7 @@ impl<'s> ExternalImageFormatPropertiesKhr<'s> {
 
 /// A `VkPhysicalDeviceExternalBufferInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceExternalBufferInfoKhr<'s> {
@@ -12080,7 +12080,7 @@ impl<'s> PhysicalDeviceExternalBufferInfoKhr<'s> {
 
 /// A builder for `VkPhysicalDeviceExternalBufferInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalBufferInfoKHR,
@@ -12116,7 +12116,7 @@ impl<'b> PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
 
 /// A `VkExternalBufferPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalBufferPropertiesKhr<'s> {
@@ -12139,7 +12139,7 @@ impl<'s> ExternalBufferPropertiesKhr<'s> {
 
 /// A `VkPhysicalDeviceIDPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceIDPropertiesKhr<'s> {
@@ -12174,7 +12174,7 @@ impl<'s> PhysicalDeviceIDPropertiesKhr<'s> {
 
 /// A `VkExternalMemoryImageCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalMemoryImageCreateInfoKhr<'s> {
@@ -12201,7 +12201,7 @@ impl<'s> ExternalMemoryImageCreateInfoKhr<'s> {
 
 /// A builder for `VkExternalMemoryImageCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExternalMemoryImageCreateInfoKhrBuilder<'b> {
     raw: vks::VkExternalMemoryImageCreateInfoKHR,
@@ -12229,7 +12229,7 @@ impl<'b> ExternalMemoryImageCreateInfoKhrBuilder<'b> {
 
 /// A `VkExternalMemoryBufferCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalMemoryBufferCreateInfoKhr<'s> {
@@ -12256,7 +12256,7 @@ impl<'s> ExternalMemoryBufferCreateInfoKhr<'s> {
 
 /// A builder for `VkExternalMemoryBufferCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExternalMemoryBufferCreateInfoKhrBuilder<'b> {
     raw: vks::VkExternalMemoryBufferCreateInfoKHR,
@@ -12284,7 +12284,7 @@ impl<'b> ExternalMemoryBufferCreateInfoKhrBuilder<'b> {
 
 /// A `VkExportMemoryAllocateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportMemoryAllocateInfoKhr<'s> {
@@ -12311,7 +12311,7 @@ impl<'s> ExportMemoryAllocateInfoKhr<'s> {
 
 /// A builder for `VkExportMemoryAllocateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryAllocateInfoKhrBuilder<'b> {
     raw: vks::VkExportMemoryAllocateInfoKHR,
@@ -12339,7 +12339,7 @@ impl<'b> ExportMemoryAllocateInfoKhrBuilder<'b> {
 
 /// A `VkImportMemoryWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportMemoryWin32HandleInfoKhr<'s> {
@@ -12372,7 +12372,7 @@ impl<'s> ImportMemoryWin32HandleInfoKhr<'s> {
 
 /// A builder for `VkImportMemoryWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportMemoryWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkImportMemoryWin32HandleInfoKHR,
@@ -12408,7 +12408,7 @@ impl<'b> ImportMemoryWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkExportMemoryWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportMemoryWin32HandleInfoKhr<'s> {
@@ -12441,7 +12441,7 @@ impl<'s> ExportMemoryWin32HandleInfoKhr<'s> {
 
 /// A builder for `VkExportMemoryWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkExportMemoryWin32HandleInfoKHR,
@@ -12477,7 +12477,7 @@ impl<'b> ExportMemoryWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkMemoryWin32HandlePropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryWin32HandlePropertiesKhr<'s> {
@@ -12500,7 +12500,7 @@ impl<'s> MemoryWin32HandlePropertiesKhr<'s> {
 
 /// A `VkMemoryGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryGetWin32HandleInfoKhr<'s> {
@@ -12530,7 +12530,7 @@ impl<'s> MemoryGetWin32HandleInfoKhr<'s> {
 
 /// A builder for `VkMemoryGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryGetWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkMemoryGetWin32HandleInfoKHR,
@@ -12562,7 +12562,7 @@ impl<'b> MemoryGetWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkImportMemoryFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportMemoryFdInfoKhr<'s> {
@@ -12592,7 +12592,7 @@ impl<'s> ImportMemoryFdInfoKhr<'s> {
 
 /// A builder for `VkImportMemoryFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportMemoryFdInfoKhrBuilder<'b> {
     raw: vks::VkImportMemoryFdInfoKHR,
@@ -12624,7 +12624,7 @@ impl<'b> ImportMemoryFdInfoKhrBuilder<'b> {
 
 /// A `VkMemoryFdPropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryFdPropertiesKhr<'s> {
@@ -12647,7 +12647,7 @@ impl<'s> MemoryFdPropertiesKhr<'s> {
 
 /// A `VkMemoryGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryGetFdInfoKhr<'s> {
@@ -12677,7 +12677,7 @@ impl<'s> MemoryGetFdInfoKhr<'s> {
 
 /// A builder for `VkMemoryGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryGetFdInfoKhrBuilder<'b> {
     raw: vks::VkMemoryGetFdInfoKHR,
@@ -12709,7 +12709,7 @@ impl<'b> MemoryGetFdInfoKhrBuilder<'b> {
 
 /// A `VkWin32KeyedMutexAcquireReleaseInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
@@ -12754,7 +12754,7 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
 
 /// A builder for `VkWin32KeyedMutexAcquireReleaseInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoKHR,
@@ -12806,7 +12806,7 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
 
 /// A `VkPhysicalDeviceExternalSemaphoreInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
@@ -12833,7 +12833,7 @@ impl<'s> PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
 
 /// A builder for `VkPhysicalDeviceExternalSemaphoreInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalSemaphoreInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalSemaphoreInfoKHR,
@@ -12861,7 +12861,7 @@ impl<'b> PhysicalDeviceExternalSemaphoreInfoKhrBuilder<'b> {
 
 /// A `VkExternalSemaphorePropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalSemaphorePropertiesKhr<'s> {
@@ -12890,7 +12890,7 @@ impl<'s> ExternalSemaphorePropertiesKhr<'s> {
 
 /// A `VkExportSemaphoreCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportSemaphoreCreateInfoKhr<'s> {
@@ -12917,7 +12917,7 @@ impl<'s> ExportSemaphoreCreateInfoKhr<'s> {
 
 /// A builder for `VkExportSemaphoreCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportSemaphoreCreateInfoKhrBuilder<'b> {
     raw: vks::VkExportSemaphoreCreateInfoKHR,
@@ -12945,7 +12945,7 @@ impl<'b> ExportSemaphoreCreateInfoKhrBuilder<'b> {
 
 /// A `VkImportSemaphoreWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportSemaphoreWin32HandleInfoKhr<'s> {
@@ -12984,7 +12984,7 @@ impl<'s> ImportSemaphoreWin32HandleInfoKhr<'s> {
 
 /// A builder for `VkImportSemaphoreWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkImportSemaphoreWin32HandleInfoKHR,
@@ -13028,7 +13028,7 @@ impl<'b> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkExportSemaphoreWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportSemaphoreWin32HandleInfoKhr<'s> {
@@ -13061,7 +13061,7 @@ impl<'s> ExportSemaphoreWin32HandleInfoKhr<'s> {
 
 /// A builder for `VkExportSemaphoreWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkExportSemaphoreWin32HandleInfoKHR,
@@ -13097,7 +13097,7 @@ impl<'b> ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkD3D12FenceSubmitInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct D3d12FenceSubmitInfoKHR<'s> {
@@ -13133,7 +13133,7 @@ impl<'s> D3d12FenceSubmitInfoKHR<'s> {
 
 /// A builder for `VkD3D12FenceSubmitInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct D3d12FenceSubmitInfoKHRBuilder<'b> {
     raw: vks::VkD3D12FenceSubmitInfoKHR,
@@ -13173,7 +13173,7 @@ impl<'b> D3d12FenceSubmitInfoKHRBuilder<'b> {
 
 /// A `VkSemaphoreGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SemaphoreGetWin32HandleInfoKhr<'s> {
@@ -13203,7 +13203,7 @@ impl<'s> SemaphoreGetWin32HandleInfoKhr<'s> {
 
 /// A builder for `VkSemaphoreGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkSemaphoreGetWin32HandleInfoKHR,
@@ -13235,7 +13235,7 @@ impl<'b> SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkImportSemaphoreFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportSemaphoreFdInfoKhr<'s> {
@@ -13271,7 +13271,7 @@ impl<'s> ImportSemaphoreFdInfoKhr<'s> {
 
 /// A builder for `VkImportSemaphoreFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportSemaphoreFdInfoKhrBuilder<'b> {
     raw: vks::VkImportSemaphoreFdInfoKHR,
@@ -13311,7 +13311,7 @@ impl<'b> ImportSemaphoreFdInfoKhrBuilder<'b> {
 
 /// A `VkSemaphoreGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SemaphoreGetFdInfoKhr<'s> {
@@ -13341,7 +13341,7 @@ impl<'s> SemaphoreGetFdInfoKhr<'s> {
 
 /// A builder for `VkSemaphoreGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SemaphoreGetFdInfoKhrBuilder<'b> {
     raw: vks::VkSemaphoreGetFdInfoKHR,
@@ -13373,7 +13373,7 @@ impl<'b> SemaphoreGetFdInfoKhrBuilder<'b> {
 
 /// A `VkPhysicalDeviceExternalFenceInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceExternalFenceInfoKhr<'s> {
@@ -13400,7 +13400,7 @@ impl<'s> PhysicalDeviceExternalFenceInfoKhr<'s> {
 
 /// A builder for `VkPhysicalDeviceExternalFenceInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalFenceInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalFenceInfoKHR,
@@ -13428,7 +13428,7 @@ impl<'b> PhysicalDeviceExternalFenceInfoKhrBuilder<'b> {
 
 /// A `VkExternalFencePropertiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExternalFencePropertiesKhr<'s> {
@@ -13457,7 +13457,7 @@ impl<'s> ExternalFencePropertiesKhr<'s> {
 
 /// A `VkExportFenceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportFenceCreateInfoKhr<'s> {
@@ -13484,7 +13484,7 @@ impl<'s> ExportFenceCreateInfoKhr<'s> {
 
 /// A builder for `VkExportFenceCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportFenceCreateInfoKhrBuilder<'b> {
     raw: vks::VkExportFenceCreateInfoKHR,
@@ -13512,7 +13512,7 @@ impl<'b> ExportFenceCreateInfoKhrBuilder<'b> {
 
 /// A `VkImportFenceWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportFenceWin32HandleInfoKhr<'s> {
@@ -13551,7 +13551,7 @@ impl<'s> ImportFenceWin32HandleInfoKhr<'s> {
 
 /// A builder for `VkImportFenceWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportFenceWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkImportFenceWin32HandleInfoKHR,
@@ -13595,7 +13595,7 @@ impl<'b> ImportFenceWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkExportFenceWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ExportFenceWin32HandleInfoKhr<'s> {
@@ -13628,7 +13628,7 @@ impl<'s> ExportFenceWin32HandleInfoKhr<'s> {
 
 /// A builder for `VkExportFenceWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportFenceWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkExportFenceWin32HandleInfoKHR,
@@ -13664,7 +13664,7 @@ impl<'b> ExportFenceWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkFenceGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct FenceGetWin32HandleInfoKhr<'s> {
@@ -13694,7 +13694,7 @@ impl<'s> FenceGetWin32HandleInfoKhr<'s> {
 
 /// A builder for `VkFenceGetWin32HandleInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct FenceGetWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkFenceGetWin32HandleInfoKHR,
@@ -13726,7 +13726,7 @@ impl<'b> FenceGetWin32HandleInfoKhrBuilder<'b> {
 
 /// A `VkImportFenceFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImportFenceFdInfoKhr<'s> {
@@ -13762,7 +13762,7 @@ impl<'s> ImportFenceFdInfoKhr<'s> {
 
 /// A builder for `VkImportFenceFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportFenceFdInfoKhrBuilder<'b> {
     raw: vks::VkImportFenceFdInfoKHR,
@@ -13802,7 +13802,7 @@ impl<'b> ImportFenceFdInfoKhrBuilder<'b> {
 
 /// A `VkFenceGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct FenceGetFdInfoKhr<'s> {
@@ -13832,7 +13832,7 @@ impl<'s> FenceGetFdInfoKhr<'s> {
 
 /// A builder for `VkFenceGetFdInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct FenceGetFdInfoKhrBuilder<'b> {
     raw: vks::VkFenceGetFdInfoKHR,
@@ -13864,7 +13864,7 @@ impl<'b> FenceGetFdInfoKhrBuilder<'b> {
 
 /// A `VkPhysicalDeviceMultiviewFeaturesKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -13899,7 +13899,7 @@ impl<'s> PhysicalDeviceMultiviewFeaturesKhx<'s> {
 
 /// A builder for `VkPhysicalDeviceMultiviewFeaturesKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
@@ -13937,7 +13937,7 @@ impl<'b> PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
 
 /// A `VkPhysicalDeviceMultiviewPropertiesKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -13965,7 +13965,7 @@ impl<'s> PhysicalDeviceMultiviewPropertiesKhx<'s> {
 
 /// A `VkRenderPassMultiviewCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14009,7 +14009,7 @@ impl<'s> RenderPassMultiviewCreateInfoKhx<'s> {
 
 /// A builder for `VkRenderPassMultiviewCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct RenderPassMultiviewCreateInfoKhxBuilder<'b> {
@@ -14059,7 +14059,7 @@ impl<'b> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
 
 /// A `VkSurfaceCapabilities2EXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SurfaceCapabilities2Ext<'s> {
@@ -14112,7 +14112,7 @@ impl<'s> SurfaceCapabilities2Ext<'s> {
 
 /// A `VkDisplayPowerInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayPowerInfoExt<'s> {
@@ -14139,7 +14139,7 @@ impl<'s> DisplayPowerInfoExt<'s> {
 
 /// A builder for `VkDisplayPowerInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayPowerInfoExtBuilder<'b> {
     raw: vks::VkDisplayPowerInfoEXT,
@@ -14167,7 +14167,7 @@ impl<'b> DisplayPowerInfoExtBuilder<'b> {
 
 /// A `VkDeviceEventInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DeviceEventInfoExt<'s> {
@@ -14194,7 +14194,7 @@ impl<'s> DeviceEventInfoExt<'s> {
 
 /// A builder for `VkDeviceEventInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DeviceEventInfoExtBuilder<'b> {
     raw: vks::VkDeviceEventInfoEXT,
@@ -14222,7 +14222,7 @@ impl<'b> DeviceEventInfoExtBuilder<'b> {
 
 /// A `VkDisplayEventInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DisplayEventInfoExt<'s> {
@@ -14249,7 +14249,7 @@ impl<'s> DisplayEventInfoExt<'s> {
 
 /// A builder for `VkDisplayEventInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayEventInfoExtBuilder<'b> {
     raw: vks::VkDisplayEventInfoEXT,
@@ -14277,7 +14277,7 @@ impl<'b> DisplayEventInfoExtBuilder<'b> {
 
 /// A `VkSwapchainCounterCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SwapchainCounterCreateInfoExt<'s> {
@@ -14304,7 +14304,7 @@ impl<'s> SwapchainCounterCreateInfoExt<'s> {
 
 /// A builder for `VkSwapchainCounterCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SwapchainCounterCreateInfoExtBuilder<'b> {
     raw: vks::VkSwapchainCounterCreateInfoEXT,
@@ -14332,7 +14332,7 @@ impl<'b> SwapchainCounterCreateInfoExtBuilder<'b> {
 
 /// A `VkPhysicalDeviceGroupPropertiesKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14363,7 +14363,7 @@ impl<'s> PhysicalDeviceGroupPropertiesKhx<'s> {
 
 /// A `VkMemoryAllocateFlagsInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14395,7 +14395,7 @@ impl<'s> MemoryAllocateFlagsInfoKhx<'s> {
 
 /// A builder for `VkMemoryAllocateFlagsInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct MemoryAllocateFlagsInfoKhxBuilder<'b> {
@@ -14429,7 +14429,7 @@ impl<'b> MemoryAllocateFlagsInfoKhxBuilder<'b> {
 
 /// A `VkBindBufferMemoryDeviceGroupInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14461,7 +14461,7 @@ impl<'s> BindBufferMemoryDeviceGroupInfoKhx<'s> {
 
 /// A builder for `VkBindBufferMemoryDeviceGroupInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
@@ -14495,7 +14495,7 @@ impl<'b> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
 
 /// A `VkBindImageMemoryDeviceGroupInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14533,7 +14533,7 @@ impl<'s> BindImageMemoryDeviceGroupInfoKhx<'s> {
 
 /// A builder for `VkBindImageMemoryDeviceGroupInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
@@ -14575,7 +14575,7 @@ impl<'b> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupRenderPassBeginInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14610,7 +14610,7 @@ impl<'s> DeviceGroupRenderPassBeginInfoKhx<'s> {
 
 /// A builder for `VkDeviceGroupRenderPassBeginInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
@@ -14648,7 +14648,7 @@ impl<'b> DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupCommandBufferBeginInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14677,7 +14677,7 @@ impl<'s> DeviceGroupCommandBufferBeginInfoKhx<'s> {
 
 /// A builder for `VkDeviceGroupCommandBufferBeginInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupCommandBufferBeginInfoKhxBuilder<'b> {
@@ -14707,7 +14707,7 @@ impl<'b> DeviceGroupCommandBufferBeginInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupSubmitInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14751,7 +14751,7 @@ impl<'s> DeviceGroupSubmitInfoKhx<'s> {
 
 /// A builder for `VkDeviceGroupSubmitInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupSubmitInfoKhxBuilder<'b> {
@@ -14801,7 +14801,7 @@ impl<'b> DeviceGroupSubmitInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupBindSparseInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14833,7 +14833,7 @@ impl<'s> DeviceGroupBindSparseInfoKhx<'s> {
 
 /// A builder for `VkDeviceGroupBindSparseInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupBindSparseInfoKhxBuilder<'b> {
@@ -14867,7 +14867,7 @@ impl<'b> DeviceGroupBindSparseInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupPresentCapabilitiesKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14895,7 +14895,7 @@ impl<'s> DeviceGroupPresentCapabilitiesKhx<'s> {
 
 /// A `VkImageSwapchainCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14924,7 +14924,7 @@ impl<'s> ImageSwapchainCreateInfoKhx<'s> {
 
 /// A builder for `VkImageSwapchainCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct ImageSwapchainCreateInfoKhxBuilder<'b> {
@@ -14954,7 +14954,7 @@ impl<'b> ImageSwapchainCreateInfoKhxBuilder<'b> {
 
 /// A `VkBindImageMemorySwapchainInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -14986,7 +14986,7 @@ impl<'s> BindImageMemorySwapchainInfoKhx<'s> {
 
 /// A builder for `VkBindImageMemorySwapchainInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct BindImageMemorySwapchainInfoKhxBuilder<'b> {
@@ -15020,7 +15020,7 @@ impl<'b> BindImageMemorySwapchainInfoKhxBuilder<'b> {
 
 /// A `VkAcquireNextImageInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -15061,7 +15061,7 @@ impl<'s> AcquireNextImageInfoKhx<'s> {
 
 /// A builder for `VkAcquireNextImageInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct AcquireNextImageInfoKhxBuilder<'b> {
@@ -15107,7 +15107,7 @@ impl<'b> AcquireNextImageInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupPresentInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -15142,7 +15142,7 @@ impl<'s> DeviceGroupPresentInfoKhx<'s> {
 
 /// A builder for `VkDeviceGroupPresentInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupPresentInfoKhxBuilder<'b> {
@@ -15180,7 +15180,7 @@ impl<'b> DeviceGroupPresentInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupDeviceCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -15212,7 +15212,7 @@ impl<'s> DeviceGroupDeviceCreateInfoKhx<'s> {
 
 /// A builder for `VkDeviceGroupDeviceCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
@@ -15246,7 +15246,7 @@ impl<'b> DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
 
 /// A `VkDeviceGroupSwapchainCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -15275,7 +15275,7 @@ impl<'s> DeviceGroupSwapchainCreateInfoKhx<'s> {
 
 /// A builder for `VkDeviceGroupSwapchainCreateInfoKHX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupSwapchainCreateInfoKhxBuilder<'b> {
@@ -15305,7 +15305,7 @@ impl<'b> DeviceGroupSwapchainCreateInfoKhxBuilder<'b> {
 
 /// A `VkDescriptorUpdateTemplateEntryKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorUpdateTemplateEntryKhr {
@@ -15343,7 +15343,7 @@ impl DescriptorUpdateTemplateEntryKhr {
 
 /// A builder for `VkDescriptorUpdateTemplateEntryKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorUpdateTemplateEntryKhrBuilder {
     raw: vks::VkDescriptorUpdateTemplateEntryKHR,
@@ -15385,7 +15385,7 @@ impl DescriptorUpdateTemplateEntryKhrBuilder {
 
 /// A `VkDescriptorUpdateTemplateCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct DescriptorUpdateTemplateCreateInfoKhr<'s> {
@@ -15433,7 +15433,7 @@ impl<'s> DescriptorUpdateTemplateCreateInfoKhr<'s> {
 
 /// A builder for `VkDescriptorUpdateTemplateCreateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
     raw: vks::VkDescriptorUpdateTemplateCreateInfoKHR,
@@ -15645,7 +15645,7 @@ impl<'b> HdrMetadataExtBuilder<'b> {
 
 /// A `VkRefreshCycleDurationGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct RefreshCycleDurationGoogle {
@@ -15668,7 +15668,7 @@ impl RefreshCycleDurationGoogle {
 
 /// A builder for `VkRefreshCycleDurationGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct RefreshCycleDurationGoogleBuilder {
     raw: vks::VkRefreshCycleDurationGOOGLE,
@@ -15690,7 +15690,7 @@ impl RefreshCycleDurationGoogleBuilder {
 
 /// A `VkPastPresentationTimingGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PastPresentationTimingGoogle {
@@ -15725,7 +15725,7 @@ impl PastPresentationTimingGoogle {
 
 /// A builder for `VkPastPresentationTimingGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PastPresentationTimingGoogleBuilder {
     raw: vks::VkPastPresentationTimingGOOGLE,
@@ -15763,7 +15763,7 @@ impl PastPresentationTimingGoogleBuilder {
 
 /// A `VkPresentTimesInfoGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PresentTimesInfoGoogle<'s> {
@@ -15793,7 +15793,7 @@ impl<'s> PresentTimesInfoGoogle<'s> {
 
 /// A builder for `VkPresentTimesInfoGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentTimesInfoGoogleBuilder<'b> {
     raw: vks::VkPresentTimesInfoGOOGLE,
@@ -15825,7 +15825,7 @@ impl<'b> PresentTimesInfoGoogleBuilder<'b> {
 
 /// A `VkPresentTimeGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PresentTimeGoogle {
@@ -15851,7 +15851,7 @@ impl PresentTimeGoogle {
 
 /// A builder for `VkPresentTimeGOOGLE`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentTimeGoogleBuilder {
     raw: vks::VkPresentTimeGOOGLE,
@@ -15877,7 +15877,7 @@ impl PresentTimeGoogleBuilder {
 
 /// A `VkIOSSurfaceCreateInfoMVK`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct IosSurfaceCreateInfoMvk<'s> {
@@ -15907,7 +15907,7 @@ impl<'s> IosSurfaceCreateInfoMvk<'s> {
 
 /// A builder for `VkIOSSurfaceCreateInfoMVK`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct IosSurfaceCreateInfoMvkBuilder<'b> {
     raw: vks::VkIOSSurfaceCreateInfoMVK,
@@ -15939,7 +15939,7 @@ impl<'b> IosSurfaceCreateInfoMvkBuilder<'b> {
 
 /// A `VkMacOSSurfaceCreateInfoMVK`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MacOsSurfaceCreateInfoMvk<'s> {
@@ -15969,7 +15969,7 @@ impl<'s> MacOsSurfaceCreateInfoMvk<'s> {
 
 /// A builder for `VkMacOSSurfaceCreateInfoMVK`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MacOsSurfaceCreateInfoMvkBuilder<'b> {
     raw: vks::VkMacOSSurfaceCreateInfoMVK,
@@ -16001,7 +16001,7 @@ impl<'b> MacOsSurfaceCreateInfoMvkBuilder<'b> {
 
 /// A `VkViewportWScalingNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ViewportWScalingNv {
@@ -16027,7 +16027,7 @@ impl ViewportWScalingNv {
 
 /// A builder for `VkViewportWScalingNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ViewportWScalingNvBuilder {
     raw: vks::VkViewportWScalingNV,
@@ -16053,7 +16053,7 @@ impl ViewportWScalingNvBuilder {
 
 /// A `VkPipelineViewportWScalingStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineViewportWScalingStateCreateInfoNv<'s> {
@@ -16086,7 +16086,7 @@ impl<'s> PipelineViewportWScalingStateCreateInfoNv<'s> {
 
 /// A builder for `VkPipelineViewportWScalingStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineViewportWScalingStateCreateInfoNV,
@@ -16122,7 +16122,7 @@ impl<'b> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
 
 /// A `VkViewportSwizzleNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ViewportSwizzleNv {
@@ -16154,7 +16154,7 @@ impl ViewportSwizzleNv {
 
 /// A builder for `VkViewportSwizzleNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ViewportSwizzleNvBuilder {
     raw: vks::VkViewportSwizzleNV,
@@ -16188,7 +16188,7 @@ impl ViewportSwizzleNvBuilder {
 
 /// A `VkPipelineViewportSwizzleStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineViewportSwizzleStateCreateInfoNv<'s> {
@@ -16221,7 +16221,7 @@ impl<'s> PipelineViewportSwizzleStateCreateInfoNv<'s> {
 
 /// A builder for `VkPipelineViewportSwizzleStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineViewportSwizzleStateCreateInfoNV,
@@ -16257,7 +16257,7 @@ impl<'b> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
 
 /// A `VkPhysicalDeviceDiscardRectanglePropertiesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
@@ -16284,7 +16284,7 @@ impl<'s> PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
 
 /// A builder for `VkPhysicalDeviceDiscardRectanglePropertiesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceDiscardRectanglePropertiesExtBuilder<'b> {
     raw: vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT,
@@ -16312,7 +16312,7 @@ impl<'b> PhysicalDeviceDiscardRectanglePropertiesExtBuilder<'b> {
 
 /// A `VkPipelineDiscardRectangleStateCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineDiscardRectangleStateCreateInfoExt<'s> {
@@ -16348,7 +16348,7 @@ impl<'s> PipelineDiscardRectangleStateCreateInfoExt<'s> {
 
 /// A builder for `VkPipelineDiscardRectangleStateCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
     raw: vks::VkPipelineDiscardRectangleStateCreateInfoEXT,
@@ -16388,7 +16388,7 @@ impl<'b> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
 
 /// A `VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX`.
 ///
-///
+/// 
 #[cfg(feature = "experimental")]
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
@@ -16413,7 +16413,7 @@ impl<'s> PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
 
 /// A `VkPhysicalDeviceSurfaceInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceSurfaceInfo2Khr<'s> {
@@ -16440,7 +16440,7 @@ impl<'s> PhysicalDeviceSurfaceInfo2Khr<'s> {
 
 /// A builder for `VkPhysicalDeviceSurfaceInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceSurfaceInfo2KHR,
@@ -16468,7 +16468,7 @@ impl<'b> PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
 
 /// A `VkSurfaceCapabilities2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SurfaceCapabilities2Khr<'s> {
@@ -16491,7 +16491,7 @@ impl<'s> SurfaceCapabilities2Khr<'s> {
 
 /// A `VkSurfaceFormat2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SurfaceFormat2Khr<'s> {
@@ -16514,7 +16514,7 @@ impl<'s> SurfaceFormat2Khr<'s> {
 
 /// A `VkSharedPresentSurfaceCapabilitiesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SharedPresentSurfaceCapabilitiesKhr<'s> {
@@ -16537,7 +16537,7 @@ impl<'s> SharedPresentSurfaceCapabilitiesKhr<'s> {
 
 /// A `VkPhysicalDevice16BitStorageFeaturesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDevice16BitStorageFeaturesKhr<'s> {
@@ -16573,7 +16573,7 @@ impl<'s> PhysicalDevice16BitStorageFeaturesKhr<'s> {
 
 /// A builder for `VkPhysicalDevice16BitStorageFeaturesKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
     raw: vks::VkPhysicalDevice16BitStorageFeaturesKHR,
@@ -16613,7 +16613,7 @@ impl<'b> PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
 
 /// A `VkBufferMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct BufferMemoryRequirementsInfo2Khr<'s> {
@@ -16640,7 +16640,7 @@ impl<'s> BufferMemoryRequirementsInfo2Khr<'s> {
 
 /// A builder for `VkBufferMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferMemoryRequirementsInfo2KhrBuilder<'b> {
     raw: vks::VkBufferMemoryRequirementsInfo2KHR,
@@ -16668,7 +16668,7 @@ impl<'b> BufferMemoryRequirementsInfo2KhrBuilder<'b> {
 
 /// A `VkImageMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageMemoryRequirementsInfo2Khr<'s> {
@@ -16695,7 +16695,7 @@ impl<'s> ImageMemoryRequirementsInfo2Khr<'s> {
 
 /// A builder for `VkImageMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageMemoryRequirementsInfo2KhrBuilder<'b> {
     raw: vks::VkImageMemoryRequirementsInfo2KHR,
@@ -16723,7 +16723,7 @@ impl<'b> ImageMemoryRequirementsInfo2KhrBuilder<'b> {
 
 /// A `VkImageSparseMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct ImageSparseMemoryRequirementsInfo2Khr<'s> {
@@ -16750,7 +16750,7 @@ impl<'s> ImageSparseMemoryRequirementsInfo2Khr<'s> {
 
 /// A builder for `VkImageSparseMemoryRequirementsInfo2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
     raw: vks::VkImageSparseMemoryRequirementsInfo2KHR,
@@ -16778,7 +16778,7 @@ impl<'b> ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
 
 /// A `VkMemoryRequirements2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryRequirements2Khr<'s> {
@@ -16801,7 +16801,7 @@ impl<'s> MemoryRequirements2Khr<'s> {
 
 /// A `VkSparseImageMemoryRequirements2KHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SparseImageMemoryRequirements2Khr<'s> {
@@ -16824,7 +16824,7 @@ impl<'s> SparseImageMemoryRequirements2Khr<'s> {
 
 /// A `VkMemoryDedicatedRequirementsKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryDedicatedRequirementsKhr<'s> {
@@ -16850,7 +16850,7 @@ impl<'s> MemoryDedicatedRequirementsKhr<'s> {
 
 /// A `VkMemoryDedicatedAllocateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct MemoryDedicatedAllocateInfoKhr<'s> {
@@ -16880,7 +16880,7 @@ impl<'s> MemoryDedicatedAllocateInfoKhr<'s> {
 
 /// A builder for `VkMemoryDedicatedAllocateInfoKHR`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryDedicatedAllocateInfoKhrBuilder<'b> {
     raw: vks::VkMemoryDedicatedAllocateInfoKHR,
@@ -16912,7 +16912,7 @@ impl<'b> MemoryDedicatedAllocateInfoKhrBuilder<'b> {
 
 /// A `VkTextureLODGatherFormatPropertiesAMD`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct TextureLODGatherFormatPropertiesAmd<'s> {
@@ -16935,7 +16935,7 @@ impl<'s> TextureLODGatherFormatPropertiesAmd<'s> {
 
 /// A `VkPipelineCoverageToColorStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineCoverageToColorStateCreateInfoNv<'s> {
@@ -16968,7 +16968,7 @@ impl<'s> PipelineCoverageToColorStateCreateInfoNv<'s> {
 
 /// A builder for `VkPipelineCoverageToColorStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineCoverageToColorStateCreateInfoNV,
@@ -17004,7 +17004,7 @@ impl<'b> PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
 
 /// A `VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
@@ -17030,7 +17030,7 @@ impl<'s> PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
 
 /// A `VkSamplerReductionModeCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct SamplerReductionModeCreateInfoExt<'s> {
@@ -17057,7 +17057,7 @@ impl<'s> SamplerReductionModeCreateInfoExt<'s> {
 
 /// A builder for `VkSamplerReductionModeCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct SamplerReductionModeCreateInfoExtBuilder<'b> {
     raw: vks::VkSamplerReductionModeCreateInfoEXT,
@@ -17085,7 +17085,7 @@ impl<'b> SamplerReductionModeCreateInfoExtBuilder<'b> {
 
 /// A `VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
@@ -17112,7 +17112,7 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
 
 /// A builder for `VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder<'b> {
     raw: vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT,
@@ -17140,7 +17140,7 @@ impl<'b> PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder<'b> {
 
 /// A `VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
@@ -17178,7 +17178,7 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
 
 /// A `VkPipelineColorBlendAdvancedStateCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
@@ -17211,7 +17211,7 @@ impl<'s> PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
 
 /// A builder for `VkPipelineColorBlendAdvancedStateCreateInfoEXT`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
     raw: vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT,
@@ -17247,7 +17247,7 @@ impl<'b> PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
 
 /// A `VkPipelineCoverageModulationStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct PipelineCoverageModulationStateCreateInfoNv<'s> {
@@ -17286,7 +17286,7 @@ impl<'s> PipelineCoverageModulationStateCreateInfoNv<'s> {
 
 /// A builder for `VkPipelineCoverageModulationStateCreateInfoNV`.
 ///
-///
+/// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineCoverageModulationStateCreateInfoNV,

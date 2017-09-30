@@ -10,7 +10,7 @@ pub enum PipelineCacheHeaderVersion {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
-pub enum Result {
+pub enum ResultEnum {
     Success = vks::VK_SUCCESS as i32,
     NotReady = vks::VK_NOT_READY as i32,
     Timeout = vks::VK_TIMEOUT as i32,
@@ -865,7 +865,7 @@ pub enum ObjectType {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum ColorSpaceKHR {
+pub enum ColorSpaceKhr {
     SrgbNonlinearKhr = vks::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR as i32,
     DisplayP3NonlinearExt = vks::VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT as i32,
     ExtendedSrgbLinearExt = vks::VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT as i32,
@@ -889,7 +889,7 @@ pub enum ColorSpaceKHR {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum PresentModeKHR {
+pub enum PresentModeKhr {
     ImmediateKhr = vks::VK_PRESENT_MODE_IMMEDIATE_KHR as i32,
     MailboxKhr = vks::VK_PRESENT_MODE_MAILBOX_KHR as i32,
     FifoKhr = vks::VK_PRESENT_MODE_FIFO_KHR as i32,
@@ -904,7 +904,7 @@ pub enum PresentModeKHR {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum DescriptorUpdateTemplateTypeKHR {
+pub enum DescriptorUpdateTemplateTypeKhr {
     DescriptorSetKhr = vks::VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET_KHR as i32,
     PushDescriptorsKhr = vks::VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR as i32,
     #[cfg(feature = "experimental")]
@@ -917,7 +917,7 @@ pub type DescriptorUpdateTemplateCreateFlagsKHR = i32;
 #[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum PointClippingBehaviorKHR {
+pub enum PointClippingBehaviorKhr {
     AllClipPlanesKhr = vks::VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES_KHR as i32,
     UserClipPlanesOnlyKhr = vks::VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY_KHR as i32,
     RangeSizeKhr = vks::VK_POINT_CLIPPING_BEHAVIOR_RANGE_SIZE_KHR as i32,
@@ -927,7 +927,7 @@ pub enum PointClippingBehaviorKHR {
 #[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum TessellationDomainOriginKHR {
+pub enum TessellationDomainOriginKhr {
     UpperLeftKhr = vks::VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT_KHR as i32,
     LowerLeftKhr = vks::VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT_KHR as i32,
     RangeSizeKhr = vks::VK_TESSELLATION_DOMAIN_ORIGIN_RANGE_SIZE_KHR as i32,
@@ -937,7 +937,7 @@ pub enum TessellationDomainOriginKHR {
 #[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum SamplerYcbcrModelConversionKHR {
+pub enum SamplerYcbcrModelConversionKhr {
     RgbIdentityKhr = vks::VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY_KHR as i32,
     YcbcrIdentityKhr = vks::VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY_KHR as i32,
     Ycbcr709Khr = vks::VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709_KHR as i32,
@@ -950,7 +950,7 @@ pub enum SamplerYcbcrModelConversionKHR {
 #[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum SamplerYcbcrRangeKHR {
+pub enum SamplerYcbcrRangeKhr {
     ItuFullKhr = vks::VK_SAMPLER_YCBCR_RANGE_ITU_FULL_KHR as i32,
     ItuNarrowKhr = vks::VK_SAMPLER_YCBCR_RANGE_ITU_NARROW_KHR as i32,
     RangeSizeKhr = vks::VK_SAMPLER_YCBCR_RANGE_RANGE_SIZE_KHR as i32,
@@ -960,7 +960,7 @@ pub enum SamplerYcbcrRangeKHR {
 #[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum ChromaLocationKHR {
+pub enum ChromaLocationKhr {
     CositedEvenKhr = vks::VK_CHROMA_LOCATION_COSITED_EVEN_KHR as i32,
     MidpointKhr = vks::VK_CHROMA_LOCATION_MIDPOINT_KHR as i32,
     RangeSizeKhr = vks::VK_CHROMA_LOCATION_RANGE_SIZE_KHR as i32,
@@ -969,7 +969,7 @@ pub enum ChromaLocationKHR {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum DebugReportObjectTypeEXT {
+pub enum DebugReportObjectTypeExt {
     UnknownExt = vks::VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT as i32,
     InstanceExt = vks::VK_DEBUG_REPORT_OBJECT_TYPE_INSTANCE_EXT as i32,
     PhysicalDeviceExt = vks::VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT as i32,
@@ -1019,7 +1019,7 @@ pub enum DebugReportObjectTypeEXT {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum RasterizationOrderAMD {
+pub enum RasterizationOrderAmd {
     StrictAmd = vks::VK_RASTERIZATION_ORDER_STRICT_AMD as i32,
     RelaxedAmd = vks::VK_RASTERIZATION_ORDER_RELAXED_AMD as i32,
     #[cfg(feature = "experimental")]
@@ -1032,7 +1032,7 @@ pub enum RasterizationOrderAMD {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum ValidationCheckEXT {
+pub enum ValidationCheckExt {
     AllExt = vks::VK_VALIDATION_CHECK_ALL_EXT as i32,
     ShadersExt = vks::VK_VALIDATION_CHECK_SHADERS_EXT as i32,
     #[cfg(feature = "experimental")]
@@ -1044,7 +1044,7 @@ pub enum ValidationCheckEXT {
 #[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum IndirectCommandsTokenTypeNVX {
+pub enum IndirectCommandsTokenTypeNvx {
     PipelineNvx = vks::VK_INDIRECT_COMMANDS_TOKEN_TYPE_PIPELINE_NVX as i32,
     DescriptorSetNvx = vks::VK_INDIRECT_COMMANDS_TOKEN_TYPE_DESCRIPTOR_SET_NVX as i32,
     IndexBufferNvx = vks::VK_INDIRECT_COMMANDS_TOKEN_TYPE_INDEX_BUFFER_NVX as i32,
@@ -1060,7 +1060,7 @@ pub enum IndirectCommandsTokenTypeNVX {
 #[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum ObjectEntryTypeNVX {
+pub enum ObjectEntryTypeNvx {
     DescriptorSetNvx = vks::VK_OBJECT_ENTRY_TYPE_DESCRIPTOR_SET_NVX as i32,
     PipelineNvx = vks::VK_OBJECT_ENTRY_TYPE_PIPELINE_NVX as i32,
     IndexBufferNvx = vks::VK_OBJECT_ENTRY_TYPE_INDEX_BUFFER_NVX as i32,
@@ -1072,7 +1072,7 @@ pub enum ObjectEntryTypeNVX {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum DisplayPowerStateEXT {
+pub enum DisplayPowerStateExt {
     OffExt = vks::VK_DISPLAY_POWER_STATE_OFF_EXT as i32,
     SuspendExt = vks::VK_DISPLAY_POWER_STATE_SUSPEND_EXT as i32,
     OnExt = vks::VK_DISPLAY_POWER_STATE_ON_EXT as i32,
@@ -1084,7 +1084,7 @@ pub enum DisplayPowerStateEXT {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum DeviceEventTypeEXT {
+pub enum DeviceEventTypeExt {
     DisplayHotplugExt = vks::VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT as i32,
     #[cfg(feature = "experimental")]
     RangeSizeExt = vks::VK_DEVICE_EVENT_TYPE_RANGE_SIZE_EXT as i32,
@@ -1094,7 +1094,7 @@ pub enum DeviceEventTypeEXT {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum DisplayEventTypeEXT {
+pub enum DisplayEventTypeExt {
     FirstPixelOutExt = vks::VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT as i32,
     #[cfg(feature = "experimental")]
     RangeSizeExt = vks::VK_DISPLAY_EVENT_TYPE_RANGE_SIZE_EXT as i32,
@@ -1104,7 +1104,7 @@ pub enum DisplayEventTypeEXT {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum ViewportCoordinateSwizzleNV {
+pub enum ViewportCoordinateSwizzleNv {
     PositiveXNv = vks::VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_X_NV as i32,
     NegativeXNv = vks::VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_X_NV as i32,
     PositiveYNv = vks::VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_Y_NV as i32,
@@ -1121,7 +1121,7 @@ pub enum ViewportCoordinateSwizzleNV {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum DiscardRectangleModeEXT {
+pub enum DiscardRectangleModeExt {
     InclusiveExt = vks::VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT as i32,
     ExclusiveExt = vks::VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT as i32,
     #[cfg(feature = "experimental")]
@@ -1132,7 +1132,7 @@ pub enum DiscardRectangleModeEXT {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum SamplerReductionModeEXT {
+pub enum SamplerReductionModeExt {
     WeightedAverageExt = vks::VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT as i32,
     MinExt = vks::VK_SAMPLER_REDUCTION_MODE_MIN_EXT as i32,
     MaxExt = vks::VK_SAMPLER_REDUCTION_MODE_MAX_EXT as i32,
@@ -1144,7 +1144,7 @@ pub enum SamplerReductionModeEXT {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum BlendOverlapEXT {
+pub enum BlendOverlapExt {
     UncorrelatedExt = vks::VK_BLEND_OVERLAP_UNCORRELATED_EXT as i32,
     DisjointExt = vks::VK_BLEND_OVERLAP_DISJOINT_EXT as i32,
     ConjointExt = vks::VK_BLEND_OVERLAP_CONJOINT_EXT as i32,
@@ -1156,7 +1156,7 @@ pub enum BlendOverlapEXT {
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum CoverageModulationModeNV {
+pub enum CoverageModulationModeNv {
     NoneNv = vks::VK_COVERAGE_MODULATION_MODE_NONE_NV as i32,
     RgbNv = vks::VK_COVERAGE_MODULATION_MODE_RGB_NV as i32,
     AlphaNv = vks::VK_COVERAGE_MODULATION_MODE_ALPHA_NV as i32,
@@ -1170,7 +1170,7 @@ pub enum CoverageModulationModeNV {
 #[cfg(feature = "experimental")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
-pub enum ValidationCacheHeaderVersionEXT {
+pub enum ValidationCacheHeaderVersionExt {
     OneExt = vks::VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT as i32,
     MaxEnumExt = vks::VK_VALIDATION_CACHE_HEADER_VERSION_MAX_ENUM_EXT as i32,
 }
