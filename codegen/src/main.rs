@@ -20,6 +20,8 @@ const ORIG_USE: &str = "vks";
 const ORIG_PRE: &str = "vks::";
 
 
+/// Swaps an arbitrary member name with a replacement. The replacement name
+/// will have been determined within the ffi definition lib (`vks`).
 fn filter_member_name(orig: &mut String) {
     if orig == "type" {
         mem::replace(orig, "type_".to_string());
@@ -27,6 +29,8 @@ fn filter_member_name(orig: &mut String) {
 }
 
 
+/// Converts a pascal string to snake case and returns whether or not a "p" or
+/// "pp" was pruned (indicating a pointer member).
 fn pascal_to_snake_case(orig: &str, prune_p: bool) -> (String, bool, bool) {
     let mut output = String::with_capacity(48);
     let mut prev_was_new_word = true;
@@ -94,6 +98,7 @@ fn pascal_to_snake_case(orig: &str, prune_p: bool) -> (String, bool, bool) {
     (output, p_was_pruned, pp_was_pruned)
 }
 
+/// Changes capitalization of extension and dimension type name suffixes.
 fn replace_suffix(orig: &str) -> String {
     if orig.contains("1D") { return orig.replace("1D", "1d"); }
     if orig.contains("2D") { return orig.replace("2D", "2d"); }
@@ -111,6 +116,7 @@ fn replace_suffix(orig: &str) -> String {
     orig.to_string()
 }
 
+/// Converts Vulkan/C names into Voodoo/Rust conventions.
 fn convert_type_name(orig_type: &str) -> String {
     match orig_type {
         "float" => "f32".to_string(),
@@ -164,8 +170,10 @@ fn convert_type_name(orig_type: &str) -> String {
     }
 }
 
-
-// What's a hashmap?
+/// Returns true if `orig_name` specifies a dispatchable or non-dispatchable
+/// handle.
+///
+/// What's a hashmap?
 fn struct_is_handle_type(orig_name: &str) -> bool {
     match orig_name {
         "VkInstance" => true,
@@ -208,6 +216,7 @@ fn struct_is_handle_type(orig_name: &str) -> bool {
 }
 
 
+/// A category of parsable type within the source spec. document.
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum TypeCategory {
     None,
@@ -217,7 +226,16 @@ enum TypeCategory {
     Other,
 }
 
+fn category(s: &str) -> TypeCategory {
+    match s {
+        "struct" => TypeCategory::Struct,
+        "union" => TypeCategory::Union,
+        "enum" => TypeCategory::Enum,
+        _ => TypeCategory::Other,
+    }
+}
 
+/// A member of a struct.
 #[derive(Clone, Debug)]
 struct Member {
     orig_type: String,
@@ -230,7 +248,8 @@ struct Member {
     is_const_const: bool,
     is_struct: bool,
     is_handle_type: bool,
-    // type_is_voodoo_struct: bool,
+    ptr_count_member_orig_name: Option<String>,
+    is_ptr_count: bool,
     optional: bool,
     noautovalidity: bool,
     externsync: bool,
@@ -254,7 +273,8 @@ impl Member {
             is_const_const: false,
             is_struct: false,
             is_handle_type: false,
-            // type_is_voodoo_struct: false,
+            ptr_count_member_orig_name: None,
+            is_ptr_count: false,
             optional: false,
             noautovalidity: false,
             externsync: false,
@@ -281,6 +301,9 @@ impl Member {
         member
     }
 
+    /// Specifies the name of a member, filtering it for an invalid name
+    /// (currently only "type" is invalid) and generating a snake_case
+    /// `voodoo_name` to use in the output code.
     fn set_name(&mut self, mut orig_name: String) {
         assert!(self.orig_name.is_empty());
         assert!(self.voodoo_name.is_empty());
@@ -288,10 +311,16 @@ impl Member {
         let (voodoo_name, p_was_pruned, pp_was_pruned) = pascal_to_snake_case(&orig_name, true);
         assert!((p_was_pruned && self.is_ptr) || !p_was_pruned);
         assert!((pp_was_pruned && self.is_ptr_ptr) || !pp_was_pruned);
+        // if orig_name.contains("Count") {
+        //     self.is_count = true;
+        // }
         self.voodoo_name = voodoo_name;
         self.orig_name = orig_name;
     }
 
+    /// Specifies the type of a member, both original and converted, and
+    /// whether or not the member is a dispatchable or non-dispatchable handle
+    /// type.
     fn set_type(&mut self, orig_type: String) {
         assert!(self.orig_type.is_empty() && self.voodoo_type.is_empty());
         self.is_handle_type = struct_is_handle_type(&orig_type);
@@ -301,6 +330,9 @@ impl Member {
 }
 
 
+/// A field that must be created within a generated struct to store referenced
+/// information for convenience. Structs containing special fields are no
+/// longer `repr(C)`.
 #[derive(Clone, Debug)]
 struct SpecialField {
     name: String,
@@ -344,8 +376,8 @@ fn special_field(m: &Member) -> Option<SpecialField> {
             if m.is_ptr {
                 return Some(SpecialField {
                     name: m.voodoo_name.clone(),
-                    ty_struct: format!("Option<Vec<{}{}>>", ORIG_PRE, m.orig_type),
-                    ty_builder: format!("Option<Vec<{}{}>>", ORIG_PRE, m.orig_type),
+                    ty_struct: format!("Option<SmallVec<[{}{}; 8]>>", ORIG_PRE, m.orig_type),
+                    ty_builder: format!("Option<SmallVec<[{}{}; 8]>>", ORIG_PRE, m.orig_type),
                     default_val: "None".to_string(),
                 });
             }
@@ -356,6 +388,7 @@ fn special_field(m: &Member) -> Option<SpecialField> {
 }
 
 
+/// A struct type parsed from the API spec. which will be generated anew.
 #[derive(Clone, Debug)]
 struct Struct {
     orig_name: String,
@@ -408,11 +441,70 @@ impl Struct {
         }
     }
 
-    fn add_member(&mut self, m: Member) {
+    /// Searches for a member within this struct which matches the naming
+    /// conventions used to relate pointers with corresponding count fields
+    /// then marks that relationship.
+    fn match_ptr_count_member(&mut self, m: &mut Member) {
+        if !m.is_ptr && m.orig_name.len() > 5 && m.orig_name.contains("Count") {
+            // Check for pointers members matching a count member. NOTE: This
+            // will never find a match, the spec consistently defines count
+            // members before their corresponding pointers.
+            let (head, tail) = m.orig_name.split_at(m.orig_name.len() - 5);
+            if tail == "Count" {
+                for ptr_m in self.members.iter_mut().filter(|ptr_m|
+                        (ptr_m.is_ptr || ptr_m.is_ptr_ptr) && ptr_m.orig_name.starts_with("p")) {
+                    // let (ptr_first, ptr_tail) = ptr_m.orig_name.split_at(1);
+                    let (ptr_pre, ptr_tail) = if m.orig_name.starts_with("pp") {
+                        m.orig_name.split_at(2)
+                    } else {
+                        m.orig_name.split_at(1)
+                    };
+                    let (ptr_tail_first, ptr_tail_tail) = ptr_tail.split_at(1);
+                    let ptr_tail_lower = format!("{}{}", ptr_tail_first.to_lowercase(), ptr_tail_tail);
+                    if ptr_tail_lower.contains(head) {
+                        if PRINT { println!("Pointer member found matching count member: \
+                            ptr: \"{}\", cnt: \"{}\"", ptr_tail_lower, head); }
+                        ptr_m.ptr_count_member_orig_name = Some(m.orig_name.clone());
+                        m.is_ptr_count = true;
+                        // NOTE: Currently unreachable: count always comes first.
+                    }
+                }
+            }
+        } else if (m.is_ptr || m.is_ptr_ptr) && m.orig_name.starts_with("p") {
+            // Check for a count member matching a pointer member.
+            let (ptr_pre, ptr_tail) = if m.orig_name.starts_with("pp") {
+                m.orig_name.split_at(2)
+            } else {
+                m.orig_name.split_at(1)
+            };
+            assert!(ptr_pre == "pp" || ptr_pre == "p");
+            let (ptr_tail_first, ptr_tail_tail) = ptr_tail.split_at(1);
+            let ptr_tail_lower = format!("{}{}", ptr_tail_first.to_lowercase(), ptr_tail_tail);
+            for cnt_m in self.members.iter_mut().filter(|cnt_m| cnt_m.orig_name.len() > 5) {
+                let (cnt_head, cnt_tail) = cnt_m.orig_name.split_at(cnt_m.orig_name.len() - 5);
+                if ptr_tail_lower.contains(cnt_head) && cnt_tail == "Count" {
+                    assert!(ptr_tail_lower.starts_with(cnt_head));
+                    if PRINT { println!("Count member found matching pointer member: \
+                            ptr: \"{}\", cnt: \"{}\"", ptr_tail_lower, cnt_head); }
+
+                    // println!("Count member found matching pointer member: \
+                    //         ptr: \"{}\", cnt: \"{}\"", ptr_tail_lower, cnt_head);
+
+                    // Damn exceptions ("pCoverageModulationTable")....
+                    assert!(m.orig_name.ends_with("s") || m.orig_name == "pCoverageModulationTable");
+                    m.ptr_count_member_orig_name = Some(cnt_m.orig_name.clone());
+                    cnt_m.is_ptr_count = true;
+                }
+            }
+        }
+    }
+
+    fn add_member(&mut self, mut m: Member) {
         if let Some(sf) = special_field(&m) {
             self.special_fields.reserve(4);
             self.special_fields.insert(m.voodoo_name.clone(), sf);
         }
+        self.match_ptr_count_member(&mut m);
         self.members.push(m);
     }
 
@@ -426,15 +518,8 @@ impl Struct {
 }
 
 
-fn category(s: &str) -> TypeCategory {
-    match s {
-        "struct" => TypeCategory::Struct,
-        "union" => TypeCategory::Union,
-        "enum" => TypeCategory::Enum,
-        _ => TypeCategory::Other,
-    }
-}
-
+/// Parses and categorizes the usable data from the characters in the source
+/// document.
 fn parse_stray_text(s: &str, m: &mut Member) {
     match s {
         // Brackets alone will have sizes set by a value wrapped in an <enum> tag.
@@ -487,11 +572,13 @@ fn parse_stray_text(s: &str, m: &mut Member) {
     }
 }
 
+/// Used for printing purposes (and taken from the original xml-rs example).
 fn indent(size: usize) -> String {
     (0..size).map(|_| INDENT)
         .fold(String::with_capacity(size*INDENT.len()), |r, s| r + s)
 }
 
+/// Parses a source XML API spec. and pulls out (currently only) structs.
 fn parse_structs() -> (HashMap<String, Struct>, Vec<String>) {
     let file = File::open(concat!(env!("CARGO_MANIFEST_DIR"), "/gen_src/vk.xml")).unwrap();
     let reader = BufReader::new(file);
@@ -572,8 +659,6 @@ fn parse_structs() -> (HashMap<String, Struct>, Vec<String>) {
                     if depth == member_start_depth {
                         let s = current_struct.as_mut().expect("no current struct");
                         let new_member = current_member.take().expect("no current member");
-                        // new_member.validate();
-                        // s.members.push(new_member);
                         s.add_member(new_member)
                     }
                 } else if name.local_name == "type" && current_struct.is_some() {
@@ -635,6 +720,7 @@ fn parse_structs() -> (HashMap<String, Struct>, Vec<String>) {
     (structs, struct_order)
 }
 
+/// Returns true if a struct with a certain name is to be ignored.
 fn struct_is_excluded(orig_name: &str) -> bool {
     match orig_name {
         "VkRect3D" => true,
@@ -666,6 +752,7 @@ fn struct_is_excluded(orig_name: &str) -> bool {
     }
 }
 
+/// Returns true if a member is to be ignored during generation.
 fn member_is_excluded(orig_name: &str) -> bool {
     match orig_name {
         "sType" => true,
@@ -673,6 +760,7 @@ fn member_is_excluded(orig_name: &str) -> bool {
     }
 }
 
+/// Returns true if the member is a pointer that must be treated unsafely.
 fn function_is_unsafe(m: &Member) -> bool {
     match m.orig_name.as_str() {
         "pNext" => true,
@@ -692,6 +780,8 @@ fn function_is_unsafe(m: &Member) -> bool {
     }
 }
 
+/// Filters a function name. Similar to `::filter_member_name` except modifies
+/// the name of an output function rather than a source field.
 fn filter_function_name(orig_name: &str) -> Option<String> {
     match orig_name {
         "type_" => Some("type_of".to_string()),
@@ -699,14 +789,18 @@ fn filter_function_name(orig_name: &str) -> Option<String> {
     }
 }
 
+/// Returns true if a type name is to be marked with the `experimental`
+/// feature gate.
 fn is_experimental(orig_name: &str) -> bool {
     orig_name.contains("KHX") || orig_name.contains("NVX")
 }
 
+/// Writes a setter function to the output buffer.
 fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_params: &str,
         structs: &HashMap<String, Struct>) -> io::Result<()> {
     let t = INDENT;
     if member_is_excluded(&m.orig_name) { return Ok(()); }
+    if m.is_ptr_count { return Ok(()); }
     let fn_is_unsafe = function_is_unsafe(&m);
     let unsafe_str = if fn_is_unsafe { " unsafe" } else { "" };
     let filtered_fn_name = filter_function_name(&m.orig_name);
@@ -716,31 +810,29 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
     };
 
     let arg_lifetime = "'a";
-    // let mut arg_is_generic = false;
     let mut arg_is_slice = false;
     let mut arg_is_struct = structs.contains_key(&m.voodoo_type);
     let mut convert_arg = false;
     let mut double_convert_arg = false;
     let mut convert_to_bits = false;
-    // let mut is_repr_c =
-    let mut arg_type = String::new();
+    let mut arg_type_sig = String::new();
     let mut where_clause = String::new();
     let mut fn_type_params = "'m".to_string();
 
     // Type signature:
     if let Some(ref size) = m.array_size {
-        arg_type.push_str("[");
-        arg_type.push_str(&m.voodoo_type);
-        arg_type.push_str("; ");
-        arg_type.push_str(size);
-        arg_type.push_str("]");
+        arg_type_sig.push_str("[");
+        arg_type_sig.push_str(&m.voodoo_type);
+        arg_type_sig.push_str("; ");
+        arg_type_sig.push_str(size);
+        arg_type_sig.push_str("]");
     } else if m.voodoo_type == "i8" {
         assert!(s.special_field(&m.voodoo_name).is_some());
         convert_arg = true;
         fn_type_params.push_str(", ");
         fn_type_params.push_str(arg_lifetime);
         fn_type_params.push_str(", T");
-        arg_type.push_str("T");
+        arg_type_sig.push_str("T");
         if m.is_ptr {
             assert!(bldr_type_params.contains("'b"));
             where_clause = format!(" where {a}: 'b, T: Into<CharStr<{a}>>", a=arg_lifetime);
@@ -752,7 +844,7 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
         convert_arg = true;
         double_convert_arg = true;
         fn_type_params.push_str(", T");
-        arg_type.push_str("T");
+        arg_type_sig.push_str("T");
         where_clause = format!(" where T: Into<Version>");
     } else if m.voodoo_type.contains("Flags") {
         if m.voodoo_type == "PipelineStageFlags" {
@@ -761,49 +853,49 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
             } else {
                 fn_type_params.push_str(", ");
                 fn_type_params.push_str(arg_lifetime);
-                arg_type.push_str("&");
-                arg_type.push_str(arg_lifetime);
-                arg_type.push_str(" ");
+                arg_type_sig.push_str("&");
+                arg_type_sig.push_str(arg_lifetime);
+                arg_type_sig.push_str(" ");
             }
         } else {
             convert_to_bits = true;
         }
-        arg_type.push_str(&m.voodoo_type);
-    } else if m.is_ptr && (fn_name.ends_with("s") || fn_name == "code") {
+        arg_type_sig.push_str(&m.voodoo_type);
+    } else if m.is_ptr && (fn_name.ends_with("s") ||
+            fn_name == "code" || fn_name == "coverage_modulation_table") {
         arg_is_slice = true;
         fn_type_params.push_str(", ");
         fn_type_params.push_str(arg_lifetime);
-        arg_type.push_str("&");
-        arg_type.push_str(arg_lifetime);
-        arg_type.push_str(" ");
+        arg_type_sig.push_str("&");
+        arg_type_sig.push_str(arg_lifetime);
+        arg_type_sig.push_str(" ");
         assert!(!m.is_const_const);
         if !m.is_const {
-            arg_type.push_str("mut ");
+            arg_type_sig.push_str("mut ");
         }
-        arg_type.push_str("[");
-        arg_type.push_str(&m.voodoo_type);
-        arg_type.push_str("]");
+        arg_type_sig.push_str("[");
+        arg_type_sig.push_str(&m.voodoo_type);
+        arg_type_sig.push_str("]");
         if m.is_handle_type {
             assert!(bldr_type_params.contains("'b"));
             where_clause = format!(" where {a}: 'b", a=arg_lifetime);
         }
     } else if m.is_ptr && fn_is_unsafe {
         if m.is_const {
-            arg_type.push_str("*const ");
+            arg_type_sig.push_str("*const ");
         } else {
-            arg_type.push_str("*mut ");
+            arg_type_sig.push_str("*mut ");
         }
-        // arg_type.push_str("c_void");
-        arg_type.push_str(&m.voodoo_type);
+        arg_type_sig.push_str(&m.voodoo_type);
     } else {
         if m.is_ptr || m.is_handle_type {
             fn_type_params.push_str(", ");
             fn_type_params.push_str(arg_lifetime);
-            arg_type.push_str("&");
-            arg_type.push_str(arg_lifetime);
-            arg_type.push_str(" ");
+            arg_type_sig.push_str("&");
+            arg_type_sig.push_str(arg_lifetime);
+            arg_type_sig.push_str(" ");
         }
-        arg_type.push_str(&m.voodoo_type);
+        arg_type_sig.push_str(&m.voodoo_type);
         if !m.is_handle_type {
             if m.orig_name != "pSampleMask" &&
                 m.orig_name != "pCoverageModulationTable" {
@@ -812,9 +904,28 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
         }
     }
 
+    // Function signature:
     writeln!(o, "{t}pub{} fn {}<{}>(mut self, {}: {}) -> {}Builder{}{} {{",
-        unsafe_str, fn_name, fn_type_params, fn_name, arg_type,
+        unsafe_str, fn_name, fn_type_params, fn_name, arg_type_sig,
         s.voodoo_name, bldr_type_params, where_clause, t=t)?;
+
+    // if let Some(ref count_orig_name) = m.ptr_count_member_orig_name {
+    //     writeln!(o, "{t}{t}assert!(self.raw.{c} == 0 || self.raw.{c} == {f}.len() as u32, \n\
+    //         {t}{t}{t}\"count inconsistency found when specifying `{s}::{f}`.\");",
+    //         c=count_orig_name, f=fn_name, s=s.voodoo_name, t=t)?;
+    //     writeln!(o, "{t}{t}self.raw.{c} = {f}.len() as u32;", c=count_orig_name, f=fn_name, t=t)?;
+    // }
+
+    let set_counts = |o: &mut BufWriter<File>, extra_indent: &str| -> io::Result<()> {
+        if let Some(ref count_orig_name) = m.ptr_count_member_orig_name {
+            writeln!(o, "{t}{t}{x}assert!(self.raw.{c} == 0 || self.raw.{c} == {f}.len() as u32, \n\
+                {t}{t}{t}{x}\"count inconsistency found when specifying `{s}::{f}`.\");",
+                c=count_orig_name, f=fn_name, s=s.voodoo_name, t=t, x=extra_indent)?;
+            writeln!(o, "{t}{t}{x}self.raw.{c} = {f}.len() as u32;", c=count_orig_name, f=fn_name,
+                t=t, x=extra_indent)?;
+        }
+        Ok(())
+    };
 
     if s.special_field(&m.voodoo_name).is_some() {
         write!(o, "{t}{t}self.{} = Some({}", m.voodoo_name, fn_name, t=t)?;
@@ -828,9 +939,14 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
             write!(o, ".into()")?;
         }
         writeln!(o, ");")?;
-        writeln!(o, "{t}{t}self.raw.{} = self.{}.as_ref().unwrap().as_ptr();",
+        writeln!(o, "{t}{t}{{", t=t)?;
+        writeln!(o, "{t}{t}{t}let {} = self.{}.as_ref().unwrap();", m.voodoo_name, fn_name, t=t)?;
+        writeln!(o, "{t}{t}{t}self.raw.{} = {}.as_ptr();",
             m.orig_name, m.voodoo_name, t=t)?;
+        set_counts(o, t)?;
+        writeln!(o, "{t}{t}}}", t=t)?;
     } else {
+        set_counts(o, "")?;
         write!(o, "{t}{t}self.raw.{} = ", m.orig_name, t=t)?;
         if arg_is_struct {
             if m.is_ptr {
@@ -859,7 +975,7 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
                 if arg_is_slice {
                     assert!(s.special_fields.contains_key(&m.voodoo_name),
                         "\"{}\" is lacking a special field for {{ {}: {} }}",
-                        s.voodoo_name, fn_name, arg_type);
+                        s.voodoo_name, fn_name, arg_type_sig);
                     write!(o, "{}", fn_name)?;
                 } else {
                     if m.is_ptr {
@@ -897,6 +1013,8 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
     Ok(())
 }
 
+/// Writes struct and corresponding builder definitions to an output file
+/// which is overwritten if it exists.
 fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> io::Result<()> {
     // let output_file_path = concat!(env!("CARGO_MANIFEST_DIR"), "/output/structs.rs");
     let output_file_path = "/src/voodoo/src/structs.rs";
@@ -920,6 +1038,7 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
     writeln!(o, "use std::marker::PhantomData;")?;
     writeln!(o, "use libc::c_void;")?;
     writeln!(o, "use num_traits::ToPrimitive;")?;
+    writeln!(o, "use smallvec::SmallVec;")?;
     writeln!(o, "use ::*;")?;
     writeln!(o, "use {};", ORIG_USE)?;
     writeln!(o, "use {}::{{PFN_vkAllocationFunction, PFN_vkReallocationFunction, \
@@ -950,12 +1069,10 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
 
         // Raw:
         writeln!(o, "{t}raw: {}{},", ORIG_PRE, s.orig_name, t=t)?;
-
         // Special fields:
         for (_, field) in &s.special_fields {
             writeln!(o, "{t}{}: {},", field.name, field.ty_struct, t=t)?;
         }
-
         // Phantom data:
         if s.contains_ptr {
             writeln!(o, "{t}_p: PhantomData<&'s ()>,", t=t)?;
