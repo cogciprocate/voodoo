@@ -449,6 +449,8 @@ impl Struct {
             // Check for pointers members matching a count member. NOTE: This
             // will never find a match, the spec consistently defines count
             // members before their corresponding pointers.
+            //
+            // TODO: Implement Irregularities
             let (head, tail) = m.orig_name.split_at(m.orig_name.len() - 5);
             if tail == "Count" {
                 for ptr_m in self.members.iter_mut().filter(|ptr_m|
@@ -472,25 +474,34 @@ impl Struct {
             }
         } else if (m.is_ptr || m.is_ptr_ptr) && m.orig_name.starts_with("p") {
             // Check for a count member matching a pointer member.
-            let (ptr_pre, ptr_tail) = if m.orig_name.starts_with("pp") {
+            let (ptr_pre, ptr_tail_) = if m.orig_name.starts_with("pp") {
                 m.orig_name.split_at(2)
             } else {
                 m.orig_name.split_at(1)
             };
             assert!(ptr_pre == "pp" || ptr_pre == "p");
+            // Compensate for pointer member name irregularities:
+            let ptr_tail = ptr_tail_
+                .replace("Indices", "Indexes")
+                .replace("Entries", "Entrys")
+                .replace("Dependencies", "Dependencys");
             let (ptr_tail_first, ptr_tail_tail) = ptr_tail.split_at(1);
             let ptr_tail_lower = format!("{}{}", ptr_tail_first.to_lowercase(), ptr_tail_tail);
             for cnt_m in self.members.iter_mut().filter(|cnt_m| cnt_m.orig_name.len() > 5) {
-                let (cnt_head, cnt_tail) = cnt_m.orig_name.split_at(cnt_m.orig_name.len() - 5);
-                if ptr_tail_lower.contains(cnt_head) && cnt_tail == "Count" {
-                    assert!(ptr_tail_lower.starts_with(cnt_head));
+                let (cnt_head_, cnt_tail) = cnt_m.orig_name.split_at(cnt_m.orig_name.len() - 5);
+                // Compensate for count member name irregularities:
+                let cnt_head = cnt_head_
+                    .replace("descriptorSet", "setLayout")
+                    .replace("SFRRect", "sFRRect");
+                if ptr_tail_lower.contains(&cnt_head) && cnt_tail == "Count" {
+                    assert!(ptr_tail_lower.starts_with(&cnt_head));
                     if PRINT { println!("Count member found matching pointer member: \
                             ptr: \"{}\", cnt: \"{}\"", ptr_tail_lower, cnt_head); }
 
                     // println!("Count member found matching pointer member: \
                     //         ptr: \"{}\", cnt: \"{}\"", ptr_tail_lower, cnt_head);
 
-                    // Damn exceptions ("pCoverageModulationTable")....
+                    // Damn irregularities ("pCoverageModulationTable")....
                     assert!(m.orig_name.ends_with("s") || m.orig_name == "pCoverageModulationTable");
                     m.ptr_count_member_orig_name = Some(cnt_m.orig_name.clone());
                     cnt_m.is_ptr_count = true;
@@ -1098,7 +1109,7 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
         }
 
         for m in &s.members {
-            if member_is_excluded(&m.orig_name) { continue; }
+            if member_is_excluded(&m.orig_name) || m.is_ptr_count { continue; }
             let unsafe_str = if function_is_unsafe(&m) { " unsafe" } else { "" };
             let filtered_fn_name = filter_function_name(&m.orig_name);
             let fn_name = match filtered_fn_name {

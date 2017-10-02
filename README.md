@@ -22,9 +22,9 @@ the [Vulkano] project.
 Other similar libraries include [dacite] (by the author of [vks], which this
 library is also built on) and [ash].
 
-[Vulkano](https://github.com/vulkano-rs/vulkano)
-[dacite](https://gitlab.com/dennis-hamester/dacite/tree/master/dacite)
-[vks](https://gitlab.com/dennis-hamester/vks)
-[ash](https://github.com/MaikKlein/ash)
+[Vulkano]: https://github.com/vulkano-rs/vulkano
+[dacite]: https://gitlab.com/dennis-hamester/dacite/tree/master/dacite
+[vks]: https://gitlab.com/dennis-hamester/vks
+[ash]: https://github.com/MaikKlein/ash
 
 <br/>*“Vulkan and the Vulkan logo are registered trademarks of the Khronos Group Inc.”*

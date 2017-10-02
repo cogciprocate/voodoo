@@ -744,8 +744,8 @@ impl From<LayerProperties> for vks::VkLayerProperties {
 #[derive(Debug, Clone, Default)]
 pub struct ApplicationInfo<'s> {
     raw: vks::VkApplicationInfo,
-    application_name: Option<CharStr<'s>>,
     engine_name: Option<CharStr<'s>>,
+    application_name: Option<CharStr<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -791,8 +791,8 @@ impl<'s> From<ApplicationInfo<'s>> for vks::VkApplicationInfo {
 #[derive(Debug, Clone, Default)]
 pub struct ApplicationInfoBuilder<'b> {
     raw: vks::VkApplicationInfo,
-    application_name: Option<CharStr<'b>>,
     engine_name: Option<CharStr<'b>>,
+    application_name: Option<CharStr<'b>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -800,8 +800,8 @@ impl<'b> ApplicationInfoBuilder<'b> {
     pub fn new() -> ApplicationInfoBuilder<'b> {
         ApplicationInfoBuilder {
             raw: vks::VkApplicationInfo::default(),
-            application_name: None,
             engine_name: None,
+            application_name: None,
             _p: PhantomData,
         }
     }
@@ -847,8 +847,8 @@ impl<'b> ApplicationInfoBuilder<'b> {
     pub fn build(self) -> ApplicationInfo<'b> {
         ApplicationInfo {
             raw: self.raw,
-            application_name: self.application_name,
             engine_name: self.engine_name,
+            application_name: self.application_name,
             _p: PhantomData,
         }
     }
@@ -983,9 +983,6 @@ impl<'s> DeviceQueueCreateInfo<'s> {
     pub fn queue_family_index(&self) {
     }
 
-    pub fn queue_count(&self) {
-    }
-
     pub fn queue_priorities(&self) {
     }
 
@@ -1074,19 +1071,10 @@ impl<'s> DeviceCreateInfo<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn queue_create_info_count(&self) {
-    }
-
     pub fn queue_create_infos(&self) {
     }
 
-    pub fn enabled_layer_count(&self) {
-    }
-
     pub fn enabled_layer_names(&self) {
-    }
-
-    pub fn enabled_extension_count(&self) {
     }
 
     pub fn enabled_extension_names(&self) {
@@ -1213,13 +1201,7 @@ impl<'s> InstanceCreateInfo<'s> {
     pub fn application_info(&self) {
     }
 
-    pub fn enabled_layer_count(&self) {
-    }
-
     pub fn enabled_layer_names(&self) {
-    }
-
-    pub fn enabled_extension_count(&self) {
     }
 
     pub fn enabled_extension_names(&self) {
@@ -2202,9 +2184,6 @@ impl<'s> BufferCreateInfo<'s> {
     pub fn sharing_mode(&self) {
     }
 
-    pub fn queue_family_index_count(&self) {
-    }
-
     pub fn queue_family_indices(&self) {
     }
 
@@ -2263,12 +2242,10 @@ impl<'b> BufferCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn queue_family_index_count<'m>(mut self, queue_family_index_count: u32) -> BufferCreateInfoBuilder<'b> {
-        self.raw.queueFamilyIndexCount = queue_family_index_count.into();
-        self
-    }
-
     pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> BufferCreateInfoBuilder<'b> {
+        assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as u32, 
+            "count inconsistency found when specifying `BufferCreateInfo::queue_family_indices`.");
+        self.raw.queueFamilyIndexCount = queue_family_indices.len() as u32;
         self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const _;
         self
     }
@@ -3008,9 +2985,6 @@ impl<'s> ImageCreateInfo<'s> {
     pub fn sharing_mode(&self) {
     }
 
-    pub fn queue_family_index_count(&self) {
-    }
-
     pub fn queue_family_indices(&self) {
     }
 
@@ -3102,12 +3076,10 @@ impl<'b> ImageCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn queue_family_index_count<'m>(mut self, queue_family_index_count: u32) -> ImageCreateInfoBuilder<'b> {
-        self.raw.queueFamilyIndexCount = queue_family_index_count.into();
-        self
-    }
-
     pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> ImageCreateInfoBuilder<'b> {
+        assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as u32, 
+            "count inconsistency found when specifying `ImageCreateInfo::queue_family_indices`.");
+        self.raw.queueFamilyIndexCount = queue_family_indices.len() as u32;
         self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const _;
         self
     }
@@ -3559,9 +3531,6 @@ impl<'s> SparseBufferMemoryBindInfo<'s> {
     pub fn buffer(&self) {
     }
 
-    pub fn bind_count(&self) {
-    }
-
     pub fn binds(&self) {
     }
 
@@ -3636,9 +3605,6 @@ impl<'s> SparseImageOpaqueMemoryBindInfo<'s> {
     pub fn image(&self) {
     }
 
-    pub fn bind_count(&self) {
-    }
-
     pub fn binds(&self) {
     }
 
@@ -3711,9 +3677,6 @@ impl<'s> SparseImageMemoryBindInfo<'s> {
     }
 
     pub fn image(&self) {
-    }
-
-    pub fn bind_count(&self) {
     }
 
     pub fn binds(&self) {
@@ -3791,31 +3754,16 @@ impl<'s> BindSparseInfo<'s> {
     pub unsafe fn next(&self) {
     }
 
-    pub fn wait_semaphore_count(&self) {
-    }
-
     pub fn wait_semaphores(&self) {
-    }
-
-    pub fn buffer_bind_count(&self) {
     }
 
     pub fn buffer_binds(&self) {
     }
 
-    pub fn image_opaque_bind_count(&self) {
-    }
-
     pub fn image_opaque_binds(&self) {
     }
 
-    pub fn image_bind_count(&self) {
-    }
-
     pub fn image_binds(&self) {
-    }
-
-    pub fn signal_semaphore_count(&self) {
     }
 
     pub fn signal_semaphores(&self) {
@@ -4494,9 +4442,6 @@ impl<'s> DescriptorSetLayoutCreateInfo<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn binding_count(&self) {
-    }
-
     pub fn bindings(&self) {
     }
 
@@ -4656,9 +4601,6 @@ impl<'s> DescriptorPoolCreateInfo<'s> {
     pub fn max_sets(&self) {
     }
 
-    pub fn pool_size_count(&self) {
-    }
-
     pub fn pool_sizes(&self) {
     }
 
@@ -4746,9 +4688,6 @@ impl<'s> DescriptorSetAllocateInfo<'s> {
     pub fn descriptor_pool(&self) {
     }
 
-    pub fn descriptor_set_count(&self) {
-    }
-
     pub fn set_layouts(&self) {
     }
 
@@ -4794,16 +4733,14 @@ impl<'b> DescriptorSetAllocateInfoBuilder<'b> {
         self
     }
 
-    pub fn descriptor_set_count<'m>(mut self, descriptor_set_count: u32) -> DescriptorSetAllocateInfoBuilder<'b> {
-        self.raw.descriptorSetCount = descriptor_set_count.into();
-        self
-    }
-
     pub fn set_layouts<'m, 'a>(mut self, set_layouts: &'a [DescriptorSetLayout]) -> DescriptorSetAllocateInfoBuilder<'b> where 'a: 'b {
         self.set_layouts = Some(set_layouts.iter().map(|h| h.handle()).collect());
         {
             let set_layouts = self.set_layouts.as_ref().unwrap();
             self.raw.pSetLayouts = set_layouts.as_ptr();
+            assert!(self.raw.descriptorSetCount == 0 || self.raw.descriptorSetCount == set_layouts.len() as u32, 
+                "count inconsistency found when specifying `DescriptorSetAllocateInfo::set_layouts`.");
+            self.raw.descriptorSetCount = set_layouts.len() as u32;
         }
         self
     }
@@ -4909,9 +4846,6 @@ impl<'s> SpecializationInfo<'s> {
         SpecializationInfoBuilder::new()
     }
 
-    pub fn map_entry_count(&self) {
-    }
-
     pub fn map_entries(&self) {
     }
 
@@ -4951,12 +4885,10 @@ impl<'b> SpecializationInfoBuilder<'b> {
         }
     }
 
-    pub fn map_entry_count<'m>(mut self, map_entry_count: u32) -> SpecializationInfoBuilder<'b> {
-        self.raw.mapEntryCount = map_entry_count.into();
-        self
-    }
-
     pub fn map_entries<'m, 'a>(mut self, map_entries: &'a [SpecializationMapEntry]) -> SpecializationInfoBuilder<'b> {
+        assert!(self.raw.mapEntryCount == 0 || self.raw.mapEntryCount == map_entries.len() as u32, 
+            "count inconsistency found when specifying `SpecializationInfo::map_entries`.");
+        self.raw.mapEntryCount = map_entries.len() as u32;
         self.raw.pMapEntries = map_entries.as_ptr() as *const _;
         self
     }
@@ -5373,13 +5305,7 @@ impl<'s> PipelineVertexInputStateCreateInfo<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn vertex_binding_description_count(&self) {
-    }
-
     pub fn vertex_binding_descriptions(&self) {
-    }
-
-    pub fn vertex_attribute_description_count(&self) {
     }
 
     pub fn vertex_attribute_descriptions(&self) {
@@ -5638,13 +5564,7 @@ impl<'s> PipelineViewportStateCreateInfo<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn viewport_count(&self) {
-    }
-
     pub fn viewports(&self) {
-    }
-
-    pub fn scissor_count(&self) {
     }
 
     pub fn scissors(&self) {
@@ -6128,9 +6048,6 @@ impl<'s> PipelineColorBlendStateCreateInfo<'s> {
     pub fn logic_op(&self) {
     }
 
-    pub fn attachment_count(&self) {
-    }
-
     pub fn attachments(&self) {
     }
 
@@ -6229,9 +6146,6 @@ impl<'s> PipelineDynamicStateCreateInfo<'s> {
     }
 
     pub fn flags(&self) {
-    }
-
-    pub fn dynamic_state_count(&self) {
     }
 
     pub fn dynamic_states(&self) {
@@ -6564,9 +6478,6 @@ impl<'s> GraphicsPipelineCreateInfo<'s> {
     }
 
     pub fn flags(&self) {
-    }
-
-    pub fn stage_count(&self) {
     }
 
     pub fn stages(&self) {
@@ -6932,13 +6843,7 @@ impl<'s> PipelineLayoutCreateInfo<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn set_layout_count(&self) {
-    }
-
     pub fn set_layouts(&self) {
-    }
-
-    pub fn push_constant_range_count(&self) {
     }
 
     pub fn push_constant_ranges(&self) {
@@ -7591,9 +7496,6 @@ impl<'s> RenderPassBeginInfo<'s> {
     pub fn render_area(&self) {
     }
 
-    pub fn clear_value_count(&self) {
-    }
-
     pub fn clear_values(&self) {
     }
 
@@ -8018,13 +7920,7 @@ impl<'s> SubpassDescription<'s> {
     pub fn pipeline_bind_point(&self) {
     }
 
-    pub fn input_attachment_count(&self) {
-    }
-
     pub fn input_attachments(&self) {
-    }
-
-    pub fn color_attachment_count(&self) {
     }
 
     pub fn color_attachments(&self) {
@@ -8034,9 +7930,6 @@ impl<'s> SubpassDescription<'s> {
     }
 
     pub fn depth_stencil_attachment(&self) {
-    }
-
-    pub fn preserve_attachment_count(&self) {
     }
 
     pub fn preserve_attachments(&self) {
@@ -8254,19 +8147,10 @@ impl<'s> RenderPassCreateInfo<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn attachment_count(&self) {
-    }
-
     pub fn attachments(&self) {
     }
 
-    pub fn subpass_count(&self) {
-    }
-
     pub fn subpasses(&self) {
-    }
-
-    pub fn dependency_count(&self) {
     }
 
     pub fn dependencies(&self) {
@@ -8328,12 +8212,10 @@ impl<'b> RenderPassCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn dependency_count<'m>(mut self, dependency_count: u32) -> RenderPassCreateInfoBuilder<'b> {
-        self.raw.dependencyCount = dependency_count.into();
-        self
-    }
-
     pub fn dependencies<'m, 'a>(mut self, dependencies: &'a [SubpassDependency]) -> RenderPassCreateInfoBuilder<'b> {
+        assert!(self.raw.dependencyCount == 0 || self.raw.dependencyCount == dependencies.len() as u32, 
+            "count inconsistency found when specifying `RenderPassCreateInfo::dependencies`.");
+        self.raw.dependencyCount = dependencies.len() as u32;
         self.raw.pDependencies = dependencies.as_ptr() as *const _;
         self
     }
@@ -9550,9 +9432,6 @@ impl<'s> FramebufferCreateInfo<'s> {
     pub fn render_pass(&self) {
     }
 
-    pub fn attachment_count(&self) {
-    }
-
     pub fn attachments(&self) {
     }
 
@@ -9906,8 +9785,8 @@ impl DispatchIndirectCommandBuilder {
 pub struct SubmitInfo<'s> {
     raw: vks::VkSubmitInfo,
     wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
-    signal_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     command_buffers: Option<SmallVec<[vks::VkCommandBuffer; 8]>>,
+    signal_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -9919,22 +9798,13 @@ impl<'s> SubmitInfo<'s> {
     pub unsafe fn next(&self) {
     }
 
-    pub fn wait_semaphore_count(&self) {
-    }
-
     pub fn wait_semaphores(&self) {
     }
 
     pub fn wait_dst_stage_mask(&self) {
     }
 
-    pub fn command_buffer_count(&self) {
-    }
-
     pub fn command_buffers(&self) {
-    }
-
-    pub fn signal_semaphore_count(&self) {
     }
 
     pub fn signal_semaphores(&self) {
@@ -9960,8 +9830,8 @@ impl<'s> From<SubmitInfo<'s>> for vks::VkSubmitInfo {
 pub struct SubmitInfoBuilder<'b> {
     raw: vks::VkSubmitInfo,
     wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
-    signal_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     command_buffers: Option<SmallVec<[vks::VkCommandBuffer; 8]>>,
+    signal_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -9970,8 +9840,8 @@ impl<'b> SubmitInfoBuilder<'b> {
         SubmitInfoBuilder {
             raw: vks::VkSubmitInfo::default(),
             wait_semaphores: None,
-            signal_semaphores: None,
             command_buffers: None,
+            signal_semaphores: None,
             _p: PhantomData,
         }
     }
@@ -10026,8 +9896,8 @@ impl<'b> SubmitInfoBuilder<'b> {
         SubmitInfo {
             raw: self.raw,
             wait_semaphores: self.wait_semaphores,
-            signal_semaphores: self.signal_semaphores,
             command_buffers: self.command_buffers,
+            signal_semaphores: self.signal_semaphores,
             _p: PhantomData,
         }
     }
@@ -11268,9 +11138,6 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
     pub fn image_sharing_mode(&self) {
     }
 
-    pub fn queue_family_index_count(&self) {
-    }
-
     pub fn queue_family_indices(&self) {
     }
 
@@ -11369,12 +11236,10 @@ impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn queue_family_index_count<'m>(mut self, queue_family_index_count: u32) -> SwapchainCreateInfoKhrBuilder<'b> {
-        self.raw.queueFamilyIndexCount = queue_family_index_count.into();
-        self
-    }
-
     pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> SwapchainCreateInfoKhrBuilder<'b> {
+        assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as u32, 
+            "count inconsistency found when specifying `SwapchainCreateInfoKhr::queue_family_indices`.");
+        self.raw.queueFamilyIndexCount = queue_family_indices.len() as u32;
         self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const _;
         self
     }
@@ -11433,13 +11298,7 @@ impl<'s> PresentInfoKhr<'s> {
     pub unsafe fn next(&self) {
     }
 
-    pub fn wait_semaphore_count(&self) {
-    }
-
     pub fn wait_semaphores(&self) {
-    }
-
-    pub fn swapchain_count(&self) {
     }
 
     pub fn swapchains(&self) {
@@ -11639,9 +11498,6 @@ impl<'s> ValidationFlagsExt<'s> {
     }
 
     pub unsafe fn next(&self) {
-    }
-
-    pub fn disabled_validation_check_count(&self) {
     }
 
     pub fn disabled_validation_checks(&self) {
@@ -12616,8 +12472,8 @@ impl<'b> ExportMemoryWin32HandleInfoNvBuilder<'b> {
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoNv<'s> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV,
-    release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
+    release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -12629,9 +12485,6 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
     pub unsafe fn next(&self) {
     }
 
-    pub fn acquire_count(&self) {
-    }
-
     pub fn acquire_syncs(&self) {
     }
 
@@ -12639,9 +12492,6 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
     }
 
     pub fn acquire_timeout_milliseconds(&self) {
-    }
-
-    pub fn release_count(&self) {
     }
 
     pub fn release_syncs(&self) {
@@ -12669,8 +12519,8 @@ impl<'s> From<Win32KeyedMutexAcquireReleaseInfoNv<'s>> for vks::VkWin32KeyedMute
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV,
-    release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
+    release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -12678,8 +12528,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     pub fn new() -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
         Win32KeyedMutexAcquireReleaseInfoNvBuilder {
             raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV::default(),
-            release_syncs: None,
             acquire_syncs: None,
+            release_syncs: None,
             _p: PhantomData,
         }
     }
@@ -12740,8 +12590,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     pub fn build(self) -> Win32KeyedMutexAcquireReleaseInfoNv<'b> {
         Win32KeyedMutexAcquireReleaseInfoNv {
             raw: self.raw,
-            release_syncs: self.release_syncs,
             acquire_syncs: self.acquire_syncs,
+            release_syncs: self.release_syncs,
             _p: PhantomData,
         }
     }
@@ -13127,9 +12977,6 @@ impl<'s> IndirectCommandsLayoutCreateInfoNvx<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn token_count(&self) {
-    }
-
     pub fn tokens(&self) {
     }
 
@@ -13223,9 +13070,6 @@ impl<'s> CmdProcessCommandsInfoNvx<'s> {
     }
 
     pub fn indirect_commands_layout(&self) {
-    }
-
-    pub fn indirect_commands_token_count(&self) {
     }
 
     pub fn indirect_commands_tokens(&self) {
@@ -13455,9 +13299,6 @@ impl<'s> ObjectTableCreateInfoNvx<'s> {
     }
 
     pub unsafe fn next(&self) {
-    }
-
-    pub fn object_count(&self) {
     }
 
     pub fn object_entry_types(&self) {
@@ -14699,9 +14540,6 @@ impl<'s> PresentRegionKhr<'s> {
         PresentRegionKhrBuilder::new()
     }
 
-    pub fn rectangle_count(&self) {
-    }
-
     pub fn rectangles(&self) {
     }
 
@@ -15902,9 +15740,6 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
     pub unsafe fn next(&self) {
     }
 
-    pub fn acquire_count(&self) {
-    }
-
     pub fn acquire_syncs(&self) {
     }
 
@@ -15912,9 +15747,6 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
     }
 
     pub fn acquire_timeouts(&self) {
-    }
-
-    pub fn release_count(&self) {
     }
 
     pub fn release_syncs(&self) {
@@ -16408,13 +16240,7 @@ impl<'s> D3d12FenceSubmitInfoKHR<'s> {
     pub unsafe fn next(&self) {
     }
 
-    pub fn wait_semaphore_values_count(&self) {
-    }
-
     pub fn wait_semaphore_values(&self) {
-    }
-
-    pub fn signal_semaphore_values_count(&self) {
     }
 
     pub fn signal_semaphore_values(&self) {
@@ -17515,9 +17341,6 @@ impl<'s> RenderPassMultiviewCreateInfoKhx<'s> {
     pub fn view_offsets(&self) {
     }
 
-    pub fn correlation_mask_count(&self) {
-    }
-
     pub fn correlation_masks(&self) {
     }
 
@@ -18084,9 +17907,6 @@ impl<'s> BindBufferMemoryDeviceGroupInfoKhx<'s> {
     pub unsafe fn next(&self) {
     }
 
-    pub fn device_index_count(&self) {
-    }
-
     pub fn device_indices(&self) {
     }
 
@@ -18128,12 +17948,10 @@ impl<'b> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn device_index_count<'m>(mut self, device_index_count: u32) -> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
-        self.raw.deviceIndexCount = device_index_count.into();
-        self
-    }
-
     pub fn device_indices<'m, 'a>(mut self, device_indices: &'a [u32]) -> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
+        assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as u32, 
+            "count inconsistency found when specifying `BindBufferMemoryDeviceGroupInfoKhx::device_indices`.");
+        self.raw.deviceIndexCount = device_indices.len() as u32;
         self.raw.pDeviceIndices = device_indices.as_ptr() as *const _;
         self
     }
@@ -18168,13 +17986,7 @@ impl<'s> BindImageMemoryDeviceGroupInfoKhx<'s> {
     pub unsafe fn next(&self) {
     }
 
-    pub fn device_index_count(&self) {
-    }
-
     pub fn device_indices(&self) {
-    }
-
-    pub fn s_fr_rect_count(&self) {
     }
 
     pub fn s_fr_rects(&self) {
@@ -18218,22 +18030,18 @@ impl<'b> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn device_index_count<'m>(mut self, device_index_count: u32) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
-        self.raw.deviceIndexCount = device_index_count.into();
-        self
-    }
-
     pub fn device_indices<'m, 'a>(mut self, device_indices: &'a [u32]) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+        assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as u32, 
+            "count inconsistency found when specifying `BindImageMemoryDeviceGroupInfoKhx::device_indices`.");
+        self.raw.deviceIndexCount = device_indices.len() as u32;
         self.raw.pDeviceIndices = device_indices.as_ptr() as *const _;
         self
     }
 
-    pub fn s_fr_rect_count<'m>(mut self, s_fr_rect_count: u32) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
-        self.raw.SFRRectCount = s_fr_rect_count.into();
-        self
-    }
-
     pub fn s_fr_rects<'m, 'a>(mut self, s_fr_rects: &'a [Rect2d]) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+        assert!(self.raw.SFRRectCount == 0 || self.raw.SFRRectCount == s_fr_rects.len() as u32, 
+            "count inconsistency found when specifying `BindImageMemoryDeviceGroupInfoKhx::s_fr_rects`.");
+        self.raw.SFRRectCount = s_fr_rects.len() as u32;
         self.raw.pSFRRects = s_fr_rects.as_ptr() as *const _;
         self
     }
@@ -18269,9 +18077,6 @@ impl<'s> DeviceGroupRenderPassBeginInfoKhx<'s> {
     }
 
     pub fn device_mask(&self) {
-    }
-
-    pub fn device_render_area_count(&self) {
     }
 
     pub fn device_render_areas(&self) {
@@ -18434,19 +18239,10 @@ impl<'s> DeviceGroupSubmitInfoKhx<'s> {
     pub unsafe fn next(&self) {
     }
 
-    pub fn wait_semaphore_count(&self) {
-    }
-
     pub fn wait_semaphore_device_indices(&self) {
     }
 
-    pub fn command_buffer_count(&self) {
-    }
-
     pub fn command_buffer_device_masks(&self) {
-    }
-
-    pub fn signal_semaphore_count(&self) {
     }
 
     pub fn signal_semaphore_device_indices(&self) {
@@ -19024,9 +18820,6 @@ impl<'s> DeviceGroupDeviceCreateInfoKhx<'s> {
     pub unsafe fn next(&self) {
     }
 
-    pub fn physical_device_count(&self) {
-    }
-
     pub fn physical_devices(&self) {
     }
 
@@ -19289,9 +19082,6 @@ impl<'s> DescriptorUpdateTemplateCreateInfoKhr<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn descriptor_update_entry_count(&self) {
-    }
-
     pub fn descriptor_update_entries(&self) {
     }
 
@@ -19350,12 +19140,10 @@ impl<'b> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn descriptor_update_entry_count<'m>(mut self, descriptor_update_entry_count: u32) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
-        self.raw.descriptorUpdateEntryCount = descriptor_update_entry_count.into();
-        self
-    }
-
     pub fn descriptor_update_entries<'m, 'a>(mut self, descriptor_update_entries: &'a [DescriptorUpdateTemplateEntryKhr]) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+        assert!(self.raw.descriptorUpdateEntryCount == 0 || self.raw.descriptorUpdateEntryCount == descriptor_update_entries.len() as u32, 
+            "count inconsistency found when specifying `DescriptorUpdateTemplateCreateInfoKhr::descriptor_update_entries`.");
+        self.raw.descriptorUpdateEntryCount = descriptor_update_entries.len() as u32;
         self.raw.pDescriptorUpdateEntries = descriptor_update_entries.as_ptr() as *const _;
         self
     }
@@ -20131,9 +19919,6 @@ impl<'s> PipelineViewportWScalingStateCreateInfoNv<'s> {
     pub fn viewport_wscaling_enable(&self) {
     }
 
-    pub fn viewport_count(&self) {
-    }
-
     pub fn viewport_wscalings(&self) {
     }
 
@@ -20299,9 +20084,6 @@ impl<'s> PipelineViewportSwizzleStateCreateInfoNv<'s> {
     pub fn flags(&self) {
     }
 
-    pub fn viewport_count(&self) {
-    }
-
     pub fn viewport_swizzles(&self) {
     }
 
@@ -20456,9 +20238,6 @@ impl<'s> PipelineDiscardRectangleStateCreateInfoExt<'s> {
     }
 
     pub fn discard_rectangle_mode(&self) {
-    }
-
-    pub fn discard_rectangle_count(&self) {
     }
 
     pub fn discard_rectangles(&self) {
@@ -21650,9 +21429,6 @@ impl<'s> PipelineCoverageModulationStateCreateInfoNv<'s> {
     }
 
     pub fn coverage_modulation_table_enable(&self) {
-    }
-
-    pub fn coverage_modulation_table_count(&self) {
     }
 
     pub fn coverage_modulation_table(&self) {
