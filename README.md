@@ -14,7 +14,7 @@
 * Useful documentation
 
 
-##### Other Vulkan libraries in Rust
+#### Other Vulkan libraries in Rust
 
 For a higher level, more opinionated Vulkan API (that does more for you) see
 the [Vulkano] project.

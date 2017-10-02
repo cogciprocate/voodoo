@@ -1,7 +1,7 @@
 //! Parses type definitions in `vk.xml` and outputs Voodoo equivalent types
 //! and wrappers.
 
-#![allow(unused_mut, unused_variables)]
+#![allow(unused_mut, unused_variables, dead_code)]
 
 
 extern crate xml;
@@ -116,7 +116,7 @@ fn replace_suffix(orig: &str) -> String {
     orig.to_string()
 }
 
-/// Converts Vulkan/C names into Voodoo/Rust conventions.
+/// Converts C/Vulkan names into Rust/Voodoo conventions.
 fn convert_type_name(orig_type: &str) -> String {
     match orig_type {
         "float" => "f32".to_string(),
@@ -226,6 +226,7 @@ enum TypeCategory {
     Other,
 }
 
+/// TODO: Make this a `::new`.
 fn category(s: &str) -> TypeCategory {
     match s {
         "struct" => TypeCategory::Struct,
@@ -423,7 +424,7 @@ impl Struct {
                 "returnedonly" => returnedonly |= attrib.value == "true",
                 "structextends" => structextends = Some(String::from(attrib.value.clone())),
                 "comment" => comment = attrib.value.clone(),
-                unknown @ _ => panic!("unknown struct attribute: {:?}={:?}",
+                unknown @ _ => panic!("unknown struct attribute: {:?}=\"{:?}\"",
                     unknown, attrib.value),
             }
         }
@@ -792,7 +793,7 @@ fn function_is_unsafe(m: &Member) -> bool {
 }
 
 /// Filters a function name. Similar to `::filter_member_name` except modifies
-/// the name of an output function rather than a source field.
+/// the name of a (visible) function rather than a field.
 fn filter_function_name(orig_name: &str) -> Option<String> {
     match orig_name {
         "type_" => Some("type_of".to_string()),
@@ -806,119 +807,249 @@ fn is_experimental(orig_name: &str) -> bool {
     orig_name.contains("KHX") || orig_name.contains("NVX")
 }
 
+/// The getter and setter type signatures of a struct member.
+struct MemberSig {
+    // Untamable:
+    arg_lifetime: &'static str,
+    unsafe_to_set: bool,
+    arg_is_slice: bool,
+    arg_is_struct: bool,
+    convert_arg: bool,
+    convert_arg_twice: bool,
+    convert_to_bits: bool,
+    arg_type_sig: String,
+    where_clause: String,
+    fn_type_params: String,
+}
+
+impl MemberSig {
+    fn new(m: &Member, s: &Struct, structs: &HashMap<String, Struct>,
+            fn_name: &str, bldr_type_params: &str,) -> MemberSig {
+        let mut sig = MemberSig {
+            arg_lifetime: "'a",
+            unsafe_to_set: function_is_unsafe(&m),
+            arg_is_slice: arg_is_slice(m, &fn_name),
+            arg_is_struct: structs.contains_key(&m.voodoo_type),
+            convert_arg: false,
+            convert_arg_twice: false,
+            convert_to_bits: false,
+            arg_type_sig: String::new(),
+            where_clause: String::new(),
+            fn_type_params: "'m".to_string(),
+        };
+
+        // Type signature:
+        if let Some(ref size) = m.array_size {
+            sig.arg_type_sig.push_str("[");
+            sig.arg_type_sig.push_str(&m.voodoo_type);
+            sig.arg_type_sig.push_str("; ");
+            sig.arg_type_sig.push_str(size);
+            sig.arg_type_sig.push_str("]");
+        } else if m.voodoo_type == "i8" {
+            assert!(s.special_field(&m.voodoo_name).is_some());
+            sig.convert_arg = true;
+            sig.fn_type_params.push_str(", ");
+            sig.fn_type_params.push_str(sig.arg_lifetime);
+            sig.fn_type_params.push_str(", T");
+            sig.arg_type_sig.push_str("T");
+            if m.is_ptr {
+                assert!(bldr_type_params.contains("'b"));
+                sig.where_clause = format!(" where {a}: 'b, T: Into<CharStr<{a}>>", a=sig.arg_lifetime);
+            } else if m.is_ptr_ptr {
+                assert!(bldr_type_params.contains("'b"));
+                sig.where_clause = format!(" where {a}: 'b, T: Into<CharStrs<{a}>>", a=sig.arg_lifetime);
+            }
+        } else if m.voodoo_type == "u32" && m.orig_name.contains("Version") {
+            sig.convert_arg = true;
+            sig.convert_arg_twice = true;
+            sig.fn_type_params.push_str(", T");
+            sig.arg_type_sig.push_str("T");
+            sig.where_clause = format!(" where T: Into<Version>");
+        } else if m.voodoo_type.contains("Flags") {
+            if m.voodoo_type == "PipelineStageFlags" {
+                if !m.is_ptr {
+                    sig.convert_to_bits = true;
+                } else {
+                    sig.fn_type_params.push_str(", ");
+                    sig.fn_type_params.push_str(sig.arg_lifetime);
+                    sig.arg_type_sig.push_str("&");
+                    sig.arg_type_sig.push_str(sig.arg_lifetime);
+                    sig.arg_type_sig.push_str(" ");
+                }
+            } else {
+                sig.convert_to_bits = true;
+            }
+            sig.arg_type_sig.push_str(&m.voodoo_type);
+        } else if sig.arg_is_slice {
+            sig.fn_type_params.push_str(", ");
+            sig.fn_type_params.push_str(sig.arg_lifetime);
+            sig.arg_type_sig.push_str("&");
+            sig.arg_type_sig.push_str(sig.arg_lifetime);
+            sig.arg_type_sig.push_str(" ");
+            assert!(!m.is_const_const);
+            if !m.is_const {
+                sig.arg_type_sig.push_str("mut ");
+            }
+            sig.arg_type_sig.push_str("[");
+            sig.arg_type_sig.push_str(&m.voodoo_type);
+            sig.arg_type_sig.push_str("]");
+            if m.is_handle_type {
+                assert!(bldr_type_params.contains("'b"));
+                sig.where_clause = format!(" where {a}: 'b", a=sig.arg_lifetime);
+            }
+        } else if m.is_ptr && sig.unsafe_to_set {
+            if m.is_const {
+                sig.arg_type_sig.push_str("*const ");
+            } else {
+                sig.arg_type_sig.push_str("*mut ");
+            }
+            sig.arg_type_sig.push_str(&m.voodoo_type);
+        } else {
+            if m.is_ptr || m.is_handle_type {
+                sig.fn_type_params.push_str(", ");
+                sig.fn_type_params.push_str(sig.arg_lifetime);
+                sig.arg_type_sig.push_str("&");
+                sig.arg_type_sig.push_str(sig.arg_lifetime);
+                sig.arg_type_sig.push_str(" ");
+            }
+            sig.arg_type_sig.push_str(&m.voodoo_type);
+            if !m.is_handle_type {
+                if m.orig_name != "pSampleMask" &&
+                    m.orig_name != "pCoverageModulationTable" {
+                    sig.convert_arg = true;
+                }
+            }
+        }
+
+        sig
+    }
+}
+
+fn arg_is_slice(m: &Member, fn_name: &str) -> bool {
+    m.is_ptr && (fn_name.ends_with("s") || fn_name == "code" || fn_name == "coverage_modulation_table")
+}
+
 /// Writes a setter function to the output buffer.
-fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_params: &str,
-        structs: &HashMap<String, Struct>) -> io::Result<()> {
+fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_params: &str,
+        structs: &HashMap<String, Struct>, is_for_builder: bool) -> io::Result<()> {
     let t = INDENT;
+    // Skip excluded members and "Count" members that have associated
+    // pointer members (stuff that gets merged into a slice).
     if member_is_excluded(&m.orig_name) { return Ok(()); }
     if m.is_ptr_count { return Ok(()); }
-    let fn_is_unsafe = function_is_unsafe(&m);
-    let unsafe_str = if fn_is_unsafe { " unsafe" } else { "" };
-    let filtered_fn_name = filter_function_name(&m.orig_name);
-    let fn_name = match filtered_fn_name {
-        Some(ref n) => n.as_str(),
-        None => m.voodoo_name.as_str(),
+
+    // let fn_is_unsafe = function_is_unsafe(&m);
+
+    // The function name, blemishes removed:
+    let fn_name = match filter_function_name(&m.orig_name) {
+        Some(filtered_name) => filtered_name,
+        None => m.voodoo_name.clone(),
     };
 
-    let arg_lifetime = "'a";
-    let mut arg_is_slice = false;
-    let mut arg_is_struct = structs.contains_key(&m.voodoo_type);
-    let mut convert_arg = false;
-    let mut double_convert_arg = false;
-    let mut convert_to_bits = false;
-    let mut arg_type_sig = String::new();
-    let mut where_clause = String::new();
-    let mut fn_type_params = "'m".to_string();
+    // let arg_lifetime = "'a";
+    // // let mut arg_is_slice = false;
+    // let mut arg_is_slice = arg_is_slice(m, &fn_name);
+    // let mut arg_is_struct = structs.contains_key(&m.voodoo_type);
+    // let mut convert_arg = false;
+    // let mut convert_arg_twice = false;
+    // let mut convert_to_bits = false;
+    // let mut arg_type_sig = String::new();
+    // let mut where_clause = String::new();
+    // let mut fn_type_params = "'m".to_string();
+    let mut sig = MemberSig::new(m, s, structs, &fn_name, bldr_type_params);
 
-    // Type signature:
-    if let Some(ref size) = m.array_size {
-        arg_type_sig.push_str("[");
-        arg_type_sig.push_str(&m.voodoo_type);
-        arg_type_sig.push_str("; ");
-        arg_type_sig.push_str(size);
-        arg_type_sig.push_str("]");
-    } else if m.voodoo_type == "i8" {
-        assert!(s.special_field(&m.voodoo_name).is_some());
-        convert_arg = true;
-        fn_type_params.push_str(", ");
-        fn_type_params.push_str(arg_lifetime);
-        fn_type_params.push_str(", T");
-        arg_type_sig.push_str("T");
-        if m.is_ptr {
-            assert!(bldr_type_params.contains("'b"));
-            where_clause = format!(" where {a}: 'b, T: Into<CharStr<{a}>>", a=arg_lifetime);
-        } else if m.is_ptr_ptr {
-            assert!(bldr_type_params.contains("'b"));
-            where_clause = format!(" where {a}: 'b, T: Into<CharStrs<{a}>>", a=arg_lifetime);
-        }
-    } else if m.voodoo_type == "u32" && m.orig_name.contains("Version") {
-        convert_arg = true;
-        double_convert_arg = true;
-        fn_type_params.push_str(", T");
-        arg_type_sig.push_str("T");
-        where_clause = format!(" where T: Into<Version>");
-    } else if m.voodoo_type.contains("Flags") {
-        if m.voodoo_type == "PipelineStageFlags" {
-            if !m.is_ptr {
-                convert_to_bits = true;
-            } else {
-                fn_type_params.push_str(", ");
-                fn_type_params.push_str(arg_lifetime);
-                arg_type_sig.push_str("&");
-                arg_type_sig.push_str(arg_lifetime);
-                arg_type_sig.push_str(" ");
-            }
-        } else {
-            convert_to_bits = true;
-        }
-        arg_type_sig.push_str(&m.voodoo_type);
-    } else if m.is_ptr && (fn_name.ends_with("s") ||
-            fn_name == "code" || fn_name == "coverage_modulation_table") {
-        arg_is_slice = true;
-        fn_type_params.push_str(", ");
-        fn_type_params.push_str(arg_lifetime);
-        arg_type_sig.push_str("&");
-        arg_type_sig.push_str(arg_lifetime);
-        arg_type_sig.push_str(" ");
-        assert!(!m.is_const_const);
-        if !m.is_const {
-            arg_type_sig.push_str("mut ");
-        }
-        arg_type_sig.push_str("[");
-        arg_type_sig.push_str(&m.voodoo_type);
-        arg_type_sig.push_str("]");
-        if m.is_handle_type {
-            assert!(bldr_type_params.contains("'b"));
-            where_clause = format!(" where {a}: 'b", a=arg_lifetime);
-        }
-    } else if m.is_ptr && fn_is_unsafe {
-        if m.is_const {
-            arg_type_sig.push_str("*const ");
-        } else {
-            arg_type_sig.push_str("*mut ");
-        }
-        arg_type_sig.push_str(&m.voodoo_type);
-    } else {
-        if m.is_ptr || m.is_handle_type {
-            fn_type_params.push_str(", ");
-            fn_type_params.push_str(arg_lifetime);
-            arg_type_sig.push_str("&");
-            arg_type_sig.push_str(arg_lifetime);
-            arg_type_sig.push_str(" ");
-        }
-        arg_type_sig.push_str(&m.voodoo_type);
-        if !m.is_handle_type {
-            if m.orig_name != "pSampleMask" &&
-                m.orig_name != "pCoverageModulationTable" {
-                convert_arg = true;
-            }
-        }
-    }
+
+
+    // // Type signature:
+    // if let Some(ref size) = m.array_size {
+    //     sig.arg_type_sig.push_str("[");
+    //     sig.arg_type_sig.push_str(&m.voodoo_type);
+    //     sig.arg_type_sig.push_str("; ");
+    //     sig.arg_type_sig.push_str(size);
+    //     sig.arg_type_sig.push_str("]");
+    // } else if m.voodoo_type == "i8" {
+    //     assert!(s.special_field(&m.voodoo_name).is_some());
+    //     sig.convert_arg = true;
+    //     sig.fn_type_params.push_str(", ");
+    //     sig.fn_type_params.push_str(sig.arg_lifetime);
+    //     sig.fn_type_params.push_str(", T");
+    //     sig.arg_type_sig.push_str("T");
+    //     if m.is_ptr {
+    //         assert!(bldr_type_params.contains("'b"));
+    //         sig.where_clause = format!(" where {a}: 'b, T: Into<CharStr<{a}>>", a=sig.arg_lifetime);
+    //     } else if m.is_ptr_ptr {
+    //         assert!(bldr_type_params.contains("'b"));
+    //         sig.where_clause = format!(" where {a}: 'b, T: Into<CharStrs<{a}>>", a=sig.arg_lifetime);
+    //     }
+    // } else if m.voodoo_type == "u32" && m.orig_name.contains("Version") {
+    //     sig.convert_arg = true;
+    //     sig.convert_arg_twice = true;
+    //     sig.fn_type_params.push_str(", T");
+    //     sig.arg_type_sig.push_str("T");
+    //     sig.where_clause = format!(" where T: Into<Version>");
+    // } else if m.voodoo_type.contains("Flags") {
+    //     if m.voodoo_type == "PipelineStageFlags" {
+    //         if !m.is_ptr {
+    //             sig.convert_to_bits = true;
+    //         } else {
+    //             sig.fn_type_params.push_str(", ");
+    //             sig.fn_type_params.push_str(sig.arg_lifetime);
+    //             sig.arg_type_sig.push_str("&");
+    //             sig.arg_type_sig.push_str(sig.arg_lifetime);
+    //             sig.arg_type_sig.push_str(" ");
+    //         }
+    //     } else {
+    //         sig.convert_to_bits = true;
+    //     }
+    //     sig.arg_type_sig.push_str(&m.voodoo_type);
+    // } else if sig.arg_is_slice {
+    //     sig.fn_type_params.push_str(", ");
+    //     sig.fn_type_params.push_str(sig.arg_lifetime);
+    //     sig.arg_type_sig.push_str("&");
+    //     sig.arg_type_sig.push_str(sig.arg_lifetime);
+    //     sig.arg_type_sig.push_str(" ");
+    //     assert!(!m.is_const_const);
+    //     if !m.is_const {
+    //         sig.arg_type_sig.push_str("mut ");
+    //     }
+    //     sig.arg_type_sig.push_str("[");
+    //     sig.arg_type_sig.push_str(&m.voodoo_type);
+    //     sig.arg_type_sig.push_str("]");
+    //     if m.is_handle_type {
+    //         assert!(bldr_type_params.contains("'b"));
+    //         sig.where_clause = format!(" where {a}: 'b", a=sig.arg_lifetime);
+    //     }
+    // } else if m.is_ptr && fn_is_unsafe {
+    //     if m.is_const {
+    //         sig.arg_type_sig.push_str("*const ");
+    //     } else {
+    //         sig.arg_type_sig.push_str("*mut ");
+    //     }
+    //     sig.arg_type_sig.push_str(&m.voodoo_type);
+    // } else {
+    //     if m.is_ptr || m.is_handle_type {
+    //         sig.fn_type_params.push_str(", ");
+    //         sig.fn_type_params.push_str(sig.arg_lifetime);
+    //         sig.arg_type_sig.push_str("&");
+    //         sig.arg_type_sig.push_str(sig.arg_lifetime);
+    //         sig.arg_type_sig.push_str(" ");
+    //     }
+    //     sig.arg_type_sig.push_str(&m.voodoo_type);
+    //     if !m.is_handle_type {
+    //         if m.orig_name != "pSampleMask" &&
+    //             m.orig_name != "pCoverageModulationTable" {
+    //             sig.convert_arg = true;
+    //         }
+    //     }
+    // }
+
+    // Are you wearing a seatbelt?
+    let unsafe_str = if sig.unsafe_to_set { " unsafe" } else { "" };
 
     // Function signature:
     writeln!(o, "{t}pub{} fn {}<{}>(mut self, {}: {}) -> {}Builder{}{} {{",
-        unsafe_str, fn_name, fn_type_params, fn_name, arg_type_sig,
-        s.voodoo_name, bldr_type_params, where_clause, t=t)?;
+        unsafe_str, fn_name, sig.fn_type_params, fn_name, sig.arg_type_sig,
+        s.voodoo_name, bldr_type_params, sig.where_clause, t=t)?;
 
     // if let Some(ref count_orig_name) = m.ptr_count_member_orig_name {
     //     writeln!(o, "{t}{t}assert!(self.raw.{c} == 0 || self.raw.{c} == {f}.len() as u32, \n\
@@ -940,13 +1071,13 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
 
     if s.special_field(&m.voodoo_name).is_some() {
         write!(o, "{t}{t}self.{} = Some({}", m.voodoo_name, fn_name, t=t)?;
-        if arg_is_slice {
+        if sig.arg_is_slice {
             if m.is_handle_type {
                 write!(o, ".iter().map(|h| h.handle()).collect()")?;
-            } else if arg_is_struct {
+            } else if sig.arg_is_struct {
                 write!(o, ".iter().map(|h| h.raw).collect()")?;
             }
-        } else if convert_arg {
+        } else if sig.convert_arg {
             write!(o, ".into()")?;
         }
         writeln!(o, ");")?;
@@ -959,9 +1090,9 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
     } else {
         set_counts(o, "")?;
         write!(o, "{t}{t}self.raw.{} = ", m.orig_name, t=t)?;
-        if arg_is_struct {
+        if sig.arg_is_struct {
             if m.is_ptr {
-                if arg_is_slice && structs[&m.voodoo_type].is_repr_c() {
+                if sig.arg_is_slice && structs[&m.voodoo_type].is_repr_c() {
                     if m.is_const {
                         write!(o, "{}.as_ptr() as *const _", fn_name)?;
                     } else {
@@ -983,10 +1114,10 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
             }
         } else {
             if m.is_handle_type {
-                if arg_is_slice {
+                if sig.arg_is_slice {
                     assert!(s.special_fields.contains_key(&m.voodoo_name),
                         "\"{}\" is lacking a special field for {{ {}: {} }}",
-                        s.voodoo_name, fn_name, arg_type_sig);
+                        s.voodoo_name, fn_name, sig.arg_type_sig);
                     write!(o, "{}", fn_name)?;
                 } else {
                     if m.is_ptr {
@@ -996,17 +1127,17 @@ fn write_builder_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_ty
                 }
             } else if m.voodoo_type.as_str() == "bool" {
                 write!(o, "{} as u32", fn_name)?;
-            } else if convert_to_bits {
+            } else if sig.convert_to_bits {
                 write!(o, "{}.bits()", fn_name)?;
-            } else if arg_is_slice {
+            } else if sig.arg_is_slice {
                 if m.is_const {
                     write!(o, "{}.as_ptr() as *const _", fn_name)?;
                 } else {
                     write!(o, "{}.as_mut_ptr() as *mut _", fn_name)?;
                 }
-            } else if convert_arg {
+            } else if sig.convert_arg {
                 write!(o, "{}.into()", fn_name)?;
-                if double_convert_arg {
+                if sig.convert_arg_twice {
                     write!(o, ".into()")?;
                 }
             } else if m.voodoo_type == "PipelineStageFlags" && m.is_ptr {
@@ -1195,7 +1326,7 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
             write!(o, "{t}}}\n\n", t=t)?;
 
             for m in &s.members {
-                write_builder_set_fn(o, s, m, bldr_type_param, &structs)?
+                write_set_fn(o, s, m, bldr_type_param, &structs, true)?
             }
 
             // BUILD:

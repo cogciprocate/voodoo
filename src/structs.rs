@@ -744,8 +744,8 @@ impl From<LayerProperties> for vks::VkLayerProperties {
 #[derive(Debug, Clone, Default)]
 pub struct ApplicationInfo<'s> {
     raw: vks::VkApplicationInfo,
-    engine_name: Option<CharStr<'s>>,
     application_name: Option<CharStr<'s>>,
+    engine_name: Option<CharStr<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -791,8 +791,8 @@ impl<'s> From<ApplicationInfo<'s>> for vks::VkApplicationInfo {
 #[derive(Debug, Clone, Default)]
 pub struct ApplicationInfoBuilder<'b> {
     raw: vks::VkApplicationInfo,
-    engine_name: Option<CharStr<'b>>,
     application_name: Option<CharStr<'b>>,
+    engine_name: Option<CharStr<'b>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -800,8 +800,8 @@ impl<'b> ApplicationInfoBuilder<'b> {
     pub fn new() -> ApplicationInfoBuilder<'b> {
         ApplicationInfoBuilder {
             raw: vks::VkApplicationInfo::default(),
-            engine_name: None,
             application_name: None,
+            engine_name: None,
             _p: PhantomData,
         }
     }
@@ -847,8 +847,8 @@ impl<'b> ApplicationInfoBuilder<'b> {
     pub fn build(self) -> ApplicationInfo<'b> {
         ApplicationInfo {
             raw: self.raw,
-            engine_name: self.engine_name,
             application_name: self.application_name,
+            engine_name: self.engine_name,
             _p: PhantomData,
         }
     }
@@ -1182,8 +1182,8 @@ impl<'b> DeviceCreateInfoBuilder<'b> {
 #[derive(Debug, Clone, Default)]
 pub struct InstanceCreateInfo<'s> {
     raw: vks::VkInstanceCreateInfo,
-    enabled_extension_names: Option<CharStrs<'s>>,
     enabled_layer_names: Option<CharStrs<'s>>,
+    enabled_extension_names: Option<CharStrs<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -1226,8 +1226,8 @@ impl<'s> From<InstanceCreateInfo<'s>> for vks::VkInstanceCreateInfo {
 #[derive(Debug, Clone, Default)]
 pub struct InstanceCreateInfoBuilder<'b> {
     raw: vks::VkInstanceCreateInfo,
-    enabled_extension_names: Option<CharStrs<'b>>,
     enabled_layer_names: Option<CharStrs<'b>>,
+    enabled_extension_names: Option<CharStrs<'b>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -1235,8 +1235,8 @@ impl<'b> InstanceCreateInfoBuilder<'b> {
     pub fn new() -> InstanceCreateInfoBuilder<'b> {
         InstanceCreateInfoBuilder {
             raw: vks::VkInstanceCreateInfo::default(),
-            enabled_extension_names: None,
             enabled_layer_names: None,
+            enabled_extension_names: None,
             _p: PhantomData,
         }
     }
@@ -1283,8 +1283,8 @@ impl<'b> InstanceCreateInfoBuilder<'b> {
     pub fn build(self) -> InstanceCreateInfo<'b> {
         InstanceCreateInfo {
             raw: self.raw,
-            enabled_extension_names: self.enabled_extension_names,
             enabled_layer_names: self.enabled_layer_names,
+            enabled_extension_names: self.enabled_extension_names,
             _p: PhantomData,
         }
     }
@@ -9784,8 +9784,8 @@ impl DispatchIndirectCommandBuilder {
 #[derive(Debug, Clone, Default)]
 pub struct SubmitInfo<'s> {
     raw: vks::VkSubmitInfo,
-    wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     command_buffers: Option<SmallVec<[vks::VkCommandBuffer; 8]>>,
+    wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     signal_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     _p: PhantomData<&'s ()>,
 }
@@ -9829,8 +9829,8 @@ impl<'s> From<SubmitInfo<'s>> for vks::VkSubmitInfo {
 #[derive(Debug, Clone, Default)]
 pub struct SubmitInfoBuilder<'b> {
     raw: vks::VkSubmitInfo,
-    wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     command_buffers: Option<SmallVec<[vks::VkCommandBuffer; 8]>>,
+    wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     signal_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     _p: PhantomData<&'b ()>,
 }
@@ -9839,8 +9839,8 @@ impl<'b> SubmitInfoBuilder<'b> {
     pub fn new() -> SubmitInfoBuilder<'b> {
         SubmitInfoBuilder {
             raw: vks::VkSubmitInfo::default(),
-            wait_semaphores: None,
             command_buffers: None,
+            wait_semaphores: None,
             signal_semaphores: None,
             _p: PhantomData,
         }
@@ -9895,8 +9895,8 @@ impl<'b> SubmitInfoBuilder<'b> {
     pub fn build(self) -> SubmitInfo<'b> {
         SubmitInfo {
             raw: self.raw,
-            wait_semaphores: self.wait_semaphores,
             command_buffers: self.command_buffers,
+            wait_semaphores: self.wait_semaphores,
             signal_semaphores: self.signal_semaphores,
             _p: PhantomData,
         }
@@ -12472,8 +12472,8 @@ impl<'b> ExportMemoryWin32HandleInfoNvBuilder<'b> {
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoNv<'s> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV,
-    acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
+    acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -12519,8 +12519,8 @@ impl<'s> From<Win32KeyedMutexAcquireReleaseInfoNv<'s>> for vks::VkWin32KeyedMute
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV,
-    acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
+    acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -12528,8 +12528,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     pub fn new() -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
         Win32KeyedMutexAcquireReleaseInfoNvBuilder {
             raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV::default(),
-            acquire_syncs: None,
             release_syncs: None,
+            acquire_syncs: None,
             _p: PhantomData,
         }
     }
@@ -12590,8 +12590,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     pub fn build(self) -> Win32KeyedMutexAcquireReleaseInfoNv<'b> {
         Win32KeyedMutexAcquireReleaseInfoNv {
             raw: self.raw,
-            acquire_syncs: self.acquire_syncs,
             release_syncs: self.release_syncs,
+            acquire_syncs: self.acquire_syncs,
             _p: PhantomData,
         }
     }
