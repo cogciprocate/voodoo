@@ -861,7 +861,7 @@ struct MemberSig {
 
 impl MemberSig {
     fn new(m: &Member, s: &Struct, structs: &HashMap<String, Struct>,
-            bldr_type_params: &str,) -> MemberSig {
+            impl_type_param: &str,) -> MemberSig {
         // The function name, blemishes removed:
         let fn_name = match filter_function_name(&m.orig_name) {
             Some(filtered_name) => filtered_name,
@@ -923,13 +923,15 @@ impl MemberSig {
             sig.set_fn_type_params.push_str(", T");
             sig.arg_type.push_str("T");
             if m.is_ptr {
-                assert!(bldr_type_params.contains("'b"));
-                sig.where_clause = format!(" where {a}: 'b, T: Into<CharStr<{a}>>", a=sig.arg_lifetime);
+                // assert!(impl_type_param.contains("'b"));
+                sig.where_clause = format!("where {a}: {i}, T: Into<CharStr<{a}>>",
+                    a=sig.arg_lifetime, i=impl_type_param);
                 sig.return_type.push_str("&'a CStr");
                 sig.convert_return_to_c_str = true;
             } else if m.is_ptr_ptr {
-                assert!(bldr_type_params.contains("'b"));
-                sig.where_clause = format!(" where {a}: 'b, T: Into<CharStrs<{a}>>", a=sig.arg_lifetime);
+                // assert!(impl_type_param.contains("'b"));
+                sig.where_clause = format!("where {a}: {i}, T: Into<CharStrs<{a}>>",
+                    a=sig.arg_lifetime, i=impl_type_param);
                 sig.return_type.push_str("&'a [*const c_char]");
                 sig.convert_return_to_slice = true;
             }
@@ -939,7 +941,7 @@ impl MemberSig {
             sig.convert_return = true;
             sig.set_fn_type_params.push_str(", T");
             sig.arg_type.push_str("T");
-            sig.where_clause = format!(" where T: Into<Version>");
+            sig.where_clause = format!("where T: Into<Version>");
             sig.return_type.push_str("Version");
         } else if m.voodoo_type.contains("Flags") {
             if m.voodoo_type == "PipelineStageFlags" {
@@ -975,8 +977,8 @@ impl MemberSig {
                 sig.arg_type.push_str("&");
                 sig.arg_type.push_str(sig.arg_lifetime);
                 sig.arg_type.push_str(" ");
-                assert!(bldr_type_params.contains("'b"));
-                sig.where_clause = format!(" where {a}: 'b", a=sig.arg_lifetime);
+                // assert!(impl_type_param.contains("'b"));
+                sig.where_clause = format!("where {a}: {i}", a=sig.arg_lifetime, i=impl_type_param);
             }
             sig.arg_type.push_str(&m.voodoo_type);
             sig.arg_type.push_str("]");
@@ -1034,32 +1036,36 @@ impl MemberSig {
 
 
 /// Writes a setter function to the output buffer.
-fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_params: &str,
-        structs: &HashMap<String, Struct>, is_for_builder: bool) -> io::Result<()> {
+fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param: &str,
+        impl_type_param_block: &str, structs: &HashMap<String, Struct>, is_for_builder: bool)
+        -> io::Result<()> {
     let t = INDENT;
     // Skip excluded members and "...Count" members that have associated
     // pointer members (stuff that gets merged into a slice).
     if member_is_excluded(&m.orig_name) { return Ok(()); }
+    // Skip "Count" members that are associated with a pointer field.
     if m.is_ptr_count { return Ok(()); }
-
-    // let fn_is_unsafe = function_is_unsafe(&m);
-
-    // // The function name, blemishes removed:
-    // let fn_name = match filter_function_name(&m.orig_name) {
-    //     Some(filtered_name) => filtered_name,
-    //     None => m.voodoo_name.clone(),
-    // };
+    // Skip setters on structs that are only returned from API calls and not
+    // use to create or sestanything.
+    if !is_for_builder && s.returnedonly { return Ok(()); }
 
     // Signature and all kinds of other stuff:
-    let sig = MemberSig::new(m, s, structs, bldr_type_params);
+    let sig = MemberSig::new(m, s, structs, impl_type_param);
 
-    // Are you wearing a seatbelt?
     let unsafe_str = if sig.unsafe_to_set { " unsafe" } else { "" };
+    let set_pre = if is_for_builder { "" } else { "set_" };
 
     // Function signature:
-    writeln!(o, "{t}pub{} fn {}<{}>(mut self, {}: {}) -> {}Builder{}{} {{",
-        unsafe_str, sig.fn_name, sig.set_fn_type_params, sig.fn_name, sig.arg_type,
-        s.voodoo_name, bldr_type_params, sig.where_clause, t=t)?;
+    write!(o, "{t}pub{} fn {}{}<{}>(mut self, {}: {})",
+        unsafe_str, set_pre, sig.fn_name, sig.set_fn_type_params, sig.fn_name, sig.arg_type,
+        /*s.voodoo_name, type_params, sig.where_clause,*/ t=t)?;
+    if is_for_builder {
+        write!(o, " -> {}Builder{}", s.voodoo_name, impl_type_param_block, /*sig.where_clause*/)?;
+    }
+    if !sig.where_clause.is_empty() {
+        write!(o, "\n{t}{t}{t}{}", sig.where_clause, t=t)?;
+    }
+    writeln!(o, " {{")?;
 
     let set_counts = |o: &mut BufWriter<File>, extra_indent: &str| -> io::Result<()> {
         if let Some(ref count_orig_name) = m.ptr_count_member_orig_name {
@@ -1108,11 +1114,23 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_param
                 }
             } else {
                 if let Some(ref len) = m.array_len {
-                    write!(o, "[")?;
-                    for idx in 0..len.parse::<u32>().unwrap() {
-                        write!(o, "{}[{}].raw, ", sig.fn_name, idx)?;
+                    if sig.arg_is_repr_c {
+
                     }
-                    write!(o, "]")?;
+                    match len.parse::<usize>() {
+                        Ok(len) => {
+                            // Numeric length:
+                            write!(o, "[")?;
+                            for idx in 0..len {
+                                write!(o, "{}[{}].raw, ", sig.fn_name, idx)?;
+                            }
+                            write!(o, "]")?;
+                        },
+                        Err(_) => {
+                            // Constant (macro) length:
+                            write!(o, "{}{} as usize ", ORIG_PRE, len)?
+                        },
+                    }
                 } else {
                     write!(o, "{}.raw", sig.fn_name)?;
                 }
@@ -1153,7 +1171,9 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_param
         }
         writeln!(o, ";")?;
     }
-    writeln!(o, "{t}{t}self", t=t)?;
+    if is_for_builder {
+        writeln!(o, "{t}{t}self", t=t)?;
+    }
 
     write!(o, "{t}}}\n\n", t=t)?;
 
@@ -1162,11 +1182,12 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_param
 
 
 /// Writes a getter function to the output buffer.
-fn write_get_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_params: &str,
-        structs: &HashMap<String, Struct>, is_for_builder: bool) -> io::Result<()> {
+fn write_get_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param: &str,
+        impl_type_param_block: &str, structs: &HashMap<String, Struct>, is_for_builder: bool)
+        -> io::Result<()> {
     let t = INDENT;
     if member_is_excluded(&m.orig_name) || m.is_ptr_count { return Ok(()); }
-    let sig = MemberSig::new(m, s, structs, bldr_type_params);
+    let sig = MemberSig::new(m, s, structs, impl_type_param);
 
     let fn_name = if m.is_handle_type {
         format!("{}_handle", sig.fn_name)
@@ -1186,8 +1207,10 @@ fn write_get_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_param
         sig.return_type
     };
 
-    writeln!(o, "{t}pub fn {}<{}>(&'a self) -> {} {{", fn_name, sig.get_fn_type_params,
-        return_type, t=t)?;
+    let get_pre = if is_for_builder { "get_" } else { "" };
+
+    writeln!(o, "{t}pub fn {}{}<{}>(&'a self) -> {} {{", get_pre, fn_name,
+        sig.get_fn_type_params, return_type, t=t)?;
 
     if sig.arg_is_struct {
         if m.is_ptr {
@@ -1370,13 +1393,24 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
             writeln!(o, "#[cfg(feature = \"experimental\")]")?;
         }
 
-        let struct_type_param = if s.contains_ptr { "<'s>" } else { "" };
-        let bldr_type_param = if s.contains_ptr { "<'b>" } else { "" };
-        write!(o, "impl{} {}{}", struct_type_param, s.voodoo_name, struct_type_param)?;
+        let struct_type_param = if s.contains_ptr { "'s" } else { "" };
+        let struct_type_param_block = if !struct_type_param.is_empty() {
+            format!("<{}>", struct_type_param)
+        } else {
+            "".to_string()
+        };
+
+        let bldr_type_param = if s.contains_ptr { "'b" } else { "" };
+        let bldr_type_param_block = if !bldr_type_param.is_empty() {
+            format!("<{}>", bldr_type_param)
+        } else {
+            "".to_string()
+        };
+        write!(o, "impl{} {}{}", struct_type_param_block, s.voodoo_name, struct_type_param_block)?;
         writeln!(o, " {{")?;
 
         if !s.returnedonly {
-            write!(o, "{t}pub fn builder{tp}() -> {}Builder{tp}", s.voodoo_name, tp=bldr_type_param, t=t)?;
+            write!(o, "{t}pub fn builder{tp}() -> {}Builder{tp}", s.voodoo_name, tp=bldr_type_param_block, t=t)?;
             writeln!(o, " {{")?;
             writeln!(o, "{t}{t}{}Builder::new()", s.voodoo_name, t=t)?;
             write!(o, "{t}}}\n\n", t=t)?;
@@ -1384,7 +1418,12 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
 
         for m in &s.members {
             // Write getter function:
-            write_get_fn(o, s, m, bldr_type_param, structs, false)?;
+            write_get_fn(o, s, m, struct_type_param, &struct_type_param_block, structs, false)?;
+        }
+
+        for m in &s.members {
+            // Write setter function:
+            write_set_fn(o, s, m, struct_type_param, &struct_type_param_block, structs, false)?;
         }
 
         writeln!(o, "{t}pub fn raw(&self) -> &{}{} {{", ORIG_PRE, s.orig_name, t=t)?;
@@ -1398,10 +1437,10 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
         if is_experimental(&s.orig_name) {
             writeln!(o, "#[cfg(feature = \"experimental\")]")?;
         }
-        write!(o, "impl{} From<{}{}> for {}{}", struct_type_param, s.voodoo_name, struct_type_param,
+        write!(o, "impl{} From<{}{}> for {}{}", struct_type_param_block, s.voodoo_name, struct_type_param_block,
             ORIG_PRE, s.orig_name,)?;
         writeln!(o, " {{")?;
-        writeln!(o, "{t}fn from(f: {}{}) -> {}{} {{", s.voodoo_name, struct_type_param,
+        writeln!(o, "{t}fn from(f: {}{}) -> {}{} {{", s.voodoo_name, struct_type_param_block,
             ORIG_PRE, s.orig_name, t=t)?;
         writeln!(o, "{t}{t}f.raw", t=t)?;
         writeln!(o, "{t}}}", t=t)?;
@@ -1410,11 +1449,11 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
         if is_experimental(&s.orig_name) {
             writeln!(o, "#[cfg(feature = \"experimental\")]")?;
         }
-        write!(o, "impl{} From<{}{}> for {}{}", struct_type_param, ORIG_PRE, s.orig_name,
-            s.voodoo_name, struct_type_param)?;
+        write!(o, "impl{} From<{}{}> for {}{}", struct_type_param_block, ORIG_PRE, s.orig_name,
+            s.voodoo_name, struct_type_param_block)?;
         writeln!(o, " {{")?;
         writeln!(o, "{t}fn from(f: {}{}) -> {}{} {{", ORIG_PRE, s.orig_name,
-            s.voodoo_name, struct_type_param, t=t)?;
+            s.voodoo_name, struct_type_param_block, t=t)?;
         write!(o, "{t}{t}{} {{ raw: f, ", s.voodoo_name, t=t)?;
         for (_, field) in &s.special_fields {
             write!(o, "{}: {}, ", field.name, field.default_val)?;
@@ -1437,7 +1476,7 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
             }
             writeln!(o, "#[derive(Debug, Clone, Default)]")?;
             write!(o, "pub struct {}Builder", s.voodoo_name)?;
-            if s.contains_ptr { write!(o, "<'b>")?; }
+            if s.contains_ptr { write!(o, "{}", bldr_type_param_block)?; }
             writeln!(o, " {{")?;
 
             // Raw:
@@ -1459,11 +1498,10 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
                 writeln!(o, "#[cfg(feature = \"experimental\")]")?;
             }
 
-            // let bldr_type_param = if s.contains_ptr { "<'b>" } else { "" };
-            write!(o, "impl{} {}Builder{}", bldr_type_param, s.voodoo_name, bldr_type_param)?;
+            write!(o, "impl{} {}Builder{}", bldr_type_param_block, s.voodoo_name, bldr_type_param_block)?;
             writeln!(o, " {{")?;
             // NEW:
-            writeln!(o, "{t}pub fn new() -> {}Builder{} {{", s.voodoo_name, bldr_type_param, t=t)?;
+            writeln!(o, "{t}pub fn new() -> {}Builder{} {{", s.voodoo_name, bldr_type_param_block, t=t)?;
             writeln!(o, "{t}{t}{}Builder {{", s.voodoo_name, t=t)?;
             // Raw:
             writeln!(o, "{t}{t}{t}raw: {}{}::default(),", ORIG_PRE, s.orig_name, t=t)?;
@@ -1478,13 +1516,18 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
             writeln!(o, "{t}{t}}}", t=t)?;
             write!(o, "{t}}}\n\n", t=t)?;
 
+            // Write setter functions:
             for m in &s.members {
-                // Write setter function:
-                write_set_fn(o, s, m, bldr_type_param, &structs, true)?
+                write_set_fn(o, s, m, bldr_type_param, &bldr_type_param_block, &structs, true)?
+            }
+
+            // Write getter functions:
+            for m in &s.members {
+                write_get_fn(o, s, m, bldr_type_param, &bldr_type_param_block, &structs, true)?
             }
 
             // BUILD:
-            write!(o, "{t}pub fn build(self) -> {}{p}", s.voodoo_name, p=bldr_type_param, t=t)?;
+            write!(o, "{t}pub fn build(self) -> {}{p}", s.voodoo_name, p=bldr_type_param_block, t=t)?;
             writeln!(o," {{")?;
             writeln!(o, "{t}{t}{} {{", s.voodoo_name, t=t)?;
             // Raw:
