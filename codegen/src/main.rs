@@ -1054,10 +1054,11 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
 
     let unsafe_str = if sig.unsafe_to_set { " unsafe" } else { "" };
     let set_pre = if is_for_builder { "" } else { "set_" };
+    let self_arg_pre = if is_for_builder { "mut".to_string() } else { format!("&{} mut", impl_type_param) };
 
     // Function signature:
-    write!(o, "{t}pub{} fn {}{}<{}>(mut self, {}: {})",
-        unsafe_str, set_pre, sig.fn_name, sig.set_fn_type_params, sig.fn_name, sig.arg_type,
+    write!(o, "{t}pub{} fn {}{}<{}>({} self, {}: {})",
+        unsafe_str, set_pre, sig.fn_name, sig.set_fn_type_params, self_arg_pre, sig.fn_name, sig.arg_type,
         /*s.voodoo_name, type_params, sig.where_clause,*/ t=t)?;
     if is_for_builder {
         write!(o, " -> {}Builder{}", s.voodoo_name, impl_type_param_block, /*sig.where_clause*/)?;
