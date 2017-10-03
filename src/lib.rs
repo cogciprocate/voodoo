@@ -164,7 +164,7 @@ pub use loader::Loader;
 pub use error::{Error, Result};
 pub use version::Version;
 pub use instance::Instance;
-pub use physical_device::{PhysicalDevice, PhysicalDeviceFeatures};
+pub use physical_device::{PhysicalDevice};
 pub use device::Device;
 pub use surface::Surface;
 pub use queue::{queue_families, Queue};

@@ -172,80 +172,87 @@ impl PhysicalDevice {
 }
 
 
+// #[derive(Clone, Debug)]
+// #[repr(C)]
+// pub struct PhysicalDeviceFeatures {
+//     raw: vks::VkPhysicalDeviceFeatures,
+// }
 
-pub struct PhysicalDeviceFeatures {
-    raw: vks::VkPhysicalDeviceFeatures,
-}
+// impl PhysicalDeviceFeatures {
+//     pub fn new() -> PhysicalDeviceFeatures {
+//         PhysicalDeviceFeatures {
+//             raw: vks::VkPhysicalDeviceFeatures {
+//                 robustBufferAccess: vks::VK_FALSE,
+//                 fullDrawIndexUint32: vks::VK_FALSE,
+//                 imageCubeArray: vks::VK_FALSE,
+//                 independentBlend: vks::VK_FALSE,
+//                 geometryShader: vks::VK_FALSE,
+//                 tessellationShader: vks::VK_FALSE,
+//                 sampleRateShading: vks::VK_FALSE,
+//                 dualSrcBlend: vks::VK_FALSE,
+//                 logicOp: vks::VK_FALSE,
+//                 multiDrawIndirect: vks::VK_FALSE,
+//                 drawIndirectFirstInstance: vks::VK_FALSE,
+//                 depthClamp: vks::VK_FALSE,
+//                 depthBiasClamp: vks::VK_FALSE,
+//                 fillModeNonSolid: vks::VK_FALSE,
+//                 depthBounds: vks::VK_FALSE,
+//                 wideLines: vks::VK_FALSE,
+//                 largePoints: vks::VK_FALSE,
+//                 alphaToOne: vks::VK_FALSE,
+//                 multiViewport: vks::VK_FALSE,
+//                 samplerAnisotropy: vks::VK_FALSE,
+//                 textureCompressionETC2: vks::VK_FALSE,
+//                 textureCompressionASTC_LDR: vks::VK_FALSE,
+//                 textureCompressionBC: vks::VK_FALSE,
+//                 occlusionQueryPrecise: vks::VK_FALSE,
+//                 pipelineStatisticsQuery: vks::VK_FALSE,
+//                 vertexPipelineStoresAndAtomics: vks::VK_FALSE,
+//                 fragmentStoresAndAtomics: vks::VK_FALSE,
+//                 shaderTessellationAndGeometryPointSize: vks::VK_FALSE,
+//                 shaderImageGatherExtended: vks::VK_FALSE,
+//                 shaderStorageImageExtendedFormats: vks::VK_FALSE,
+//                 shaderStorageImageMultisample: vks::VK_FALSE,
+//                 shaderStorageImageReadWithoutFormat: vks::VK_FALSE,
+//                 shaderStorageImageWriteWithoutFormat: vks::VK_FALSE,
+//                 shaderUniformBufferArrayDynamicIndexing: vks::VK_FALSE,
+//                 shaderSampledImageArrayDynamicIndexing: vks::VK_FALSE,
+//                 shaderStorageBufferArrayDynamicIndexing: vks::VK_FALSE,
+//                 shaderStorageImageArrayDynamicIndexing: vks::VK_FALSE,
+//                 shaderClipDistance: vks::VK_FALSE,
+//                 shaderCullDistance: vks::VK_FALSE,
+//                 shaderFloat64: vks::VK_FALSE,
+//                 shaderInt64: vks::VK_FALSE,
+//                 shaderInt16: vks::VK_FALSE,
+//                 shaderResourceResidency: vks::VK_FALSE,
+//                 shaderResourceMinLod: vks::VK_FALSE,
+//                 sparseBinding: vks::VK_FALSE,
+//                 sparseResidencyBuffer: vks::VK_FALSE,
+//                 sparseResidencyImage2D: vks::VK_FALSE,
+//                 sparseResidencyImage3D: vks::VK_FALSE,
+//                 sparseResidency2Samples: vks::VK_FALSE,
+//                 sparseResidency4Samples: vks::VK_FALSE,
+//                 sparseResidency8Samples: vks::VK_FALSE,
+//                 sparseResidency16Samples: vks::VK_FALSE,
+//                 sparseResidencyAliased: vks::VK_FALSE,
+//                 variableMultisampleRate: vks::VK_FALSE,
+//                 inheritedQueries: vks::VK_FALSE,
+//             }
+//         }
+//     }
 
-impl PhysicalDeviceFeatures {
-    pub fn new() -> PhysicalDeviceFeatures {
-        PhysicalDeviceFeatures {
-            raw: vks::VkPhysicalDeviceFeatures {
-                robustBufferAccess: vks::VK_FALSE,
-                fullDrawIndexUint32: vks::VK_FALSE,
-                imageCubeArray: vks::VK_FALSE,
-                independentBlend: vks::VK_FALSE,
-                geometryShader: vks::VK_FALSE,
-                tessellationShader: vks::VK_FALSE,
-                sampleRateShading: vks::VK_FALSE,
-                dualSrcBlend: vks::VK_FALSE,
-                logicOp: vks::VK_FALSE,
-                multiDrawIndirect: vks::VK_FALSE,
-                drawIndirectFirstInstance: vks::VK_FALSE,
-                depthClamp: vks::VK_FALSE,
-                depthBiasClamp: vks::VK_FALSE,
-                fillModeNonSolid: vks::VK_FALSE,
-                depthBounds: vks::VK_FALSE,
-                wideLines: vks::VK_FALSE,
-                largePoints: vks::VK_FALSE,
-                alphaToOne: vks::VK_FALSE,
-                multiViewport: vks::VK_FALSE,
-                samplerAnisotropy: vks::VK_FALSE,
-                textureCompressionETC2: vks::VK_FALSE,
-                textureCompressionASTC_LDR: vks::VK_FALSE,
-                textureCompressionBC: vks::VK_FALSE,
-                occlusionQueryPrecise: vks::VK_FALSE,
-                pipelineStatisticsQuery: vks::VK_FALSE,
-                vertexPipelineStoresAndAtomics: vks::VK_FALSE,
-                fragmentStoresAndAtomics: vks::VK_FALSE,
-                shaderTessellationAndGeometryPointSize: vks::VK_FALSE,
-                shaderImageGatherExtended: vks::VK_FALSE,
-                shaderStorageImageExtendedFormats: vks::VK_FALSE,
-                shaderStorageImageMultisample: vks::VK_FALSE,
-                shaderStorageImageReadWithoutFormat: vks::VK_FALSE,
-                shaderStorageImageWriteWithoutFormat: vks::VK_FALSE,
-                shaderUniformBufferArrayDynamicIndexing: vks::VK_FALSE,
-                shaderSampledImageArrayDynamicIndexing: vks::VK_FALSE,
-                shaderStorageBufferArrayDynamicIndexing: vks::VK_FALSE,
-                shaderStorageImageArrayDynamicIndexing: vks::VK_FALSE,
-                shaderClipDistance: vks::VK_FALSE,
-                shaderCullDistance: vks::VK_FALSE,
-                shaderFloat64: vks::VK_FALSE,
-                shaderInt64: vks::VK_FALSE,
-                shaderInt16: vks::VK_FALSE,
-                shaderResourceResidency: vks::VK_FALSE,
-                shaderResourceMinLod: vks::VK_FALSE,
-                sparseBinding: vks::VK_FALSE,
-                sparseResidencyBuffer: vks::VK_FALSE,
-                sparseResidencyImage2D: vks::VK_FALSE,
-                sparseResidencyImage3D: vks::VK_FALSE,
-                sparseResidency2Samples: vks::VK_FALSE,
-                sparseResidency4Samples: vks::VK_FALSE,
-                sparseResidency8Samples: vks::VK_FALSE,
-                sparseResidency16Samples: vks::VK_FALSE,
-                sparseResidencyAliased: vks::VK_FALSE,
-                variableMultisampleRate: vks::VK_FALSE,
-                inheritedQueries: vks::VK_FALSE,
-            }
-        }
-    }
+//     pub fn sampler_anisotropy(mut self, b: bool) -> PhysicalDeviceFeatures {
+//         self.raw.samplerAnisotropy = if b { vks::VK_TRUE } else {vks::VK_FALSE };
+//         self
+//     }
 
-    pub fn sampler_anisotropy(mut self, b: bool) -> PhysicalDeviceFeatures {
-        self.raw.samplerAnisotropy = if b { vks::VK_TRUE } else {vks::VK_FALSE };
-        self
-    }
+//     pub fn raw(&self) -> &vks::VkPhysicalDeviceFeatures {
+//         &self.raw
+//     }
+// }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceFeatures {
-        &self.raw
-    }
-}
+// impl From<vks::VkPhysicalDeviceFeatures> for PhysicalDeviceFeatures {
+//     fn from(f: vks::VkPhysicalDeviceFeatures) -> PhysicalDeviceFeatures {
+//         PhysicalDeviceFeatures { raw: f }
+//     }
+// }

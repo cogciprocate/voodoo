@@ -170,8 +170,9 @@ fn create_device(instance: Instance, surface: &Surface, physical_device: Physica
         .queue_priorities(&[1.0])
         .build();
 
-    let features = PhysicalDeviceFeatures::new()
-        .sampler_anisotropy(true);
+    let features = PhysicalDeviceFeatures::builder()
+        .sampler_anisotropy(true)
+        .build();
 
     Device::builder()
         .queue_create_infos(&[queue_create_info.clone()])

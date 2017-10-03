@@ -5,7 +5,8 @@
 use std::ptr;
 use std::ffi::{CString, CStr};
 use std::marker::PhantomData;
-use libc::c_void;
+use std::slice;
+use libc::{c_void, c_char};
 use num_traits::ToPrimitive;
 use smallvec::SmallVec;
 use ::*;
@@ -30,10 +31,12 @@ impl Offset2d {
         Offset2dBuilder::new()
     }
 
-    pub fn x(&self) {
+    pub fn x<'a>(&'a self) -> i32 {
+        self.raw.x.into()
     }
 
-    pub fn y(&self) {
+    pub fn y<'a>(&'a self) -> i32 {
+        self.raw.y.into()
     }
 
     pub fn raw(&self) -> &vks::VkOffset2D {
@@ -45,6 +48,13 @@ impl Offset2d {
 impl From<Offset2d> for vks::VkOffset2D {
     fn from(f: Offset2d) -> vks::VkOffset2D {
         f.raw
+    }
+}
+
+
+impl From<vks::VkOffset2D> for Offset2d {
+    fn from(f: vks::VkOffset2D) -> Offset2d {
+        Offset2d { raw: f, }
     }
 }
 
@@ -97,13 +107,16 @@ impl Offset3d {
         Offset3dBuilder::new()
     }
 
-    pub fn x(&self) {
+    pub fn x<'a>(&'a self) -> i32 {
+        self.raw.x.into()
     }
 
-    pub fn y(&self) {
+    pub fn y<'a>(&'a self) -> i32 {
+        self.raw.y.into()
     }
 
-    pub fn z(&self) {
+    pub fn z<'a>(&'a self) -> i32 {
+        self.raw.z.into()
     }
 
     pub fn raw(&self) -> &vks::VkOffset3D {
@@ -115,6 +128,13 @@ impl Offset3d {
 impl From<Offset3d> for vks::VkOffset3D {
     fn from(f: Offset3d) -> vks::VkOffset3D {
         f.raw
+    }
+}
+
+
+impl From<vks::VkOffset3D> for Offset3d {
+    fn from(f: vks::VkOffset3D) -> Offset3d {
+        Offset3d { raw: f, }
     }
 }
 
@@ -172,10 +192,12 @@ impl Extent2d {
         Extent2dBuilder::new()
     }
 
-    pub fn width(&self) {
+    pub fn width<'a>(&'a self) -> u32 {
+        self.raw.width.into()
     }
 
-    pub fn height(&self) {
+    pub fn height<'a>(&'a self) -> u32 {
+        self.raw.height.into()
     }
 
     pub fn raw(&self) -> &vks::VkExtent2D {
@@ -187,6 +209,13 @@ impl Extent2d {
 impl From<Extent2d> for vks::VkExtent2D {
     fn from(f: Extent2d) -> vks::VkExtent2D {
         f.raw
+    }
+}
+
+
+impl From<vks::VkExtent2D> for Extent2d {
+    fn from(f: vks::VkExtent2D) -> Extent2d {
+        Extent2d { raw: f, }
     }
 }
 
@@ -239,13 +268,16 @@ impl Extent3d {
         Extent3dBuilder::new()
     }
 
-    pub fn width(&self) {
+    pub fn width<'a>(&'a self) -> u32 {
+        self.raw.width.into()
     }
 
-    pub fn height(&self) {
+    pub fn height<'a>(&'a self) -> u32 {
+        self.raw.height.into()
     }
 
-    pub fn depth(&self) {
+    pub fn depth<'a>(&'a self) -> u32 {
+        self.raw.depth.into()
     }
 
     pub fn raw(&self) -> &vks::VkExtent3D {
@@ -257,6 +289,13 @@ impl Extent3d {
 impl From<Extent3d> for vks::VkExtent3D {
     fn from(f: Extent3d) -> vks::VkExtent3D {
         f.raw
+    }
+}
+
+
+impl From<vks::VkExtent3D> for Extent3d {
+    fn from(f: vks::VkExtent3D) -> Extent3d {
+        Extent3d { raw: f, }
     }
 }
 
@@ -314,22 +353,28 @@ impl Viewport {
         ViewportBuilder::new()
     }
 
-    pub fn x(&self) {
+    pub fn x<'a>(&'a self) -> f32 {
+        self.raw.x.into()
     }
 
-    pub fn y(&self) {
+    pub fn y<'a>(&'a self) -> f32 {
+        self.raw.y.into()
     }
 
-    pub fn width(&self) {
+    pub fn width<'a>(&'a self) -> f32 {
+        self.raw.width.into()
     }
 
-    pub fn height(&self) {
+    pub fn height<'a>(&'a self) -> f32 {
+        self.raw.height.into()
     }
 
-    pub fn min_depth(&self) {
+    pub fn min_depth<'a>(&'a self) -> f32 {
+        self.raw.minDepth.into()
     }
 
-    pub fn max_depth(&self) {
+    pub fn max_depth<'a>(&'a self) -> f32 {
+        self.raw.maxDepth.into()
     }
 
     pub fn raw(&self) -> &vks::VkViewport {
@@ -341,6 +386,13 @@ impl Viewport {
 impl From<Viewport> for vks::VkViewport {
     fn from(f: Viewport) -> vks::VkViewport {
         f.raw
+    }
+}
+
+
+impl From<vks::VkViewport> for Viewport {
+    fn from(f: vks::VkViewport) -> Viewport {
+        Viewport { raw: f, }
     }
 }
 
@@ -413,10 +465,12 @@ impl Rect2d {
         Rect2dBuilder::new()
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> Offset2d {
+        self.raw.offset.into()
     }
 
-    pub fn extent(&self) {
+    pub fn extent<'a>(&'a self) -> Extent2d {
+        self.raw.extent.into()
     }
 
     pub fn raw(&self) -> &vks::VkRect2D {
@@ -428,6 +482,13 @@ impl Rect2d {
 impl From<Rect2d> for vks::VkRect2D {
     fn from(f: Rect2d) -> vks::VkRect2D {
         f.raw
+    }
+}
+
+
+impl From<vks::VkRect2D> for Rect2d {
+    fn from(f: vks::VkRect2D) -> Rect2d {
+        Rect2d { raw: f, }
     }
 }
 
@@ -480,13 +541,16 @@ impl ClearRect {
         ClearRectBuilder::new()
     }
 
-    pub fn rect(&self) {
+    pub fn rect<'a>(&'a self) -> Rect2d {
+        self.raw.rect.into()
     }
 
-    pub fn base_array_layer(&self) {
+    pub fn base_array_layer<'a>(&'a self) -> u32 {
+        self.raw.baseArrayLayer.into()
     }
 
-    pub fn layer_count(&self) {
+    pub fn layer_count<'a>(&'a self) -> u32 {
+        self.raw.layerCount.into()
     }
 
     pub fn raw(&self) -> &vks::VkClearRect {
@@ -498,6 +562,13 @@ impl ClearRect {
 impl From<ClearRect> for vks::VkClearRect {
     fn from(f: ClearRect) -> vks::VkClearRect {
         f.raw
+    }
+}
+
+
+impl From<vks::VkClearRect> for ClearRect {
+    fn from(f: vks::VkClearRect) -> ClearRect {
+        ClearRect { raw: f, }
     }
 }
 
@@ -555,16 +626,20 @@ impl ComponentMapping {
         ComponentMappingBuilder::new()
     }
 
-    pub fn r(&self) {
+    pub fn r<'a>(&'a self) -> ComponentSwizzle {
+        self.raw.r.into()
     }
 
-    pub fn g(&self) {
+    pub fn g<'a>(&'a self) -> ComponentSwizzle {
+        self.raw.g.into()
     }
 
-    pub fn b(&self) {
+    pub fn b<'a>(&'a self) -> ComponentSwizzle {
+        self.raw.b.into()
     }
 
-    pub fn a(&self) {
+    pub fn a<'a>(&'a self) -> ComponentSwizzle {
+        self.raw.a.into()
     }
 
     pub fn raw(&self) -> &vks::VkComponentMapping {
@@ -576,6 +651,13 @@ impl ComponentMapping {
 impl From<ComponentMapping> for vks::VkComponentMapping {
     fn from(f: ComponentMapping) -> vks::VkComponentMapping {
         f.raw
+    }
+}
+
+
+impl From<vks::VkComponentMapping> for ComponentMapping {
+    fn from(f: vks::VkComponentMapping) -> ComponentMapping {
+        ComponentMapping { raw: f, }
     }
 }
 
@@ -634,31 +716,40 @@ pub struct PhysicalDeviceProperties {
 }
 
 impl PhysicalDeviceProperties {
-    pub fn api_version(&self) {
+    pub fn api_version<'a>(&'a self) -> Version {
+        self.raw.apiVersion.into()
     }
 
-    pub fn driver_version(&self) {
+    pub fn driver_version<'a>(&'a self) -> Version {
+        self.raw.driverVersion.into()
     }
 
-    pub fn vendor_id(&self) {
+    pub fn vendor_id<'a>(&'a self) -> u32 {
+        self.raw.vendorID.into()
     }
 
-    pub fn device_id(&self) {
+    pub fn device_id<'a>(&'a self) -> u32 {
+        self.raw.deviceID.into()
     }
 
-    pub fn device_type(&self) {
+    pub fn device_type<'a>(&'a self) -> PhysicalDeviceType {
+        self.raw.deviceType.into()
     }
 
-    pub fn device_name(&self) {
+    pub fn device_name<'a>(&'a self) -> &'a CStr {
+        unsafe { CStr::from_ptr(&self.raw.deviceName as *const _) }
     }
 
-    pub fn pipeline_cache_uu_id(&self) {
+    pub fn pipeline_cache_uu_id<'a>(&'a self) -> &[u8] {
+        unsafe { slice::from_raw_parts(&self.raw.pipelineCacheUUID as *const _, vks::VK_UUID_SIZE as usize) }
     }
 
-    pub fn limits(&self) {
+    pub fn limits<'a>(&'a self) -> PhysicalDeviceLimits {
+        self.raw.limits.into()
     }
 
-    pub fn sparse_properties(&self) {
+    pub fn sparse_properties<'a>(&'a self) -> PhysicalDeviceSparseProperties {
+        self.raw.sparseProperties.into()
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceProperties {
@@ -674,6 +765,13 @@ impl From<PhysicalDeviceProperties> for vks::VkPhysicalDeviceProperties {
 }
 
 
+impl From<vks::VkPhysicalDeviceProperties> for PhysicalDeviceProperties {
+    fn from(f: vks::VkPhysicalDeviceProperties) -> PhysicalDeviceProperties {
+        PhysicalDeviceProperties { raw: f, }
+    }
+}
+
+
 /// A `VkExtensionProperties`.
 ///
 /// 
@@ -684,10 +782,12 @@ pub struct ExtensionProperties {
 }
 
 impl ExtensionProperties {
-    pub fn extension_name(&self) {
+    pub fn extension_name<'a>(&'a self) -> &'a CStr {
+        unsafe { CStr::from_ptr(&self.raw.extensionName as *const _) }
     }
 
-    pub fn spec_version(&self) {
+    pub fn spec_version<'a>(&'a self) -> Version {
+        self.raw.specVersion.into()
     }
 
     pub fn raw(&self) -> &vks::VkExtensionProperties {
@@ -703,6 +803,13 @@ impl From<ExtensionProperties> for vks::VkExtensionProperties {
 }
 
 
+impl From<vks::VkExtensionProperties> for ExtensionProperties {
+    fn from(f: vks::VkExtensionProperties) -> ExtensionProperties {
+        ExtensionProperties { raw: f, }
+    }
+}
+
+
 /// A `VkLayerProperties`.
 ///
 /// 
@@ -713,16 +820,20 @@ pub struct LayerProperties {
 }
 
 impl LayerProperties {
-    pub fn layer_name(&self) {
+    pub fn layer_name<'a>(&'a self) -> &'a CStr {
+        unsafe { CStr::from_ptr(&self.raw.layerName as *const _) }
     }
 
-    pub fn spec_version(&self) {
+    pub fn spec_version<'a>(&'a self) -> Version {
+        self.raw.specVersion.into()
     }
 
-    pub fn implementation_version(&self) {
+    pub fn implementation_version<'a>(&'a self) -> Version {
+        self.raw.implementationVersion.into()
     }
 
-    pub fn description(&self) {
+    pub fn description<'a>(&'a self) -> &'a CStr {
+        unsafe { CStr::from_ptr(&self.raw.description as *const _) }
     }
 
     pub fn raw(&self) -> &vks::VkLayerProperties {
@@ -734,6 +845,13 @@ impl LayerProperties {
 impl From<LayerProperties> for vks::VkLayerProperties {
     fn from(f: LayerProperties) -> vks::VkLayerProperties {
         f.raw
+    }
+}
+
+
+impl From<vks::VkLayerProperties> for LayerProperties {
+    fn from(f: vks::VkLayerProperties) -> LayerProperties {
+        LayerProperties { raw: f, }
     }
 }
 
@@ -754,22 +872,28 @@ impl<'s> ApplicationInfo<'s> {
         ApplicationInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn application_name(&self) {
+    pub fn application_name<'a>(&'a self) -> &'a CStr {
+        unsafe { CStr::from_ptr(self.raw.pApplicationName) }
     }
 
-    pub fn application_version(&self) {
+    pub fn application_version<'a>(&'a self) -> Version {
+        self.raw.applicationVersion.into()
     }
 
-    pub fn engine_name(&self) {
+    pub fn engine_name<'a>(&'a self) -> &'a CStr {
+        unsafe { CStr::from_ptr(self.raw.pEngineName) }
     }
 
-    pub fn engine_version(&self) {
+    pub fn engine_version<'a>(&'a self) -> Version {
+        self.raw.engineVersion.into()
     }
 
-    pub fn api_version(&self) {
+    pub fn api_version<'a>(&'a self) -> Version {
+        self.raw.apiVersion.into()
     }
 
     pub fn raw(&self) -> &vks::VkApplicationInfo {
@@ -785,6 +909,13 @@ impl<'s> From<ApplicationInfo<'s>> for vks::VkApplicationInfo {
 }
 
 
+impl<'s> From<vks::VkApplicationInfo> for ApplicationInfo<'s> {
+    fn from(f: vks::VkApplicationInfo) -> ApplicationInfo<'s> {
+        ApplicationInfo { raw: f, application_name: None, engine_name: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkApplicationInfo`.
 ///
 /// 
@@ -793,7 +924,7 @@ pub struct ApplicationInfoBuilder<'b> {
     raw: vks::VkApplicationInfo,
     application_name: Option<CharStr<'b>>,
     engine_name: Option<CharStr<'b>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ApplicationInfoBuilder<'b> {
@@ -871,22 +1002,28 @@ impl<'s> AllocationCallbacks<'s> {
         AllocationCallbacksBuilder::new()
     }
 
-    pub unsafe fn user_data(&self) {
+    pub fn user_data<'a>(&'a self) -> *mut c_void {
+        self.raw.pUserData
     }
 
-    pub fn pfn_allocation(&self) {
+    pub fn pfn_allocation<'a>(&'a self) -> PFN_vkAllocationFunction {
+        self.raw.pfnAllocation.into()
     }
 
-    pub fn pfn_reallocation(&self) {
+    pub fn pfn_reallocation<'a>(&'a self) -> PFN_vkReallocationFunction {
+        self.raw.pfnReallocation.into()
     }
 
-    pub fn pfn_free(&self) {
+    pub fn pfn_free<'a>(&'a self) -> PFN_vkFreeFunction {
+        self.raw.pfnFree.into()
     }
 
-    pub fn pfn_internal_allocation(&self) {
+    pub fn pfn_internal_allocation<'a>(&'a self) -> PFN_vkInternalAllocationNotification {
+        self.raw.pfnInternalAllocation.into()
     }
 
-    pub fn pfn_internal_free(&self) {
+    pub fn pfn_internal_free<'a>(&'a self) -> PFN_vkInternalFreeNotification {
+        self.raw.pfnInternalFree.into()
     }
 
     pub fn raw(&self) -> &vks::VkAllocationCallbacks {
@@ -902,13 +1039,20 @@ impl<'s> From<AllocationCallbacks<'s>> for vks::VkAllocationCallbacks {
 }
 
 
+impl<'s> From<vks::VkAllocationCallbacks> for AllocationCallbacks<'s> {
+    fn from(f: vks::VkAllocationCallbacks) -> AllocationCallbacks<'s> {
+        AllocationCallbacks { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkAllocationCallbacks`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct AllocationCallbacksBuilder<'b> {
     raw: vks::VkAllocationCallbacks,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> AllocationCallbacksBuilder<'b> {
@@ -974,16 +1118,21 @@ impl<'s> DeviceQueueCreateInfo<'s> {
         DeviceQueueCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> DeviceQueueCreateFlags {
+        DeviceQueueCreateFlags::from_bits(self.raw.flags)
+            .expect("DeviceQueueCreateInfo::flags: error converting flags")
     }
 
-    pub fn queue_family_index(&self) {
+    pub fn queue_family_index<'a>(&'a self) -> u32 {
+        self.raw.queueFamilyIndex.into()
     }
 
-    pub fn queue_priorities(&self) {
+    pub fn queue_priorities<'a>(&'a self) -> &'a [f32] {
+        unsafe { slice::from_raw_parts(self.raw.pQueuePriorities as *const _, self.raw.queueCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkDeviceQueueCreateInfo {
@@ -999,13 +1148,20 @@ impl<'s> From<DeviceQueueCreateInfo<'s>> for vks::VkDeviceQueueCreateInfo {
 }
 
 
+impl<'s> From<vks::VkDeviceQueueCreateInfo> for DeviceQueueCreateInfo<'s> {
+    fn from(f: vks::VkDeviceQueueCreateInfo) -> DeviceQueueCreateInfo<'s> {
+        DeviceQueueCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceQueueCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DeviceQueueCreateInfoBuilder<'b> {
     raw: vks::VkDeviceQueueCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DeviceQueueCreateInfoBuilder<'b> {
@@ -1032,10 +1188,10 @@ impl<'b> DeviceQueueCreateInfoBuilder<'b> {
     }
 
     pub fn queue_priorities<'m, 'a>(mut self, queue_priorities: &'a [f32]) -> DeviceQueueCreateInfoBuilder<'b> {
-        assert!(self.raw.queueCount == 0 || self.raw.queueCount == queue_priorities.len() as u32, 
+        assert!(self.raw.queueCount == 0 || self.raw.queueCount == queue_priorities.len() as _, 
             "count inconsistency found when specifying `DeviceQueueCreateInfo::queue_priorities`.");
-        self.raw.queueCount = queue_priorities.len() as u32;
-        self.raw.pQueuePriorities = queue_priorities.as_ptr() as *const _;
+        self.raw.queueCount = queue_priorities.len() as _;
+        self.raw.pQueuePriorities = queue_priorities.as_ptr() as *const f32 as *const _;
         self
     }
 
@@ -1065,22 +1221,29 @@ impl<'s> DeviceCreateInfo<'s> {
         DeviceCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> DeviceCreateFlags {
+        DeviceCreateFlags::from_bits(self.raw.flags)
+            .expect("DeviceCreateInfo::flags: error converting flags")
     }
 
-    pub fn queue_create_infos(&self) {
+    pub fn queue_create_infos<'a>(&'a self) -> &'a [DeviceQueueCreateInfo] {
+        unsafe { slice::from_raw_parts(self.raw.pQueueCreateInfos as *const _, self.raw.queueCreateInfoCount as usize) }
     }
 
-    pub fn enabled_layer_names(&self) {
+    pub fn enabled_layer_names<'a>(&'a self) -> &'a [*const c_char] {
+        unsafe { slice::from_raw_parts(self.raw.ppEnabledLayerNames as *const _, self.raw.enabledLayerCount as usize) }
     }
 
-    pub fn enabled_extension_names(&self) {
+    pub fn enabled_extension_names<'a>(&'a self) -> &'a [*const c_char] {
+        unsafe { slice::from_raw_parts(self.raw.ppEnabledExtensionNames as *const _, self.raw.enabledExtensionCount as usize) }
     }
 
-    pub fn enabled_features(&self) {
+    pub fn enabled_features<'a>(&'a self) -> &'a PhysicalDeviceFeatures {
+        unsafe { &*(self.raw.pEnabledFeatures as *const vks::VkPhysicalDeviceFeatures as *const _) }
     }
 
     pub fn raw(&self) -> &vks::VkDeviceCreateInfo {
@@ -1096,6 +1259,13 @@ impl<'s> From<DeviceCreateInfo<'s>> for vks::VkDeviceCreateInfo {
 }
 
 
+impl<'s> From<vks::VkDeviceCreateInfo> for DeviceCreateInfo<'s> {
+    fn from(f: vks::VkDeviceCreateInfo) -> DeviceCreateInfo<'s> {
+        DeviceCreateInfo { raw: f, enabled_layer_names: None, enabled_extension_names: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceCreateInfo`.
 ///
 /// 
@@ -1104,7 +1274,7 @@ pub struct DeviceCreateInfoBuilder<'b> {
     raw: vks::VkDeviceCreateInfo,
     enabled_layer_names: Option<CharStrs<'b>>,
     enabled_extension_names: Option<CharStrs<'b>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DeviceCreateInfoBuilder<'b> {
@@ -1128,10 +1298,10 @@ impl<'b> DeviceCreateInfoBuilder<'b> {
     }
 
     pub fn queue_create_infos<'m, 'a>(mut self, queue_create_infos: &'a [DeviceQueueCreateInfo]) -> DeviceCreateInfoBuilder<'b> {
-        assert!(self.raw.queueCreateInfoCount == 0 || self.raw.queueCreateInfoCount == queue_create_infos.len() as u32, 
+        assert!(self.raw.queueCreateInfoCount == 0 || self.raw.queueCreateInfoCount == queue_create_infos.len() as _, 
             "count inconsistency found when specifying `DeviceCreateInfo::queue_create_infos`.");
-        self.raw.queueCreateInfoCount = queue_create_infos.len() as u32;
-        self.raw.pQueueCreateInfos = queue_create_infos.as_ptr() as *const _;
+        self.raw.queueCreateInfoCount = queue_create_infos.len() as _;
+        self.raw.pQueueCreateInfos = queue_create_infos.as_ptr() as *const vks::VkDeviceQueueCreateInfo as *const _;
         self
     }
 
@@ -1140,9 +1310,9 @@ impl<'b> DeviceCreateInfoBuilder<'b> {
         {
             let enabled_layer_names = self.enabled_layer_names.as_ref().unwrap();
             self.raw.ppEnabledLayerNames = enabled_layer_names.as_ptr();
-            assert!(self.raw.enabledLayerCount == 0 || self.raw.enabledLayerCount == enabled_layer_names.len() as u32, 
+            assert!(self.raw.enabledLayerCount == 0 || self.raw.enabledLayerCount == enabled_layer_names.len() as _, 
                 "count inconsistency found when specifying `DeviceCreateInfo::enabled_layer_names`.");
-            self.raw.enabledLayerCount = enabled_layer_names.len() as u32;
+            self.raw.enabledLayerCount = enabled_layer_names.len() as _;
         }
         self
     }
@@ -1152,15 +1322,15 @@ impl<'b> DeviceCreateInfoBuilder<'b> {
         {
             let enabled_extension_names = self.enabled_extension_names.as_ref().unwrap();
             self.raw.ppEnabledExtensionNames = enabled_extension_names.as_ptr();
-            assert!(self.raw.enabledExtensionCount == 0 || self.raw.enabledExtensionCount == enabled_extension_names.len() as u32, 
+            assert!(self.raw.enabledExtensionCount == 0 || self.raw.enabledExtensionCount == enabled_extension_names.len() as _, 
                 "count inconsistency found when specifying `DeviceCreateInfo::enabled_extension_names`.");
-            self.raw.enabledExtensionCount = enabled_extension_names.len() as u32;
+            self.raw.enabledExtensionCount = enabled_extension_names.len() as _;
         }
         self
     }
 
-    pub fn enabled_features<'m, 'a>(mut self, enabled_features: &'a [PhysicalDeviceFeatures]) -> DeviceCreateInfoBuilder<'b> {
-        self.raw.pEnabledFeatures = enabled_features.as_ptr() as *const _;
+    pub fn enabled_features<'m, 'a>(mut self, enabled_features: &'a PhysicalDeviceFeatures) -> DeviceCreateInfoBuilder<'b> {
+        self.raw.pEnabledFeatures = enabled_features.raw();
         self
     }
 
@@ -1192,19 +1362,25 @@ impl<'s> InstanceCreateInfo<'s> {
         InstanceCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> InstanceCreateFlags {
+        InstanceCreateFlags::from_bits(self.raw.flags)
+            .expect("InstanceCreateInfo::flags: error converting flags")
     }
 
-    pub fn application_info(&self) {
+    pub fn application_info<'a>(&'a self) -> &'a ApplicationInfo {
+        unsafe { &*(self.raw.pApplicationInfo as *const vks::VkApplicationInfo as *const _) }
     }
 
-    pub fn enabled_layer_names(&self) {
+    pub fn enabled_layer_names<'a>(&'a self) -> &'a [*const c_char] {
+        unsafe { slice::from_raw_parts(self.raw.ppEnabledLayerNames as *const _, self.raw.enabledLayerCount as usize) }
     }
 
-    pub fn enabled_extension_names(&self) {
+    pub fn enabled_extension_names<'a>(&'a self) -> &'a [*const c_char] {
+        unsafe { slice::from_raw_parts(self.raw.ppEnabledExtensionNames as *const _, self.raw.enabledExtensionCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkInstanceCreateInfo {
@@ -1220,6 +1396,13 @@ impl<'s> From<InstanceCreateInfo<'s>> for vks::VkInstanceCreateInfo {
 }
 
 
+impl<'s> From<vks::VkInstanceCreateInfo> for InstanceCreateInfo<'s> {
+    fn from(f: vks::VkInstanceCreateInfo) -> InstanceCreateInfo<'s> {
+        InstanceCreateInfo { raw: f, enabled_layer_names: None, enabled_extension_names: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkInstanceCreateInfo`.
 ///
 /// 
@@ -1228,7 +1411,7 @@ pub struct InstanceCreateInfoBuilder<'b> {
     raw: vks::VkInstanceCreateInfo,
     enabled_layer_names: Option<CharStrs<'b>>,
     enabled_extension_names: Option<CharStrs<'b>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> InstanceCreateInfoBuilder<'b> {
@@ -1261,9 +1444,9 @@ impl<'b> InstanceCreateInfoBuilder<'b> {
         {
             let enabled_layer_names = self.enabled_layer_names.as_ref().unwrap();
             self.raw.ppEnabledLayerNames = enabled_layer_names.as_ptr();
-            assert!(self.raw.enabledLayerCount == 0 || self.raw.enabledLayerCount == enabled_layer_names.len() as u32, 
+            assert!(self.raw.enabledLayerCount == 0 || self.raw.enabledLayerCount == enabled_layer_names.len() as _, 
                 "count inconsistency found when specifying `InstanceCreateInfo::enabled_layer_names`.");
-            self.raw.enabledLayerCount = enabled_layer_names.len() as u32;
+            self.raw.enabledLayerCount = enabled_layer_names.len() as _;
         }
         self
     }
@@ -1273,9 +1456,9 @@ impl<'b> InstanceCreateInfoBuilder<'b> {
         {
             let enabled_extension_names = self.enabled_extension_names.as_ref().unwrap();
             self.raw.ppEnabledExtensionNames = enabled_extension_names.as_ptr();
-            assert!(self.raw.enabledExtensionCount == 0 || self.raw.enabledExtensionCount == enabled_extension_names.len() as u32, 
+            assert!(self.raw.enabledExtensionCount == 0 || self.raw.enabledExtensionCount == enabled_extension_names.len() as _, 
                 "count inconsistency found when specifying `InstanceCreateInfo::enabled_extension_names`.");
-            self.raw.enabledExtensionCount = enabled_extension_names.len() as u32;
+            self.raw.enabledExtensionCount = enabled_extension_names.len() as _;
         }
         self
     }
@@ -1302,16 +1485,21 @@ pub struct QueueFamilyProperties {
 }
 
 impl QueueFamilyProperties {
-    pub fn queue_flags(&self) {
+    pub fn queue_flags<'a>(&'a self) -> QueueFlags {
+        QueueFlags::from_bits(self.raw.queueFlags)
+            .expect("QueueFamilyProperties::queue_flags: error converting flags")
     }
 
-    pub fn queue_count(&self) {
+    pub fn queue_count<'a>(&'a self) -> u32 {
+        self.raw.queueCount.into()
     }
 
-    pub fn timestamp_valid_bits(&self) {
+    pub fn timestamp_valid_bits<'a>(&'a self) -> u32 {
+        self.raw.timestampValidBits.into()
     }
 
-    pub fn min_image_transfer_granularity(&self) {
+    pub fn min_image_transfer_granularity<'a>(&'a self) -> Extent3d {
+        self.raw.minImageTransferGranularity.into()
     }
 
     pub fn raw(&self) -> &vks::VkQueueFamilyProperties {
@@ -1327,6 +1515,13 @@ impl From<QueueFamilyProperties> for vks::VkQueueFamilyProperties {
 }
 
 
+impl From<vks::VkQueueFamilyProperties> for QueueFamilyProperties {
+    fn from(f: vks::VkQueueFamilyProperties) -> QueueFamilyProperties {
+        QueueFamilyProperties { raw: f, }
+    }
+}
+
+
 /// A `VkPhysicalDeviceMemoryProperties`.
 ///
 /// 
@@ -1337,16 +1532,20 @@ pub struct PhysicalDeviceMemoryProperties {
 }
 
 impl PhysicalDeviceMemoryProperties {
-    pub fn memory_type_count(&self) {
+    pub fn memory_type_count<'a>(&'a self) -> u32 {
+        self.raw.memoryTypeCount.into()
     }
 
-    pub fn memory_types(&self) {
+    pub fn memory_types<'a>(&'a self) -> &[MemoryType] {
+        unsafe { slice::from_raw_parts(&self.raw.memoryTypes as *const vks::VkMemoryType as *const _, vks::VK_MAX_MEMORY_TYPES as usize) }
     }
 
-    pub fn memory_heap_count(&self) {
+    pub fn memory_heap_count<'a>(&'a self) -> u32 {
+        self.raw.memoryHeapCount.into()
     }
 
-    pub fn memory_heaps(&self) {
+    pub fn memory_heaps<'a>(&'a self) -> &[MemoryHeap] {
+        unsafe { slice::from_raw_parts(&self.raw.memoryHeaps as *const vks::VkMemoryHeap as *const _, vks::VK_MAX_MEMORY_HEAPS as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceMemoryProperties {
@@ -1358,6 +1557,13 @@ impl PhysicalDeviceMemoryProperties {
 impl From<PhysicalDeviceMemoryProperties> for vks::VkPhysicalDeviceMemoryProperties {
     fn from(f: PhysicalDeviceMemoryProperties) -> vks::VkPhysicalDeviceMemoryProperties {
         f.raw
+    }
+}
+
+
+impl From<vks::VkPhysicalDeviceMemoryProperties> for PhysicalDeviceMemoryProperties {
+    fn from(f: vks::VkPhysicalDeviceMemoryProperties) -> PhysicalDeviceMemoryProperties {
+        PhysicalDeviceMemoryProperties { raw: f, }
     }
 }
 
@@ -1377,13 +1583,16 @@ impl<'s> MemoryAllocateInfo<'s> {
         MemoryAllocateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn allocation_size(&self) {
+    pub fn allocation_size<'a>(&'a self) -> u64 {
+        self.raw.allocationSize.into()
     }
 
-    pub fn memory_type_index(&self) {
+    pub fn memory_type_index<'a>(&'a self) -> u32 {
+        self.raw.memoryTypeIndex.into()
     }
 
     pub fn raw(&self) -> &vks::VkMemoryAllocateInfo {
@@ -1399,13 +1608,20 @@ impl<'s> From<MemoryAllocateInfo<'s>> for vks::VkMemoryAllocateInfo {
 }
 
 
+impl<'s> From<vks::VkMemoryAllocateInfo> for MemoryAllocateInfo<'s> {
+    fn from(f: vks::VkMemoryAllocateInfo) -> MemoryAllocateInfo<'s> {
+        MemoryAllocateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkMemoryAllocateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryAllocateInfoBuilder<'b> {
     raw: vks::VkMemoryAllocateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> MemoryAllocateInfoBuilder<'b> {
@@ -1451,13 +1667,16 @@ pub struct MemoryRequirements {
 }
 
 impl MemoryRequirements {
-    pub fn size(&self) {
+    pub fn size<'a>(&'a self) -> u64 {
+        self.raw.size.into()
     }
 
-    pub fn alignment(&self) {
+    pub fn alignment<'a>(&'a self) -> u64 {
+        self.raw.alignment.into()
     }
 
-    pub fn memory_type_bits(&self) {
+    pub fn memory_type_bits<'a>(&'a self) -> u32 {
+        self.raw.memoryTypeBits.into()
     }
 
     pub fn raw(&self) -> &vks::VkMemoryRequirements {
@@ -1473,6 +1692,13 @@ impl From<MemoryRequirements> for vks::VkMemoryRequirements {
 }
 
 
+impl From<vks::VkMemoryRequirements> for MemoryRequirements {
+    fn from(f: vks::VkMemoryRequirements) -> MemoryRequirements {
+        MemoryRequirements { raw: f, }
+    }
+}
+
+
 /// A `VkSparseImageFormatProperties`.
 ///
 /// 
@@ -1483,13 +1709,18 @@ pub struct SparseImageFormatProperties {
 }
 
 impl SparseImageFormatProperties {
-    pub fn aspect_mask(&self) {
+    pub fn aspect_mask<'a>(&'a self) -> ImageAspectFlags {
+        ImageAspectFlags::from_bits(self.raw.aspectMask)
+            .expect("SparseImageFormatProperties::aspect_mask: error converting flags")
     }
 
-    pub fn image_granularity(&self) {
+    pub fn image_granularity<'a>(&'a self) -> Extent3d {
+        self.raw.imageGranularity.into()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> SparseImageFormatFlags {
+        SparseImageFormatFlags::from_bits(self.raw.flags)
+            .expect("SparseImageFormatProperties::flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkSparseImageFormatProperties {
@@ -1505,6 +1736,13 @@ impl From<SparseImageFormatProperties> for vks::VkSparseImageFormatProperties {
 }
 
 
+impl From<vks::VkSparseImageFormatProperties> for SparseImageFormatProperties {
+    fn from(f: vks::VkSparseImageFormatProperties) -> SparseImageFormatProperties {
+        SparseImageFormatProperties { raw: f, }
+    }
+}
+
+
 /// A `VkSparseImageMemoryRequirements`.
 ///
 /// 
@@ -1515,19 +1753,24 @@ pub struct SparseImageMemoryRequirements {
 }
 
 impl SparseImageMemoryRequirements {
-    pub fn format_properties(&self) {
+    pub fn format_properties<'a>(&'a self) -> SparseImageFormatProperties {
+        self.raw.formatProperties.into()
     }
 
-    pub fn image_mip_tail_first_lod(&self) {
+    pub fn image_mip_tail_first_lod<'a>(&'a self) -> u32 {
+        self.raw.imageMipTailFirstLod.into()
     }
 
-    pub fn image_mip_tail_size(&self) {
+    pub fn image_mip_tail_size<'a>(&'a self) -> u64 {
+        self.raw.imageMipTailSize.into()
     }
 
-    pub fn image_mip_tail_offset(&self) {
+    pub fn image_mip_tail_offset<'a>(&'a self) -> u64 {
+        self.raw.imageMipTailOffset.into()
     }
 
-    pub fn image_mip_tail_stride(&self) {
+    pub fn image_mip_tail_stride<'a>(&'a self) -> u64 {
+        self.raw.imageMipTailStride.into()
     }
 
     pub fn raw(&self) -> &vks::VkSparseImageMemoryRequirements {
@@ -1543,6 +1786,13 @@ impl From<SparseImageMemoryRequirements> for vks::VkSparseImageMemoryRequirement
 }
 
 
+impl From<vks::VkSparseImageMemoryRequirements> for SparseImageMemoryRequirements {
+    fn from(f: vks::VkSparseImageMemoryRequirements) -> SparseImageMemoryRequirements {
+        SparseImageMemoryRequirements { raw: f, }
+    }
+}
+
+
 /// A `VkMemoryType`.
 ///
 /// 
@@ -1553,10 +1803,13 @@ pub struct MemoryType {
 }
 
 impl MemoryType {
-    pub fn property_flags(&self) {
+    pub fn property_flags<'a>(&'a self) -> MemoryPropertyFlags {
+        MemoryPropertyFlags::from_bits(self.raw.propertyFlags)
+            .expect("MemoryType::property_flags: error converting flags")
     }
 
-    pub fn heap_index(&self) {
+    pub fn heap_index<'a>(&'a self) -> u32 {
+        self.raw.heapIndex.into()
     }
 
     pub fn raw(&self) -> &vks::VkMemoryType {
@@ -1572,6 +1825,13 @@ impl From<MemoryType> for vks::VkMemoryType {
 }
 
 
+impl From<vks::VkMemoryType> for MemoryType {
+    fn from(f: vks::VkMemoryType) -> MemoryType {
+        MemoryType { raw: f, }
+    }
+}
+
+
 /// A `VkMemoryHeap`.
 ///
 /// 
@@ -1582,10 +1842,13 @@ pub struct MemoryHeap {
 }
 
 impl MemoryHeap {
-    pub fn size(&self) {
+    pub fn size<'a>(&'a self) -> u64 {
+        self.raw.size.into()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> MemoryHeapFlags {
+        MemoryHeapFlags::from_bits(self.raw.flags)
+            .expect("MemoryHeap::flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkMemoryHeap {
@@ -1597,6 +1860,13 @@ impl MemoryHeap {
 impl From<MemoryHeap> for vks::VkMemoryHeap {
     fn from(f: MemoryHeap) -> vks::VkMemoryHeap {
         f.raw
+    }
+}
+
+
+impl From<vks::VkMemoryHeap> for MemoryHeap {
+    fn from(f: vks::VkMemoryHeap) -> MemoryHeap {
+        MemoryHeap { raw: f, }
     }
 }
 
@@ -1616,16 +1886,20 @@ impl<'s> MappedMemoryRange<'s> {
         MappedMemoryRangeBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn memory(&self) {
+    pub fn memory_handle<'a>(&'a self) -> vks::VkDeviceMemory {
+        self.raw.memory
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> u64 {
+        self.raw.offset.into()
     }
 
-    pub fn size(&self) {
+    pub fn size<'a>(&'a self) -> u64 {
+        self.raw.size.into()
     }
 
     pub fn raw(&self) -> &vks::VkMappedMemoryRange {
@@ -1641,13 +1915,20 @@ impl<'s> From<MappedMemoryRange<'s>> for vks::VkMappedMemoryRange {
 }
 
 
+impl<'s> From<vks::VkMappedMemoryRange> for MappedMemoryRange<'s> {
+    fn from(f: vks::VkMappedMemoryRange) -> MappedMemoryRange<'s> {
+        MappedMemoryRange { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkMappedMemoryRange`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct MappedMemoryRangeBuilder<'b> {
     raw: vks::VkMappedMemoryRange,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> MappedMemoryRangeBuilder<'b> {
@@ -1698,13 +1979,19 @@ pub struct FormatProperties {
 }
 
 impl FormatProperties {
-    pub fn linear_tiling_features(&self) {
+    pub fn linear_tiling_features<'a>(&'a self) -> FormatFeatureFlags {
+        FormatFeatureFlags::from_bits(self.raw.linearTilingFeatures)
+            .expect("FormatProperties::linear_tiling_features: error converting flags")
     }
 
-    pub fn optimal_tiling_features(&self) {
+    pub fn optimal_tiling_features<'a>(&'a self) -> FormatFeatureFlags {
+        FormatFeatureFlags::from_bits(self.raw.optimalTilingFeatures)
+            .expect("FormatProperties::optimal_tiling_features: error converting flags")
     }
 
-    pub fn buffer_features(&self) {
+    pub fn buffer_features<'a>(&'a self) -> FormatFeatureFlags {
+        FormatFeatureFlags::from_bits(self.raw.bufferFeatures)
+            .expect("FormatProperties::buffer_features: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkFormatProperties {
@@ -1720,6 +2007,13 @@ impl From<FormatProperties> for vks::VkFormatProperties {
 }
 
 
+impl From<vks::VkFormatProperties> for FormatProperties {
+    fn from(f: vks::VkFormatProperties) -> FormatProperties {
+        FormatProperties { raw: f, }
+    }
+}
+
+
 /// A `VkImageFormatProperties`.
 ///
 /// 
@@ -1730,19 +2024,25 @@ pub struct ImageFormatProperties {
 }
 
 impl ImageFormatProperties {
-    pub fn max_extent(&self) {
+    pub fn max_extent<'a>(&'a self) -> Extent3d {
+        self.raw.maxExtent.into()
     }
 
-    pub fn max_mip_levels(&self) {
+    pub fn max_mip_levels<'a>(&'a self) -> u32 {
+        self.raw.maxMipLevels.into()
     }
 
-    pub fn max_array_layers(&self) {
+    pub fn max_array_layers<'a>(&'a self) -> u32 {
+        self.raw.maxArrayLayers.into()
     }
 
-    pub fn sample_counts(&self) {
+    pub fn sample_counts<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.sampleCounts)
+            .expect("ImageFormatProperties::sample_counts: error converting flags")
     }
 
-    pub fn max_resource_size(&self) {
+    pub fn max_resource_size<'a>(&'a self) -> u64 {
+        self.raw.maxResourceSize.into()
     }
 
     pub fn raw(&self) -> &vks::VkImageFormatProperties {
@@ -1754,6 +2054,13 @@ impl ImageFormatProperties {
 impl From<ImageFormatProperties> for vks::VkImageFormatProperties {
     fn from(f: ImageFormatProperties) -> vks::VkImageFormatProperties {
         f.raw
+    }
+}
+
+
+impl From<vks::VkImageFormatProperties> for ImageFormatProperties {
+    fn from(f: vks::VkImageFormatProperties) -> ImageFormatProperties {
+        ImageFormatProperties { raw: f, }
     }
 }
 
@@ -1772,13 +2079,16 @@ impl DescriptorBufferInfo {
         DescriptorBufferInfoBuilder::new()
     }
 
-    pub fn buffer(&self) {
+    pub fn buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.buffer
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> u64 {
+        self.raw.offset.into()
     }
 
-    pub fn range(&self) {
+    pub fn range<'a>(&'a self) -> u64 {
+        self.raw.range.into()
     }
 
     pub fn raw(&self) -> &vks::VkDescriptorBufferInfo {
@@ -1790,6 +2100,13 @@ impl DescriptorBufferInfo {
 impl From<DescriptorBufferInfo> for vks::VkDescriptorBufferInfo {
     fn from(f: DescriptorBufferInfo) -> vks::VkDescriptorBufferInfo {
         f.raw
+    }
+}
+
+
+impl From<vks::VkDescriptorBufferInfo> for DescriptorBufferInfo {
+    fn from(f: vks::VkDescriptorBufferInfo) -> DescriptorBufferInfo {
+        DescriptorBufferInfo { raw: f, }
     }
 }
 
@@ -1847,13 +2164,16 @@ impl DescriptorImageInfo {
         DescriptorImageInfoBuilder::new()
     }
 
-    pub fn sampler(&self) {
+    pub fn sampler_handle<'a>(&'a self) -> vks::VkSampler {
+        self.raw.sampler
     }
 
-    pub fn image_view(&self) {
+    pub fn image_view_handle<'a>(&'a self) -> vks::VkImageView {
+        self.raw.imageView
     }
 
-    pub fn image_layout(&self) {
+    pub fn image_layout<'a>(&'a self) -> ImageLayout {
+        self.raw.imageLayout.into()
     }
 
     pub fn raw(&self) -> &vks::VkDescriptorImageInfo {
@@ -1865,6 +2185,13 @@ impl DescriptorImageInfo {
 impl From<DescriptorImageInfo> for vks::VkDescriptorImageInfo {
     fn from(f: DescriptorImageInfo) -> vks::VkDescriptorImageInfo {
         f.raw
+    }
+}
+
+
+impl From<vks::VkDescriptorImageInfo> for DescriptorImageInfo {
+    fn from(f: vks::VkDescriptorImageInfo) -> DescriptorImageInfo {
+        DescriptorImageInfo { raw: f, }
     }
 }
 
@@ -1923,31 +2250,40 @@ impl<'s> WriteDescriptorSet<'s> {
         WriteDescriptorSetBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn dst_set(&self) {
+    pub fn dst_set_handle<'a>(&'a self) -> vks::VkDescriptorSet {
+        self.raw.dstSet
     }
 
-    pub fn dst_binding(&self) {
+    pub fn dst_binding<'a>(&'a self) -> u32 {
+        self.raw.dstBinding.into()
     }
 
-    pub fn dst_array_element(&self) {
+    pub fn dst_array_element<'a>(&'a self) -> u32 {
+        self.raw.dstArrayElement.into()
     }
 
-    pub fn descriptor_count(&self) {
+    pub fn descriptor_count<'a>(&'a self) -> u32 {
+        self.raw.descriptorCount.into()
     }
 
-    pub fn descriptor_type(&self) {
+    pub fn descriptor_type<'a>(&'a self) -> DescriptorType {
+        self.raw.descriptorType.into()
     }
 
-    pub fn image_info(&self) {
+    pub fn image_info<'a>(&'a self) -> &'a DescriptorImageInfo {
+        unsafe { &*(self.raw.pImageInfo as *const vks::VkDescriptorImageInfo as *const _) }
     }
 
-    pub fn buffer_info(&self) {
+    pub fn buffer_info<'a>(&'a self) -> &'a DescriptorBufferInfo {
+        unsafe { &*(self.raw.pBufferInfo as *const vks::VkDescriptorBufferInfo as *const _) }
     }
 
-    pub fn texel_buffer_view(&self) {
+    pub fn texel_buffer_view_handle<'a>(&'a self) -> &'a vks::VkBufferView {
+        unsafe { &*(self.raw.pTexelBufferView as *const _) }
     }
 
     pub fn raw(&self) -> &vks::VkWriteDescriptorSet {
@@ -1963,13 +2299,20 @@ impl<'s> From<WriteDescriptorSet<'s>> for vks::VkWriteDescriptorSet {
 }
 
 
+impl<'s> From<vks::VkWriteDescriptorSet> for WriteDescriptorSet<'s> {
+    fn from(f: vks::VkWriteDescriptorSet) -> WriteDescriptorSet<'s> {
+        WriteDescriptorSet { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkWriteDescriptorSet`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct WriteDescriptorSetBuilder<'b> {
     raw: vks::VkWriteDescriptorSet,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> WriteDescriptorSetBuilder<'b> {
@@ -2050,28 +2393,36 @@ impl<'s> CopyDescriptorSet<'s> {
         CopyDescriptorSetBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn src_set(&self) {
+    pub fn src_set_handle<'a>(&'a self) -> vks::VkDescriptorSet {
+        self.raw.srcSet
     }
 
-    pub fn src_binding(&self) {
+    pub fn src_binding<'a>(&'a self) -> u32 {
+        self.raw.srcBinding.into()
     }
 
-    pub fn src_array_element(&self) {
+    pub fn src_array_element<'a>(&'a self) -> u32 {
+        self.raw.srcArrayElement.into()
     }
 
-    pub fn dst_set(&self) {
+    pub fn dst_set_handle<'a>(&'a self) -> vks::VkDescriptorSet {
+        self.raw.dstSet
     }
 
-    pub fn dst_binding(&self) {
+    pub fn dst_binding<'a>(&'a self) -> u32 {
+        self.raw.dstBinding.into()
     }
 
-    pub fn dst_array_element(&self) {
+    pub fn dst_array_element<'a>(&'a self) -> u32 {
+        self.raw.dstArrayElement.into()
     }
 
-    pub fn descriptor_count(&self) {
+    pub fn descriptor_count<'a>(&'a self) -> u32 {
+        self.raw.descriptorCount.into()
     }
 
     pub fn raw(&self) -> &vks::VkCopyDescriptorSet {
@@ -2087,13 +2438,20 @@ impl<'s> From<CopyDescriptorSet<'s>> for vks::VkCopyDescriptorSet {
 }
 
 
+impl<'s> From<vks::VkCopyDescriptorSet> for CopyDescriptorSet<'s> {
+    fn from(f: vks::VkCopyDescriptorSet) -> CopyDescriptorSet<'s> {
+        CopyDescriptorSet { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkCopyDescriptorSet`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct CopyDescriptorSetBuilder<'b> {
     raw: vks::VkCopyDescriptorSet,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> CopyDescriptorSetBuilder<'b> {
@@ -2169,22 +2527,30 @@ impl<'s> BufferCreateInfo<'s> {
         BufferCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> BufferCreateFlags {
+        BufferCreateFlags::from_bits(self.raw.flags)
+            .expect("BufferCreateInfo::flags: error converting flags")
     }
 
-    pub fn size(&self) {
+    pub fn size<'a>(&'a self) -> u64 {
+        self.raw.size.into()
     }
 
-    pub fn usage(&self) {
+    pub fn usage<'a>(&'a self) -> BufferUsageFlags {
+        BufferUsageFlags::from_bits(self.raw.usage)
+            .expect("BufferCreateInfo::usage: error converting flags")
     }
 
-    pub fn sharing_mode(&self) {
+    pub fn sharing_mode<'a>(&'a self) -> SharingMode {
+        self.raw.sharingMode.into()
     }
 
-    pub fn queue_family_indices(&self) {
+    pub fn queue_family_indices<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pQueueFamilyIndices as *const _, self.raw.queueFamilyIndexCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkBufferCreateInfo {
@@ -2200,13 +2566,20 @@ impl<'s> From<BufferCreateInfo<'s>> for vks::VkBufferCreateInfo {
 }
 
 
+impl<'s> From<vks::VkBufferCreateInfo> for BufferCreateInfo<'s> {
+    fn from(f: vks::VkBufferCreateInfo) -> BufferCreateInfo<'s> {
+        BufferCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkBufferCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferCreateInfoBuilder<'b> {
     raw: vks::VkBufferCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> BufferCreateInfoBuilder<'b> {
@@ -2243,10 +2616,10 @@ impl<'b> BufferCreateInfoBuilder<'b> {
     }
 
     pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> BufferCreateInfoBuilder<'b> {
-        assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as u32, 
+        assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `BufferCreateInfo::queue_family_indices`.");
-        self.raw.queueFamilyIndexCount = queue_family_indices.len() as u32;
-        self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const _;
+        self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
+        self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const u32 as *const _;
         self
     }
 
@@ -2275,22 +2648,29 @@ impl<'s> BufferViewCreateInfo<'s> {
         BufferViewCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> BufferViewCreateFlags {
+        BufferViewCreateFlags::from_bits(self.raw.flags)
+            .expect("BufferViewCreateInfo::flags: error converting flags")
     }
 
-    pub fn buffer(&self) {
+    pub fn buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.buffer
     }
 
-    pub fn format(&self) {
+    pub fn format<'a>(&'a self) -> Format {
+        self.raw.format.into()
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> u64 {
+        self.raw.offset.into()
     }
 
-    pub fn range(&self) {
+    pub fn range<'a>(&'a self) -> u64 {
+        self.raw.range.into()
     }
 
     pub fn raw(&self) -> &vks::VkBufferViewCreateInfo {
@@ -2306,13 +2686,20 @@ impl<'s> From<BufferViewCreateInfo<'s>> for vks::VkBufferViewCreateInfo {
 }
 
 
+impl<'s> From<vks::VkBufferViewCreateInfo> for BufferViewCreateInfo<'s> {
+    fn from(f: vks::VkBufferViewCreateInfo) -> BufferViewCreateInfo<'s> {
+        BufferViewCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkBufferViewCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferViewCreateInfoBuilder<'b> {
     raw: vks::VkBufferViewCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> BufferViewCreateInfoBuilder<'b> {
@@ -2377,13 +2764,17 @@ impl ImageSubresource {
         ImageSubresourceBuilder::new()
     }
 
-    pub fn aspect_mask(&self) {
+    pub fn aspect_mask<'a>(&'a self) -> ImageAspectFlags {
+        ImageAspectFlags::from_bits(self.raw.aspectMask)
+            .expect("ImageSubresource::aspect_mask: error converting flags")
     }
 
-    pub fn mip_level(&self) {
+    pub fn mip_level<'a>(&'a self) -> u32 {
+        self.raw.mipLevel.into()
     }
 
-    pub fn array_layer(&self) {
+    pub fn array_layer<'a>(&'a self) -> u32 {
+        self.raw.arrayLayer.into()
     }
 
     pub fn raw(&self) -> &vks::VkImageSubresource {
@@ -2395,6 +2786,13 @@ impl ImageSubresource {
 impl From<ImageSubresource> for vks::VkImageSubresource {
     fn from(f: ImageSubresource) -> vks::VkImageSubresource {
         f.raw
+    }
+}
+
+
+impl From<vks::VkImageSubresource> for ImageSubresource {
+    fn from(f: vks::VkImageSubresource) -> ImageSubresource {
+        ImageSubresource { raw: f, }
     }
 }
 
@@ -2452,16 +2850,21 @@ impl ImageSubresourceLayers {
         ImageSubresourceLayersBuilder::new()
     }
 
-    pub fn aspect_mask(&self) {
+    pub fn aspect_mask<'a>(&'a self) -> ImageAspectFlags {
+        ImageAspectFlags::from_bits(self.raw.aspectMask)
+            .expect("ImageSubresourceLayers::aspect_mask: error converting flags")
     }
 
-    pub fn mip_level(&self) {
+    pub fn mip_level<'a>(&'a self) -> u32 {
+        self.raw.mipLevel.into()
     }
 
-    pub fn base_array_layer(&self) {
+    pub fn base_array_layer<'a>(&'a self) -> u32 {
+        self.raw.baseArrayLayer.into()
     }
 
-    pub fn layer_count(&self) {
+    pub fn layer_count<'a>(&'a self) -> u32 {
+        self.raw.layerCount.into()
     }
 
     pub fn raw(&self) -> &vks::VkImageSubresourceLayers {
@@ -2473,6 +2876,13 @@ impl ImageSubresourceLayers {
 impl From<ImageSubresourceLayers> for vks::VkImageSubresourceLayers {
     fn from(f: ImageSubresourceLayers) -> vks::VkImageSubresourceLayers {
         f.raw
+    }
+}
+
+
+impl From<vks::VkImageSubresourceLayers> for ImageSubresourceLayers {
+    fn from(f: vks::VkImageSubresourceLayers) -> ImageSubresourceLayers {
+        ImageSubresourceLayers { raw: f, }
     }
 }
 
@@ -2535,19 +2945,25 @@ impl ImageSubresourceRange {
         ImageSubresourceRangeBuilder::new()
     }
 
-    pub fn aspect_mask(&self) {
+    pub fn aspect_mask<'a>(&'a self) -> ImageAspectFlags {
+        ImageAspectFlags::from_bits(self.raw.aspectMask)
+            .expect("ImageSubresourceRange::aspect_mask: error converting flags")
     }
 
-    pub fn base_mip_level(&self) {
+    pub fn base_mip_level<'a>(&'a self) -> u32 {
+        self.raw.baseMipLevel.into()
     }
 
-    pub fn level_count(&self) {
+    pub fn level_count<'a>(&'a self) -> u32 {
+        self.raw.levelCount.into()
     }
 
-    pub fn base_array_layer(&self) {
+    pub fn base_array_layer<'a>(&'a self) -> u32 {
+        self.raw.baseArrayLayer.into()
     }
 
-    pub fn layer_count(&self) {
+    pub fn layer_count<'a>(&'a self) -> u32 {
+        self.raw.layerCount.into()
     }
 
     pub fn raw(&self) -> &vks::VkImageSubresourceRange {
@@ -2559,6 +2975,13 @@ impl ImageSubresourceRange {
 impl From<ImageSubresourceRange> for vks::VkImageSubresourceRange {
     fn from(f: ImageSubresourceRange) -> vks::VkImageSubresourceRange {
         f.raw
+    }
+}
+
+
+impl From<vks::VkImageSubresourceRange> for ImageSubresourceRange {
+    fn from(f: vks::VkImageSubresourceRange) -> ImageSubresourceRange {
+        ImageSubresourceRange { raw: f, }
     }
 }
 
@@ -2627,13 +3050,18 @@ impl<'s> MemoryBarrier<'s> {
         MemoryBarrierBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn src_access_mask(&self) {
+    pub fn src_access_mask<'a>(&'a self) -> AccessFlags {
+        AccessFlags::from_bits(self.raw.srcAccessMask)
+            .expect("MemoryBarrier::src_access_mask: error converting flags")
     }
 
-    pub fn dst_access_mask(&self) {
+    pub fn dst_access_mask<'a>(&'a self) -> AccessFlags {
+        AccessFlags::from_bits(self.raw.dstAccessMask)
+            .expect("MemoryBarrier::dst_access_mask: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkMemoryBarrier {
@@ -2649,13 +3077,20 @@ impl<'s> From<MemoryBarrier<'s>> for vks::VkMemoryBarrier {
 }
 
 
+impl<'s> From<vks::VkMemoryBarrier> for MemoryBarrier<'s> {
+    fn from(f: vks::VkMemoryBarrier) -> MemoryBarrier<'s> {
+        MemoryBarrier { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkMemoryBarrier`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryBarrierBuilder<'b> {
     raw: vks::VkMemoryBarrier,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> MemoryBarrierBuilder<'b> {
@@ -2706,28 +3141,38 @@ impl<'s> BufferMemoryBarrier<'s> {
         BufferMemoryBarrierBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn src_access_mask(&self) {
+    pub fn src_access_mask<'a>(&'a self) -> AccessFlags {
+        AccessFlags::from_bits(self.raw.srcAccessMask)
+            .expect("BufferMemoryBarrier::src_access_mask: error converting flags")
     }
 
-    pub fn dst_access_mask(&self) {
+    pub fn dst_access_mask<'a>(&'a self) -> AccessFlags {
+        AccessFlags::from_bits(self.raw.dstAccessMask)
+            .expect("BufferMemoryBarrier::dst_access_mask: error converting flags")
     }
 
-    pub fn src_queue_family_index(&self) {
+    pub fn src_queue_family_index<'a>(&'a self) -> u32 {
+        self.raw.srcQueueFamilyIndex.into()
     }
 
-    pub fn dst_queue_family_index(&self) {
+    pub fn dst_queue_family_index<'a>(&'a self) -> u32 {
+        self.raw.dstQueueFamilyIndex.into()
     }
 
-    pub fn buffer(&self) {
+    pub fn buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.buffer
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> u64 {
+        self.raw.offset.into()
     }
 
-    pub fn size(&self) {
+    pub fn size<'a>(&'a self) -> u64 {
+        self.raw.size.into()
     }
 
     pub fn raw(&self) -> &vks::VkBufferMemoryBarrier {
@@ -2743,13 +3188,20 @@ impl<'s> From<BufferMemoryBarrier<'s>> for vks::VkBufferMemoryBarrier {
 }
 
 
+impl<'s> From<vks::VkBufferMemoryBarrier> for BufferMemoryBarrier<'s> {
+    fn from(f: vks::VkBufferMemoryBarrier) -> BufferMemoryBarrier<'s> {
+        BufferMemoryBarrier { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkBufferMemoryBarrier`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferMemoryBarrierBuilder<'b> {
     raw: vks::VkBufferMemoryBarrier,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> BufferMemoryBarrierBuilder<'b> {
@@ -2825,31 +3277,42 @@ impl<'s> ImageMemoryBarrier<'s> {
         ImageMemoryBarrierBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn src_access_mask(&self) {
+    pub fn src_access_mask<'a>(&'a self) -> AccessFlags {
+        AccessFlags::from_bits(self.raw.srcAccessMask)
+            .expect("ImageMemoryBarrier::src_access_mask: error converting flags")
     }
 
-    pub fn dst_access_mask(&self) {
+    pub fn dst_access_mask<'a>(&'a self) -> AccessFlags {
+        AccessFlags::from_bits(self.raw.dstAccessMask)
+            .expect("ImageMemoryBarrier::dst_access_mask: error converting flags")
     }
 
-    pub fn old_layout(&self) {
+    pub fn old_layout<'a>(&'a self) -> ImageLayout {
+        self.raw.oldLayout.into()
     }
 
-    pub fn new_layout(&self) {
+    pub fn new_layout<'a>(&'a self) -> ImageLayout {
+        self.raw.newLayout.into()
     }
 
-    pub fn src_queue_family_index(&self) {
+    pub fn src_queue_family_index<'a>(&'a self) -> u32 {
+        self.raw.srcQueueFamilyIndex.into()
     }
 
-    pub fn dst_queue_family_index(&self) {
+    pub fn dst_queue_family_index<'a>(&'a self) -> u32 {
+        self.raw.dstQueueFamilyIndex.into()
     }
 
-    pub fn image(&self) {
+    pub fn image_handle<'a>(&'a self) -> vks::VkImage {
+        self.raw.image
     }
 
-    pub fn subresource_range(&self) {
+    pub fn subresource_range<'a>(&'a self) -> ImageSubresourceRange {
+        self.raw.subresourceRange.into()
     }
 
     pub fn raw(&self) -> &vks::VkImageMemoryBarrier {
@@ -2865,13 +3328,20 @@ impl<'s> From<ImageMemoryBarrier<'s>> for vks::VkImageMemoryBarrier {
 }
 
 
+impl<'s> From<vks::VkImageMemoryBarrier> for ImageMemoryBarrier<'s> {
+    fn from(f: vks::VkImageMemoryBarrier) -> ImageMemoryBarrier<'s> {
+        ImageMemoryBarrier { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImageMemoryBarrier`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageMemoryBarrierBuilder<'b> {
     raw: vks::VkImageMemoryBarrier,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImageMemoryBarrierBuilder<'b> {
@@ -2952,43 +3422,59 @@ impl<'s> ImageCreateInfo<'s> {
         ImageCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> ImageCreateFlags {
+        ImageCreateFlags::from_bits(self.raw.flags)
+            .expect("ImageCreateInfo::flags: error converting flags")
     }
 
-    pub fn image_type(&self) {
+    pub fn image_type<'a>(&'a self) -> ImageType {
+        self.raw.imageType.into()
     }
 
-    pub fn format(&self) {
+    pub fn format<'a>(&'a self) -> Format {
+        self.raw.format.into()
     }
 
-    pub fn extent(&self) {
+    pub fn extent<'a>(&'a self) -> Extent3d {
+        self.raw.extent.into()
     }
 
-    pub fn mip_levels(&self) {
+    pub fn mip_levels<'a>(&'a self) -> u32 {
+        self.raw.mipLevels.into()
     }
 
-    pub fn array_layers(&self) {
+    pub fn array_layers<'a>(&'a self) -> u32 {
+        self.raw.arrayLayers.into()
     }
 
-    pub fn samples(&self) {
+    pub fn samples<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.samples)
+            .expect("ImageCreateInfo::samples: error converting flags")
     }
 
-    pub fn tiling(&self) {
+    pub fn tiling<'a>(&'a self) -> ImageTiling {
+        self.raw.tiling.into()
     }
 
-    pub fn usage(&self) {
+    pub fn usage<'a>(&'a self) -> ImageUsageFlags {
+        ImageUsageFlags::from_bits(self.raw.usage)
+            .expect("ImageCreateInfo::usage: error converting flags")
     }
 
-    pub fn sharing_mode(&self) {
+    pub fn sharing_mode<'a>(&'a self) -> SharingMode {
+        self.raw.sharingMode.into()
     }
 
-    pub fn queue_family_indices(&self) {
+    pub fn queue_family_indices<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pQueueFamilyIndices as *const _, self.raw.queueFamilyIndexCount as usize) }
     }
 
-    pub fn initial_layout(&self) {
+    pub fn initial_layout<'a>(&'a self) -> ImageLayout {
+        self.raw.initialLayout.into()
     }
 
     pub fn raw(&self) -> &vks::VkImageCreateInfo {
@@ -3004,13 +3490,20 @@ impl<'s> From<ImageCreateInfo<'s>> for vks::VkImageCreateInfo {
 }
 
 
+impl<'s> From<vks::VkImageCreateInfo> for ImageCreateInfo<'s> {
+    fn from(f: vks::VkImageCreateInfo) -> ImageCreateInfo<'s> {
+        ImageCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImageCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageCreateInfoBuilder<'b> {
     raw: vks::VkImageCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImageCreateInfoBuilder<'b> {
@@ -3077,10 +3570,10 @@ impl<'b> ImageCreateInfoBuilder<'b> {
     }
 
     pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> ImageCreateInfoBuilder<'b> {
-        assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as u32, 
+        assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `ImageCreateInfo::queue_family_indices`.");
-        self.raw.queueFamilyIndexCount = queue_family_indices.len() as u32;
-        self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const _;
+        self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
+        self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const u32 as *const _;
         self
     }
 
@@ -3109,19 +3602,24 @@ pub struct SubresourceLayout {
 }
 
 impl SubresourceLayout {
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> u64 {
+        self.raw.offset.into()
     }
 
-    pub fn size(&self) {
+    pub fn size<'a>(&'a self) -> u64 {
+        self.raw.size.into()
     }
 
-    pub fn row_pitch(&self) {
+    pub fn row_pitch<'a>(&'a self) -> u64 {
+        self.raw.rowPitch.into()
     }
 
-    pub fn array_pitch(&self) {
+    pub fn array_pitch<'a>(&'a self) -> u64 {
+        self.raw.arrayPitch.into()
     }
 
-    pub fn depth_pitch(&self) {
+    pub fn depth_pitch<'a>(&'a self) -> u64 {
+        self.raw.depthPitch.into()
     }
 
     pub fn raw(&self) -> &vks::VkSubresourceLayout {
@@ -3133,6 +3631,13 @@ impl SubresourceLayout {
 impl From<SubresourceLayout> for vks::VkSubresourceLayout {
     fn from(f: SubresourceLayout) -> vks::VkSubresourceLayout {
         f.raw
+    }
+}
+
+
+impl From<vks::VkSubresourceLayout> for SubresourceLayout {
+    fn from(f: vks::VkSubresourceLayout) -> SubresourceLayout {
+        SubresourceLayout { raw: f, }
     }
 }
 
@@ -3152,25 +3657,33 @@ impl<'s> ImageViewCreateInfo<'s> {
         ImageViewCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> ImageViewCreateFlags {
+        ImageViewCreateFlags::from_bits(self.raw.flags)
+            .expect("ImageViewCreateInfo::flags: error converting flags")
     }
 
-    pub fn image(&self) {
+    pub fn image_handle<'a>(&'a self) -> vks::VkImage {
+        self.raw.image
     }
 
-    pub fn view_type(&self) {
+    pub fn view_type<'a>(&'a self) -> ImageViewType {
+        self.raw.viewType.into()
     }
 
-    pub fn format(&self) {
+    pub fn format<'a>(&'a self) -> Format {
+        self.raw.format.into()
     }
 
-    pub fn components(&self) {
+    pub fn components<'a>(&'a self) -> ComponentMapping {
+        self.raw.components.into()
     }
 
-    pub fn subresource_range(&self) {
+    pub fn subresource_range<'a>(&'a self) -> ImageSubresourceRange {
+        self.raw.subresourceRange.into()
     }
 
     pub fn raw(&self) -> &vks::VkImageViewCreateInfo {
@@ -3186,13 +3699,20 @@ impl<'s> From<ImageViewCreateInfo<'s>> for vks::VkImageViewCreateInfo {
 }
 
 
+impl<'s> From<vks::VkImageViewCreateInfo> for ImageViewCreateInfo<'s> {
+    fn from(f: vks::VkImageViewCreateInfo) -> ImageViewCreateInfo<'s> {
+        ImageViewCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImageViewCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageViewCreateInfoBuilder<'b> {
     raw: vks::VkImageViewCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImageViewCreateInfoBuilder<'b> {
@@ -3262,13 +3782,16 @@ impl BufferCopy {
         BufferCopyBuilder::new()
     }
 
-    pub fn src_offset(&self) {
+    pub fn src_offset<'a>(&'a self) -> u64 {
+        self.raw.srcOffset.into()
     }
 
-    pub fn dst_offset(&self) {
+    pub fn dst_offset<'a>(&'a self) -> u64 {
+        self.raw.dstOffset.into()
     }
 
-    pub fn size(&self) {
+    pub fn size<'a>(&'a self) -> u64 {
+        self.raw.size.into()
     }
 
     pub fn raw(&self) -> &vks::VkBufferCopy {
@@ -3280,6 +3803,13 @@ impl BufferCopy {
 impl From<BufferCopy> for vks::VkBufferCopy {
     fn from(f: BufferCopy) -> vks::VkBufferCopy {
         f.raw
+    }
+}
+
+
+impl From<vks::VkBufferCopy> for BufferCopy {
+    fn from(f: vks::VkBufferCopy) -> BufferCopy {
+        BufferCopy { raw: f, }
     }
 }
 
@@ -3337,19 +3867,25 @@ impl SparseMemoryBind {
         SparseMemoryBindBuilder::new()
     }
 
-    pub fn resource_offset(&self) {
+    pub fn resource_offset<'a>(&'a self) -> u64 {
+        self.raw.resourceOffset.into()
     }
 
-    pub fn size(&self) {
+    pub fn size<'a>(&'a self) -> u64 {
+        self.raw.size.into()
     }
 
-    pub fn memory(&self) {
+    pub fn memory_handle<'a>(&'a self) -> vks::VkDeviceMemory {
+        self.raw.memory
     }
 
-    pub fn memory_offset(&self) {
+    pub fn memory_offset<'a>(&'a self) -> u64 {
+        self.raw.memoryOffset.into()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> SparseMemoryBindFlags {
+        SparseMemoryBindFlags::from_bits(self.raw.flags)
+            .expect("SparseMemoryBind::flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkSparseMemoryBind {
@@ -3361,6 +3897,13 @@ impl SparseMemoryBind {
 impl From<SparseMemoryBind> for vks::VkSparseMemoryBind {
     fn from(f: SparseMemoryBind) -> vks::VkSparseMemoryBind {
         f.raw
+    }
+}
+
+
+impl From<vks::VkSparseMemoryBind> for SparseMemoryBind {
+    fn from(f: vks::VkSparseMemoryBind) -> SparseMemoryBind {
+        SparseMemoryBind { raw: f, }
     }
 }
 
@@ -3428,22 +3971,29 @@ impl SparseImageMemoryBind {
         SparseImageMemoryBindBuilder::new()
     }
 
-    pub fn subresource(&self) {
+    pub fn subresource<'a>(&'a self) -> ImageSubresource {
+        self.raw.subresource.into()
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> Offset3d {
+        self.raw.offset.into()
     }
 
-    pub fn extent(&self) {
+    pub fn extent<'a>(&'a self) -> Extent3d {
+        self.raw.extent.into()
     }
 
-    pub fn memory(&self) {
+    pub fn memory_handle<'a>(&'a self) -> vks::VkDeviceMemory {
+        self.raw.memory
     }
 
-    pub fn memory_offset(&self) {
+    pub fn memory_offset<'a>(&'a self) -> u64 {
+        self.raw.memoryOffset.into()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> SparseMemoryBindFlags {
+        SparseMemoryBindFlags::from_bits(self.raw.flags)
+            .expect("SparseImageMemoryBind::flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkSparseImageMemoryBind {
@@ -3455,6 +4005,13 @@ impl SparseImageMemoryBind {
 impl From<SparseImageMemoryBind> for vks::VkSparseImageMemoryBind {
     fn from(f: SparseImageMemoryBind) -> vks::VkSparseImageMemoryBind {
         f.raw
+    }
+}
+
+
+impl From<vks::VkSparseImageMemoryBind> for SparseImageMemoryBind {
+    fn from(f: vks::VkSparseImageMemoryBind) -> SparseImageMemoryBind {
+        SparseImageMemoryBind { raw: f, }
     }
 }
 
@@ -3528,10 +4085,12 @@ impl<'s> SparseBufferMemoryBindInfo<'s> {
         SparseBufferMemoryBindInfoBuilder::new()
     }
 
-    pub fn buffer(&self) {
+    pub fn buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.buffer
     }
 
-    pub fn binds(&self) {
+    pub fn binds<'a>(&'a self) -> &'a [SparseMemoryBind] {
+        unsafe { slice::from_raw_parts(self.raw.pBinds as *const _, self.raw.bindCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkSparseBufferMemoryBindInfo {
@@ -3547,13 +4106,20 @@ impl<'s> From<SparseBufferMemoryBindInfo<'s>> for vks::VkSparseBufferMemoryBindI
 }
 
 
+impl<'s> From<vks::VkSparseBufferMemoryBindInfo> for SparseBufferMemoryBindInfo<'s> {
+    fn from(f: vks::VkSparseBufferMemoryBindInfo) -> SparseBufferMemoryBindInfo<'s> {
+        SparseBufferMemoryBindInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSparseBufferMemoryBindInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseBufferMemoryBindInfoBuilder<'b> {
     raw: vks::VkSparseBufferMemoryBindInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SparseBufferMemoryBindInfoBuilder<'b> {
@@ -3570,10 +4136,10 @@ impl<'b> SparseBufferMemoryBindInfoBuilder<'b> {
     }
 
     pub fn binds<'m, 'a>(mut self, binds: &'a [SparseMemoryBind]) -> SparseBufferMemoryBindInfoBuilder<'b> {
-        assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as u32, 
+        assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseBufferMemoryBindInfo::binds`.");
-        self.raw.bindCount = binds.len() as u32;
-        self.raw.pBinds = binds.as_ptr() as *const _;
+        self.raw.bindCount = binds.len() as _;
+        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind as *const _;
         self
     }
 
@@ -3602,10 +4168,12 @@ impl<'s> SparseImageOpaqueMemoryBindInfo<'s> {
         SparseImageOpaqueMemoryBindInfoBuilder::new()
     }
 
-    pub fn image(&self) {
+    pub fn image_handle<'a>(&'a self) -> vks::VkImage {
+        self.raw.image
     }
 
-    pub fn binds(&self) {
+    pub fn binds<'a>(&'a self) -> &'a [SparseMemoryBind] {
+        unsafe { slice::from_raw_parts(self.raw.pBinds as *const _, self.raw.bindCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkSparseImageOpaqueMemoryBindInfo {
@@ -3621,13 +4189,20 @@ impl<'s> From<SparseImageOpaqueMemoryBindInfo<'s>> for vks::VkSparseImageOpaqueM
 }
 
 
+impl<'s> From<vks::VkSparseImageOpaqueMemoryBindInfo> for SparseImageOpaqueMemoryBindInfo<'s> {
+    fn from(f: vks::VkSparseImageOpaqueMemoryBindInfo) -> SparseImageOpaqueMemoryBindInfo<'s> {
+        SparseImageOpaqueMemoryBindInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSparseImageOpaqueMemoryBindInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseImageOpaqueMemoryBindInfoBuilder<'b> {
     raw: vks::VkSparseImageOpaqueMemoryBindInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
@@ -3644,10 +4219,10 @@ impl<'b> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
     }
 
     pub fn binds<'m, 'a>(mut self, binds: &'a [SparseMemoryBind]) -> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
-        assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as u32, 
+        assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseImageOpaqueMemoryBindInfo::binds`.");
-        self.raw.bindCount = binds.len() as u32;
-        self.raw.pBinds = binds.as_ptr() as *const _;
+        self.raw.bindCount = binds.len() as _;
+        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind as *const _;
         self
     }
 
@@ -3676,10 +4251,12 @@ impl<'s> SparseImageMemoryBindInfo<'s> {
         SparseImageMemoryBindInfoBuilder::new()
     }
 
-    pub fn image(&self) {
+    pub fn image_handle<'a>(&'a self) -> vks::VkImage {
+        self.raw.image
     }
 
-    pub fn binds(&self) {
+    pub fn binds<'a>(&'a self) -> &'a [SparseImageMemoryBind] {
+        unsafe { slice::from_raw_parts(self.raw.pBinds as *const _, self.raw.bindCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkSparseImageMemoryBindInfo {
@@ -3695,13 +4272,20 @@ impl<'s> From<SparseImageMemoryBindInfo<'s>> for vks::VkSparseImageMemoryBindInf
 }
 
 
+impl<'s> From<vks::VkSparseImageMemoryBindInfo> for SparseImageMemoryBindInfo<'s> {
+    fn from(f: vks::VkSparseImageMemoryBindInfo) -> SparseImageMemoryBindInfo<'s> {
+        SparseImageMemoryBindInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSparseImageMemoryBindInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SparseImageMemoryBindInfoBuilder<'b> {
     raw: vks::VkSparseImageMemoryBindInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SparseImageMemoryBindInfoBuilder<'b> {
@@ -3718,10 +4302,10 @@ impl<'b> SparseImageMemoryBindInfoBuilder<'b> {
     }
 
     pub fn binds<'m, 'a>(mut self, binds: &'a [SparseImageMemoryBind]) -> SparseImageMemoryBindInfoBuilder<'b> {
-        assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as u32, 
+        assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseImageMemoryBindInfo::binds`.");
-        self.raw.bindCount = binds.len() as u32;
-        self.raw.pBinds = binds.as_ptr() as *const _;
+        self.raw.bindCount = binds.len() as _;
+        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseImageMemoryBind as *const _;
         self
     }
 
@@ -3741,8 +4325,8 @@ impl<'b> SparseImageMemoryBindInfoBuilder<'b> {
 #[derive(Debug, Clone, Default)]
 pub struct BindSparseInfo<'s> {
     raw: vks::VkBindSparseInfo,
-    wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     signal_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
+    wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -3751,22 +4335,28 @@ impl<'s> BindSparseInfo<'s> {
         BindSparseInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn wait_semaphores(&self) {
+    pub fn wait_semaphores_handle<'a>(&'a self) -> &'a [vks::VkSemaphore] {
+        unsafe { slice::from_raw_parts(self.raw.pWaitSemaphores as *const _, self.raw.waitSemaphoreCount as usize) }
     }
 
-    pub fn buffer_binds(&self) {
+    pub fn buffer_binds<'a>(&'a self) -> &'a [SparseBufferMemoryBindInfo] {
+        unsafe { slice::from_raw_parts(self.raw.pBufferBinds as *const _, self.raw.bufferBindCount as usize) }
     }
 
-    pub fn image_opaque_binds(&self) {
+    pub fn image_opaque_binds<'a>(&'a self) -> &'a [SparseImageOpaqueMemoryBindInfo] {
+        unsafe { slice::from_raw_parts(self.raw.pImageOpaqueBinds as *const _, self.raw.imageOpaqueBindCount as usize) }
     }
 
-    pub fn image_binds(&self) {
+    pub fn image_binds<'a>(&'a self) -> &'a [SparseImageMemoryBindInfo] {
+        unsafe { slice::from_raw_parts(self.raw.pImageBinds as *const _, self.raw.imageBindCount as usize) }
     }
 
-    pub fn signal_semaphores(&self) {
+    pub fn signal_semaphores_handle<'a>(&'a self) -> &'a [vks::VkSemaphore] {
+        unsafe { slice::from_raw_parts(self.raw.pSignalSemaphores as *const _, self.raw.signalSemaphoreCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkBindSparseInfo {
@@ -3782,23 +4372,30 @@ impl<'s> From<BindSparseInfo<'s>> for vks::VkBindSparseInfo {
 }
 
 
+impl<'s> From<vks::VkBindSparseInfo> for BindSparseInfo<'s> {
+    fn from(f: vks::VkBindSparseInfo) -> BindSparseInfo<'s> {
+        BindSparseInfo { raw: f, signal_semaphores: None, wait_semaphores: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkBindSparseInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct BindSparseInfoBuilder<'b> {
     raw: vks::VkBindSparseInfo,
-    wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     signal_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
-    _p: PhantomData<&'b ()>,
+    wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> BindSparseInfoBuilder<'b> {
     pub fn new() -> BindSparseInfoBuilder<'b> {
         BindSparseInfoBuilder {
             raw: vks::VkBindSparseInfo::default(),
-            wait_semaphores: None,
             signal_semaphores: None,
+            wait_semaphores: None,
             _p: PhantomData,
         }
     }
@@ -3808,50 +4405,50 @@ impl<'b> BindSparseInfoBuilder<'b> {
         self
     }
 
-    pub fn wait_semaphores<'m, 'a>(mut self, wait_semaphores: &'a [Semaphore]) -> BindSparseInfoBuilder<'b> where 'a: 'b {
+    pub fn wait_semaphores<'m, 'a>(mut self, wait_semaphores: &'a [&'a Semaphore]) -> BindSparseInfoBuilder<'b> where 'a: 'b {
         self.wait_semaphores = Some(wait_semaphores.iter().map(|h| h.handle()).collect());
         {
             let wait_semaphores = self.wait_semaphores.as_ref().unwrap();
             self.raw.pWaitSemaphores = wait_semaphores.as_ptr();
-            assert!(self.raw.waitSemaphoreCount == 0 || self.raw.waitSemaphoreCount == wait_semaphores.len() as u32, 
+            assert!(self.raw.waitSemaphoreCount == 0 || self.raw.waitSemaphoreCount == wait_semaphores.len() as _, 
                 "count inconsistency found when specifying `BindSparseInfo::wait_semaphores`.");
-            self.raw.waitSemaphoreCount = wait_semaphores.len() as u32;
+            self.raw.waitSemaphoreCount = wait_semaphores.len() as _;
         }
         self
     }
 
     pub fn buffer_binds<'m, 'a>(mut self, buffer_binds: &'a [SparseBufferMemoryBindInfo]) -> BindSparseInfoBuilder<'b> {
-        assert!(self.raw.bufferBindCount == 0 || self.raw.bufferBindCount == buffer_binds.len() as u32, 
+        assert!(self.raw.bufferBindCount == 0 || self.raw.bufferBindCount == buffer_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::buffer_binds`.");
-        self.raw.bufferBindCount = buffer_binds.len() as u32;
-        self.raw.pBufferBinds = buffer_binds.as_ptr() as *const _;
+        self.raw.bufferBindCount = buffer_binds.len() as _;
+        self.raw.pBufferBinds = buffer_binds.as_ptr() as *const vks::VkSparseBufferMemoryBindInfo as *const _;
         self
     }
 
     pub fn image_opaque_binds<'m, 'a>(mut self, image_opaque_binds: &'a [SparseImageOpaqueMemoryBindInfo]) -> BindSparseInfoBuilder<'b> {
-        assert!(self.raw.imageOpaqueBindCount == 0 || self.raw.imageOpaqueBindCount == image_opaque_binds.len() as u32, 
+        assert!(self.raw.imageOpaqueBindCount == 0 || self.raw.imageOpaqueBindCount == image_opaque_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::image_opaque_binds`.");
-        self.raw.imageOpaqueBindCount = image_opaque_binds.len() as u32;
-        self.raw.pImageOpaqueBinds = image_opaque_binds.as_ptr() as *const _;
+        self.raw.imageOpaqueBindCount = image_opaque_binds.len() as _;
+        self.raw.pImageOpaqueBinds = image_opaque_binds.as_ptr() as *const vks::VkSparseImageOpaqueMemoryBindInfo as *const _;
         self
     }
 
     pub fn image_binds<'m, 'a>(mut self, image_binds: &'a [SparseImageMemoryBindInfo]) -> BindSparseInfoBuilder<'b> {
-        assert!(self.raw.imageBindCount == 0 || self.raw.imageBindCount == image_binds.len() as u32, 
+        assert!(self.raw.imageBindCount == 0 || self.raw.imageBindCount == image_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::image_binds`.");
-        self.raw.imageBindCount = image_binds.len() as u32;
-        self.raw.pImageBinds = image_binds.as_ptr() as *const _;
+        self.raw.imageBindCount = image_binds.len() as _;
+        self.raw.pImageBinds = image_binds.as_ptr() as *const vks::VkSparseImageMemoryBindInfo as *const _;
         self
     }
 
-    pub fn signal_semaphores<'m, 'a>(mut self, signal_semaphores: &'a [Semaphore]) -> BindSparseInfoBuilder<'b> where 'a: 'b {
+    pub fn signal_semaphores<'m, 'a>(mut self, signal_semaphores: &'a [&'a Semaphore]) -> BindSparseInfoBuilder<'b> where 'a: 'b {
         self.signal_semaphores = Some(signal_semaphores.iter().map(|h| h.handle()).collect());
         {
             let signal_semaphores = self.signal_semaphores.as_ref().unwrap();
             self.raw.pSignalSemaphores = signal_semaphores.as_ptr();
-            assert!(self.raw.signalSemaphoreCount == 0 || self.raw.signalSemaphoreCount == signal_semaphores.len() as u32, 
+            assert!(self.raw.signalSemaphoreCount == 0 || self.raw.signalSemaphoreCount == signal_semaphores.len() as _, 
                 "count inconsistency found when specifying `BindSparseInfo::signal_semaphores`.");
-            self.raw.signalSemaphoreCount = signal_semaphores.len() as u32;
+            self.raw.signalSemaphoreCount = signal_semaphores.len() as _;
         }
         self
     }
@@ -3859,8 +4456,8 @@ impl<'b> BindSparseInfoBuilder<'b> {
     pub fn build(self) -> BindSparseInfo<'b> {
         BindSparseInfo {
             raw: self.raw,
-            wait_semaphores: self.wait_semaphores,
             signal_semaphores: self.signal_semaphores,
+            wait_semaphores: self.wait_semaphores,
             _p: PhantomData,
         }
     }
@@ -3882,19 +4479,24 @@ impl ImageCopy {
         ImageCopyBuilder::new()
     }
 
-    pub fn src_subresource(&self) {
+    pub fn src_subresource<'a>(&'a self) -> ImageSubresourceLayers {
+        self.raw.srcSubresource.into()
     }
 
-    pub fn src_offset(&self) {
+    pub fn src_offset<'a>(&'a self) -> Offset3d {
+        self.raw.srcOffset.into()
     }
 
-    pub fn dst_subresource(&self) {
+    pub fn dst_subresource<'a>(&'a self) -> ImageSubresourceLayers {
+        self.raw.dstSubresource.into()
     }
 
-    pub fn dst_offset(&self) {
+    pub fn dst_offset<'a>(&'a self) -> Offset3d {
+        self.raw.dstOffset.into()
     }
 
-    pub fn extent(&self) {
+    pub fn extent<'a>(&'a self) -> Extent3d {
+        self.raw.extent.into()
     }
 
     pub fn raw(&self) -> &vks::VkImageCopy {
@@ -3906,6 +4508,13 @@ impl ImageCopy {
 impl From<ImageCopy> for vks::VkImageCopy {
     fn from(f: ImageCopy) -> vks::VkImageCopy {
         f.raw
+    }
+}
+
+
+impl From<vks::VkImageCopy> for ImageCopy {
+    fn from(f: vks::VkImageCopy) -> ImageCopy {
+        ImageCopy { raw: f, }
     }
 }
 
@@ -3973,16 +4582,20 @@ impl ImageBlit {
         ImageBlitBuilder::new()
     }
 
-    pub fn src_subresource(&self) {
+    pub fn src_subresource<'a>(&'a self) -> ImageSubresourceLayers {
+        self.raw.srcSubresource.into()
     }
 
-    pub fn src_offsets(&self) {
+    pub fn src_offsets<'a>(&'a self) -> &[Offset3d] {
+        unsafe { slice::from_raw_parts(&self.raw.srcOffsets as *const vks::VkOffset3D as *const _, 2 as usize) }
     }
 
-    pub fn dst_subresource(&self) {
+    pub fn dst_subresource<'a>(&'a self) -> ImageSubresourceLayers {
+        self.raw.dstSubresource.into()
     }
 
-    pub fn dst_offsets(&self) {
+    pub fn dst_offsets<'a>(&'a self) -> &[Offset3d] {
+        unsafe { slice::from_raw_parts(&self.raw.dstOffsets as *const vks::VkOffset3D as *const _, 2 as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkImageBlit {
@@ -3994,6 +4607,13 @@ impl ImageBlit {
 impl From<ImageBlit> for vks::VkImageBlit {
     fn from(f: ImageBlit) -> vks::VkImageBlit {
         f.raw
+    }
+}
+
+
+impl From<vks::VkImageBlit> for ImageBlit {
+    fn from(f: vks::VkImageBlit) -> ImageBlit {
+        ImageBlit { raw: f, }
     }
 }
 
@@ -4056,22 +4676,28 @@ impl BufferImageCopy {
         BufferImageCopyBuilder::new()
     }
 
-    pub fn buffer_offset(&self) {
+    pub fn buffer_offset<'a>(&'a self) -> u64 {
+        self.raw.bufferOffset.into()
     }
 
-    pub fn buffer_row_length(&self) {
+    pub fn buffer_row_length<'a>(&'a self) -> u32 {
+        self.raw.bufferRowLength.into()
     }
 
-    pub fn buffer_image_height(&self) {
+    pub fn buffer_image_height<'a>(&'a self) -> u32 {
+        self.raw.bufferImageHeight.into()
     }
 
-    pub fn image_subresource(&self) {
+    pub fn image_subresource<'a>(&'a self) -> ImageSubresourceLayers {
+        self.raw.imageSubresource.into()
     }
 
-    pub fn image_offset(&self) {
+    pub fn image_offset<'a>(&'a self) -> Offset3d {
+        self.raw.imageOffset.into()
     }
 
-    pub fn image_extent(&self) {
+    pub fn image_extent<'a>(&'a self) -> Extent3d {
+        self.raw.imageExtent.into()
     }
 
     pub fn raw(&self) -> &vks::VkBufferImageCopy {
@@ -4083,6 +4709,13 @@ impl BufferImageCopy {
 impl From<BufferImageCopy> for vks::VkBufferImageCopy {
     fn from(f: BufferImageCopy) -> vks::VkBufferImageCopy {
         f.raw
+    }
+}
+
+
+impl From<vks::VkBufferImageCopy> for BufferImageCopy {
+    fn from(f: vks::VkBufferImageCopy) -> BufferImageCopy {
+        BufferImageCopy { raw: f, }
     }
 }
 
@@ -4155,19 +4788,24 @@ impl ImageResolve {
         ImageResolveBuilder::new()
     }
 
-    pub fn src_subresource(&self) {
+    pub fn src_subresource<'a>(&'a self) -> ImageSubresourceLayers {
+        self.raw.srcSubresource.into()
     }
 
-    pub fn src_offset(&self) {
+    pub fn src_offset<'a>(&'a self) -> Offset3d {
+        self.raw.srcOffset.into()
     }
 
-    pub fn dst_subresource(&self) {
+    pub fn dst_subresource<'a>(&'a self) -> ImageSubresourceLayers {
+        self.raw.dstSubresource.into()
     }
 
-    pub fn dst_offset(&self) {
+    pub fn dst_offset<'a>(&'a self) -> Offset3d {
+        self.raw.dstOffset.into()
     }
 
-    pub fn extent(&self) {
+    pub fn extent<'a>(&'a self) -> Extent3d {
+        self.raw.extent.into()
     }
 
     pub fn raw(&self) -> &vks::VkImageResolve {
@@ -4179,6 +4817,13 @@ impl ImageResolve {
 impl From<ImageResolve> for vks::VkImageResolve {
     fn from(f: ImageResolve) -> vks::VkImageResolve {
         f.raw
+    }
+}
+
+
+impl From<vks::VkImageResolve> for ImageResolve {
+    fn from(f: vks::VkImageResolve) -> ImageResolve {
+        ImageResolve { raw: f, }
     }
 }
 
@@ -4247,16 +4892,17 @@ impl<'s> ShaderModuleCreateInfo<'s> {
         ShaderModuleCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> ShaderModuleCreateFlags {
+        ShaderModuleCreateFlags::from_bits(self.raw.flags)
+            .expect("ShaderModuleCreateInfo::flags: error converting flags")
     }
 
-    pub fn code_size(&self) {
-    }
-
-    pub fn code(&self) {
+    pub fn code<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pCode as *const _, self.raw.codeSize as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkShaderModuleCreateInfo {
@@ -4272,13 +4918,20 @@ impl<'s> From<ShaderModuleCreateInfo<'s>> for vks::VkShaderModuleCreateInfo {
 }
 
 
+impl<'s> From<vks::VkShaderModuleCreateInfo> for ShaderModuleCreateInfo<'s> {
+    fn from(f: vks::VkShaderModuleCreateInfo) -> ShaderModuleCreateInfo<'s> {
+        ShaderModuleCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkShaderModuleCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ShaderModuleCreateInfoBuilder<'b> {
     raw: vks::VkShaderModuleCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ShaderModuleCreateInfoBuilder<'b> {
@@ -4299,13 +4952,11 @@ impl<'b> ShaderModuleCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn code_size<'m>(mut self, code_size: usize) -> ShaderModuleCreateInfoBuilder<'b> {
-        self.raw.codeSize = code_size.into();
-        self
-    }
-
     pub fn code<'m, 'a>(mut self, code: &'a [u32]) -> ShaderModuleCreateInfoBuilder<'b> {
-        self.raw.pCode = code.as_ptr() as *const _;
+        assert!(self.raw.codeSize == 0 || self.raw.codeSize == code.len() as _, 
+            "count inconsistency found when specifying `ShaderModuleCreateInfo::code`.");
+        self.raw.codeSize = code.len() as _;
+        self.raw.pCode = code.as_ptr() as *const u32 as *const _;
         self
     }
 
@@ -4334,19 +4985,25 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
         DescriptorSetLayoutBindingBuilder::new()
     }
 
-    pub fn binding(&self) {
+    pub fn binding<'a>(&'a self) -> u32 {
+        self.raw.binding.into()
     }
 
-    pub fn descriptor_type(&self) {
+    pub fn descriptor_type<'a>(&'a self) -> DescriptorType {
+        self.raw.descriptorType.into()
     }
 
-    pub fn descriptor_count(&self) {
+    pub fn descriptor_count<'a>(&'a self) -> u32 {
+        self.raw.descriptorCount.into()
     }
 
-    pub fn stage_flags(&self) {
+    pub fn stage_flags<'a>(&'a self) -> ShaderStageFlags {
+        ShaderStageFlags::from_bits(self.raw.stageFlags)
+            .expect("DescriptorSetLayoutBinding::stage_flags: error converting flags")
     }
 
-    pub fn immutable_samplers(&self) {
+    pub fn immutable_samplers_handle<'a>(&'a self) -> &'a vks::VkSampler {
+        unsafe { &*(self.raw.pImmutableSamplers as *const _) }
     }
 
     pub fn raw(&self) -> &vks::VkDescriptorSetLayoutBinding {
@@ -4362,6 +5019,13 @@ impl<'s> From<DescriptorSetLayoutBinding<'s>> for vks::VkDescriptorSetLayoutBind
 }
 
 
+impl<'s> From<vks::VkDescriptorSetLayoutBinding> for DescriptorSetLayoutBinding<'s> {
+    fn from(f: vks::VkDescriptorSetLayoutBinding) -> DescriptorSetLayoutBinding<'s> {
+        DescriptorSetLayoutBinding { raw: f, immutable_samplers: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDescriptorSetLayoutBinding`.
 ///
 /// 
@@ -4369,7 +5033,7 @@ impl<'s> From<DescriptorSetLayoutBinding<'s>> for vks::VkDescriptorSetLayoutBind
 pub struct DescriptorSetLayoutBindingBuilder<'b> {
     raw: vks::VkDescriptorSetLayoutBinding,
     immutable_samplers: Option<SmallVec<[vks::VkSampler; 8]>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DescriptorSetLayoutBindingBuilder<'b> {
@@ -4401,7 +5065,7 @@ impl<'b> DescriptorSetLayoutBindingBuilder<'b> {
         self
     }
 
-    pub fn immutable_samplers<'m, 'a>(mut self, immutable_samplers: &'a [Sampler]) -> DescriptorSetLayoutBindingBuilder<'b> where 'a: 'b {
+    pub fn immutable_samplers<'m, 'a>(mut self, immutable_samplers: &'a [&'a Sampler]) -> DescriptorSetLayoutBindingBuilder<'b> where 'a: 'b {
         self.immutable_samplers = Some(immutable_samplers.iter().map(|h| h.handle()).collect());
         {
             let immutable_samplers = self.immutable_samplers.as_ref().unwrap();
@@ -4436,13 +5100,17 @@ impl<'s> DescriptorSetLayoutCreateInfo<'s> {
         DescriptorSetLayoutCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> DescriptorSetLayoutCreateFlags {
+        DescriptorSetLayoutCreateFlags::from_bits(self.raw.flags)
+            .expect("DescriptorSetLayoutCreateInfo::flags: error converting flags")
     }
 
-    pub fn bindings(&self) {
+    pub fn bindings<'a>(&'a self) -> &'a [vks::VkDescriptorSetLayoutBinding] {
+        unsafe { slice::from_raw_parts(self.raw.pBindings as *const _, self.raw.bindingCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkDescriptorSetLayoutCreateInfo {
@@ -4458,6 +5126,13 @@ impl<'s> From<DescriptorSetLayoutCreateInfo<'s>> for vks::VkDescriptorSetLayoutC
 }
 
 
+impl<'s> From<vks::VkDescriptorSetLayoutCreateInfo> for DescriptorSetLayoutCreateInfo<'s> {
+    fn from(f: vks::VkDescriptorSetLayoutCreateInfo) -> DescriptorSetLayoutCreateInfo<'s> {
+        DescriptorSetLayoutCreateInfo { raw: f, bindings: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDescriptorSetLayoutCreateInfo`.
 ///
 /// 
@@ -4465,7 +5140,7 @@ impl<'s> From<DescriptorSetLayoutCreateInfo<'s>> for vks::VkDescriptorSetLayoutC
 pub struct DescriptorSetLayoutCreateInfoBuilder<'b> {
     raw: vks::VkDescriptorSetLayoutCreateInfo,
     bindings: Option<SmallVec<[vks::VkDescriptorSetLayoutBinding; 8]>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DescriptorSetLayoutCreateInfoBuilder<'b> {
@@ -4492,9 +5167,9 @@ impl<'b> DescriptorSetLayoutCreateInfoBuilder<'b> {
         {
             let bindings = self.bindings.as_ref().unwrap();
             self.raw.pBindings = bindings.as_ptr();
-            assert!(self.raw.bindingCount == 0 || self.raw.bindingCount == bindings.len() as u32, 
+            assert!(self.raw.bindingCount == 0 || self.raw.bindingCount == bindings.len() as _, 
                 "count inconsistency found when specifying `DescriptorSetLayoutCreateInfo::bindings`.");
-            self.raw.bindingCount = bindings.len() as u32;
+            self.raw.bindingCount = bindings.len() as _;
         }
         self
     }
@@ -4524,10 +5199,12 @@ impl DescriptorPoolSize {
         DescriptorPoolSizeBuilder::new()
     }
 
-    pub fn type_of(&self) {
+    pub fn type_of<'a>(&'a self) -> DescriptorType {
+        self.raw.type_.into()
     }
 
-    pub fn descriptor_count(&self) {
+    pub fn descriptor_count<'a>(&'a self) -> u32 {
+        self.raw.descriptorCount.into()
     }
 
     pub fn raw(&self) -> &vks::VkDescriptorPoolSize {
@@ -4539,6 +5216,13 @@ impl DescriptorPoolSize {
 impl From<DescriptorPoolSize> for vks::VkDescriptorPoolSize {
     fn from(f: DescriptorPoolSize) -> vks::VkDescriptorPoolSize {
         f.raw
+    }
+}
+
+
+impl From<vks::VkDescriptorPoolSize> for DescriptorPoolSize {
+    fn from(f: vks::VkDescriptorPoolSize) -> DescriptorPoolSize {
+        DescriptorPoolSize { raw: f, }
     }
 }
 
@@ -4592,16 +5276,21 @@ impl<'s> DescriptorPoolCreateInfo<'s> {
         DescriptorPoolCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> DescriptorPoolCreateFlags {
+        DescriptorPoolCreateFlags::from_bits(self.raw.flags)
+            .expect("DescriptorPoolCreateInfo::flags: error converting flags")
     }
 
-    pub fn max_sets(&self) {
+    pub fn max_sets<'a>(&'a self) -> u32 {
+        self.raw.maxSets.into()
     }
 
-    pub fn pool_sizes(&self) {
+    pub fn pool_sizes<'a>(&'a self) -> &'a [DescriptorPoolSize] {
+        unsafe { slice::from_raw_parts(self.raw.pPoolSizes as *const _, self.raw.poolSizeCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkDescriptorPoolCreateInfo {
@@ -4617,13 +5306,20 @@ impl<'s> From<DescriptorPoolCreateInfo<'s>> for vks::VkDescriptorPoolCreateInfo 
 }
 
 
+impl<'s> From<vks::VkDescriptorPoolCreateInfo> for DescriptorPoolCreateInfo<'s> {
+    fn from(f: vks::VkDescriptorPoolCreateInfo) -> DescriptorPoolCreateInfo<'s> {
+        DescriptorPoolCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDescriptorPoolCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorPoolCreateInfoBuilder<'b> {
     raw: vks::VkDescriptorPoolCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DescriptorPoolCreateInfoBuilder<'b> {
@@ -4650,10 +5346,10 @@ impl<'b> DescriptorPoolCreateInfoBuilder<'b> {
     }
 
     pub fn pool_sizes<'m, 'a>(mut self, pool_sizes: &'a [DescriptorPoolSize]) -> DescriptorPoolCreateInfoBuilder<'b> {
-        assert!(self.raw.poolSizeCount == 0 || self.raw.poolSizeCount == pool_sizes.len() as u32, 
+        assert!(self.raw.poolSizeCount == 0 || self.raw.poolSizeCount == pool_sizes.len() as _, 
             "count inconsistency found when specifying `DescriptorPoolCreateInfo::pool_sizes`.");
-        self.raw.poolSizeCount = pool_sizes.len() as u32;
-        self.raw.pPoolSizes = pool_sizes.as_ptr() as *const _;
+        self.raw.poolSizeCount = pool_sizes.len() as _;
+        self.raw.pPoolSizes = pool_sizes.as_ptr() as *const vks::VkDescriptorPoolSize as *const _;
         self
     }
 
@@ -4682,13 +5378,16 @@ impl<'s> DescriptorSetAllocateInfo<'s> {
         DescriptorSetAllocateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn descriptor_pool(&self) {
+    pub fn descriptor_pool_handle<'a>(&'a self) -> vks::VkDescriptorPool {
+        self.raw.descriptorPool
     }
 
-    pub fn set_layouts(&self) {
+    pub fn set_layouts_handle<'a>(&'a self) -> &'a [vks::VkDescriptorSetLayout] {
+        unsafe { slice::from_raw_parts(self.raw.pSetLayouts as *const _, self.raw.descriptorSetCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkDescriptorSetAllocateInfo {
@@ -4704,6 +5403,13 @@ impl<'s> From<DescriptorSetAllocateInfo<'s>> for vks::VkDescriptorSetAllocateInf
 }
 
 
+impl<'s> From<vks::VkDescriptorSetAllocateInfo> for DescriptorSetAllocateInfo<'s> {
+    fn from(f: vks::VkDescriptorSetAllocateInfo) -> DescriptorSetAllocateInfo<'s> {
+        DescriptorSetAllocateInfo { raw: f, set_layouts: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDescriptorSetAllocateInfo`.
 ///
 /// 
@@ -4711,7 +5417,7 @@ impl<'s> From<DescriptorSetAllocateInfo<'s>> for vks::VkDescriptorSetAllocateInf
 pub struct DescriptorSetAllocateInfoBuilder<'b> {
     raw: vks::VkDescriptorSetAllocateInfo,
     set_layouts: Option<SmallVec<[vks::VkDescriptorSetLayout; 8]>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DescriptorSetAllocateInfoBuilder<'b> {
@@ -4733,14 +5439,14 @@ impl<'b> DescriptorSetAllocateInfoBuilder<'b> {
         self
     }
 
-    pub fn set_layouts<'m, 'a>(mut self, set_layouts: &'a [DescriptorSetLayout]) -> DescriptorSetAllocateInfoBuilder<'b> where 'a: 'b {
+    pub fn set_layouts<'m, 'a>(mut self, set_layouts: &'a [&'a DescriptorSetLayout]) -> DescriptorSetAllocateInfoBuilder<'b> where 'a: 'b {
         self.set_layouts = Some(set_layouts.iter().map(|h| h.handle()).collect());
         {
             let set_layouts = self.set_layouts.as_ref().unwrap();
             self.raw.pSetLayouts = set_layouts.as_ptr();
-            assert!(self.raw.descriptorSetCount == 0 || self.raw.descriptorSetCount == set_layouts.len() as u32, 
+            assert!(self.raw.descriptorSetCount == 0 || self.raw.descriptorSetCount == set_layouts.len() as _, 
                 "count inconsistency found when specifying `DescriptorSetAllocateInfo::set_layouts`.");
-            self.raw.descriptorSetCount = set_layouts.len() as u32;
+            self.raw.descriptorSetCount = set_layouts.len() as _;
         }
         self
     }
@@ -4770,13 +5476,16 @@ impl SpecializationMapEntry {
         SpecializationMapEntryBuilder::new()
     }
 
-    pub fn constant_id(&self) {
+    pub fn constant_id<'a>(&'a self) -> u32 {
+        self.raw.constantID.into()
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> u32 {
+        self.raw.offset.into()
     }
 
-    pub fn size(&self) {
+    pub fn size<'a>(&'a self) -> usize {
+        self.raw.size.into()
     }
 
     pub fn raw(&self) -> &vks::VkSpecializationMapEntry {
@@ -4788,6 +5497,13 @@ impl SpecializationMapEntry {
 impl From<SpecializationMapEntry> for vks::VkSpecializationMapEntry {
     fn from(f: SpecializationMapEntry) -> vks::VkSpecializationMapEntry {
         f.raw
+    }
+}
+
+
+impl From<vks::VkSpecializationMapEntry> for SpecializationMapEntry {
+    fn from(f: vks::VkSpecializationMapEntry) -> SpecializationMapEntry {
+        SpecializationMapEntry { raw: f, }
     }
 }
 
@@ -4846,13 +5562,16 @@ impl<'s> SpecializationInfo<'s> {
         SpecializationInfoBuilder::new()
     }
 
-    pub fn map_entries(&self) {
+    pub fn map_entries<'a>(&'a self) -> &'a [SpecializationMapEntry] {
+        unsafe { slice::from_raw_parts(self.raw.pMapEntries as *const _, self.raw.mapEntryCount as usize) }
     }
 
-    pub fn data_size(&self) {
+    pub fn data_size<'a>(&'a self) -> usize {
+        self.raw.dataSize.into()
     }
 
-    pub unsafe fn data(&self) {
+    pub fn data<'a>(&'a self) -> *const c_void {
+        self.raw.pData
     }
 
     pub fn raw(&self) -> &vks::VkSpecializationInfo {
@@ -4868,13 +5587,20 @@ impl<'s> From<SpecializationInfo<'s>> for vks::VkSpecializationInfo {
 }
 
 
+impl<'s> From<vks::VkSpecializationInfo> for SpecializationInfo<'s> {
+    fn from(f: vks::VkSpecializationInfo) -> SpecializationInfo<'s> {
+        SpecializationInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSpecializationInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SpecializationInfoBuilder<'b> {
     raw: vks::VkSpecializationInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SpecializationInfoBuilder<'b> {
@@ -4886,10 +5612,10 @@ impl<'b> SpecializationInfoBuilder<'b> {
     }
 
     pub fn map_entries<'m, 'a>(mut self, map_entries: &'a [SpecializationMapEntry]) -> SpecializationInfoBuilder<'b> {
-        assert!(self.raw.mapEntryCount == 0 || self.raw.mapEntryCount == map_entries.len() as u32, 
+        assert!(self.raw.mapEntryCount == 0 || self.raw.mapEntryCount == map_entries.len() as _, 
             "count inconsistency found when specifying `SpecializationInfo::map_entries`.");
-        self.raw.mapEntryCount = map_entries.len() as u32;
-        self.raw.pMapEntries = map_entries.as_ptr() as *const _;
+        self.raw.mapEntryCount = map_entries.len() as _;
+        self.raw.pMapEntries = map_entries.as_ptr() as *const vks::VkSpecializationMapEntry as *const _;
         self
     }
 
@@ -4928,22 +5654,30 @@ impl<'s> PipelineShaderStageCreateInfo<'s> {
         PipelineShaderStageCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineShaderStageCreateFlags {
+        PipelineShaderStageCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineShaderStageCreateInfo::flags: error converting flags")
     }
 
-    pub fn stage(&self) {
+    pub fn stage<'a>(&'a self) -> ShaderStageFlags {
+        ShaderStageFlags::from_bits(self.raw.stage)
+            .expect("PipelineShaderStageCreateInfo::stage: error converting flags")
     }
 
-    pub fn module(&self) {
+    pub fn module_handle<'a>(&'a self) -> vks::VkShaderModule {
+        self.raw.module
     }
 
-    pub fn name(&self) {
+    pub fn name<'a>(&'a self) -> &'a CStr {
+        unsafe { CStr::from_ptr(self.raw.pName) }
     }
 
-    pub fn specialization_info(&self) {
+    pub fn specialization_info<'a>(&'a self) -> &'a SpecializationInfo {
+        unsafe { &*(self.raw.pSpecializationInfo as *const vks::VkSpecializationInfo as *const _) }
     }
 
     pub fn raw(&self) -> &vks::VkPipelineShaderStageCreateInfo {
@@ -4959,6 +5693,13 @@ impl<'s> From<PipelineShaderStageCreateInfo<'s>> for vks::VkPipelineShaderStageC
 }
 
 
+impl<'s> From<vks::VkPipelineShaderStageCreateInfo> for PipelineShaderStageCreateInfo<'s> {
+    fn from(f: vks::VkPipelineShaderStageCreateInfo) -> PipelineShaderStageCreateInfo<'s> {
+        PipelineShaderStageCreateInfo { raw: f, name: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineShaderStageCreateInfo`.
 ///
 /// 
@@ -4966,7 +5707,7 @@ impl<'s> From<PipelineShaderStageCreateInfo<'s>> for vks::VkPipelineShaderStageC
 pub struct PipelineShaderStageCreateInfoBuilder<'b> {
     raw: vks::VkPipelineShaderStageCreateInfo,
     name: Option<CharStr<'b>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineShaderStageCreateInfoBuilder<'b> {
@@ -5038,22 +5779,29 @@ impl<'s> ComputePipelineCreateInfo<'s> {
         ComputePipelineCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineCreateFlags {
+        PipelineCreateFlags::from_bits(self.raw.flags)
+            .expect("ComputePipelineCreateInfo::flags: error converting flags")
     }
 
-    pub fn stage(&self) {
+    pub fn stage<'a>(&'a self) -> PipelineShaderStageCreateInfo {
+        self.raw.stage.into()
     }
 
-    pub fn layout(&self) {
+    pub fn layout_handle<'a>(&'a self) -> vks::VkPipelineLayout {
+        self.raw.layout
     }
 
-    pub fn base_pipeline_handle(&self) {
+    pub fn base_pipeline_handle_handle<'a>(&'a self) -> vks::VkPipeline {
+        self.raw.basePipelineHandle
     }
 
-    pub fn base_pipeline_index(&self) {
+    pub fn base_pipeline_index<'a>(&'a self) -> i32 {
+        self.raw.basePipelineIndex.into()
     }
 
     pub fn raw(&self) -> &vks::VkComputePipelineCreateInfo {
@@ -5069,13 +5817,20 @@ impl<'s> From<ComputePipelineCreateInfo<'s>> for vks::VkComputePipelineCreateInf
 }
 
 
+impl<'s> From<vks::VkComputePipelineCreateInfo> for ComputePipelineCreateInfo<'s> {
+    fn from(f: vks::VkComputePipelineCreateInfo) -> ComputePipelineCreateInfo<'s> {
+        ComputePipelineCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkComputePipelineCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ComputePipelineCreateInfoBuilder<'b> {
     raw: vks::VkComputePipelineCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ComputePipelineCreateInfoBuilder<'b> {
@@ -5140,13 +5895,16 @@ impl VertexInputBindingDescription {
         VertexInputBindingDescriptionBuilder::new()
     }
 
-    pub fn binding(&self) {
+    pub fn binding<'a>(&'a self) -> u32 {
+        self.raw.binding.into()
     }
 
-    pub fn stride(&self) {
+    pub fn stride<'a>(&'a self) -> u32 {
+        self.raw.stride.into()
     }
 
-    pub fn input_rate(&self) {
+    pub fn input_rate<'a>(&'a self) -> VertexInputRate {
+        self.raw.inputRate.into()
     }
 
     pub fn raw(&self) -> &vks::VkVertexInputBindingDescription {
@@ -5158,6 +5916,13 @@ impl VertexInputBindingDescription {
 impl From<VertexInputBindingDescription> for vks::VkVertexInputBindingDescription {
     fn from(f: VertexInputBindingDescription) -> vks::VkVertexInputBindingDescription {
         f.raw
+    }
+}
+
+
+impl From<vks::VkVertexInputBindingDescription> for VertexInputBindingDescription {
+    fn from(f: vks::VkVertexInputBindingDescription) -> VertexInputBindingDescription {
+        VertexInputBindingDescription { raw: f, }
     }
 }
 
@@ -5215,16 +5980,20 @@ impl VertexInputAttributeDescription {
         VertexInputAttributeDescriptionBuilder::new()
     }
 
-    pub fn location(&self) {
+    pub fn location<'a>(&'a self) -> u32 {
+        self.raw.location.into()
     }
 
-    pub fn binding(&self) {
+    pub fn binding<'a>(&'a self) -> u32 {
+        self.raw.binding.into()
     }
 
-    pub fn format(&self) {
+    pub fn format<'a>(&'a self) -> Format {
+        self.raw.format.into()
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> u32 {
+        self.raw.offset.into()
     }
 
     pub fn raw(&self) -> &vks::VkVertexInputAttributeDescription {
@@ -5236,6 +6005,13 @@ impl VertexInputAttributeDescription {
 impl From<VertexInputAttributeDescription> for vks::VkVertexInputAttributeDescription {
     fn from(f: VertexInputAttributeDescription) -> vks::VkVertexInputAttributeDescription {
         f.raw
+    }
+}
+
+
+impl From<vks::VkVertexInputAttributeDescription> for VertexInputAttributeDescription {
+    fn from(f: vks::VkVertexInputAttributeDescription) -> VertexInputAttributeDescription {
+        VertexInputAttributeDescription { raw: f, }
     }
 }
 
@@ -5299,16 +6075,21 @@ impl<'s> PipelineVertexInputStateCreateInfo<'s> {
         PipelineVertexInputStateCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineVertexInputStateCreateFlags {
+        PipelineVertexInputStateCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineVertexInputStateCreateInfo::flags: error converting flags")
     }
 
-    pub fn vertex_binding_descriptions(&self) {
+    pub fn vertex_binding_descriptions<'a>(&'a self) -> &'a [VertexInputBindingDescription] {
+        unsafe { slice::from_raw_parts(self.raw.pVertexBindingDescriptions as *const _, self.raw.vertexBindingDescriptionCount as usize) }
     }
 
-    pub fn vertex_attribute_descriptions(&self) {
+    pub fn vertex_attribute_descriptions<'a>(&'a self) -> &'a [VertexInputAttributeDescription] {
+        unsafe { slice::from_raw_parts(self.raw.pVertexAttributeDescriptions as *const _, self.raw.vertexAttributeDescriptionCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPipelineVertexInputStateCreateInfo {
@@ -5324,13 +6105,20 @@ impl<'s> From<PipelineVertexInputStateCreateInfo<'s>> for vks::VkPipelineVertexI
 }
 
 
+impl<'s> From<vks::VkPipelineVertexInputStateCreateInfo> for PipelineVertexInputStateCreateInfo<'s> {
+    fn from(f: vks::VkPipelineVertexInputStateCreateInfo) -> PipelineVertexInputStateCreateInfo<'s> {
+        PipelineVertexInputStateCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineVertexInputStateCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineVertexInputStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineVertexInputStateCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineVertexInputStateCreateInfoBuilder<'b> {
@@ -5352,18 +6140,18 @@ impl<'b> PipelineVertexInputStateCreateInfoBuilder<'b> {
     }
 
     pub fn vertex_binding_descriptions<'m, 'a>(mut self, vertex_binding_descriptions: &'a [VertexInputBindingDescription]) -> PipelineVertexInputStateCreateInfoBuilder<'b> {
-        assert!(self.raw.vertexBindingDescriptionCount == 0 || self.raw.vertexBindingDescriptionCount == vertex_binding_descriptions.len() as u32, 
+        assert!(self.raw.vertexBindingDescriptionCount == 0 || self.raw.vertexBindingDescriptionCount == vertex_binding_descriptions.len() as _, 
             "count inconsistency found when specifying `PipelineVertexInputStateCreateInfo::vertex_binding_descriptions`.");
-        self.raw.vertexBindingDescriptionCount = vertex_binding_descriptions.len() as u32;
-        self.raw.pVertexBindingDescriptions = vertex_binding_descriptions.as_ptr() as *const _;
+        self.raw.vertexBindingDescriptionCount = vertex_binding_descriptions.len() as _;
+        self.raw.pVertexBindingDescriptions = vertex_binding_descriptions.as_ptr() as *const vks::VkVertexInputBindingDescription as *const _;
         self
     }
 
     pub fn vertex_attribute_descriptions<'m, 'a>(mut self, vertex_attribute_descriptions: &'a [VertexInputAttributeDescription]) -> PipelineVertexInputStateCreateInfoBuilder<'b> {
-        assert!(self.raw.vertexAttributeDescriptionCount == 0 || self.raw.vertexAttributeDescriptionCount == vertex_attribute_descriptions.len() as u32, 
+        assert!(self.raw.vertexAttributeDescriptionCount == 0 || self.raw.vertexAttributeDescriptionCount == vertex_attribute_descriptions.len() as _, 
             "count inconsistency found when specifying `PipelineVertexInputStateCreateInfo::vertex_attribute_descriptions`.");
-        self.raw.vertexAttributeDescriptionCount = vertex_attribute_descriptions.len() as u32;
-        self.raw.pVertexAttributeDescriptions = vertex_attribute_descriptions.as_ptr() as *const _;
+        self.raw.vertexAttributeDescriptionCount = vertex_attribute_descriptions.len() as _;
+        self.raw.pVertexAttributeDescriptions = vertex_attribute_descriptions.as_ptr() as *const vks::VkVertexInputAttributeDescription as *const _;
         self
     }
 
@@ -5392,16 +6180,21 @@ impl<'s> PipelineInputAssemblyStateCreateInfo<'s> {
         PipelineInputAssemblyStateCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineInputAssemblyStateCreateFlags {
+        PipelineInputAssemblyStateCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineInputAssemblyStateCreateInfo::flags: error converting flags")
     }
 
-    pub fn topology(&self) {
+    pub fn topology<'a>(&'a self) -> PrimitiveTopology {
+        self.raw.topology.into()
     }
 
-    pub fn primitive_restart_enable(&self) {
+    pub fn primitive_restart_enable<'a>(&'a self) -> bool {
+        self.raw.primitiveRestartEnable != 0
     }
 
     pub fn raw(&self) -> &vks::VkPipelineInputAssemblyStateCreateInfo {
@@ -5417,13 +6210,20 @@ impl<'s> From<PipelineInputAssemblyStateCreateInfo<'s>> for vks::VkPipelineInput
 }
 
 
+impl<'s> From<vks::VkPipelineInputAssemblyStateCreateInfo> for PipelineInputAssemblyStateCreateInfo<'s> {
+    fn from(f: vks::VkPipelineInputAssemblyStateCreateInfo) -> PipelineInputAssemblyStateCreateInfo<'s> {
+        PipelineInputAssemblyStateCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineInputAssemblyStateCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineInputAssemblyStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineInputAssemblyStateCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineInputAssemblyStateCreateInfoBuilder<'b> {
@@ -5479,13 +6279,17 @@ impl<'s> PipelineTessellationStateCreateInfo<'s> {
         PipelineTessellationStateCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineTessellationStateCreateFlags {
+        PipelineTessellationStateCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineTessellationStateCreateInfo::flags: error converting flags")
     }
 
-    pub fn patch_control_points(&self) {
+    pub fn patch_control_points<'a>(&'a self) -> u32 {
+        self.raw.patchControlPoints.into()
     }
 
     pub fn raw(&self) -> &vks::VkPipelineTessellationStateCreateInfo {
@@ -5501,13 +6305,20 @@ impl<'s> From<PipelineTessellationStateCreateInfo<'s>> for vks::VkPipelineTessel
 }
 
 
+impl<'s> From<vks::VkPipelineTessellationStateCreateInfo> for PipelineTessellationStateCreateInfo<'s> {
+    fn from(f: vks::VkPipelineTessellationStateCreateInfo) -> PipelineTessellationStateCreateInfo<'s> {
+        PipelineTessellationStateCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineTessellationStateCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineTessellationStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineTessellationStateCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineTessellationStateCreateInfoBuilder<'b> {
@@ -5558,16 +6369,21 @@ impl<'s> PipelineViewportStateCreateInfo<'s> {
         PipelineViewportStateCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineViewportStateCreateFlags {
+        PipelineViewportStateCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineViewportStateCreateInfo::flags: error converting flags")
     }
 
-    pub fn viewports(&self) {
+    pub fn viewports<'a>(&'a self) -> &'a [Viewport] {
+        unsafe { slice::from_raw_parts(self.raw.pViewports as *const _, self.raw.viewportCount as usize) }
     }
 
-    pub fn scissors(&self) {
+    pub fn scissors<'a>(&'a self) -> &'a [Rect2d] {
+        unsafe { slice::from_raw_parts(self.raw.pScissors as *const _, self.raw.scissorCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPipelineViewportStateCreateInfo {
@@ -5583,13 +6399,20 @@ impl<'s> From<PipelineViewportStateCreateInfo<'s>> for vks::VkPipelineViewportSt
 }
 
 
+impl<'s> From<vks::VkPipelineViewportStateCreateInfo> for PipelineViewportStateCreateInfo<'s> {
+    fn from(f: vks::VkPipelineViewportStateCreateInfo) -> PipelineViewportStateCreateInfo<'s> {
+        PipelineViewportStateCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineViewportStateCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineViewportStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineViewportStateCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineViewportStateCreateInfoBuilder<'b> {
@@ -5611,18 +6434,18 @@ impl<'b> PipelineViewportStateCreateInfoBuilder<'b> {
     }
 
     pub fn viewports<'m, 'a>(mut self, viewports: &'a [Viewport]) -> PipelineViewportStateCreateInfoBuilder<'b> {
-        assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewports.len() as u32, 
+        assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewports.len() as _, 
             "count inconsistency found when specifying `PipelineViewportStateCreateInfo::viewports`.");
-        self.raw.viewportCount = viewports.len() as u32;
-        self.raw.pViewports = viewports.as_ptr() as *const _;
+        self.raw.viewportCount = viewports.len() as _;
+        self.raw.pViewports = viewports.as_ptr() as *const vks::VkViewport as *const _;
         self
     }
 
     pub fn scissors<'m, 'a>(mut self, scissors: &'a [Rect2d]) -> PipelineViewportStateCreateInfoBuilder<'b> {
-        assert!(self.raw.scissorCount == 0 || self.raw.scissorCount == scissors.len() as u32, 
+        assert!(self.raw.scissorCount == 0 || self.raw.scissorCount == scissors.len() as _, 
             "count inconsistency found when specifying `PipelineViewportStateCreateInfo::scissors`.");
-        self.raw.scissorCount = scissors.len() as u32;
-        self.raw.pScissors = scissors.as_ptr() as *const _;
+        self.raw.scissorCount = scissors.len() as _;
+        self.raw.pScissors = scissors.as_ptr() as *const vks::VkRect2D as *const _;
         self
     }
 
@@ -5651,40 +6474,54 @@ impl<'s> PipelineRasterizationStateCreateInfo<'s> {
         PipelineRasterizationStateCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineRasterizationStateCreateFlags {
+        PipelineRasterizationStateCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineRasterizationStateCreateInfo::flags: error converting flags")
     }
 
-    pub fn depth_clamp_enable(&self) {
+    pub fn depth_clamp_enable<'a>(&'a self) -> bool {
+        self.raw.depthClampEnable != 0
     }
 
-    pub fn rasterizer_discard_enable(&self) {
+    pub fn rasterizer_discard_enable<'a>(&'a self) -> bool {
+        self.raw.rasterizerDiscardEnable != 0
     }
 
-    pub fn polygon_mode(&self) {
+    pub fn polygon_mode<'a>(&'a self) -> PolygonMode {
+        self.raw.polygonMode.into()
     }
 
-    pub fn cull_mode(&self) {
+    pub fn cull_mode<'a>(&'a self) -> CullModeFlags {
+        CullModeFlags::from_bits(self.raw.cullMode)
+            .expect("PipelineRasterizationStateCreateInfo::cull_mode: error converting flags")
     }
 
-    pub fn front_face(&self) {
+    pub fn front_face<'a>(&'a self) -> FrontFace {
+        self.raw.frontFace.into()
     }
 
-    pub fn depth_bias_enable(&self) {
+    pub fn depth_bias_enable<'a>(&'a self) -> bool {
+        self.raw.depthBiasEnable != 0
     }
 
-    pub fn depth_bias_constant_factor(&self) {
+    pub fn depth_bias_constant_factor<'a>(&'a self) -> f32 {
+        self.raw.depthBiasConstantFactor.into()
     }
 
-    pub fn depth_bias_clamp(&self) {
+    pub fn depth_bias_clamp<'a>(&'a self) -> f32 {
+        self.raw.depthBiasClamp.into()
     }
 
-    pub fn depth_bias_slope_factor(&self) {
+    pub fn depth_bias_slope_factor<'a>(&'a self) -> f32 {
+        self.raw.depthBiasSlopeFactor.into()
     }
 
-    pub fn line_width(&self) {
+    pub fn line_width<'a>(&'a self) -> f32 {
+        self.raw.lineWidth.into()
     }
 
     pub fn raw(&self) -> &vks::VkPipelineRasterizationStateCreateInfo {
@@ -5700,13 +6537,20 @@ impl<'s> From<PipelineRasterizationStateCreateInfo<'s>> for vks::VkPipelineRaste
 }
 
 
+impl<'s> From<vks::VkPipelineRasterizationStateCreateInfo> for PipelineRasterizationStateCreateInfo<'s> {
+    fn from(f: vks::VkPipelineRasterizationStateCreateInfo) -> PipelineRasterizationStateCreateInfo<'s> {
+        PipelineRasterizationStateCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineRasterizationStateCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineRasterizationStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineRasterizationStateCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineRasterizationStateCreateInfoBuilder<'b> {
@@ -5802,28 +6646,38 @@ impl<'s> PipelineMultisampleStateCreateInfo<'s> {
         PipelineMultisampleStateCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineMultisampleStateCreateFlags {
+        PipelineMultisampleStateCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineMultisampleStateCreateInfo::flags: error converting flags")
     }
 
-    pub fn rasterization_samples(&self) {
+    pub fn rasterization_samples<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.rasterizationSamples)
+            .expect("PipelineMultisampleStateCreateInfo::rasterization_samples: error converting flags")
     }
 
-    pub fn sample_shading_enable(&self) {
+    pub fn sample_shading_enable<'a>(&'a self) -> bool {
+        self.raw.sampleShadingEnable != 0
     }
 
-    pub fn min_sample_shading(&self) {
+    pub fn min_sample_shading<'a>(&'a self) -> f32 {
+        self.raw.minSampleShading.into()
     }
 
-    pub fn sample_mask(&self) {
+    pub fn sample_mask<'a>(&'a self) -> &'a u32 {
+        unsafe { &*(self.raw.pSampleMask as *const _) }
     }
 
-    pub fn alpha_to_coverage_enable(&self) {
+    pub fn alpha_to_coverage_enable<'a>(&'a self) -> bool {
+        self.raw.alphaToCoverageEnable != 0
     }
 
-    pub fn alpha_to_one_enable(&self) {
+    pub fn alpha_to_one_enable<'a>(&'a self) -> bool {
+        self.raw.alphaToOneEnable != 0
     }
 
     pub fn raw(&self) -> &vks::VkPipelineMultisampleStateCreateInfo {
@@ -5839,13 +6693,20 @@ impl<'s> From<PipelineMultisampleStateCreateInfo<'s>> for vks::VkPipelineMultisa
 }
 
 
+impl<'s> From<vks::VkPipelineMultisampleStateCreateInfo> for PipelineMultisampleStateCreateInfo<'s> {
+    fn from(f: vks::VkPipelineMultisampleStateCreateInfo) -> PipelineMultisampleStateCreateInfo<'s> {
+        PipelineMultisampleStateCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineMultisampleStateCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineMultisampleStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineMultisampleStateCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineMultisampleStateCreateInfoBuilder<'b> {
@@ -5920,28 +6781,37 @@ impl PipelineColorBlendAttachmentState {
         PipelineColorBlendAttachmentStateBuilder::new()
     }
 
-    pub fn blend_enable(&self) {
+    pub fn blend_enable<'a>(&'a self) -> bool {
+        self.raw.blendEnable != 0
     }
 
-    pub fn src_color_blend_factor(&self) {
+    pub fn src_color_blend_factor<'a>(&'a self) -> BlendFactor {
+        self.raw.srcColorBlendFactor.into()
     }
 
-    pub fn dst_color_blend_factor(&self) {
+    pub fn dst_color_blend_factor<'a>(&'a self) -> BlendFactor {
+        self.raw.dstColorBlendFactor.into()
     }
 
-    pub fn color_blend_op(&self) {
+    pub fn color_blend_op<'a>(&'a self) -> BlendOp {
+        self.raw.colorBlendOp.into()
     }
 
-    pub fn src_alpha_blend_factor(&self) {
+    pub fn src_alpha_blend_factor<'a>(&'a self) -> BlendFactor {
+        self.raw.srcAlphaBlendFactor.into()
     }
 
-    pub fn dst_alpha_blend_factor(&self) {
+    pub fn dst_alpha_blend_factor<'a>(&'a self) -> BlendFactor {
+        self.raw.dstAlphaBlendFactor.into()
     }
 
-    pub fn alpha_blend_op(&self) {
+    pub fn alpha_blend_op<'a>(&'a self) -> BlendOp {
+        self.raw.alphaBlendOp.into()
     }
 
-    pub fn color_write_mask(&self) {
+    pub fn color_write_mask<'a>(&'a self) -> ColorComponentFlags {
+        ColorComponentFlags::from_bits(self.raw.colorWriteMask)
+            .expect("PipelineColorBlendAttachmentState::color_write_mask: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkPipelineColorBlendAttachmentState {
@@ -5953,6 +6823,13 @@ impl PipelineColorBlendAttachmentState {
 impl From<PipelineColorBlendAttachmentState> for vks::VkPipelineColorBlendAttachmentState {
     fn from(f: PipelineColorBlendAttachmentState) -> vks::VkPipelineColorBlendAttachmentState {
         f.raw
+    }
+}
+
+
+impl From<vks::VkPipelineColorBlendAttachmentState> for PipelineColorBlendAttachmentState {
+    fn from(f: vks::VkPipelineColorBlendAttachmentState) -> PipelineColorBlendAttachmentState {
+        PipelineColorBlendAttachmentState { raw: f, }
     }
 }
 
@@ -6036,22 +6913,29 @@ impl<'s> PipelineColorBlendStateCreateInfo<'s> {
         PipelineColorBlendStateCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineColorBlendStateCreateFlags {
+        PipelineColorBlendStateCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineColorBlendStateCreateInfo::flags: error converting flags")
     }
 
-    pub fn logic_op_enable(&self) {
+    pub fn logic_op_enable<'a>(&'a self) -> bool {
+        self.raw.logicOpEnable != 0
     }
 
-    pub fn logic_op(&self) {
+    pub fn logic_op<'a>(&'a self) -> LogicOp {
+        self.raw.logicOp.into()
     }
 
-    pub fn attachments(&self) {
+    pub fn attachments<'a>(&'a self) -> &'a [PipelineColorBlendAttachmentState] {
+        unsafe { slice::from_raw_parts(self.raw.pAttachments as *const _, self.raw.attachmentCount as usize) }
     }
 
-    pub fn blend_constants(&self) {
+    pub fn blend_constants<'a>(&'a self) -> &[f32] {
+        unsafe { slice::from_raw_parts(&self.raw.blendConstants as *const _, 4 as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPipelineColorBlendStateCreateInfo {
@@ -6067,13 +6951,20 @@ impl<'s> From<PipelineColorBlendStateCreateInfo<'s>> for vks::VkPipelineColorBle
 }
 
 
+impl<'s> From<vks::VkPipelineColorBlendStateCreateInfo> for PipelineColorBlendStateCreateInfo<'s> {
+    fn from(f: vks::VkPipelineColorBlendStateCreateInfo) -> PipelineColorBlendStateCreateInfo<'s> {
+        PipelineColorBlendStateCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineColorBlendStateCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineColorBlendStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineColorBlendStateCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineColorBlendStateCreateInfoBuilder<'b> {
@@ -6105,10 +6996,10 @@ impl<'b> PipelineColorBlendStateCreateInfoBuilder<'b> {
     }
 
     pub fn attachments<'m, 'a>(mut self, attachments: &'a [PipelineColorBlendAttachmentState]) -> PipelineColorBlendStateCreateInfoBuilder<'b> {
-        assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as u32, 
+        assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as _, 
             "count inconsistency found when specifying `PipelineColorBlendStateCreateInfo::attachments`.");
-        self.raw.attachmentCount = attachments.len() as u32;
-        self.raw.pAttachments = attachments.as_ptr() as *const _;
+        self.raw.attachmentCount = attachments.len() as _;
+        self.raw.pAttachments = attachments.as_ptr() as *const vks::VkPipelineColorBlendAttachmentState as *const _;
         self
     }
 
@@ -6142,13 +7033,17 @@ impl<'s> PipelineDynamicStateCreateInfo<'s> {
         PipelineDynamicStateCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineDynamicStateCreateFlags {
+        PipelineDynamicStateCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineDynamicStateCreateInfo::flags: error converting flags")
     }
 
-    pub fn dynamic_states(&self) {
+    pub fn dynamic_states<'a>(&'a self) -> &'a [DynamicState] {
+        unsafe { slice::from_raw_parts(self.raw.pDynamicStates as *const _, self.raw.dynamicStateCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPipelineDynamicStateCreateInfo {
@@ -6164,13 +7059,20 @@ impl<'s> From<PipelineDynamicStateCreateInfo<'s>> for vks::VkPipelineDynamicStat
 }
 
 
+impl<'s> From<vks::VkPipelineDynamicStateCreateInfo> for PipelineDynamicStateCreateInfo<'s> {
+    fn from(f: vks::VkPipelineDynamicStateCreateInfo) -> PipelineDynamicStateCreateInfo<'s> {
+        PipelineDynamicStateCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineDynamicStateCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineDynamicStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineDynamicStateCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineDynamicStateCreateInfoBuilder<'b> {
@@ -6192,10 +7094,10 @@ impl<'b> PipelineDynamicStateCreateInfoBuilder<'b> {
     }
 
     pub fn dynamic_states<'m, 'a>(mut self, dynamic_states: &'a [DynamicState]) -> PipelineDynamicStateCreateInfoBuilder<'b> {
-        assert!(self.raw.dynamicStateCount == 0 || self.raw.dynamicStateCount == dynamic_states.len() as u32, 
+        assert!(self.raw.dynamicStateCount == 0 || self.raw.dynamicStateCount == dynamic_states.len() as _, 
             "count inconsistency found when specifying `PipelineDynamicStateCreateInfo::dynamic_states`.");
-        self.raw.dynamicStateCount = dynamic_states.len() as u32;
-        self.raw.pDynamicStates = dynamic_states.as_ptr() as *const _;
+        self.raw.dynamicStateCount = dynamic_states.len() as _;
+        self.raw.pDynamicStates = dynamic_states.as_ptr() as *const DynamicState as *const _;
         self
     }
 
@@ -6223,25 +7125,32 @@ impl StencilOpState {
         StencilOpStateBuilder::new()
     }
 
-    pub fn fail_op(&self) {
+    pub fn fail_op<'a>(&'a self) -> StencilOp {
+        self.raw.failOp.into()
     }
 
-    pub fn pass_op(&self) {
+    pub fn pass_op<'a>(&'a self) -> StencilOp {
+        self.raw.passOp.into()
     }
 
-    pub fn depth_fail_op(&self) {
+    pub fn depth_fail_op<'a>(&'a self) -> StencilOp {
+        self.raw.depthFailOp.into()
     }
 
-    pub fn compare_op(&self) {
+    pub fn compare_op<'a>(&'a self) -> CompareOp {
+        self.raw.compareOp.into()
     }
 
-    pub fn compare_mask(&self) {
+    pub fn compare_mask<'a>(&'a self) -> u32 {
+        self.raw.compareMask.into()
     }
 
-    pub fn write_mask(&self) {
+    pub fn write_mask<'a>(&'a self) -> u32 {
+        self.raw.writeMask.into()
     }
 
-    pub fn reference(&self) {
+    pub fn reference<'a>(&'a self) -> u32 {
+        self.raw.reference.into()
     }
 
     pub fn raw(&self) -> &vks::VkStencilOpState {
@@ -6253,6 +7162,13 @@ impl StencilOpState {
 impl From<StencilOpState> for vks::VkStencilOpState {
     fn from(f: StencilOpState) -> vks::VkStencilOpState {
         f.raw
+    }
+}
+
+
+impl From<vks::VkStencilOpState> for StencilOpState {
+    fn from(f: vks::VkStencilOpState) -> StencilOpState {
+        StencilOpState { raw: f, }
     }
 }
 
@@ -6331,37 +7247,49 @@ impl<'s> PipelineDepthStencilStateCreateInfo<'s> {
         PipelineDepthStencilStateCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineDepthStencilStateCreateFlags {
+        PipelineDepthStencilStateCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineDepthStencilStateCreateInfo::flags: error converting flags")
     }
 
-    pub fn depth_test_enable(&self) {
+    pub fn depth_test_enable<'a>(&'a self) -> bool {
+        self.raw.depthTestEnable != 0
     }
 
-    pub fn depth_write_enable(&self) {
+    pub fn depth_write_enable<'a>(&'a self) -> bool {
+        self.raw.depthWriteEnable != 0
     }
 
-    pub fn depth_compare_op(&self) {
+    pub fn depth_compare_op<'a>(&'a self) -> CompareOp {
+        self.raw.depthCompareOp.into()
     }
 
-    pub fn depth_bounds_test_enable(&self) {
+    pub fn depth_bounds_test_enable<'a>(&'a self) -> bool {
+        self.raw.depthBoundsTestEnable != 0
     }
 
-    pub fn stencil_test_enable(&self) {
+    pub fn stencil_test_enable<'a>(&'a self) -> bool {
+        self.raw.stencilTestEnable != 0
     }
 
-    pub fn front(&self) {
+    pub fn front<'a>(&'a self) -> StencilOpState {
+        self.raw.front.into()
     }
 
-    pub fn back(&self) {
+    pub fn back<'a>(&'a self) -> StencilOpState {
+        self.raw.back.into()
     }
 
-    pub fn min_depth_bounds(&self) {
+    pub fn min_depth_bounds<'a>(&'a self) -> f32 {
+        self.raw.minDepthBounds.into()
     }
 
-    pub fn max_depth_bounds(&self) {
+    pub fn max_depth_bounds<'a>(&'a self) -> f32 {
+        self.raw.maxDepthBounds.into()
     }
 
     pub fn raw(&self) -> &vks::VkPipelineDepthStencilStateCreateInfo {
@@ -6377,13 +7305,20 @@ impl<'s> From<PipelineDepthStencilStateCreateInfo<'s>> for vks::VkPipelineDepthS
 }
 
 
+impl<'s> From<vks::VkPipelineDepthStencilStateCreateInfo> for PipelineDepthStencilStateCreateInfo<'s> {
+    fn from(f: vks::VkPipelineDepthStencilStateCreateInfo) -> PipelineDepthStencilStateCreateInfo<'s> {
+        PipelineDepthStencilStateCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineDepthStencilStateCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineDepthStencilStateCreateInfoBuilder<'b> {
     raw: vks::VkPipelineDepthStencilStateCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineDepthStencilStateCreateInfoBuilder<'b> {
@@ -6474,55 +7409,73 @@ impl<'s> GraphicsPipelineCreateInfo<'s> {
         GraphicsPipelineCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineCreateFlags {
+        PipelineCreateFlags::from_bits(self.raw.flags)
+            .expect("GraphicsPipelineCreateInfo::flags: error converting flags")
     }
 
-    pub fn stages(&self) {
+    pub fn stages<'a>(&'a self) -> &'a [vks::VkPipelineShaderStageCreateInfo] {
+        unsafe { slice::from_raw_parts(self.raw.pStages as *const _, self.raw.stageCount as usize) }
     }
 
-    pub fn vertex_input_state(&self) {
+    pub fn vertex_input_state<'a>(&'a self) -> &'a PipelineVertexInputStateCreateInfo {
+        unsafe { &*(self.raw.pVertexInputState as *const vks::VkPipelineVertexInputStateCreateInfo as *const _) }
     }
 
-    pub fn input_assembly_state(&self) {
+    pub fn input_assembly_state<'a>(&'a self) -> &'a PipelineInputAssemblyStateCreateInfo {
+        unsafe { &*(self.raw.pInputAssemblyState as *const vks::VkPipelineInputAssemblyStateCreateInfo as *const _) }
     }
 
-    pub fn tessellation_state(&self) {
+    pub fn tessellation_state<'a>(&'a self) -> &'a PipelineTessellationStateCreateInfo {
+        unsafe { &*(self.raw.pTessellationState as *const vks::VkPipelineTessellationStateCreateInfo as *const _) }
     }
 
-    pub fn viewport_state(&self) {
+    pub fn viewport_state<'a>(&'a self) -> &'a PipelineViewportStateCreateInfo {
+        unsafe { &*(self.raw.pViewportState as *const vks::VkPipelineViewportStateCreateInfo as *const _) }
     }
 
-    pub fn rasterization_state(&self) {
+    pub fn rasterization_state<'a>(&'a self) -> &'a PipelineRasterizationStateCreateInfo {
+        unsafe { &*(self.raw.pRasterizationState as *const vks::VkPipelineRasterizationStateCreateInfo as *const _) }
     }
 
-    pub fn multisample_state(&self) {
+    pub fn multisample_state<'a>(&'a self) -> &'a PipelineMultisampleStateCreateInfo {
+        unsafe { &*(self.raw.pMultisampleState as *const vks::VkPipelineMultisampleStateCreateInfo as *const _) }
     }
 
-    pub fn depth_stencil_state(&self) {
+    pub fn depth_stencil_state<'a>(&'a self) -> &'a PipelineDepthStencilStateCreateInfo {
+        unsafe { &*(self.raw.pDepthStencilState as *const vks::VkPipelineDepthStencilStateCreateInfo as *const _) }
     }
 
-    pub fn color_blend_state(&self) {
+    pub fn color_blend_state<'a>(&'a self) -> &'a PipelineColorBlendStateCreateInfo {
+        unsafe { &*(self.raw.pColorBlendState as *const vks::VkPipelineColorBlendStateCreateInfo as *const _) }
     }
 
-    pub fn dynamic_state(&self) {
+    pub fn dynamic_state<'a>(&'a self) -> &'a PipelineDynamicStateCreateInfo {
+        unsafe { &*(self.raw.pDynamicState as *const vks::VkPipelineDynamicStateCreateInfo as *const _) }
     }
 
-    pub fn layout(&self) {
+    pub fn layout_handle<'a>(&'a self) -> vks::VkPipelineLayout {
+        self.raw.layout
     }
 
-    pub fn render_pass(&self) {
+    pub fn render_pass_handle<'a>(&'a self) -> vks::VkRenderPass {
+        self.raw.renderPass
     }
 
-    pub fn subpass(&self) {
+    pub fn subpass<'a>(&'a self) -> u32 {
+        self.raw.subpass.into()
     }
 
-    pub fn base_pipeline_handle(&self) {
+    pub fn base_pipeline_handle_handle<'a>(&'a self) -> vks::VkPipeline {
+        self.raw.basePipelineHandle
     }
 
-    pub fn base_pipeline_index(&self) {
+    pub fn base_pipeline_index<'a>(&'a self) -> i32 {
+        self.raw.basePipelineIndex.into()
     }
 
     pub fn raw(&self) -> &vks::VkGraphicsPipelineCreateInfo {
@@ -6538,6 +7491,13 @@ impl<'s> From<GraphicsPipelineCreateInfo<'s>> for vks::VkGraphicsPipelineCreateI
 }
 
 
+impl<'s> From<vks::VkGraphicsPipelineCreateInfo> for GraphicsPipelineCreateInfo<'s> {
+    fn from(f: vks::VkGraphicsPipelineCreateInfo) -> GraphicsPipelineCreateInfo<'s> {
+        GraphicsPipelineCreateInfo { raw: f, stages: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkGraphicsPipelineCreateInfo`.
 ///
 /// 
@@ -6545,7 +7505,7 @@ impl<'s> From<GraphicsPipelineCreateInfo<'s>> for vks::VkGraphicsPipelineCreateI
 pub struct GraphicsPipelineCreateInfoBuilder<'b> {
     raw: vks::VkGraphicsPipelineCreateInfo,
     stages: Option<SmallVec<[vks::VkPipelineShaderStageCreateInfo; 8]>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> GraphicsPipelineCreateInfoBuilder<'b> {
@@ -6572,9 +7532,9 @@ impl<'b> GraphicsPipelineCreateInfoBuilder<'b> {
         {
             let stages = self.stages.as_ref().unwrap();
             self.raw.pStages = stages.as_ptr();
-            assert!(self.raw.stageCount == 0 || self.raw.stageCount == stages.len() as u32, 
+            assert!(self.raw.stageCount == 0 || self.raw.stageCount == stages.len() as _, 
                 "count inconsistency found when specifying `GraphicsPipelineCreateInfo::stages`.");
-            self.raw.stageCount = stages.len() as u32;
+            self.raw.stageCount = stages.len() as _;
         }
         self
     }
@@ -6675,16 +7635,21 @@ impl<'s> PipelineCacheCreateInfo<'s> {
         PipelineCacheCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineCacheCreateFlags {
+        PipelineCacheCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineCacheCreateInfo::flags: error converting flags")
     }
 
-    pub fn initial_data_size(&self) {
+    pub fn initial_data_size<'a>(&'a self) -> usize {
+        self.raw.initialDataSize.into()
     }
 
-    pub unsafe fn initial_data(&self) {
+    pub fn initial_data<'a>(&'a self) -> *const c_void {
+        self.raw.pInitialData
     }
 
     pub fn raw(&self) -> &vks::VkPipelineCacheCreateInfo {
@@ -6700,13 +7665,20 @@ impl<'s> From<PipelineCacheCreateInfo<'s>> for vks::VkPipelineCacheCreateInfo {
 }
 
 
+impl<'s> From<vks::VkPipelineCacheCreateInfo> for PipelineCacheCreateInfo<'s> {
+    fn from(f: vks::VkPipelineCacheCreateInfo) -> PipelineCacheCreateInfo<'s> {
+        PipelineCacheCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineCacheCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineCacheCreateInfoBuilder<'b> {
     raw: vks::VkPipelineCacheCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineCacheCreateInfoBuilder<'b> {
@@ -6761,13 +7733,17 @@ impl PushConstantRange {
         PushConstantRangeBuilder::new()
     }
 
-    pub fn stage_flags(&self) {
+    pub fn stage_flags<'a>(&'a self) -> ShaderStageFlags {
+        ShaderStageFlags::from_bits(self.raw.stageFlags)
+            .expect("PushConstantRange::stage_flags: error converting flags")
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> u32 {
+        self.raw.offset.into()
     }
 
-    pub fn size(&self) {
+    pub fn size<'a>(&'a self) -> u32 {
+        self.raw.size.into()
     }
 
     pub fn raw(&self) -> &vks::VkPushConstantRange {
@@ -6779,6 +7755,13 @@ impl PushConstantRange {
 impl From<PushConstantRange> for vks::VkPushConstantRange {
     fn from(f: PushConstantRange) -> vks::VkPushConstantRange {
         f.raw
+    }
+}
+
+
+impl From<vks::VkPushConstantRange> for PushConstantRange {
+    fn from(f: vks::VkPushConstantRange) -> PushConstantRange {
+        PushConstantRange { raw: f, }
     }
 }
 
@@ -6837,16 +7820,21 @@ impl<'s> PipelineLayoutCreateInfo<'s> {
         PipelineLayoutCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineLayoutCreateFlags {
+        PipelineLayoutCreateFlags::from_bits(self.raw.flags)
+            .expect("PipelineLayoutCreateInfo::flags: error converting flags")
     }
 
-    pub fn set_layouts(&self) {
+    pub fn set_layouts_handle<'a>(&'a self) -> &'a [vks::VkDescriptorSetLayout] {
+        unsafe { slice::from_raw_parts(self.raw.pSetLayouts as *const _, self.raw.setLayoutCount as usize) }
     }
 
-    pub fn push_constant_ranges(&self) {
+    pub fn push_constant_ranges<'a>(&'a self) -> &'a [PushConstantRange] {
+        unsafe { slice::from_raw_parts(self.raw.pPushConstantRanges as *const _, self.raw.pushConstantRangeCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPipelineLayoutCreateInfo {
@@ -6862,6 +7850,13 @@ impl<'s> From<PipelineLayoutCreateInfo<'s>> for vks::VkPipelineLayoutCreateInfo 
 }
 
 
+impl<'s> From<vks::VkPipelineLayoutCreateInfo> for PipelineLayoutCreateInfo<'s> {
+    fn from(f: vks::VkPipelineLayoutCreateInfo) -> PipelineLayoutCreateInfo<'s> {
+        PipelineLayoutCreateInfo { raw: f, set_layouts: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineLayoutCreateInfo`.
 ///
 /// 
@@ -6869,7 +7864,7 @@ impl<'s> From<PipelineLayoutCreateInfo<'s>> for vks::VkPipelineLayoutCreateInfo 
 pub struct PipelineLayoutCreateInfoBuilder<'b> {
     raw: vks::VkPipelineLayoutCreateInfo,
     set_layouts: Option<SmallVec<[vks::VkDescriptorSetLayout; 8]>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineLayoutCreateInfoBuilder<'b> {
@@ -6891,23 +7886,23 @@ impl<'b> PipelineLayoutCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn set_layouts<'m, 'a>(mut self, set_layouts: &'a [DescriptorSetLayout]) -> PipelineLayoutCreateInfoBuilder<'b> where 'a: 'b {
+    pub fn set_layouts<'m, 'a>(mut self, set_layouts: &'a [&'a DescriptorSetLayout]) -> PipelineLayoutCreateInfoBuilder<'b> where 'a: 'b {
         self.set_layouts = Some(set_layouts.iter().map(|h| h.handle()).collect());
         {
             let set_layouts = self.set_layouts.as_ref().unwrap();
             self.raw.pSetLayouts = set_layouts.as_ptr();
-            assert!(self.raw.setLayoutCount == 0 || self.raw.setLayoutCount == set_layouts.len() as u32, 
+            assert!(self.raw.setLayoutCount == 0 || self.raw.setLayoutCount == set_layouts.len() as _, 
                 "count inconsistency found when specifying `PipelineLayoutCreateInfo::set_layouts`.");
-            self.raw.setLayoutCount = set_layouts.len() as u32;
+            self.raw.setLayoutCount = set_layouts.len() as _;
         }
         self
     }
 
     pub fn push_constant_ranges<'m, 'a>(mut self, push_constant_ranges: &'a [PushConstantRange]) -> PipelineLayoutCreateInfoBuilder<'b> {
-        assert!(self.raw.pushConstantRangeCount == 0 || self.raw.pushConstantRangeCount == push_constant_ranges.len() as u32, 
+        assert!(self.raw.pushConstantRangeCount == 0 || self.raw.pushConstantRangeCount == push_constant_ranges.len() as _, 
             "count inconsistency found when specifying `PipelineLayoutCreateInfo::push_constant_ranges`.");
-        self.raw.pushConstantRangeCount = push_constant_ranges.len() as u32;
-        self.raw.pPushConstantRanges = push_constant_ranges.as_ptr() as *const _;
+        self.raw.pushConstantRangeCount = push_constant_ranges.len() as _;
+        self.raw.pPushConstantRanges = push_constant_ranges.as_ptr() as *const vks::VkPushConstantRange as *const _;
         self
     }
 
@@ -6937,55 +7932,73 @@ impl<'s> SamplerCreateInfo<'s> {
         SamplerCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> SamplerCreateFlags {
+        SamplerCreateFlags::from_bits(self.raw.flags)
+            .expect("SamplerCreateInfo::flags: error converting flags")
     }
 
-    pub fn mag_filter(&self) {
+    pub fn mag_filter<'a>(&'a self) -> Filter {
+        self.raw.magFilter.into()
     }
 
-    pub fn min_filter(&self) {
+    pub fn min_filter<'a>(&'a self) -> Filter {
+        self.raw.minFilter.into()
     }
 
-    pub fn mipmap_mode(&self) {
+    pub fn mipmap_mode<'a>(&'a self) -> SamplerMipmapMode {
+        self.raw.mipmapMode.into()
     }
 
-    pub fn address_mode_u(&self) {
+    pub fn address_mode_u<'a>(&'a self) -> SamplerAddressMode {
+        self.raw.addressModeU.into()
     }
 
-    pub fn address_mode_v(&self) {
+    pub fn address_mode_v<'a>(&'a self) -> SamplerAddressMode {
+        self.raw.addressModeV.into()
     }
 
-    pub fn address_mode_w(&self) {
+    pub fn address_mode_w<'a>(&'a self) -> SamplerAddressMode {
+        self.raw.addressModeW.into()
     }
 
-    pub fn mip_lod_bias(&self) {
+    pub fn mip_lod_bias<'a>(&'a self) -> f32 {
+        self.raw.mipLodBias.into()
     }
 
-    pub fn anisotropy_enable(&self) {
+    pub fn anisotropy_enable<'a>(&'a self) -> bool {
+        self.raw.anisotropyEnable != 0
     }
 
-    pub fn max_anisotropy(&self) {
+    pub fn max_anisotropy<'a>(&'a self) -> f32 {
+        self.raw.maxAnisotropy.into()
     }
 
-    pub fn compare_enable(&self) {
+    pub fn compare_enable<'a>(&'a self) -> bool {
+        self.raw.compareEnable != 0
     }
 
-    pub fn compare_op(&self) {
+    pub fn compare_op<'a>(&'a self) -> CompareOp {
+        self.raw.compareOp.into()
     }
 
-    pub fn min_lod(&self) {
+    pub fn min_lod<'a>(&'a self) -> f32 {
+        self.raw.minLod.into()
     }
 
-    pub fn max_lod(&self) {
+    pub fn max_lod<'a>(&'a self) -> f32 {
+        self.raw.maxLod.into()
     }
 
-    pub fn border_color(&self) {
+    pub fn border_color<'a>(&'a self) -> BorderColor {
+        self.raw.borderColor.into()
     }
 
-    pub fn unnormalized_coordinates(&self) {
+    pub fn unnormalized_coordinates<'a>(&'a self) -> bool {
+        self.raw.unnormalizedCoordinates != 0
     }
 
     pub fn raw(&self) -> &vks::VkSamplerCreateInfo {
@@ -7001,13 +8014,20 @@ impl<'s> From<SamplerCreateInfo<'s>> for vks::VkSamplerCreateInfo {
 }
 
 
+impl<'s> From<vks::VkSamplerCreateInfo> for SamplerCreateInfo<'s> {
+    fn from(f: vks::VkSamplerCreateInfo) -> SamplerCreateInfo<'s> {
+        SamplerCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSamplerCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SamplerCreateInfoBuilder<'b> {
     raw: vks::VkSamplerCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SamplerCreateInfoBuilder<'b> {
@@ -7128,13 +8148,17 @@ impl<'s> CommandPoolCreateInfo<'s> {
         CommandPoolCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> CommandPoolCreateFlags {
+        CommandPoolCreateFlags::from_bits(self.raw.flags)
+            .expect("CommandPoolCreateInfo::flags: error converting flags")
     }
 
-    pub fn queue_family_index(&self) {
+    pub fn queue_family_index<'a>(&'a self) -> u32 {
+        self.raw.queueFamilyIndex.into()
     }
 
     pub fn raw(&self) -> &vks::VkCommandPoolCreateInfo {
@@ -7150,13 +8174,20 @@ impl<'s> From<CommandPoolCreateInfo<'s>> for vks::VkCommandPoolCreateInfo {
 }
 
 
+impl<'s> From<vks::VkCommandPoolCreateInfo> for CommandPoolCreateInfo<'s> {
+    fn from(f: vks::VkCommandPoolCreateInfo) -> CommandPoolCreateInfo<'s> {
+        CommandPoolCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkCommandPoolCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandPoolCreateInfoBuilder<'b> {
     raw: vks::VkCommandPoolCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> CommandPoolCreateInfoBuilder<'b> {
@@ -7207,16 +8238,20 @@ impl<'s> CommandBufferAllocateInfo<'s> {
         CommandBufferAllocateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn command_pool(&self) {
+    pub fn command_pool_handle<'a>(&'a self) -> vks::VkCommandPool {
+        self.raw.commandPool
     }
 
-    pub fn level(&self) {
+    pub fn level<'a>(&'a self) -> CommandBufferLevel {
+        self.raw.level.into()
     }
 
-    pub fn command_buffer_count(&self) {
+    pub fn command_buffer_count<'a>(&'a self) -> u32 {
+        self.raw.commandBufferCount.into()
     }
 
     pub fn raw(&self) -> &vks::VkCommandBufferAllocateInfo {
@@ -7232,13 +8267,20 @@ impl<'s> From<CommandBufferAllocateInfo<'s>> for vks::VkCommandBufferAllocateInf
 }
 
 
+impl<'s> From<vks::VkCommandBufferAllocateInfo> for CommandBufferAllocateInfo<'s> {
+    fn from(f: vks::VkCommandBufferAllocateInfo) -> CommandBufferAllocateInfo<'s> {
+        CommandBufferAllocateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkCommandBufferAllocateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandBufferAllocateInfoBuilder<'b> {
     raw: vks::VkCommandBufferAllocateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> CommandBufferAllocateInfoBuilder<'b> {
@@ -7294,25 +8336,34 @@ impl<'s> CommandBufferInheritanceInfo<'s> {
         CommandBufferInheritanceInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn render_pass(&self) {
+    pub fn render_pass_handle<'a>(&'a self) -> vks::VkRenderPass {
+        self.raw.renderPass
     }
 
-    pub fn subpass(&self) {
+    pub fn subpass<'a>(&'a self) -> u32 {
+        self.raw.subpass.into()
     }
 
-    pub fn framebuffer(&self) {
+    pub fn framebuffer_handle<'a>(&'a self) -> vks::VkFramebuffer {
+        self.raw.framebuffer
     }
 
-    pub fn occlusion_query_enable(&self) {
+    pub fn occlusion_query_enable<'a>(&'a self) -> bool {
+        self.raw.occlusionQueryEnable != 0
     }
 
-    pub fn query_flags(&self) {
+    pub fn query_flags<'a>(&'a self) -> QueryControlFlags {
+        QueryControlFlags::from_bits(self.raw.queryFlags)
+            .expect("CommandBufferInheritanceInfo::query_flags: error converting flags")
     }
 
-    pub fn pipeline_statistics(&self) {
+    pub fn pipeline_statistics<'a>(&'a self) -> QueryPipelineStatisticFlags {
+        QueryPipelineStatisticFlags::from_bits(self.raw.pipelineStatistics)
+            .expect("CommandBufferInheritanceInfo::pipeline_statistics: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkCommandBufferInheritanceInfo {
@@ -7328,13 +8379,20 @@ impl<'s> From<CommandBufferInheritanceInfo<'s>> for vks::VkCommandBufferInherita
 }
 
 
+impl<'s> From<vks::VkCommandBufferInheritanceInfo> for CommandBufferInheritanceInfo<'s> {
+    fn from(f: vks::VkCommandBufferInheritanceInfo) -> CommandBufferInheritanceInfo<'s> {
+        CommandBufferInheritanceInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkCommandBufferInheritanceInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandBufferInheritanceInfoBuilder<'b> {
     raw: vks::VkCommandBufferInheritanceInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> CommandBufferInheritanceInfoBuilder<'b> {
@@ -7405,13 +8463,17 @@ impl<'s> CommandBufferBeginInfo<'s> {
         CommandBufferBeginInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> CommandBufferUsageFlags {
+        CommandBufferUsageFlags::from_bits(self.raw.flags)
+            .expect("CommandBufferBeginInfo::flags: error converting flags")
     }
 
-    pub fn inheritance_info(&self) {
+    pub fn inheritance_info<'a>(&'a self) -> &'a CommandBufferInheritanceInfo {
+        unsafe { &*(self.raw.pInheritanceInfo as *const vks::VkCommandBufferInheritanceInfo as *const _) }
     }
 
     pub fn raw(&self) -> &vks::VkCommandBufferBeginInfo {
@@ -7427,13 +8489,20 @@ impl<'s> From<CommandBufferBeginInfo<'s>> for vks::VkCommandBufferBeginInfo {
 }
 
 
+impl<'s> From<vks::VkCommandBufferBeginInfo> for CommandBufferBeginInfo<'s> {
+    fn from(f: vks::VkCommandBufferBeginInfo) -> CommandBufferBeginInfo<'s> {
+        CommandBufferBeginInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkCommandBufferBeginInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct CommandBufferBeginInfoBuilder<'b> {
     raw: vks::VkCommandBufferBeginInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> CommandBufferBeginInfoBuilder<'b> {
@@ -7484,19 +8553,24 @@ impl<'s> RenderPassBeginInfo<'s> {
         RenderPassBeginInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn render_pass(&self) {
+    pub fn render_pass_handle<'a>(&'a self) -> vks::VkRenderPass {
+        self.raw.renderPass
     }
 
-    pub fn framebuffer(&self) {
+    pub fn framebuffer_handle<'a>(&'a self) -> vks::VkFramebuffer {
+        self.raw.framebuffer
     }
 
-    pub fn render_area(&self) {
+    pub fn render_area<'a>(&'a self) -> Rect2d {
+        self.raw.renderArea.into()
     }
 
-    pub fn clear_values(&self) {
+    pub fn clear_values<'a>(&'a self) -> &'a [ClearValue] {
+        unsafe { slice::from_raw_parts(self.raw.pClearValues as *const _, self.raw.clearValueCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkRenderPassBeginInfo {
@@ -7512,13 +8586,20 @@ impl<'s> From<RenderPassBeginInfo<'s>> for vks::VkRenderPassBeginInfo {
 }
 
 
+impl<'s> From<vks::VkRenderPassBeginInfo> for RenderPassBeginInfo<'s> {
+    fn from(f: vks::VkRenderPassBeginInfo) -> RenderPassBeginInfo<'s> {
+        RenderPassBeginInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkRenderPassBeginInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct RenderPassBeginInfoBuilder<'b> {
     raw: vks::VkRenderPassBeginInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> RenderPassBeginInfoBuilder<'b> {
@@ -7550,10 +8631,10 @@ impl<'b> RenderPassBeginInfoBuilder<'b> {
     }
 
     pub fn clear_values<'m, 'a>(mut self, clear_values: &'a [ClearValue]) -> RenderPassBeginInfoBuilder<'b> {
-        assert!(self.raw.clearValueCount == 0 || self.raw.clearValueCount == clear_values.len() as u32, 
+        assert!(self.raw.clearValueCount == 0 || self.raw.clearValueCount == clear_values.len() as _, 
             "count inconsistency found when specifying `RenderPassBeginInfo::clear_values`.");
-        self.raw.clearValueCount = clear_values.len() as u32;
-        self.raw.pClearValues = clear_values.as_ptr() as *const _;
+        self.raw.clearValueCount = clear_values.len() as _;
+        self.raw.pClearValues = clear_values.as_ptr() as *const ClearValue as *const _;
         self
     }
 
@@ -7581,10 +8662,12 @@ impl ClearDepthStencilValue {
         ClearDepthStencilValueBuilder::new()
     }
 
-    pub fn depth(&self) {
+    pub fn depth<'a>(&'a self) -> f32 {
+        self.raw.depth.into()
     }
 
-    pub fn stencil(&self) {
+    pub fn stencil<'a>(&'a self) -> u32 {
+        self.raw.stencil.into()
     }
 
     pub fn raw(&self) -> &vks::VkClearDepthStencilValue {
@@ -7596,6 +8679,13 @@ impl ClearDepthStencilValue {
 impl From<ClearDepthStencilValue> for vks::VkClearDepthStencilValue {
     fn from(f: ClearDepthStencilValue) -> vks::VkClearDepthStencilValue {
         f.raw
+    }
+}
+
+
+impl From<vks::VkClearDepthStencilValue> for ClearDepthStencilValue {
+    fn from(f: vks::VkClearDepthStencilValue) -> ClearDepthStencilValue {
+        ClearDepthStencilValue { raw: f, }
     }
 }
 
@@ -7648,13 +8738,17 @@ impl ClearAttachment {
         ClearAttachmentBuilder::new()
     }
 
-    pub fn aspect_mask(&self) {
+    pub fn aspect_mask<'a>(&'a self) -> ImageAspectFlags {
+        ImageAspectFlags::from_bits(self.raw.aspectMask)
+            .expect("ClearAttachment::aspect_mask: error converting flags")
     }
 
-    pub fn color_attachment(&self) {
+    pub fn color_attachment<'a>(&'a self) -> u32 {
+        self.raw.colorAttachment.into()
     }
 
-    pub fn clear_value(&self) {
+    pub fn clear_value<'a>(&'a self) -> ClearValue {
+        self.raw.clearValue.into()
     }
 
     pub fn raw(&self) -> &vks::VkClearAttachment {
@@ -7666,6 +8760,13 @@ impl ClearAttachment {
 impl From<ClearAttachment> for vks::VkClearAttachment {
     fn from(f: ClearAttachment) -> vks::VkClearAttachment {
         f.raw
+    }
+}
+
+
+impl From<vks::VkClearAttachment> for ClearAttachment {
+    fn from(f: vks::VkClearAttachment) -> ClearAttachment {
+        ClearAttachment { raw: f, }
     }
 }
 
@@ -7723,31 +8824,42 @@ impl AttachmentDescription {
         AttachmentDescriptionBuilder::new()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> AttachmentDescriptionFlags {
+        AttachmentDescriptionFlags::from_bits(self.raw.flags)
+            .expect("AttachmentDescription::flags: error converting flags")
     }
 
-    pub fn format(&self) {
+    pub fn format<'a>(&'a self) -> Format {
+        self.raw.format.into()
     }
 
-    pub fn samples(&self) {
+    pub fn samples<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.samples)
+            .expect("AttachmentDescription::samples: error converting flags")
     }
 
-    pub fn load_op(&self) {
+    pub fn load_op<'a>(&'a self) -> AttachmentLoadOp {
+        self.raw.loadOp.into()
     }
 
-    pub fn store_op(&self) {
+    pub fn store_op<'a>(&'a self) -> AttachmentStoreOp {
+        self.raw.storeOp.into()
     }
 
-    pub fn stencil_load_op(&self) {
+    pub fn stencil_load_op<'a>(&'a self) -> AttachmentLoadOp {
+        self.raw.stencilLoadOp.into()
     }
 
-    pub fn stencil_store_op(&self) {
+    pub fn stencil_store_op<'a>(&'a self) -> AttachmentStoreOp {
+        self.raw.stencilStoreOp.into()
     }
 
-    pub fn initial_layout(&self) {
+    pub fn initial_layout<'a>(&'a self) -> ImageLayout {
+        self.raw.initialLayout.into()
     }
 
-    pub fn final_layout(&self) {
+    pub fn final_layout<'a>(&'a self) -> ImageLayout {
+        self.raw.finalLayout.into()
     }
 
     pub fn raw(&self) -> &vks::VkAttachmentDescription {
@@ -7759,6 +8871,13 @@ impl AttachmentDescription {
 impl From<AttachmentDescription> for vks::VkAttachmentDescription {
     fn from(f: AttachmentDescription) -> vks::VkAttachmentDescription {
         f.raw
+    }
+}
+
+
+impl From<vks::VkAttachmentDescription> for AttachmentDescription {
+    fn from(f: vks::VkAttachmentDescription) -> AttachmentDescription {
+        AttachmentDescription { raw: f, }
     }
 }
 
@@ -7846,10 +8965,12 @@ impl AttachmentReference {
         AttachmentReferenceBuilder::new()
     }
 
-    pub fn attachment(&self) {
+    pub fn attachment<'a>(&'a self) -> u32 {
+        self.raw.attachment.into()
     }
 
-    pub fn layout(&self) {
+    pub fn layout<'a>(&'a self) -> ImageLayout {
+        self.raw.layout.into()
     }
 
     pub fn raw(&self) -> &vks::VkAttachmentReference {
@@ -7861,6 +8982,13 @@ impl AttachmentReference {
 impl From<AttachmentReference> for vks::VkAttachmentReference {
     fn from(f: AttachmentReference) -> vks::VkAttachmentReference {
         f.raw
+    }
+}
+
+
+impl From<vks::VkAttachmentReference> for AttachmentReference {
+    fn from(f: vks::VkAttachmentReference) -> AttachmentReference {
+        AttachmentReference { raw: f, }
     }
 }
 
@@ -7914,25 +9042,33 @@ impl<'s> SubpassDescription<'s> {
         SubpassDescriptionBuilder::new()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> SubpassDescriptionFlags {
+        SubpassDescriptionFlags::from_bits(self.raw.flags)
+            .expect("SubpassDescription::flags: error converting flags")
     }
 
-    pub fn pipeline_bind_point(&self) {
+    pub fn pipeline_bind_point<'a>(&'a self) -> PipelineBindPoint {
+        self.raw.pipelineBindPoint.into()
     }
 
-    pub fn input_attachments(&self) {
+    pub fn input_attachments<'a>(&'a self) -> &'a [AttachmentReference] {
+        unsafe { slice::from_raw_parts(self.raw.pInputAttachments as *const _, self.raw.inputAttachmentCount as usize) }
     }
 
-    pub fn color_attachments(&self) {
+    pub fn color_attachments<'a>(&'a self) -> &'a [AttachmentReference] {
+        unsafe { slice::from_raw_parts(self.raw.pColorAttachments as *const _, self.raw.colorAttachmentCount as usize) }
     }
 
-    pub fn resolve_attachments(&self) {
+    pub fn resolve_attachments<'a>(&'a self) -> &'a [AttachmentReference] {
+        unsafe { slice::from_raw_parts(self.raw.pResolveAttachments as *const _, self.raw.colorAttachmentCount as usize) }
     }
 
-    pub fn depth_stencil_attachment(&self) {
+    pub fn depth_stencil_attachment<'a>(&'a self) -> &'a AttachmentReference {
+        unsafe { &*(self.raw.pDepthStencilAttachment as *const vks::VkAttachmentReference as *const _) }
     }
 
-    pub fn preserve_attachments(&self) {
+    pub fn preserve_attachments<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pPreserveAttachments as *const _, self.raw.preserveAttachmentCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkSubpassDescription {
@@ -7948,13 +9084,20 @@ impl<'s> From<SubpassDescription<'s>> for vks::VkSubpassDescription {
 }
 
 
+impl<'s> From<vks::VkSubpassDescription> for SubpassDescription<'s> {
+    fn from(f: vks::VkSubpassDescription) -> SubpassDescription<'s> {
+        SubpassDescription { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSubpassDescription`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SubpassDescriptionBuilder<'b> {
     raw: vks::VkSubpassDescription,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SubpassDescriptionBuilder<'b> {
@@ -7976,23 +9119,26 @@ impl<'b> SubpassDescriptionBuilder<'b> {
     }
 
     pub fn input_attachments<'m, 'a>(mut self, input_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b> {
-        assert!(self.raw.inputAttachmentCount == 0 || self.raw.inputAttachmentCount == input_attachments.len() as u32, 
+        assert!(self.raw.inputAttachmentCount == 0 || self.raw.inputAttachmentCount == input_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::input_attachments`.");
-        self.raw.inputAttachmentCount = input_attachments.len() as u32;
-        self.raw.pInputAttachments = input_attachments.as_ptr() as *const _;
+        self.raw.inputAttachmentCount = input_attachments.len() as _;
+        self.raw.pInputAttachments = input_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
         self
     }
 
     pub fn color_attachments<'m, 'a>(mut self, color_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b> {
-        assert!(self.raw.colorAttachmentCount == 0 || self.raw.colorAttachmentCount == color_attachments.len() as u32, 
+        assert!(self.raw.colorAttachmentCount == 0 || self.raw.colorAttachmentCount == color_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::color_attachments`.");
-        self.raw.colorAttachmentCount = color_attachments.len() as u32;
-        self.raw.pColorAttachments = color_attachments.as_ptr() as *const _;
+        self.raw.colorAttachmentCount = color_attachments.len() as _;
+        self.raw.pColorAttachments = color_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
         self
     }
 
     pub fn resolve_attachments<'m, 'a>(mut self, resolve_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b> {
-        self.raw.pResolveAttachments = resolve_attachments.as_ptr() as *const _;
+        assert!(self.raw.colorAttachmentCount == 0 || self.raw.colorAttachmentCount == resolve_attachments.len() as _, 
+            "count inconsistency found when specifying `SubpassDescription::resolve_attachments`.");
+        self.raw.colorAttachmentCount = resolve_attachments.len() as _;
+        self.raw.pResolveAttachments = resolve_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
         self
     }
 
@@ -8002,10 +9148,10 @@ impl<'b> SubpassDescriptionBuilder<'b> {
     }
 
     pub fn preserve_attachments<'m, 'a>(mut self, preserve_attachments: &'a [u32]) -> SubpassDescriptionBuilder<'b> {
-        assert!(self.raw.preserveAttachmentCount == 0 || self.raw.preserveAttachmentCount == preserve_attachments.len() as u32, 
+        assert!(self.raw.preserveAttachmentCount == 0 || self.raw.preserveAttachmentCount == preserve_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::preserve_attachments`.");
-        self.raw.preserveAttachmentCount = preserve_attachments.len() as u32;
-        self.raw.pPreserveAttachments = preserve_attachments.as_ptr() as *const _;
+        self.raw.preserveAttachmentCount = preserve_attachments.len() as _;
+        self.raw.pPreserveAttachments = preserve_attachments.as_ptr() as *const u32 as *const _;
         self
     }
 
@@ -8033,25 +9179,37 @@ impl SubpassDependency {
         SubpassDependencyBuilder::new()
     }
 
-    pub fn src_subpass(&self) {
+    pub fn src_subpass<'a>(&'a self) -> u32 {
+        self.raw.srcSubpass.into()
     }
 
-    pub fn dst_subpass(&self) {
+    pub fn dst_subpass<'a>(&'a self) -> u32 {
+        self.raw.dstSubpass.into()
     }
 
-    pub fn src_stage_mask(&self) {
+    pub fn src_stage_mask<'a>(&'a self) -> PipelineStageFlags {
+        PipelineStageFlags::from_bits(self.raw.srcStageMask)
+            .expect("SubpassDependency::src_stage_mask: error converting flags")
     }
 
-    pub fn dst_stage_mask(&self) {
+    pub fn dst_stage_mask<'a>(&'a self) -> PipelineStageFlags {
+        PipelineStageFlags::from_bits(self.raw.dstStageMask)
+            .expect("SubpassDependency::dst_stage_mask: error converting flags")
     }
 
-    pub fn src_access_mask(&self) {
+    pub fn src_access_mask<'a>(&'a self) -> AccessFlags {
+        AccessFlags::from_bits(self.raw.srcAccessMask)
+            .expect("SubpassDependency::src_access_mask: error converting flags")
     }
 
-    pub fn dst_access_mask(&self) {
+    pub fn dst_access_mask<'a>(&'a self) -> AccessFlags {
+        AccessFlags::from_bits(self.raw.dstAccessMask)
+            .expect("SubpassDependency::dst_access_mask: error converting flags")
     }
 
-    pub fn dependency_flags(&self) {
+    pub fn dependency_flags<'a>(&'a self) -> DependencyFlags {
+        DependencyFlags::from_bits(self.raw.dependencyFlags)
+            .expect("SubpassDependency::dependency_flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkSubpassDependency {
@@ -8063,6 +9221,13 @@ impl SubpassDependency {
 impl From<SubpassDependency> for vks::VkSubpassDependency {
     fn from(f: SubpassDependency) -> vks::VkSubpassDependency {
         f.raw
+    }
+}
+
+
+impl From<vks::VkSubpassDependency> for SubpassDependency {
+    fn from(f: vks::VkSubpassDependency) -> SubpassDependency {
+        SubpassDependency { raw: f, }
     }
 }
 
@@ -8141,19 +9306,25 @@ impl<'s> RenderPassCreateInfo<'s> {
         RenderPassCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> RenderPassCreateFlags {
+        RenderPassCreateFlags::from_bits(self.raw.flags)
+            .expect("RenderPassCreateInfo::flags: error converting flags")
     }
 
-    pub fn attachments(&self) {
+    pub fn attachments<'a>(&'a self) -> &'a [AttachmentDescription] {
+        unsafe { slice::from_raw_parts(self.raw.pAttachments as *const _, self.raw.attachmentCount as usize) }
     }
 
-    pub fn subpasses(&self) {
+    pub fn subpasses<'a>(&'a self) -> &'a [SubpassDescription] {
+        unsafe { slice::from_raw_parts(self.raw.pSubpasses as *const _, self.raw.subpassCount as usize) }
     }
 
-    pub fn dependencies(&self) {
+    pub fn dependencies<'a>(&'a self) -> &'a [SubpassDependency] {
+        unsafe { slice::from_raw_parts(self.raw.pDependencies as *const _, self.raw.dependencyCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkRenderPassCreateInfo {
@@ -8169,13 +9340,20 @@ impl<'s> From<RenderPassCreateInfo<'s>> for vks::VkRenderPassCreateInfo {
 }
 
 
+impl<'s> From<vks::VkRenderPassCreateInfo> for RenderPassCreateInfo<'s> {
+    fn from(f: vks::VkRenderPassCreateInfo) -> RenderPassCreateInfo<'s> {
+        RenderPassCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkRenderPassCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct RenderPassCreateInfoBuilder<'b> {
     raw: vks::VkRenderPassCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> RenderPassCreateInfoBuilder<'b> {
@@ -8197,26 +9375,26 @@ impl<'b> RenderPassCreateInfoBuilder<'b> {
     }
 
     pub fn attachments<'m, 'a>(mut self, attachments: &'a [AttachmentDescription]) -> RenderPassCreateInfoBuilder<'b> {
-        assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as u32, 
+        assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::attachments`.");
-        self.raw.attachmentCount = attachments.len() as u32;
-        self.raw.pAttachments = attachments.as_ptr() as *const _;
+        self.raw.attachmentCount = attachments.len() as _;
+        self.raw.pAttachments = attachments.as_ptr() as *const vks::VkAttachmentDescription as *const _;
         self
     }
 
     pub fn subpasses<'m, 'a>(mut self, subpasses: &'a [SubpassDescription]) -> RenderPassCreateInfoBuilder<'b> {
-        assert!(self.raw.subpassCount == 0 || self.raw.subpassCount == subpasses.len() as u32, 
+        assert!(self.raw.subpassCount == 0 || self.raw.subpassCount == subpasses.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::subpasses`.");
-        self.raw.subpassCount = subpasses.len() as u32;
-        self.raw.pSubpasses = subpasses.as_ptr() as *const _;
+        self.raw.subpassCount = subpasses.len() as _;
+        self.raw.pSubpasses = subpasses.as_ptr() as *const vks::VkSubpassDescription as *const _;
         self
     }
 
     pub fn dependencies<'m, 'a>(mut self, dependencies: &'a [SubpassDependency]) -> RenderPassCreateInfoBuilder<'b> {
-        assert!(self.raw.dependencyCount == 0 || self.raw.dependencyCount == dependencies.len() as u32, 
+        assert!(self.raw.dependencyCount == 0 || self.raw.dependencyCount == dependencies.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::dependencies`.");
-        self.raw.dependencyCount = dependencies.len() as u32;
-        self.raw.pDependencies = dependencies.as_ptr() as *const _;
+        self.raw.dependencyCount = dependencies.len() as _;
+        self.raw.pDependencies = dependencies.as_ptr() as *const vks::VkSubpassDependency as *const _;
         self
     }
 
@@ -8245,10 +9423,13 @@ impl<'s> EventCreateInfo<'s> {
         EventCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> EventCreateFlags {
+        EventCreateFlags::from_bits(self.raw.flags)
+            .expect("EventCreateInfo::flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkEventCreateInfo {
@@ -8264,13 +9445,20 @@ impl<'s> From<EventCreateInfo<'s>> for vks::VkEventCreateInfo {
 }
 
 
+impl<'s> From<vks::VkEventCreateInfo> for EventCreateInfo<'s> {
+    fn from(f: vks::VkEventCreateInfo) -> EventCreateInfo<'s> {
+        EventCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkEventCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct EventCreateInfoBuilder<'b> {
     raw: vks::VkEventCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> EventCreateInfoBuilder<'b> {
@@ -8316,10 +9504,13 @@ impl<'s> FenceCreateInfo<'s> {
         FenceCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> FenceCreateFlags {
+        FenceCreateFlags::from_bits(self.raw.flags)
+            .expect("FenceCreateInfo::flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkFenceCreateInfo {
@@ -8335,13 +9526,20 @@ impl<'s> From<FenceCreateInfo<'s>> for vks::VkFenceCreateInfo {
 }
 
 
+impl<'s> From<vks::VkFenceCreateInfo> for FenceCreateInfo<'s> {
+    fn from(f: vks::VkFenceCreateInfo) -> FenceCreateInfo<'s> {
+        FenceCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkFenceCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct FenceCreateInfoBuilder<'b> {
     raw: vks::VkFenceCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> FenceCreateInfoBuilder<'b> {
@@ -8386,169 +9584,224 @@ impl PhysicalDeviceFeatures {
         PhysicalDeviceFeaturesBuilder::new()
     }
 
-    pub fn robust_buffer_access(&self) {
+    pub fn robust_buffer_access<'a>(&'a self) -> bool {
+        self.raw.robustBufferAccess != 0
     }
 
-    pub fn full_draw_index_uint_32(&self) {
+    pub fn full_draw_index_uint_32<'a>(&'a self) -> bool {
+        self.raw.fullDrawIndexUint32 != 0
     }
 
-    pub fn image_cube_array(&self) {
+    pub fn image_cube_array<'a>(&'a self) -> bool {
+        self.raw.imageCubeArray != 0
     }
 
-    pub fn independent_blend(&self) {
+    pub fn independent_blend<'a>(&'a self) -> bool {
+        self.raw.independentBlend != 0
     }
 
-    pub fn geometry_shader(&self) {
+    pub fn geometry_shader<'a>(&'a self) -> bool {
+        self.raw.geometryShader != 0
     }
 
-    pub fn tessellation_shader(&self) {
+    pub fn tessellation_shader<'a>(&'a self) -> bool {
+        self.raw.tessellationShader != 0
     }
 
-    pub fn sample_rate_shading(&self) {
+    pub fn sample_rate_shading<'a>(&'a self) -> bool {
+        self.raw.sampleRateShading != 0
     }
 
-    pub fn dual_src_blend(&self) {
+    pub fn dual_src_blend<'a>(&'a self) -> bool {
+        self.raw.dualSrcBlend != 0
     }
 
-    pub fn logic_op(&self) {
+    pub fn logic_op<'a>(&'a self) -> bool {
+        self.raw.logicOp != 0
     }
 
-    pub fn multi_draw_indirect(&self) {
+    pub fn multi_draw_indirect<'a>(&'a self) -> bool {
+        self.raw.multiDrawIndirect != 0
     }
 
-    pub fn draw_indirect_first_instance(&self) {
+    pub fn draw_indirect_first_instance<'a>(&'a self) -> bool {
+        self.raw.drawIndirectFirstInstance != 0
     }
 
-    pub fn depth_clamp(&self) {
+    pub fn depth_clamp<'a>(&'a self) -> bool {
+        self.raw.depthClamp != 0
     }
 
-    pub fn depth_bias_clamp(&self) {
+    pub fn depth_bias_clamp<'a>(&'a self) -> bool {
+        self.raw.depthBiasClamp != 0
     }
 
-    pub fn fill_mode_non_solid(&self) {
+    pub fn fill_mode_non_solid<'a>(&'a self) -> bool {
+        self.raw.fillModeNonSolid != 0
     }
 
-    pub fn depth_bounds(&self) {
+    pub fn depth_bounds<'a>(&'a self) -> bool {
+        self.raw.depthBounds != 0
     }
 
-    pub fn wide_lines(&self) {
+    pub fn wide_lines<'a>(&'a self) -> bool {
+        self.raw.wideLines != 0
     }
 
-    pub fn large_points(&self) {
+    pub fn large_points<'a>(&'a self) -> bool {
+        self.raw.largePoints != 0
     }
 
-    pub fn alpha_to_one(&self) {
+    pub fn alpha_to_one<'a>(&'a self) -> bool {
+        self.raw.alphaToOne != 0
     }
 
-    pub fn multi_viewport(&self) {
+    pub fn multi_viewport<'a>(&'a self) -> bool {
+        self.raw.multiViewport != 0
     }
 
-    pub fn sampler_anisotropy(&self) {
+    pub fn sampler_anisotropy<'a>(&'a self) -> bool {
+        self.raw.samplerAnisotropy != 0
     }
 
-    pub fn texture_compression_et_c2(&self) {
+    pub fn texture_compression_et_c2<'a>(&'a self) -> bool {
+        self.raw.textureCompressionETC2 != 0
     }
 
-    pub fn texture_compression_as_tc_ld_r(&self) {
+    pub fn texture_compression_as_tc_ld_r<'a>(&'a self) -> bool {
+        self.raw.textureCompressionASTC_LDR != 0
     }
 
-    pub fn texture_compression_bc(&self) {
+    pub fn texture_compression_bc<'a>(&'a self) -> bool {
+        self.raw.textureCompressionBC != 0
     }
 
-    pub fn occlusion_query_precise(&self) {
+    pub fn occlusion_query_precise<'a>(&'a self) -> bool {
+        self.raw.occlusionQueryPrecise != 0
     }
 
-    pub fn pipeline_statistics_query(&self) {
+    pub fn pipeline_statistics_query<'a>(&'a self) -> bool {
+        self.raw.pipelineStatisticsQuery != 0
     }
 
-    pub fn vertex_pipeline_stores_and_atomics(&self) {
+    pub fn vertex_pipeline_stores_and_atomics<'a>(&'a self) -> bool {
+        self.raw.vertexPipelineStoresAndAtomics != 0
     }
 
-    pub fn fragment_stores_and_atomics(&self) {
+    pub fn fragment_stores_and_atomics<'a>(&'a self) -> bool {
+        self.raw.fragmentStoresAndAtomics != 0
     }
 
-    pub fn shader_tessellation_and_geometry_point_size(&self) {
+    pub fn shader_tessellation_and_geometry_point_size<'a>(&'a self) -> bool {
+        self.raw.shaderTessellationAndGeometryPointSize != 0
     }
 
-    pub fn shader_image_gather_extended(&self) {
+    pub fn shader_image_gather_extended<'a>(&'a self) -> bool {
+        self.raw.shaderImageGatherExtended != 0
     }
 
-    pub fn shader_storage_image_extended_formats(&self) {
+    pub fn shader_storage_image_extended_formats<'a>(&'a self) -> bool {
+        self.raw.shaderStorageImageExtendedFormats != 0
     }
 
-    pub fn shader_storage_image_multisample(&self) {
+    pub fn shader_storage_image_multisample<'a>(&'a self) -> bool {
+        self.raw.shaderStorageImageMultisample != 0
     }
 
-    pub fn shader_storage_image_read_without_format(&self) {
+    pub fn shader_storage_image_read_without_format<'a>(&'a self) -> bool {
+        self.raw.shaderStorageImageReadWithoutFormat != 0
     }
 
-    pub fn shader_storage_image_write_without_format(&self) {
+    pub fn shader_storage_image_write_without_format<'a>(&'a self) -> bool {
+        self.raw.shaderStorageImageWriteWithoutFormat != 0
     }
 
-    pub fn shader_uniform_buffer_array_dynamic_indexing(&self) {
+    pub fn shader_uniform_buffer_array_dynamic_indexing<'a>(&'a self) -> bool {
+        self.raw.shaderUniformBufferArrayDynamicIndexing != 0
     }
 
-    pub fn shader_sampled_image_array_dynamic_indexing(&self) {
+    pub fn shader_sampled_image_array_dynamic_indexing<'a>(&'a self) -> bool {
+        self.raw.shaderSampledImageArrayDynamicIndexing != 0
     }
 
-    pub fn shader_storage_buffer_array_dynamic_indexing(&self) {
+    pub fn shader_storage_buffer_array_dynamic_indexing<'a>(&'a self) -> bool {
+        self.raw.shaderStorageBufferArrayDynamicIndexing != 0
     }
 
-    pub fn shader_storage_image_array_dynamic_indexing(&self) {
+    pub fn shader_storage_image_array_dynamic_indexing<'a>(&'a self) -> bool {
+        self.raw.shaderStorageImageArrayDynamicIndexing != 0
     }
 
-    pub fn shader_clip_distance(&self) {
+    pub fn shader_clip_distance<'a>(&'a self) -> bool {
+        self.raw.shaderClipDistance != 0
     }
 
-    pub fn shader_cull_distance(&self) {
+    pub fn shader_cull_distance<'a>(&'a self) -> bool {
+        self.raw.shaderCullDistance != 0
     }
 
-    pub fn shader_float_64(&self) {
+    pub fn shader_float_64<'a>(&'a self) -> bool {
+        self.raw.shaderFloat64 != 0
     }
 
-    pub fn shader_int_64(&self) {
+    pub fn shader_int_64<'a>(&'a self) -> bool {
+        self.raw.shaderInt64 != 0
     }
 
-    pub fn shader_int_16(&self) {
+    pub fn shader_int_16<'a>(&'a self) -> bool {
+        self.raw.shaderInt16 != 0
     }
 
-    pub fn shader_resource_residency(&self) {
+    pub fn shader_resource_residency<'a>(&'a self) -> bool {
+        self.raw.shaderResourceResidency != 0
     }
 
-    pub fn shader_resource_min_lod(&self) {
+    pub fn shader_resource_min_lod<'a>(&'a self) -> bool {
+        self.raw.shaderResourceMinLod != 0
     }
 
-    pub fn sparse_binding(&self) {
+    pub fn sparse_binding<'a>(&'a self) -> bool {
+        self.raw.sparseBinding != 0
     }
 
-    pub fn sparse_residency_buffer(&self) {
+    pub fn sparse_residency_buffer<'a>(&'a self) -> bool {
+        self.raw.sparseResidencyBuffer != 0
     }
 
-    pub fn sparse_residency_image_2d(&self) {
+    pub fn sparse_residency_image_2d<'a>(&'a self) -> bool {
+        self.raw.sparseResidencyImage2D != 0
     }
 
-    pub fn sparse_residency_image_3d(&self) {
+    pub fn sparse_residency_image_3d<'a>(&'a self) -> bool {
+        self.raw.sparseResidencyImage3D != 0
     }
 
-    pub fn sparse_residency_2samples(&self) {
+    pub fn sparse_residency_2samples<'a>(&'a self) -> bool {
+        self.raw.sparseResidency2Samples != 0
     }
 
-    pub fn sparse_residency_4samples(&self) {
+    pub fn sparse_residency_4samples<'a>(&'a self) -> bool {
+        self.raw.sparseResidency4Samples != 0
     }
 
-    pub fn sparse_residency_8samples(&self) {
+    pub fn sparse_residency_8samples<'a>(&'a self) -> bool {
+        self.raw.sparseResidency8Samples != 0
     }
 
-    pub fn sparse_residency_16_samples(&self) {
+    pub fn sparse_residency_16_samples<'a>(&'a self) -> bool {
+        self.raw.sparseResidency16Samples != 0
     }
 
-    pub fn sparse_residency_aliased(&self) {
+    pub fn sparse_residency_aliased<'a>(&'a self) -> bool {
+        self.raw.sparseResidencyAliased != 0
     }
 
-    pub fn variable_multisample_rate(&self) {
+    pub fn variable_multisample_rate<'a>(&'a self) -> bool {
+        self.raw.variableMultisampleRate != 0
     }
 
-    pub fn inherited_queries(&self) {
+    pub fn inherited_queries<'a>(&'a self) -> bool {
+        self.raw.inheritedQueries != 0
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceFeatures {
@@ -8560,6 +9813,13 @@ impl PhysicalDeviceFeatures {
 impl From<PhysicalDeviceFeatures> for vks::VkPhysicalDeviceFeatures {
     fn from(f: PhysicalDeviceFeatures) -> vks::VkPhysicalDeviceFeatures {
         f.raw
+    }
+}
+
+
+impl From<vks::VkPhysicalDeviceFeatures> for PhysicalDeviceFeatures {
+    fn from(f: vks::VkPhysicalDeviceFeatures) -> PhysicalDeviceFeatures {
+        PhysicalDeviceFeatures { raw: f, }
     }
 }
 
@@ -8873,19 +10133,24 @@ pub struct PhysicalDeviceSparseProperties {
 }
 
 impl PhysicalDeviceSparseProperties {
-    pub fn residency_standard_2d_block_shape(&self) {
+    pub fn residency_standard_2d_block_shape<'a>(&'a self) -> bool {
+        self.raw.residencyStandard2DBlockShape != 0
     }
 
-    pub fn residency_standard_2d_multisample_block_shape(&self) {
+    pub fn residency_standard_2d_multisample_block_shape<'a>(&'a self) -> bool {
+        self.raw.residencyStandard2DMultisampleBlockShape != 0
     }
 
-    pub fn residency_standard_3d_block_shape(&self) {
+    pub fn residency_standard_3d_block_shape<'a>(&'a self) -> bool {
+        self.raw.residencyStandard3DBlockShape != 0
     }
 
-    pub fn residency_aligned_mip_size(&self) {
+    pub fn residency_aligned_mip_size<'a>(&'a self) -> bool {
+        self.raw.residencyAlignedMipSize != 0
     }
 
-    pub fn residency_non_resident_strict(&self) {
+    pub fn residency_non_resident_strict<'a>(&'a self) -> bool {
+        self.raw.residencyNonResidentStrict != 0
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceSparseProperties {
@@ -8901,6 +10166,13 @@ impl From<PhysicalDeviceSparseProperties> for vks::VkPhysicalDeviceSparsePropert
 }
 
 
+impl From<vks::VkPhysicalDeviceSparseProperties> for PhysicalDeviceSparseProperties {
+    fn from(f: vks::VkPhysicalDeviceSparseProperties) -> PhysicalDeviceSparseProperties {
+        PhysicalDeviceSparseProperties { raw: f, }
+    }
+}
+
+
 /// A `VkPhysicalDeviceLimits`.
 ///
 /// compute stage limits
@@ -8911,322 +10183,437 @@ pub struct PhysicalDeviceLimits {
 }
 
 impl PhysicalDeviceLimits {
-    pub fn max_image_dimension_1d(&self) {
+    pub fn max_image_dimension_1d<'a>(&'a self) -> u32 {
+        self.raw.maxImageDimension1D.into()
     }
 
-    pub fn max_image_dimension_2d(&self) {
+    pub fn max_image_dimension_2d<'a>(&'a self) -> u32 {
+        self.raw.maxImageDimension2D.into()
     }
 
-    pub fn max_image_dimension_3d(&self) {
+    pub fn max_image_dimension_3d<'a>(&'a self) -> u32 {
+        self.raw.maxImageDimension3D.into()
     }
 
-    pub fn max_image_dimension_cube(&self) {
+    pub fn max_image_dimension_cube<'a>(&'a self) -> u32 {
+        self.raw.maxImageDimensionCube.into()
     }
 
-    pub fn max_image_array_layers(&self) {
+    pub fn max_image_array_layers<'a>(&'a self) -> u32 {
+        self.raw.maxImageArrayLayers.into()
     }
 
-    pub fn max_texel_buffer_elements(&self) {
+    pub fn max_texel_buffer_elements<'a>(&'a self) -> u32 {
+        self.raw.maxTexelBufferElements.into()
     }
 
-    pub fn max_uniform_buffer_range(&self) {
+    pub fn max_uniform_buffer_range<'a>(&'a self) -> u32 {
+        self.raw.maxUniformBufferRange.into()
     }
 
-    pub fn max_storage_buffer_range(&self) {
+    pub fn max_storage_buffer_range<'a>(&'a self) -> u32 {
+        self.raw.maxStorageBufferRange.into()
     }
 
-    pub fn max_push_constants_size(&self) {
+    pub fn max_push_constants_size<'a>(&'a self) -> u32 {
+        self.raw.maxPushConstantsSize.into()
     }
 
-    pub fn max_memory_allocation_count(&self) {
+    pub fn max_memory_allocation_count<'a>(&'a self) -> u32 {
+        self.raw.maxMemoryAllocationCount.into()
     }
 
-    pub fn max_sampler_allocation_count(&self) {
+    pub fn max_sampler_allocation_count<'a>(&'a self) -> u32 {
+        self.raw.maxSamplerAllocationCount.into()
     }
 
-    pub fn buffer_image_granularity(&self) {
+    pub fn buffer_image_granularity<'a>(&'a self) -> u64 {
+        self.raw.bufferImageGranularity.into()
     }
 
-    pub fn sparse_address_space_size(&self) {
+    pub fn sparse_address_space_size<'a>(&'a self) -> u64 {
+        self.raw.sparseAddressSpaceSize.into()
     }
 
-    pub fn max_bound_descriptor_sets(&self) {
+    pub fn max_bound_descriptor_sets<'a>(&'a self) -> u32 {
+        self.raw.maxBoundDescriptorSets.into()
     }
 
-    pub fn max_per_stage_descriptor_samplers(&self) {
+    pub fn max_per_stage_descriptor_samplers<'a>(&'a self) -> u32 {
+        self.raw.maxPerStageDescriptorSamplers.into()
     }
 
-    pub fn max_per_stage_descriptor_uniform_buffers(&self) {
+    pub fn max_per_stage_descriptor_uniform_buffers<'a>(&'a self) -> u32 {
+        self.raw.maxPerStageDescriptorUniformBuffers.into()
     }
 
-    pub fn max_per_stage_descriptor_storage_buffers(&self) {
+    pub fn max_per_stage_descriptor_storage_buffers<'a>(&'a self) -> u32 {
+        self.raw.maxPerStageDescriptorStorageBuffers.into()
     }
 
-    pub fn max_per_stage_descriptor_sampled_images(&self) {
+    pub fn max_per_stage_descriptor_sampled_images<'a>(&'a self) -> u32 {
+        self.raw.maxPerStageDescriptorSampledImages.into()
     }
 
-    pub fn max_per_stage_descriptor_storage_images(&self) {
+    pub fn max_per_stage_descriptor_storage_images<'a>(&'a self) -> u32 {
+        self.raw.maxPerStageDescriptorStorageImages.into()
     }
 
-    pub fn max_per_stage_descriptor_input_attachments(&self) {
+    pub fn max_per_stage_descriptor_input_attachments<'a>(&'a self) -> u32 {
+        self.raw.maxPerStageDescriptorInputAttachments.into()
     }
 
-    pub fn max_per_stage_resources(&self) {
+    pub fn max_per_stage_resources<'a>(&'a self) -> u32 {
+        self.raw.maxPerStageResources.into()
     }
 
-    pub fn max_descriptor_set_samplers(&self) {
+    pub fn max_descriptor_set_samplers<'a>(&'a self) -> u32 {
+        self.raw.maxDescriptorSetSamplers.into()
     }
 
-    pub fn max_descriptor_set_uniform_buffers(&self) {
+    pub fn max_descriptor_set_uniform_buffers<'a>(&'a self) -> u32 {
+        self.raw.maxDescriptorSetUniformBuffers.into()
     }
 
-    pub fn max_descriptor_set_uniform_buffers_dynamic(&self) {
+    pub fn max_descriptor_set_uniform_buffers_dynamic<'a>(&'a self) -> u32 {
+        self.raw.maxDescriptorSetUniformBuffersDynamic.into()
     }
 
-    pub fn max_descriptor_set_storage_buffers(&self) {
+    pub fn max_descriptor_set_storage_buffers<'a>(&'a self) -> u32 {
+        self.raw.maxDescriptorSetStorageBuffers.into()
     }
 
-    pub fn max_descriptor_set_storage_buffers_dynamic(&self) {
+    pub fn max_descriptor_set_storage_buffers_dynamic<'a>(&'a self) -> u32 {
+        self.raw.maxDescriptorSetStorageBuffersDynamic.into()
     }
 
-    pub fn max_descriptor_set_sampled_images(&self) {
+    pub fn max_descriptor_set_sampled_images<'a>(&'a self) -> u32 {
+        self.raw.maxDescriptorSetSampledImages.into()
     }
 
-    pub fn max_descriptor_set_storage_images(&self) {
+    pub fn max_descriptor_set_storage_images<'a>(&'a self) -> u32 {
+        self.raw.maxDescriptorSetStorageImages.into()
     }
 
-    pub fn max_descriptor_set_input_attachments(&self) {
+    pub fn max_descriptor_set_input_attachments<'a>(&'a self) -> u32 {
+        self.raw.maxDescriptorSetInputAttachments.into()
     }
 
-    pub fn max_vertex_input_attributes(&self) {
+    pub fn max_vertex_input_attributes<'a>(&'a self) -> u32 {
+        self.raw.maxVertexInputAttributes.into()
     }
 
-    pub fn max_vertex_input_bindings(&self) {
+    pub fn max_vertex_input_bindings<'a>(&'a self) -> u32 {
+        self.raw.maxVertexInputBindings.into()
     }
 
-    pub fn max_vertex_input_attribute_offset(&self) {
+    pub fn max_vertex_input_attribute_offset<'a>(&'a self) -> u32 {
+        self.raw.maxVertexInputAttributeOffset.into()
     }
 
-    pub fn max_vertex_input_binding_stride(&self) {
+    pub fn max_vertex_input_binding_stride<'a>(&'a self) -> u32 {
+        self.raw.maxVertexInputBindingStride.into()
     }
 
-    pub fn max_vertex_output_components(&self) {
+    pub fn max_vertex_output_components<'a>(&'a self) -> u32 {
+        self.raw.maxVertexOutputComponents.into()
     }
 
-    pub fn max_tessellation_generation_level(&self) {
+    pub fn max_tessellation_generation_level<'a>(&'a self) -> u32 {
+        self.raw.maxTessellationGenerationLevel.into()
     }
 
-    pub fn max_tessellation_patch_size(&self) {
+    pub fn max_tessellation_patch_size<'a>(&'a self) -> u32 {
+        self.raw.maxTessellationPatchSize.into()
     }
 
-    pub fn max_tessellation_control_per_vertex_input_components(&self) {
+    pub fn max_tessellation_control_per_vertex_input_components<'a>(&'a self) -> u32 {
+        self.raw.maxTessellationControlPerVertexInputComponents.into()
     }
 
-    pub fn max_tessellation_control_per_vertex_output_components(&self) {
+    pub fn max_tessellation_control_per_vertex_output_components<'a>(&'a self) -> u32 {
+        self.raw.maxTessellationControlPerVertexOutputComponents.into()
     }
 
-    pub fn max_tessellation_control_per_patch_output_components(&self) {
+    pub fn max_tessellation_control_per_patch_output_components<'a>(&'a self) -> u32 {
+        self.raw.maxTessellationControlPerPatchOutputComponents.into()
     }
 
-    pub fn max_tessellation_control_total_output_components(&self) {
+    pub fn max_tessellation_control_total_output_components<'a>(&'a self) -> u32 {
+        self.raw.maxTessellationControlTotalOutputComponents.into()
     }
 
-    pub fn max_tessellation_evaluation_input_components(&self) {
+    pub fn max_tessellation_evaluation_input_components<'a>(&'a self) -> u32 {
+        self.raw.maxTessellationEvaluationInputComponents.into()
     }
 
-    pub fn max_tessellation_evaluation_output_components(&self) {
+    pub fn max_tessellation_evaluation_output_components<'a>(&'a self) -> u32 {
+        self.raw.maxTessellationEvaluationOutputComponents.into()
     }
 
-    pub fn max_geometry_shader_invocations(&self) {
+    pub fn max_geometry_shader_invocations<'a>(&'a self) -> u32 {
+        self.raw.maxGeometryShaderInvocations.into()
     }
 
-    pub fn max_geometry_input_components(&self) {
+    pub fn max_geometry_input_components<'a>(&'a self) -> u32 {
+        self.raw.maxGeometryInputComponents.into()
     }
 
-    pub fn max_geometry_output_components(&self) {
+    pub fn max_geometry_output_components<'a>(&'a self) -> u32 {
+        self.raw.maxGeometryOutputComponents.into()
     }
 
-    pub fn max_geometry_output_vertices(&self) {
+    pub fn max_geometry_output_vertices<'a>(&'a self) -> u32 {
+        self.raw.maxGeometryOutputVertices.into()
     }
 
-    pub fn max_geometry_total_output_components(&self) {
+    pub fn max_geometry_total_output_components<'a>(&'a self) -> u32 {
+        self.raw.maxGeometryTotalOutputComponents.into()
     }
 
-    pub fn max_fragment_input_components(&self) {
+    pub fn max_fragment_input_components<'a>(&'a self) -> u32 {
+        self.raw.maxFragmentInputComponents.into()
     }
 
-    pub fn max_fragment_output_attachments(&self) {
+    pub fn max_fragment_output_attachments<'a>(&'a self) -> u32 {
+        self.raw.maxFragmentOutputAttachments.into()
     }
 
-    pub fn max_fragment_dual_src_attachments(&self) {
+    pub fn max_fragment_dual_src_attachments<'a>(&'a self) -> u32 {
+        self.raw.maxFragmentDualSrcAttachments.into()
     }
 
-    pub fn max_fragment_combined_output_resources(&self) {
+    pub fn max_fragment_combined_output_resources<'a>(&'a self) -> u32 {
+        self.raw.maxFragmentCombinedOutputResources.into()
     }
 
-    pub fn max_compute_shared_memory_size(&self) {
+    pub fn max_compute_shared_memory_size<'a>(&'a self) -> u32 {
+        self.raw.maxComputeSharedMemorySize.into()
     }
 
-    pub fn max_compute_work_group_count(&self) {
+    pub fn max_compute_work_group_count<'a>(&'a self) -> &[u32] {
+        unsafe { slice::from_raw_parts(&self.raw.maxComputeWorkGroupCount as *const _, 3 as usize) }
     }
 
-    pub fn max_compute_work_group_invocations(&self) {
+    pub fn max_compute_work_group_invocations<'a>(&'a self) -> u32 {
+        self.raw.maxComputeWorkGroupInvocations.into()
     }
 
-    pub fn max_compute_work_group_size(&self) {
+    pub fn max_compute_work_group_size<'a>(&'a self) -> &[u32] {
+        unsafe { slice::from_raw_parts(&self.raw.maxComputeWorkGroupSize as *const _, 3 as usize) }
     }
 
-    pub fn sub_pixel_precision_bits(&self) {
+    pub fn sub_pixel_precision_bits<'a>(&'a self) -> u32 {
+        self.raw.subPixelPrecisionBits.into()
     }
 
-    pub fn sub_texel_precision_bits(&self) {
+    pub fn sub_texel_precision_bits<'a>(&'a self) -> u32 {
+        self.raw.subTexelPrecisionBits.into()
     }
 
-    pub fn mipmap_precision_bits(&self) {
+    pub fn mipmap_precision_bits<'a>(&'a self) -> u32 {
+        self.raw.mipmapPrecisionBits.into()
     }
 
-    pub fn max_draw_indexed_index_value(&self) {
+    pub fn max_draw_indexed_index_value<'a>(&'a self) -> u32 {
+        self.raw.maxDrawIndexedIndexValue.into()
     }
 
-    pub fn max_draw_indirect_count(&self) {
+    pub fn max_draw_indirect_count<'a>(&'a self) -> u32 {
+        self.raw.maxDrawIndirectCount.into()
     }
 
-    pub fn max_sampler_lod_bias(&self) {
+    pub fn max_sampler_lod_bias<'a>(&'a self) -> f32 {
+        self.raw.maxSamplerLodBias.into()
     }
 
-    pub fn max_sampler_anisotropy(&self) {
+    pub fn max_sampler_anisotropy<'a>(&'a self) -> f32 {
+        self.raw.maxSamplerAnisotropy.into()
     }
 
-    pub fn max_viewports(&self) {
+    pub fn max_viewports<'a>(&'a self) -> u32 {
+        self.raw.maxViewports.into()
     }
 
-    pub fn max_viewport_dimensions(&self) {
+    pub fn max_viewport_dimensions<'a>(&'a self) -> &[u32] {
+        unsafe { slice::from_raw_parts(&self.raw.maxViewportDimensions as *const _, 2 as usize) }
     }
 
-    pub fn viewport_bounds_range(&self) {
+    pub fn viewport_bounds_range<'a>(&'a self) -> &[f32] {
+        unsafe { slice::from_raw_parts(&self.raw.viewportBoundsRange as *const _, 2 as usize) }
     }
 
-    pub fn viewport_sub_pixel_bits(&self) {
+    pub fn viewport_sub_pixel_bits<'a>(&'a self) -> u32 {
+        self.raw.viewportSubPixelBits.into()
     }
 
-    pub fn min_memory_map_alignment(&self) {
+    pub fn min_memory_map_alignment<'a>(&'a self) -> usize {
+        self.raw.minMemoryMapAlignment.into()
     }
 
-    pub fn min_texel_buffer_offset_alignment(&self) {
+    pub fn min_texel_buffer_offset_alignment<'a>(&'a self) -> u64 {
+        self.raw.minTexelBufferOffsetAlignment.into()
     }
 
-    pub fn min_uniform_buffer_offset_alignment(&self) {
+    pub fn min_uniform_buffer_offset_alignment<'a>(&'a self) -> u64 {
+        self.raw.minUniformBufferOffsetAlignment.into()
     }
 
-    pub fn min_storage_buffer_offset_alignment(&self) {
+    pub fn min_storage_buffer_offset_alignment<'a>(&'a self) -> u64 {
+        self.raw.minStorageBufferOffsetAlignment.into()
     }
 
-    pub fn min_texel_offset(&self) {
+    pub fn min_texel_offset<'a>(&'a self) -> i32 {
+        self.raw.minTexelOffset.into()
     }
 
-    pub fn max_texel_offset(&self) {
+    pub fn max_texel_offset<'a>(&'a self) -> u32 {
+        self.raw.maxTexelOffset.into()
     }
 
-    pub fn min_texel_gather_offset(&self) {
+    pub fn min_texel_gather_offset<'a>(&'a self) -> i32 {
+        self.raw.minTexelGatherOffset.into()
     }
 
-    pub fn max_texel_gather_offset(&self) {
+    pub fn max_texel_gather_offset<'a>(&'a self) -> u32 {
+        self.raw.maxTexelGatherOffset.into()
     }
 
-    pub fn min_interpolation_offset(&self) {
+    pub fn min_interpolation_offset<'a>(&'a self) -> f32 {
+        self.raw.minInterpolationOffset.into()
     }
 
-    pub fn max_interpolation_offset(&self) {
+    pub fn max_interpolation_offset<'a>(&'a self) -> f32 {
+        self.raw.maxInterpolationOffset.into()
     }
 
-    pub fn sub_pixel_interpolation_offset_bits(&self) {
+    pub fn sub_pixel_interpolation_offset_bits<'a>(&'a self) -> u32 {
+        self.raw.subPixelInterpolationOffsetBits.into()
     }
 
-    pub fn max_framebuffer_width(&self) {
+    pub fn max_framebuffer_width<'a>(&'a self) -> u32 {
+        self.raw.maxFramebufferWidth.into()
     }
 
-    pub fn max_framebuffer_height(&self) {
+    pub fn max_framebuffer_height<'a>(&'a self) -> u32 {
+        self.raw.maxFramebufferHeight.into()
     }
 
-    pub fn max_framebuffer_layers(&self) {
+    pub fn max_framebuffer_layers<'a>(&'a self) -> u32 {
+        self.raw.maxFramebufferLayers.into()
     }
 
-    pub fn framebuffer_color_sample_counts(&self) {
+    pub fn framebuffer_color_sample_counts<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.framebufferColorSampleCounts)
+            .expect("PhysicalDeviceLimits::framebuffer_color_sample_counts: error converting flags")
     }
 
-    pub fn framebuffer_depth_sample_counts(&self) {
+    pub fn framebuffer_depth_sample_counts<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.framebufferDepthSampleCounts)
+            .expect("PhysicalDeviceLimits::framebuffer_depth_sample_counts: error converting flags")
     }
 
-    pub fn framebuffer_stencil_sample_counts(&self) {
+    pub fn framebuffer_stencil_sample_counts<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.framebufferStencilSampleCounts)
+            .expect("PhysicalDeviceLimits::framebuffer_stencil_sample_counts: error converting flags")
     }
 
-    pub fn framebuffer_no_attachments_sample_counts(&self) {
+    pub fn framebuffer_no_attachments_sample_counts<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.framebufferNoAttachmentsSampleCounts)
+            .expect("PhysicalDeviceLimits::framebuffer_no_attachments_sample_counts: error converting flags")
     }
 
-    pub fn max_color_attachments(&self) {
+    pub fn max_color_attachments<'a>(&'a self) -> u32 {
+        self.raw.maxColorAttachments.into()
     }
 
-    pub fn sampled_image_color_sample_counts(&self) {
+    pub fn sampled_image_color_sample_counts<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.sampledImageColorSampleCounts)
+            .expect("PhysicalDeviceLimits::sampled_image_color_sample_counts: error converting flags")
     }
 
-    pub fn sampled_image_integer_sample_counts(&self) {
+    pub fn sampled_image_integer_sample_counts<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.sampledImageIntegerSampleCounts)
+            .expect("PhysicalDeviceLimits::sampled_image_integer_sample_counts: error converting flags")
     }
 
-    pub fn sampled_image_depth_sample_counts(&self) {
+    pub fn sampled_image_depth_sample_counts<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.sampledImageDepthSampleCounts)
+            .expect("PhysicalDeviceLimits::sampled_image_depth_sample_counts: error converting flags")
     }
 
-    pub fn sampled_image_stencil_sample_counts(&self) {
+    pub fn sampled_image_stencil_sample_counts<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.sampledImageStencilSampleCounts)
+            .expect("PhysicalDeviceLimits::sampled_image_stencil_sample_counts: error converting flags")
     }
 
-    pub fn storage_image_sample_counts(&self) {
+    pub fn storage_image_sample_counts<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.storageImageSampleCounts)
+            .expect("PhysicalDeviceLimits::storage_image_sample_counts: error converting flags")
     }
 
-    pub fn max_sample_mask_words(&self) {
+    pub fn max_sample_mask_words<'a>(&'a self) -> u32 {
+        self.raw.maxSampleMaskWords.into()
     }
 
-    pub fn timestamp_compute_and_graphics(&self) {
+    pub fn timestamp_compute_and_graphics<'a>(&'a self) -> bool {
+        self.raw.timestampComputeAndGraphics != 0
     }
 
-    pub fn timestamp_period(&self) {
+    pub fn timestamp_period<'a>(&'a self) -> f32 {
+        self.raw.timestampPeriod.into()
     }
 
-    pub fn max_clip_distances(&self) {
+    pub fn max_clip_distances<'a>(&'a self) -> u32 {
+        self.raw.maxClipDistances.into()
     }
 
-    pub fn max_cull_distances(&self) {
+    pub fn max_cull_distances<'a>(&'a self) -> u32 {
+        self.raw.maxCullDistances.into()
     }
 
-    pub fn max_combined_clip_and_cull_distances(&self) {
+    pub fn max_combined_clip_and_cull_distances<'a>(&'a self) -> u32 {
+        self.raw.maxCombinedClipAndCullDistances.into()
     }
 
-    pub fn discrete_queue_priorities(&self) {
+    pub fn discrete_queue_priorities<'a>(&'a self) -> u32 {
+        self.raw.discreteQueuePriorities.into()
     }
 
-    pub fn point_size_range(&self) {
+    pub fn point_size_range<'a>(&'a self) -> &[f32] {
+        unsafe { slice::from_raw_parts(&self.raw.pointSizeRange as *const _, 2 as usize) }
     }
 
-    pub fn line_width_range(&self) {
+    pub fn line_width_range<'a>(&'a self) -> &[f32] {
+        unsafe { slice::from_raw_parts(&self.raw.lineWidthRange as *const _, 2 as usize) }
     }
 
-    pub fn point_size_granularity(&self) {
+    pub fn point_size_granularity<'a>(&'a self) -> f32 {
+        self.raw.pointSizeGranularity.into()
     }
 
-    pub fn line_width_granularity(&self) {
+    pub fn line_width_granularity<'a>(&'a self) -> f32 {
+        self.raw.lineWidthGranularity.into()
     }
 
-    pub fn strict_lines(&self) {
+    pub fn strict_lines<'a>(&'a self) -> bool {
+        self.raw.strictLines != 0
     }
 
-    pub fn standard_sample_locations(&self) {
+    pub fn standard_sample_locations<'a>(&'a self) -> bool {
+        self.raw.standardSampleLocations != 0
     }
 
-    pub fn optimal_buffer_copy_offset_alignment(&self) {
+    pub fn optimal_buffer_copy_offset_alignment<'a>(&'a self) -> u64 {
+        self.raw.optimalBufferCopyOffsetAlignment.into()
     }
 
-    pub fn optimal_buffer_copy_row_pitch_alignment(&self) {
+    pub fn optimal_buffer_copy_row_pitch_alignment<'a>(&'a self) -> u64 {
+        self.raw.optimalBufferCopyRowPitchAlignment.into()
     }
 
-    pub fn non_coherent_atom_size(&self) {
+    pub fn non_coherent_atom_size<'a>(&'a self) -> u64 {
+        self.raw.nonCoherentAtomSize.into()
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceLimits {
@@ -9238,6 +10625,13 @@ impl PhysicalDeviceLimits {
 impl From<PhysicalDeviceLimits> for vks::VkPhysicalDeviceLimits {
     fn from(f: PhysicalDeviceLimits) -> vks::VkPhysicalDeviceLimits {
         f.raw
+    }
+}
+
+
+impl From<vks::VkPhysicalDeviceLimits> for PhysicalDeviceLimits {
+    fn from(f: vks::VkPhysicalDeviceLimits) -> PhysicalDeviceLimits {
+        PhysicalDeviceLimits { raw: f, }
     }
 }
 
@@ -9257,10 +10651,13 @@ impl<'s> SemaphoreCreateInfo<'s> {
         SemaphoreCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> SemaphoreCreateFlags {
+        SemaphoreCreateFlags::from_bits(self.raw.flags)
+            .expect("SemaphoreCreateInfo::flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkSemaphoreCreateInfo {
@@ -9276,13 +10673,20 @@ impl<'s> From<SemaphoreCreateInfo<'s>> for vks::VkSemaphoreCreateInfo {
 }
 
 
+impl<'s> From<vks::VkSemaphoreCreateInfo> for SemaphoreCreateInfo<'s> {
+    fn from(f: vks::VkSemaphoreCreateInfo) -> SemaphoreCreateInfo<'s> {
+        SemaphoreCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSemaphoreCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SemaphoreCreateInfoBuilder<'b> {
     raw: vks::VkSemaphoreCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SemaphoreCreateInfoBuilder<'b> {
@@ -9328,19 +10732,26 @@ impl<'s> QueryPoolCreateInfo<'s> {
         QueryPoolCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> QueryPoolCreateFlags {
+        QueryPoolCreateFlags::from_bits(self.raw.flags)
+            .expect("QueryPoolCreateInfo::flags: error converting flags")
     }
 
-    pub fn query_type(&self) {
+    pub fn query_type<'a>(&'a self) -> QueryType {
+        self.raw.queryType.into()
     }
 
-    pub fn query_count(&self) {
+    pub fn query_count<'a>(&'a self) -> u32 {
+        self.raw.queryCount.into()
     }
 
-    pub fn pipeline_statistics(&self) {
+    pub fn pipeline_statistics<'a>(&'a self) -> QueryPipelineStatisticFlags {
+        QueryPipelineStatisticFlags::from_bits(self.raw.pipelineStatistics)
+            .expect("QueryPoolCreateInfo::pipeline_statistics: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkQueryPoolCreateInfo {
@@ -9356,13 +10767,20 @@ impl<'s> From<QueryPoolCreateInfo<'s>> for vks::VkQueryPoolCreateInfo {
 }
 
 
+impl<'s> From<vks::VkQueryPoolCreateInfo> for QueryPoolCreateInfo<'s> {
+    fn from(f: vks::VkQueryPoolCreateInfo) -> QueryPoolCreateInfo<'s> {
+        QueryPoolCreateInfo { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkQueryPoolCreateInfo`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct QueryPoolCreateInfoBuilder<'b> {
     raw: vks::VkQueryPoolCreateInfo,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> QueryPoolCreateInfoBuilder<'b> {
@@ -9423,25 +10841,33 @@ impl<'s> FramebufferCreateInfo<'s> {
         FramebufferCreateInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> FramebufferCreateFlags {
+        FramebufferCreateFlags::from_bits(self.raw.flags)
+            .expect("FramebufferCreateInfo::flags: error converting flags")
     }
 
-    pub fn render_pass(&self) {
+    pub fn render_pass_handle<'a>(&'a self) -> vks::VkRenderPass {
+        self.raw.renderPass
     }
 
-    pub fn attachments(&self) {
+    pub fn attachments_handle<'a>(&'a self) -> &'a [vks::VkImageView] {
+        unsafe { slice::from_raw_parts(self.raw.pAttachments as *const _, self.raw.attachmentCount as usize) }
     }
 
-    pub fn width(&self) {
+    pub fn width<'a>(&'a self) -> u32 {
+        self.raw.width.into()
     }
 
-    pub fn height(&self) {
+    pub fn height<'a>(&'a self) -> u32 {
+        self.raw.height.into()
     }
 
-    pub fn layers(&self) {
+    pub fn layers<'a>(&'a self) -> u32 {
+        self.raw.layers.into()
     }
 
     pub fn raw(&self) -> &vks::VkFramebufferCreateInfo {
@@ -9457,6 +10883,13 @@ impl<'s> From<FramebufferCreateInfo<'s>> for vks::VkFramebufferCreateInfo {
 }
 
 
+impl<'s> From<vks::VkFramebufferCreateInfo> for FramebufferCreateInfo<'s> {
+    fn from(f: vks::VkFramebufferCreateInfo) -> FramebufferCreateInfo<'s> {
+        FramebufferCreateInfo { raw: f, attachments: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkFramebufferCreateInfo`.
 ///
 /// 
@@ -9464,7 +10897,7 @@ impl<'s> From<FramebufferCreateInfo<'s>> for vks::VkFramebufferCreateInfo {
 pub struct FramebufferCreateInfoBuilder<'b> {
     raw: vks::VkFramebufferCreateInfo,
     attachments: Option<SmallVec<[vks::VkImageView; 8]>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> FramebufferCreateInfoBuilder<'b> {
@@ -9491,14 +10924,14 @@ impl<'b> FramebufferCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn attachments<'m, 'a>(mut self, attachments: &'a [ImageView]) -> FramebufferCreateInfoBuilder<'b> where 'a: 'b {
+    pub fn attachments<'m, 'a>(mut self, attachments: &'a [&'a ImageView]) -> FramebufferCreateInfoBuilder<'b> where 'a: 'b {
         self.attachments = Some(attachments.iter().map(|h| h.handle()).collect());
         {
             let attachments = self.attachments.as_ref().unwrap();
             self.raw.pAttachments = attachments.as_ptr();
-            assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as u32, 
+            assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as _, 
                 "count inconsistency found when specifying `FramebufferCreateInfo::attachments`.");
-            self.raw.attachmentCount = attachments.len() as u32;
+            self.raw.attachmentCount = attachments.len() as _;
         }
         self
     }
@@ -9543,16 +10976,20 @@ impl DrawIndirectCommand {
         DrawIndirectCommandBuilder::new()
     }
 
-    pub fn vertex_count(&self) {
+    pub fn vertex_count<'a>(&'a self) -> u32 {
+        self.raw.vertexCount.into()
     }
 
-    pub fn instance_count(&self) {
+    pub fn instance_count<'a>(&'a self) -> u32 {
+        self.raw.instanceCount.into()
     }
 
-    pub fn first_vertex(&self) {
+    pub fn first_vertex<'a>(&'a self) -> u32 {
+        self.raw.firstVertex.into()
     }
 
-    pub fn first_instance(&self) {
+    pub fn first_instance<'a>(&'a self) -> u32 {
+        self.raw.firstInstance.into()
     }
 
     pub fn raw(&self) -> &vks::VkDrawIndirectCommand {
@@ -9564,6 +11001,13 @@ impl DrawIndirectCommand {
 impl From<DrawIndirectCommand> for vks::VkDrawIndirectCommand {
     fn from(f: DrawIndirectCommand) -> vks::VkDrawIndirectCommand {
         f.raw
+    }
+}
+
+
+impl From<vks::VkDrawIndirectCommand> for DrawIndirectCommand {
+    fn from(f: vks::VkDrawIndirectCommand) -> DrawIndirectCommand {
+        DrawIndirectCommand { raw: f, }
     }
 }
 
@@ -9626,19 +11070,24 @@ impl DrawIndexedIndirectCommand {
         DrawIndexedIndirectCommandBuilder::new()
     }
 
-    pub fn index_count(&self) {
+    pub fn index_count<'a>(&'a self) -> u32 {
+        self.raw.indexCount.into()
     }
 
-    pub fn instance_count(&self) {
+    pub fn instance_count<'a>(&'a self) -> u32 {
+        self.raw.instanceCount.into()
     }
 
-    pub fn first_index(&self) {
+    pub fn first_index<'a>(&'a self) -> u32 {
+        self.raw.firstIndex.into()
     }
 
-    pub fn vertex_offset(&self) {
+    pub fn vertex_offset<'a>(&'a self) -> i32 {
+        self.raw.vertexOffset.into()
     }
 
-    pub fn first_instance(&self) {
+    pub fn first_instance<'a>(&'a self) -> u32 {
+        self.raw.firstInstance.into()
     }
 
     pub fn raw(&self) -> &vks::VkDrawIndexedIndirectCommand {
@@ -9650,6 +11099,13 @@ impl DrawIndexedIndirectCommand {
 impl From<DrawIndexedIndirectCommand> for vks::VkDrawIndexedIndirectCommand {
     fn from(f: DrawIndexedIndirectCommand) -> vks::VkDrawIndexedIndirectCommand {
         f.raw
+    }
+}
+
+
+impl From<vks::VkDrawIndexedIndirectCommand> for DrawIndexedIndirectCommand {
+    fn from(f: vks::VkDrawIndexedIndirectCommand) -> DrawIndexedIndirectCommand {
+        DrawIndexedIndirectCommand { raw: f, }
     }
 }
 
@@ -9717,13 +11173,16 @@ impl DispatchIndirectCommand {
         DispatchIndirectCommandBuilder::new()
     }
 
-    pub fn x(&self) {
+    pub fn x<'a>(&'a self) -> u32 {
+        self.raw.x.into()
     }
 
-    pub fn y(&self) {
+    pub fn y<'a>(&'a self) -> u32 {
+        self.raw.y.into()
     }
 
-    pub fn z(&self) {
+    pub fn z<'a>(&'a self) -> u32 {
+        self.raw.z.into()
     }
 
     pub fn raw(&self) -> &vks::VkDispatchIndirectCommand {
@@ -9735,6 +11194,13 @@ impl DispatchIndirectCommand {
 impl From<DispatchIndirectCommand> for vks::VkDispatchIndirectCommand {
     fn from(f: DispatchIndirectCommand) -> vks::VkDispatchIndirectCommand {
         f.raw
+    }
+}
+
+
+impl From<vks::VkDispatchIndirectCommand> for DispatchIndirectCommand {
+    fn from(f: vks::VkDispatchIndirectCommand) -> DispatchIndirectCommand {
+        DispatchIndirectCommand { raw: f, }
     }
 }
 
@@ -9795,19 +11261,24 @@ impl<'s> SubmitInfo<'s> {
         SubmitInfoBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn wait_semaphores(&self) {
+    pub fn wait_semaphores_handle<'a>(&'a self) -> &'a [vks::VkSemaphore] {
+        unsafe { slice::from_raw_parts(self.raw.pWaitSemaphores as *const _, self.raw.waitSemaphoreCount as usize) }
     }
 
-    pub fn wait_dst_stage_mask(&self) {
+    pub fn wait_dst_stage_mask<'a>(&'a self) -> &'a PipelineStageFlags {
+        unsafe { &*(self.raw.pWaitDstStageMask as *const _) }
     }
 
-    pub fn command_buffers(&self) {
+    pub fn command_buffers_handle<'a>(&'a self) -> &'a [vks::VkCommandBuffer] {
+        unsafe { slice::from_raw_parts(self.raw.pCommandBuffers as *const _, self.raw.commandBufferCount as usize) }
     }
 
-    pub fn signal_semaphores(&self) {
+    pub fn signal_semaphores_handle<'a>(&'a self) -> &'a [vks::VkSemaphore] {
+        unsafe { slice::from_raw_parts(self.raw.pSignalSemaphores as *const _, self.raw.signalSemaphoreCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkSubmitInfo {
@@ -9823,6 +11294,13 @@ impl<'s> From<SubmitInfo<'s>> for vks::VkSubmitInfo {
 }
 
 
+impl<'s> From<vks::VkSubmitInfo> for SubmitInfo<'s> {
+    fn from(f: vks::VkSubmitInfo) -> SubmitInfo<'s> {
+        SubmitInfo { raw: f, command_buffers: None, wait_semaphores: None, signal_semaphores: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSubmitInfo`.
 ///
 /// 
@@ -9832,7 +11310,7 @@ pub struct SubmitInfoBuilder<'b> {
     command_buffers: Option<SmallVec<[vks::VkCommandBuffer; 8]>>,
     wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     signal_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SubmitInfoBuilder<'b> {
@@ -9851,14 +11329,14 @@ impl<'b> SubmitInfoBuilder<'b> {
         self
     }
 
-    pub fn wait_semaphores<'m, 'a>(mut self, wait_semaphores: &'a [Semaphore]) -> SubmitInfoBuilder<'b> where 'a: 'b {
+    pub fn wait_semaphores<'m, 'a>(mut self, wait_semaphores: &'a [&'a Semaphore]) -> SubmitInfoBuilder<'b> where 'a: 'b {
         self.wait_semaphores = Some(wait_semaphores.iter().map(|h| h.handle()).collect());
         {
             let wait_semaphores = self.wait_semaphores.as_ref().unwrap();
             self.raw.pWaitSemaphores = wait_semaphores.as_ptr();
-            assert!(self.raw.waitSemaphoreCount == 0 || self.raw.waitSemaphoreCount == wait_semaphores.len() as u32, 
+            assert!(self.raw.waitSemaphoreCount == 0 || self.raw.waitSemaphoreCount == wait_semaphores.len() as _, 
                 "count inconsistency found when specifying `SubmitInfo::wait_semaphores`.");
-            self.raw.waitSemaphoreCount = wait_semaphores.len() as u32;
+            self.raw.waitSemaphoreCount = wait_semaphores.len() as _;
         }
         self
     }
@@ -9868,26 +11346,26 @@ impl<'b> SubmitInfoBuilder<'b> {
         self
     }
 
-    pub fn command_buffers<'m, 'a>(mut self, command_buffers: &'a [CommandBuffer]) -> SubmitInfoBuilder<'b> where 'a: 'b {
+    pub fn command_buffers<'m, 'a>(mut self, command_buffers: &'a [&'a CommandBuffer]) -> SubmitInfoBuilder<'b> where 'a: 'b {
         self.command_buffers = Some(command_buffers.iter().map(|h| h.handle()).collect());
         {
             let command_buffers = self.command_buffers.as_ref().unwrap();
             self.raw.pCommandBuffers = command_buffers.as_ptr();
-            assert!(self.raw.commandBufferCount == 0 || self.raw.commandBufferCount == command_buffers.len() as u32, 
+            assert!(self.raw.commandBufferCount == 0 || self.raw.commandBufferCount == command_buffers.len() as _, 
                 "count inconsistency found when specifying `SubmitInfo::command_buffers`.");
-            self.raw.commandBufferCount = command_buffers.len() as u32;
+            self.raw.commandBufferCount = command_buffers.len() as _;
         }
         self
     }
 
-    pub fn signal_semaphores<'m, 'a>(mut self, signal_semaphores: &'a [Semaphore]) -> SubmitInfoBuilder<'b> where 'a: 'b {
+    pub fn signal_semaphores<'m, 'a>(mut self, signal_semaphores: &'a [&'a Semaphore]) -> SubmitInfoBuilder<'b> where 'a: 'b {
         self.signal_semaphores = Some(signal_semaphores.iter().map(|h| h.handle()).collect());
         {
             let signal_semaphores = self.signal_semaphores.as_ref().unwrap();
             self.raw.pSignalSemaphores = signal_semaphores.as_ptr();
-            assert!(self.raw.signalSemaphoreCount == 0 || self.raw.signalSemaphoreCount == signal_semaphores.len() as u32, 
+            assert!(self.raw.signalSemaphoreCount == 0 || self.raw.signalSemaphoreCount == signal_semaphores.len() as _, 
                 "count inconsistency found when specifying `SubmitInfo::signal_semaphores`.");
-            self.raw.signalSemaphoreCount = signal_semaphores.len() as u32;
+            self.raw.signalSemaphoreCount = signal_semaphores.len() as _;
         }
         self
     }
@@ -9916,25 +11394,33 @@ pub struct DisplayPropertiesKhr<'s> {
 }
 
 impl<'s> DisplayPropertiesKhr<'s> {
-    pub fn display(&self) {
+    pub fn display_handle<'a>(&'a self) -> vks::VkDisplayKHR {
+        self.raw.display
     }
 
-    pub fn display_name(&self) {
+    pub fn display_name<'a>(&'a self) -> &'a CStr {
+        unsafe { CStr::from_ptr(self.raw.displayName) }
     }
 
-    pub fn physical_dimensions(&self) {
+    pub fn physical_dimensions<'a>(&'a self) -> Extent2d {
+        self.raw.physicalDimensions.into()
     }
 
-    pub fn physical_resolution(&self) {
+    pub fn physical_resolution<'a>(&'a self) -> Extent2d {
+        self.raw.physicalResolution.into()
     }
 
-    pub fn supported_transforms(&self) {
+    pub fn supported_transforms<'a>(&'a self) -> SurfaceTransformFlagsKhr {
+        SurfaceTransformFlagsKhr::from_bits(self.raw.supportedTransforms)
+            .expect("DisplayPropertiesKhr::supported_transforms: error converting flags")
     }
 
-    pub fn plane_reorder_possible(&self) {
+    pub fn plane_reorder_possible<'a>(&'a self) -> bool {
+        self.raw.planeReorderPossible != 0
     }
 
-    pub fn persistent_content(&self) {
+    pub fn persistent_content<'a>(&'a self) -> bool {
+        self.raw.persistentContent != 0
     }
 
     pub fn raw(&self) -> &vks::VkDisplayPropertiesKHR {
@@ -9950,6 +11436,13 @@ impl<'s> From<DisplayPropertiesKhr<'s>> for vks::VkDisplayPropertiesKHR {
 }
 
 
+impl<'s> From<vks::VkDisplayPropertiesKHR> for DisplayPropertiesKhr<'s> {
+    fn from(f: vks::VkDisplayPropertiesKHR) -> DisplayPropertiesKhr<'s> {
+        DisplayPropertiesKhr { raw: f, display_name: None, _p: PhantomData }
+    }
+}
+
+
 /// A `VkDisplayPlanePropertiesKHR`.
 ///
 /// 
@@ -9960,10 +11453,12 @@ pub struct DisplayPlanePropertiesKhr {
 }
 
 impl DisplayPlanePropertiesKhr {
-    pub fn current_display(&self) {
+    pub fn current_display_handle<'a>(&'a self) -> vks::VkDisplayKHR {
+        self.raw.currentDisplay
     }
 
-    pub fn current_stack_index(&self) {
+    pub fn current_stack_index<'a>(&'a self) -> u32 {
+        self.raw.currentStackIndex.into()
     }
 
     pub fn raw(&self) -> &vks::VkDisplayPlanePropertiesKHR {
@@ -9975,6 +11470,13 @@ impl DisplayPlanePropertiesKhr {
 impl From<DisplayPlanePropertiesKhr> for vks::VkDisplayPlanePropertiesKHR {
     fn from(f: DisplayPlanePropertiesKhr) -> vks::VkDisplayPlanePropertiesKHR {
         f.raw
+    }
+}
+
+
+impl From<vks::VkDisplayPlanePropertiesKHR> for DisplayPlanePropertiesKhr {
+    fn from(f: vks::VkDisplayPlanePropertiesKHR) -> DisplayPlanePropertiesKhr {
+        DisplayPlanePropertiesKhr { raw: f, }
     }
 }
 
@@ -9993,10 +11495,12 @@ impl DisplayModeParametersKhr {
         DisplayModeParametersKhrBuilder::new()
     }
 
-    pub fn visible_region(&self) {
+    pub fn visible_region<'a>(&'a self) -> Extent2d {
+        self.raw.visibleRegion.into()
     }
 
-    pub fn refresh_rate(&self) {
+    pub fn refresh_rate<'a>(&'a self) -> u32 {
+        self.raw.refreshRate.into()
     }
 
     pub fn raw(&self) -> &vks::VkDisplayModeParametersKHR {
@@ -10008,6 +11512,13 @@ impl DisplayModeParametersKhr {
 impl From<DisplayModeParametersKhr> for vks::VkDisplayModeParametersKHR {
     fn from(f: DisplayModeParametersKhr) -> vks::VkDisplayModeParametersKHR {
         f.raw
+    }
+}
+
+
+impl From<vks::VkDisplayModeParametersKHR> for DisplayModeParametersKhr {
+    fn from(f: vks::VkDisplayModeParametersKHR) -> DisplayModeParametersKhr {
+        DisplayModeParametersKhr { raw: f, }
     }
 }
 
@@ -10056,10 +11567,12 @@ pub struct DisplayModePropertiesKhr {
 }
 
 impl DisplayModePropertiesKhr {
-    pub fn display_mode(&self) {
+    pub fn display_mode_handle<'a>(&'a self) -> vks::VkDisplayModeKHR {
+        self.raw.displayMode
     }
 
-    pub fn parameters(&self) {
+    pub fn parameters<'a>(&'a self) -> DisplayModeParametersKhr {
+        self.raw.parameters.into()
     }
 
     pub fn raw(&self) -> &vks::VkDisplayModePropertiesKHR {
@@ -10071,6 +11584,13 @@ impl DisplayModePropertiesKhr {
 impl From<DisplayModePropertiesKhr> for vks::VkDisplayModePropertiesKHR {
     fn from(f: DisplayModePropertiesKhr) -> vks::VkDisplayModePropertiesKHR {
         f.raw
+    }
+}
+
+
+impl From<vks::VkDisplayModePropertiesKHR> for DisplayModePropertiesKhr {
+    fn from(f: vks::VkDisplayModePropertiesKHR) -> DisplayModePropertiesKhr {
+        DisplayModePropertiesKhr { raw: f, }
     }
 }
 
@@ -10090,13 +11610,17 @@ impl<'s> DisplayModeCreateInfoKhr<'s> {
         DisplayModeCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> DisplayModeCreateFlagsKhr {
+        DisplayModeCreateFlagsKhr::from_bits(self.raw.flags)
+            .expect("DisplayModeCreateInfoKhr::flags: error converting flags")
     }
 
-    pub fn parameters(&self) {
+    pub fn parameters<'a>(&'a self) -> DisplayModeParametersKhr {
+        self.raw.parameters.into()
     }
 
     pub fn raw(&self) -> &vks::VkDisplayModeCreateInfoKHR {
@@ -10112,13 +11636,20 @@ impl<'s> From<DisplayModeCreateInfoKhr<'s>> for vks::VkDisplayModeCreateInfoKHR 
 }
 
 
+impl<'s> From<vks::VkDisplayModeCreateInfoKHR> for DisplayModeCreateInfoKhr<'s> {
+    fn from(f: vks::VkDisplayModeCreateInfoKHR) -> DisplayModeCreateInfoKhr<'s> {
+        DisplayModeCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDisplayModeCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayModeCreateInfoKhrBuilder<'b> {
     raw: vks::VkDisplayModeCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DisplayModeCreateInfoKhrBuilder<'b> {
@@ -10164,31 +11695,41 @@ pub struct DisplayPlaneCapabilitiesKhr {
 }
 
 impl DisplayPlaneCapabilitiesKhr {
-    pub fn supported_alpha(&self) {
+    pub fn supported_alpha<'a>(&'a self) -> DisplayPlaneAlphaFlagsKhr {
+        DisplayPlaneAlphaFlagsKhr::from_bits(self.raw.supportedAlpha)
+            .expect("DisplayPlaneCapabilitiesKhr::supported_alpha: error converting flags")
     }
 
-    pub fn min_src_position(&self) {
+    pub fn min_src_position<'a>(&'a self) -> Offset2d {
+        self.raw.minSrcPosition.into()
     }
 
-    pub fn max_src_position(&self) {
+    pub fn max_src_position<'a>(&'a self) -> Offset2d {
+        self.raw.maxSrcPosition.into()
     }
 
-    pub fn min_src_extent(&self) {
+    pub fn min_src_extent<'a>(&'a self) -> Extent2d {
+        self.raw.minSrcExtent.into()
     }
 
-    pub fn max_src_extent(&self) {
+    pub fn max_src_extent<'a>(&'a self) -> Extent2d {
+        self.raw.maxSrcExtent.into()
     }
 
-    pub fn min_dst_position(&self) {
+    pub fn min_dst_position<'a>(&'a self) -> Offset2d {
+        self.raw.minDstPosition.into()
     }
 
-    pub fn max_dst_position(&self) {
+    pub fn max_dst_position<'a>(&'a self) -> Offset2d {
+        self.raw.maxDstPosition.into()
     }
 
-    pub fn min_dst_extent(&self) {
+    pub fn min_dst_extent<'a>(&'a self) -> Extent2d {
+        self.raw.minDstExtent.into()
     }
 
-    pub fn max_dst_extent(&self) {
+    pub fn max_dst_extent<'a>(&'a self) -> Extent2d {
+        self.raw.maxDstExtent.into()
     }
 
     pub fn raw(&self) -> &vks::VkDisplayPlaneCapabilitiesKHR {
@@ -10200,6 +11741,13 @@ impl DisplayPlaneCapabilitiesKhr {
 impl From<DisplayPlaneCapabilitiesKhr> for vks::VkDisplayPlaneCapabilitiesKHR {
     fn from(f: DisplayPlaneCapabilitiesKhr) -> vks::VkDisplayPlaneCapabilitiesKHR {
         f.raw
+    }
+}
+
+
+impl From<vks::VkDisplayPlaneCapabilitiesKHR> for DisplayPlaneCapabilitiesKhr {
+    fn from(f: vks::VkDisplayPlaneCapabilitiesKHR) -> DisplayPlaneCapabilitiesKhr {
+        DisplayPlaneCapabilitiesKhr { raw: f, }
     }
 }
 
@@ -10219,31 +11767,43 @@ impl<'s> DisplaySurfaceCreateInfoKhr<'s> {
         DisplaySurfaceCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> DisplaySurfaceCreateFlagsKhr {
+        DisplaySurfaceCreateFlagsKhr::from_bits(self.raw.flags)
+            .expect("DisplaySurfaceCreateInfoKhr::flags: error converting flags")
     }
 
-    pub fn display_mode(&self) {
+    pub fn display_mode_handle<'a>(&'a self) -> vks::VkDisplayModeKHR {
+        self.raw.displayMode
     }
 
-    pub fn plane_index(&self) {
+    pub fn plane_index<'a>(&'a self) -> u32 {
+        self.raw.planeIndex.into()
     }
 
-    pub fn plane_stack_index(&self) {
+    pub fn plane_stack_index<'a>(&'a self) -> u32 {
+        self.raw.planeStackIndex.into()
     }
 
-    pub fn transform(&self) {
+    pub fn transform<'a>(&'a self) -> SurfaceTransformFlagsKhr {
+        SurfaceTransformFlagsKhr::from_bits(self.raw.transform)
+            .expect("DisplaySurfaceCreateInfoKhr::transform: error converting flags")
     }
 
-    pub fn global_alpha(&self) {
+    pub fn global_alpha<'a>(&'a self) -> f32 {
+        self.raw.globalAlpha.into()
     }
 
-    pub fn alpha_mode(&self) {
+    pub fn alpha_mode<'a>(&'a self) -> DisplayPlaneAlphaFlagsKhr {
+        DisplayPlaneAlphaFlagsKhr::from_bits(self.raw.alphaMode)
+            .expect("DisplaySurfaceCreateInfoKhr::alpha_mode: error converting flags")
     }
 
-    pub fn image_extent(&self) {
+    pub fn image_extent<'a>(&'a self) -> Extent2d {
+        self.raw.imageExtent.into()
     }
 
     pub fn raw(&self) -> &vks::VkDisplaySurfaceCreateInfoKHR {
@@ -10259,13 +11819,20 @@ impl<'s> From<DisplaySurfaceCreateInfoKhr<'s>> for vks::VkDisplaySurfaceCreateIn
 }
 
 
+impl<'s> From<vks::VkDisplaySurfaceCreateInfoKHR> for DisplaySurfaceCreateInfoKhr<'s> {
+    fn from(f: vks::VkDisplaySurfaceCreateInfoKHR) -> DisplaySurfaceCreateInfoKhr<'s> {
+        DisplaySurfaceCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDisplaySurfaceCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplaySurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkDisplaySurfaceCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DisplaySurfaceCreateInfoKhrBuilder<'b> {
@@ -10346,16 +11913,20 @@ impl<'s> DisplayPresentInfoKhr<'s> {
         DisplayPresentInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn src_rect(&self) {
+    pub fn src_rect<'a>(&'a self) -> Rect2d {
+        self.raw.srcRect.into()
     }
 
-    pub fn dst_rect(&self) {
+    pub fn dst_rect<'a>(&'a self) -> Rect2d {
+        self.raw.dstRect.into()
     }
 
-    pub fn persistent(&self) {
+    pub fn persistent<'a>(&'a self) -> bool {
+        self.raw.persistent != 0
     }
 
     pub fn raw(&self) -> &vks::VkDisplayPresentInfoKHR {
@@ -10371,13 +11942,20 @@ impl<'s> From<DisplayPresentInfoKhr<'s>> for vks::VkDisplayPresentInfoKHR {
 }
 
 
+impl<'s> From<vks::VkDisplayPresentInfoKHR> for DisplayPresentInfoKhr<'s> {
+    fn from(f: vks::VkDisplayPresentInfoKHR) -> DisplayPresentInfoKhr<'s> {
+        DisplayPresentInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDisplayPresentInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayPresentInfoKhrBuilder<'b> {
     raw: vks::VkDisplayPresentInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DisplayPresentInfoKhrBuilder<'b> {
@@ -10428,34 +12006,48 @@ pub struct SurfaceCapabilitiesKhr {
 }
 
 impl SurfaceCapabilitiesKhr {
-    pub fn min_image_count(&self) {
+    pub fn min_image_count<'a>(&'a self) -> u32 {
+        self.raw.minImageCount.into()
     }
 
-    pub fn max_image_count(&self) {
+    pub fn max_image_count<'a>(&'a self) -> u32 {
+        self.raw.maxImageCount.into()
     }
 
-    pub fn current_extent(&self) {
+    pub fn current_extent<'a>(&'a self) -> Extent2d {
+        self.raw.currentExtent.into()
     }
 
-    pub fn min_image_extent(&self) {
+    pub fn min_image_extent<'a>(&'a self) -> Extent2d {
+        self.raw.minImageExtent.into()
     }
 
-    pub fn max_image_extent(&self) {
+    pub fn max_image_extent<'a>(&'a self) -> Extent2d {
+        self.raw.maxImageExtent.into()
     }
 
-    pub fn max_image_array_layers(&self) {
+    pub fn max_image_array_layers<'a>(&'a self) -> u32 {
+        self.raw.maxImageArrayLayers.into()
     }
 
-    pub fn supported_transforms(&self) {
+    pub fn supported_transforms<'a>(&'a self) -> SurfaceTransformFlagsKhr {
+        SurfaceTransformFlagsKhr::from_bits(self.raw.supportedTransforms)
+            .expect("SurfaceCapabilitiesKhr::supported_transforms: error converting flags")
     }
 
-    pub fn current_transform(&self) {
+    pub fn current_transform<'a>(&'a self) -> SurfaceTransformFlagsKhr {
+        SurfaceTransformFlagsKhr::from_bits(self.raw.currentTransform)
+            .expect("SurfaceCapabilitiesKhr::current_transform: error converting flags")
     }
 
-    pub fn supported_composite_alpha(&self) {
+    pub fn supported_composite_alpha<'a>(&'a self) -> CompositeAlphaFlagsKhr {
+        CompositeAlphaFlagsKhr::from_bits(self.raw.supportedCompositeAlpha)
+            .expect("SurfaceCapabilitiesKhr::supported_composite_alpha: error converting flags")
     }
 
-    pub fn supported_usage_flags(&self) {
+    pub fn supported_usage_flags<'a>(&'a self) -> ImageUsageFlags {
+        ImageUsageFlags::from_bits(self.raw.supportedUsageFlags)
+            .expect("SurfaceCapabilitiesKhr::supported_usage_flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkSurfaceCapabilitiesKHR {
@@ -10467,6 +12059,13 @@ impl SurfaceCapabilitiesKhr {
 impl From<SurfaceCapabilitiesKhr> for vks::VkSurfaceCapabilitiesKHR {
     fn from(f: SurfaceCapabilitiesKhr) -> vks::VkSurfaceCapabilitiesKHR {
         f.raw
+    }
+}
+
+
+impl From<vks::VkSurfaceCapabilitiesKHR> for SurfaceCapabilitiesKhr {
+    fn from(f: vks::VkSurfaceCapabilitiesKHR) -> SurfaceCapabilitiesKhr {
+        SurfaceCapabilitiesKhr { raw: f, }
     }
 }
 
@@ -10486,13 +12085,17 @@ impl<'s> AndroidSurfaceCreateInfoKhr<'s> {
         AndroidSurfaceCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> AndroidSurfaceCreateFlagsKhr {
+        AndroidSurfaceCreateFlagsKhr::from_bits(self.raw.flags)
+            .expect("AndroidSurfaceCreateInfoKhr::flags: error converting flags")
     }
 
-    pub unsafe fn window(&self) {
+    pub fn window<'a>(&'a self) -> *mut ANativeWindow {
+        self.raw.window
     }
 
     pub fn raw(&self) -> &vks::VkAndroidSurfaceCreateInfoKHR {
@@ -10508,13 +12111,20 @@ impl<'s> From<AndroidSurfaceCreateInfoKhr<'s>> for vks::VkAndroidSurfaceCreateIn
 }
 
 
+impl<'s> From<vks::VkAndroidSurfaceCreateInfoKHR> for AndroidSurfaceCreateInfoKhr<'s> {
+    fn from(f: vks::VkAndroidSurfaceCreateInfoKHR) -> AndroidSurfaceCreateInfoKhr<'s> {
+        AndroidSurfaceCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkAndroidSurfaceCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct AndroidSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkAndroidSurfaceCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> AndroidSurfaceCreateInfoKhrBuilder<'b> {
@@ -10565,16 +12175,21 @@ impl<'s> MirSurfaceCreateInfoKhr<'s> {
         MirSurfaceCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> MirSurfaceCreateFlagsKhr {
+        MirSurfaceCreateFlagsKhr::from_bits(self.raw.flags)
+            .expect("MirSurfaceCreateInfoKhr::flags: error converting flags")
     }
 
-    pub unsafe fn connection(&self) {
+    pub fn connection<'a>(&'a self) -> *mut MirConnection {
+        self.raw.connection
     }
 
-    pub unsafe fn mir_surface(&self) {
+    pub fn mir_surface<'a>(&'a self) -> *mut MirSurface {
+        self.raw.mirSurface
     }
 
     pub fn raw(&self) -> &vks::VkMirSurfaceCreateInfoKHR {
@@ -10590,13 +12205,20 @@ impl<'s> From<MirSurfaceCreateInfoKhr<'s>> for vks::VkMirSurfaceCreateInfoKHR {
 }
 
 
+impl<'s> From<vks::VkMirSurfaceCreateInfoKHR> for MirSurfaceCreateInfoKhr<'s> {
+    fn from(f: vks::VkMirSurfaceCreateInfoKHR) -> MirSurfaceCreateInfoKhr<'s> {
+        MirSurfaceCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkMirSurfaceCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct MirSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkMirSurfaceCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> MirSurfaceCreateInfoKhrBuilder<'b> {
@@ -10652,13 +12274,17 @@ impl<'s> ViSurfaceCreateInfoNn<'s> {
         ViSurfaceCreateInfoNnBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> ViSurfaceCreateFlagsNn {
+        ViSurfaceCreateFlagsNn::from_bits(self.raw.flags)
+            .expect("ViSurfaceCreateInfoNn::flags: error converting flags")
     }
 
-    pub unsafe fn window(&self) {
+    pub fn window<'a>(&'a self) -> *mut c_void {
+        self.raw.window
     }
 
     pub fn raw(&self) -> &vks::VkViSurfaceCreateInfoNN {
@@ -10674,13 +12300,20 @@ impl<'s> From<ViSurfaceCreateInfoNn<'s>> for vks::VkViSurfaceCreateInfoNN {
 }
 
 
+impl<'s> From<vks::VkViSurfaceCreateInfoNN> for ViSurfaceCreateInfoNn<'s> {
+    fn from(f: vks::VkViSurfaceCreateInfoNN) -> ViSurfaceCreateInfoNn<'s> {
+        ViSurfaceCreateInfoNn { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkViSurfaceCreateInfoNN`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ViSurfaceCreateInfoNnBuilder<'b> {
     raw: vks::VkViSurfaceCreateInfoNN,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ViSurfaceCreateInfoNnBuilder<'b> {
@@ -10731,16 +12364,21 @@ impl<'s> WaylandSurfaceCreateInfoKhr<'s> {
         WaylandSurfaceCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> WaylandSurfaceCreateFlagsKhr {
+        WaylandSurfaceCreateFlagsKhr::from_bits(self.raw.flags)
+            .expect("WaylandSurfaceCreateInfoKhr::flags: error converting flags")
     }
 
-    pub unsafe fn display(&self) {
+    pub fn display<'a>(&'a self) -> *mut wl_display {
+        self.raw.display
     }
 
-    pub unsafe fn surface(&self) {
+    pub fn surface<'a>(&'a self) -> *mut wl_surface {
+        self.raw.surface
     }
 
     pub fn raw(&self) -> &vks::VkWaylandSurfaceCreateInfoKHR {
@@ -10756,13 +12394,20 @@ impl<'s> From<WaylandSurfaceCreateInfoKhr<'s>> for vks::VkWaylandSurfaceCreateIn
 }
 
 
+impl<'s> From<vks::VkWaylandSurfaceCreateInfoKHR> for WaylandSurfaceCreateInfoKhr<'s> {
+    fn from(f: vks::VkWaylandSurfaceCreateInfoKHR) -> WaylandSurfaceCreateInfoKhr<'s> {
+        WaylandSurfaceCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkWaylandSurfaceCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct WaylandSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkWaylandSurfaceCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> WaylandSurfaceCreateInfoKhrBuilder<'b> {
@@ -10818,16 +12463,21 @@ impl<'s> Win32SurfaceCreateInfoKhr<'s> {
         Win32SurfaceCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> Win32SurfaceCreateFlagsKhr {
+        Win32SurfaceCreateFlagsKhr::from_bits(self.raw.flags)
+            .expect("Win32SurfaceCreateInfoKhr::flags: error converting flags")
     }
 
-    pub fn hinstance(&self) {
+    pub fn hinstance<'a>(&'a self) -> HINSTANCE {
+        self.raw.hinstance.into()
     }
 
-    pub fn hwnd(&self) {
+    pub fn hwnd<'a>(&'a self) -> HWND {
+        self.raw.hwnd.into()
     }
 
     pub fn raw(&self) -> &vks::VkWin32SurfaceCreateInfoKHR {
@@ -10843,13 +12493,20 @@ impl<'s> From<Win32SurfaceCreateInfoKhr<'s>> for vks::VkWin32SurfaceCreateInfoKH
 }
 
 
+impl<'s> From<vks::VkWin32SurfaceCreateInfoKHR> for Win32SurfaceCreateInfoKhr<'s> {
+    fn from(f: vks::VkWin32SurfaceCreateInfoKHR) -> Win32SurfaceCreateInfoKhr<'s> {
+        Win32SurfaceCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkWin32SurfaceCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct Win32SurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkWin32SurfaceCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> Win32SurfaceCreateInfoKhrBuilder<'b> {
@@ -10905,16 +12562,21 @@ impl<'s> XlibSurfaceCreateInfoKhr<'s> {
         XlibSurfaceCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> XlibSurfaceCreateFlagsKhr {
+        XlibSurfaceCreateFlagsKhr::from_bits(self.raw.flags)
+            .expect("XlibSurfaceCreateInfoKhr::flags: error converting flags")
     }
 
-    pub unsafe fn dpy(&self) {
+    pub fn dpy<'a>(&'a self) -> *mut Display {
+        self.raw.dpy
     }
 
-    pub unsafe fn window(&self) {
+    pub fn window<'a>(&'a self) -> u32 {
+        self.raw.window.into()
     }
 
     pub fn raw(&self) -> &vks::VkXlibSurfaceCreateInfoKHR {
@@ -10930,13 +12592,20 @@ impl<'s> From<XlibSurfaceCreateInfoKhr<'s>> for vks::VkXlibSurfaceCreateInfoKHR 
 }
 
 
+impl<'s> From<vks::VkXlibSurfaceCreateInfoKHR> for XlibSurfaceCreateInfoKhr<'s> {
+    fn from(f: vks::VkXlibSurfaceCreateInfoKHR) -> XlibSurfaceCreateInfoKhr<'s> {
+        XlibSurfaceCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkXlibSurfaceCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct XlibSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkXlibSurfaceCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> XlibSurfaceCreateInfoKhrBuilder<'b> {
@@ -10992,16 +12661,21 @@ impl<'s> XcbSurfaceCreateInfoKhr<'s> {
         XcbSurfaceCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> XcbSurfaceCreateFlagsKhr {
+        XcbSurfaceCreateFlagsKhr::from_bits(self.raw.flags)
+            .expect("XcbSurfaceCreateInfoKhr::flags: error converting flags")
     }
 
-    pub unsafe fn connection(&self) {
+    pub fn connection<'a>(&'a self) -> *mut xcb_connection_t {
+        self.raw.connection
     }
 
-    pub unsafe fn window(&self) {
+    pub fn window<'a>(&'a self) -> xcb_window_t {
+        self.raw.window.into()
     }
 
     pub fn raw(&self) -> &vks::VkXcbSurfaceCreateInfoKHR {
@@ -11017,13 +12691,20 @@ impl<'s> From<XcbSurfaceCreateInfoKhr<'s>> for vks::VkXcbSurfaceCreateInfoKHR {
 }
 
 
+impl<'s> From<vks::VkXcbSurfaceCreateInfoKHR> for XcbSurfaceCreateInfoKhr<'s> {
+    fn from(f: vks::VkXcbSurfaceCreateInfoKHR) -> XcbSurfaceCreateInfoKhr<'s> {
+        XcbSurfaceCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkXcbSurfaceCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct XcbSurfaceCreateInfoKhrBuilder<'b> {
     raw: vks::VkXcbSurfaceCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> XcbSurfaceCreateInfoKhrBuilder<'b> {
@@ -11074,10 +12755,12 @@ pub struct SurfaceFormatKhr {
 }
 
 impl SurfaceFormatKhr {
-    pub fn format(&self) {
+    pub fn format<'a>(&'a self) -> Format {
+        self.raw.format.into()
     }
 
-    pub fn color_space(&self) {
+    pub fn color_space<'a>(&'a self) -> ColorSpaceKhr {
+        self.raw.colorSpace.into()
     }
 
     pub fn raw(&self) -> &vks::VkSurfaceFormatKHR {
@@ -11089,6 +12772,13 @@ impl SurfaceFormatKhr {
 impl From<SurfaceFormatKhr> for vks::VkSurfaceFormatKHR {
     fn from(f: SurfaceFormatKhr) -> vks::VkSurfaceFormatKHR {
         f.raw
+    }
+}
+
+
+impl From<vks::VkSurfaceFormatKHR> for SurfaceFormatKhr {
+    fn from(f: vks::VkSurfaceFormatKHR) -> SurfaceFormatKhr {
+        SurfaceFormatKhr { raw: f, }
     }
 }
 
@@ -11108,52 +12798,72 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
         SwapchainCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> SwapchainCreateFlagsKhr {
+        SwapchainCreateFlagsKhr::from_bits(self.raw.flags)
+            .expect("SwapchainCreateInfoKhr::flags: error converting flags")
     }
 
-    pub fn surface(&self) {
+    pub fn surface_handle<'a>(&'a self) -> vks::VkSurfaceKHR {
+        self.raw.surface
     }
 
-    pub fn min_image_count(&self) {
+    pub fn min_image_count<'a>(&'a self) -> u32 {
+        self.raw.minImageCount.into()
     }
 
-    pub fn image_format(&self) {
+    pub fn image_format<'a>(&'a self) -> Format {
+        self.raw.imageFormat.into()
     }
 
-    pub fn image_color_space(&self) {
+    pub fn image_color_space<'a>(&'a self) -> ColorSpaceKhr {
+        self.raw.imageColorSpace.into()
     }
 
-    pub fn image_extent(&self) {
+    pub fn image_extent<'a>(&'a self) -> Extent2d {
+        self.raw.imageExtent.into()
     }
 
-    pub fn image_array_layers(&self) {
+    pub fn image_array_layers<'a>(&'a self) -> u32 {
+        self.raw.imageArrayLayers.into()
     }
 
-    pub fn image_usage(&self) {
+    pub fn image_usage<'a>(&'a self) -> ImageUsageFlags {
+        ImageUsageFlags::from_bits(self.raw.imageUsage)
+            .expect("SwapchainCreateInfoKhr::image_usage: error converting flags")
     }
 
-    pub fn image_sharing_mode(&self) {
+    pub fn image_sharing_mode<'a>(&'a self) -> SharingMode {
+        self.raw.imageSharingMode.into()
     }
 
-    pub fn queue_family_indices(&self) {
+    pub fn queue_family_indices<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pQueueFamilyIndices as *const _, self.raw.queueFamilyIndexCount as usize) }
     }
 
-    pub fn pre_transform(&self) {
+    pub fn pre_transform<'a>(&'a self) -> SurfaceTransformFlagsKhr {
+        SurfaceTransformFlagsKhr::from_bits(self.raw.preTransform)
+            .expect("SwapchainCreateInfoKhr::pre_transform: error converting flags")
     }
 
-    pub fn composite_alpha(&self) {
+    pub fn composite_alpha<'a>(&'a self) -> CompositeAlphaFlagsKhr {
+        CompositeAlphaFlagsKhr::from_bits(self.raw.compositeAlpha)
+            .expect("SwapchainCreateInfoKhr::composite_alpha: error converting flags")
     }
 
-    pub fn present_mode(&self) {
+    pub fn present_mode<'a>(&'a self) -> PresentModeKhr {
+        self.raw.presentMode.into()
     }
 
-    pub fn clipped(&self) {
+    pub fn clipped<'a>(&'a self) -> bool {
+        self.raw.clipped != 0
     }
 
-    pub fn old_swapchain(&self) {
+    pub fn old_swapchain_handle<'a>(&'a self) -> vks::VkSwapchainKHR {
+        self.raw.oldSwapchain
     }
 
     pub fn raw(&self) -> &vks::VkSwapchainCreateInfoKHR {
@@ -11169,13 +12879,20 @@ impl<'s> From<SwapchainCreateInfoKhr<'s>> for vks::VkSwapchainCreateInfoKHR {
 }
 
 
+impl<'s> From<vks::VkSwapchainCreateInfoKHR> for SwapchainCreateInfoKhr<'s> {
+    fn from(f: vks::VkSwapchainCreateInfoKHR) -> SwapchainCreateInfoKhr<'s> {
+        SwapchainCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSwapchainCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SwapchainCreateInfoKhrBuilder<'b> {
     raw: vks::VkSwapchainCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
@@ -11237,10 +12954,10 @@ impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
     }
 
     pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> SwapchainCreateInfoKhrBuilder<'b> {
-        assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as u32, 
+        assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `SwapchainCreateInfoKhr::queue_family_indices`.");
-        self.raw.queueFamilyIndexCount = queue_family_indices.len() as u32;
-        self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const _;
+        self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
+        self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const u32 as *const _;
         self
     }
 
@@ -11295,19 +13012,24 @@ impl<'s> PresentInfoKhr<'s> {
         PresentInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn wait_semaphores(&self) {
+    pub fn wait_semaphores_handle<'a>(&'a self) -> &'a [vks::VkSemaphore] {
+        unsafe { slice::from_raw_parts(self.raw.pWaitSemaphores as *const _, self.raw.waitSemaphoreCount as usize) }
     }
 
-    pub fn swapchains(&self) {
+    pub fn swapchains_handle<'a>(&'a self) -> &'a [vks::VkSwapchainKHR] {
+        unsafe { slice::from_raw_parts(self.raw.pSwapchains as *const _, self.raw.swapchainCount as usize) }
     }
 
-    pub fn image_indices(&self) {
+    pub fn image_indices<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pImageIndices as *const _, self.raw.swapchainCount as usize) }
     }
 
-    pub fn results(&self) {
+    pub fn results<'a>(&'a self) -> &'a [ResultEnum] {
+        unsafe { slice::from_raw_parts(self.raw.pResults as *const _, self.raw.swapchainCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPresentInfoKHR {
@@ -11323,6 +13045,13 @@ impl<'s> From<PresentInfoKhr<'s>> for vks::VkPresentInfoKHR {
 }
 
 
+impl<'s> From<vks::VkPresentInfoKHR> for PresentInfoKhr<'s> {
+    fn from(f: vks::VkPresentInfoKHR) -> PresentInfoKhr<'s> {
+        PresentInfoKhr { raw: f, wait_semaphores: None, swapchains: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPresentInfoKHR`.
 ///
 /// 
@@ -11331,7 +13060,7 @@ pub struct PresentInfoKhrBuilder<'b> {
     raw: vks::VkPresentInfoKHR,
     wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
     swapchains: Option<SmallVec<[vks::VkSwapchainKHR; 8]>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PresentInfoKhrBuilder<'b> {
@@ -11349,37 +13078,43 @@ impl<'b> PresentInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn wait_semaphores<'m, 'a>(mut self, wait_semaphores: &'a [Semaphore]) -> PresentInfoKhrBuilder<'b> where 'a: 'b {
+    pub fn wait_semaphores<'m, 'a>(mut self, wait_semaphores: &'a [&'a Semaphore]) -> PresentInfoKhrBuilder<'b> where 'a: 'b {
         self.wait_semaphores = Some(wait_semaphores.iter().map(|h| h.handle()).collect());
         {
             let wait_semaphores = self.wait_semaphores.as_ref().unwrap();
             self.raw.pWaitSemaphores = wait_semaphores.as_ptr();
-            assert!(self.raw.waitSemaphoreCount == 0 || self.raw.waitSemaphoreCount == wait_semaphores.len() as u32, 
+            assert!(self.raw.waitSemaphoreCount == 0 || self.raw.waitSemaphoreCount == wait_semaphores.len() as _, 
                 "count inconsistency found when specifying `PresentInfoKhr::wait_semaphores`.");
-            self.raw.waitSemaphoreCount = wait_semaphores.len() as u32;
+            self.raw.waitSemaphoreCount = wait_semaphores.len() as _;
         }
         self
     }
 
-    pub fn swapchains<'m, 'a>(mut self, swapchains: &'a [Swapchain]) -> PresentInfoKhrBuilder<'b> where 'a: 'b {
+    pub fn swapchains<'m, 'a>(mut self, swapchains: &'a [&'a Swapchain]) -> PresentInfoKhrBuilder<'b> where 'a: 'b {
         self.swapchains = Some(swapchains.iter().map(|h| h.handle()).collect());
         {
             let swapchains = self.swapchains.as_ref().unwrap();
             self.raw.pSwapchains = swapchains.as_ptr();
-            assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == swapchains.len() as u32, 
+            assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == swapchains.len() as _, 
                 "count inconsistency found when specifying `PresentInfoKhr::swapchains`.");
-            self.raw.swapchainCount = swapchains.len() as u32;
+            self.raw.swapchainCount = swapchains.len() as _;
         }
         self
     }
 
     pub fn image_indices<'m, 'a>(mut self, image_indices: &'a [u32]) -> PresentInfoKhrBuilder<'b> {
-        self.raw.pImageIndices = image_indices.as_ptr() as *const _;
+        assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == image_indices.len() as _, 
+            "count inconsistency found when specifying `PresentInfoKhr::image_indices`.");
+        self.raw.swapchainCount = image_indices.len() as _;
+        self.raw.pImageIndices = image_indices.as_ptr() as *const u32 as *const _;
         self
     }
 
     pub fn results<'m, 'a>(mut self, results: &'a mut [ResultEnum]) -> PresentInfoKhrBuilder<'b> {
-        self.raw.pResults = results.as_mut_ptr() as *mut _;
+        assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == results.len() as _, 
+            "count inconsistency found when specifying `PresentInfoKhr::results`.");
+        self.raw.swapchainCount = results.len() as _;
+        self.raw.pResults = results.as_mut_ptr() as *mut ResultEnum as *mut _;
         self
     }
 
@@ -11410,16 +13145,21 @@ impl<'s> DebugReportCallbackCreateInfoExt<'s> {
         DebugReportCallbackCreateInfoExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> DebugReportFlagsExt {
+        DebugReportFlagsExt::from_bits(self.raw.flags)
+            .expect("DebugReportCallbackCreateInfoExt::flags: error converting flags")
     }
 
-    pub fn pfn_callback(&self) {
+    pub fn pfn_callback<'a>(&'a self) -> PFN_vkDebugReportCallbackEXT {
+        self.raw.pfnCallback.into()
     }
 
-    pub unsafe fn user_data(&self) {
+    pub fn user_data<'a>(&'a self) -> *mut c_void {
+        self.raw.pUserData
     }
 
     pub fn raw(&self) -> &vks::VkDebugReportCallbackCreateInfoEXT {
@@ -11435,13 +13175,20 @@ impl<'s> From<DebugReportCallbackCreateInfoExt<'s>> for vks::VkDebugReportCallba
 }
 
 
+impl<'s> From<vks::VkDebugReportCallbackCreateInfoEXT> for DebugReportCallbackCreateInfoExt<'s> {
+    fn from(f: vks::VkDebugReportCallbackCreateInfoEXT) -> DebugReportCallbackCreateInfoExt<'s> {
+        DebugReportCallbackCreateInfoExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDebugReportCallbackCreateInfoEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DebugReportCallbackCreateInfoExtBuilder<'b> {
     raw: vks::VkDebugReportCallbackCreateInfoEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DebugReportCallbackCreateInfoExtBuilder<'b> {
@@ -11497,10 +13244,12 @@ impl<'s> ValidationFlagsExt<'s> {
         ValidationFlagsExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn disabled_validation_checks(&self) {
+    pub fn disabled_validation_checks<'a>(&'a self) -> &'a [ValidationCheckExt] {
+        unsafe { slice::from_raw_parts(self.raw.pDisabledValidationChecks as *const _, self.raw.disabledValidationCheckCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkValidationFlagsEXT {
@@ -11516,13 +13265,20 @@ impl<'s> From<ValidationFlagsExt<'s>> for vks::VkValidationFlagsEXT {
 }
 
 
+impl<'s> From<vks::VkValidationFlagsEXT> for ValidationFlagsExt<'s> {
+    fn from(f: vks::VkValidationFlagsEXT) -> ValidationFlagsExt<'s> {
+        ValidationFlagsExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkValidationFlagsEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ValidationFlagsExtBuilder<'b> {
     raw: vks::VkValidationFlagsEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ValidationFlagsExtBuilder<'b> {
@@ -11539,10 +13295,10 @@ impl<'b> ValidationFlagsExtBuilder<'b> {
     }
 
     pub fn disabled_validation_checks<'m, 'a>(mut self, disabled_validation_checks: &'a mut [ValidationCheckExt]) -> ValidationFlagsExtBuilder<'b> {
-        assert!(self.raw.disabledValidationCheckCount == 0 || self.raw.disabledValidationCheckCount == disabled_validation_checks.len() as u32, 
+        assert!(self.raw.disabledValidationCheckCount == 0 || self.raw.disabledValidationCheckCount == disabled_validation_checks.len() as _, 
             "count inconsistency found when specifying `ValidationFlagsExt::disabled_validation_checks`.");
-        self.raw.disabledValidationCheckCount = disabled_validation_checks.len() as u32;
-        self.raw.pDisabledValidationChecks = disabled_validation_checks.as_mut_ptr() as *mut _;
+        self.raw.disabledValidationCheckCount = disabled_validation_checks.len() as _;
+        self.raw.pDisabledValidationChecks = disabled_validation_checks.as_mut_ptr() as *mut ValidationCheckExt as *mut _;
         self
     }
 
@@ -11571,10 +13327,12 @@ impl<'s> PipelineRasterizationStateRasterizationOrderAmd<'s> {
         PipelineRasterizationStateRasterizationOrderAmdBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn rasterization_order(&self) {
+    pub fn rasterization_order<'a>(&'a self) -> RasterizationOrderAmd {
+        self.raw.rasterizationOrder.into()
     }
 
     pub fn raw(&self) -> &vks::VkPipelineRasterizationStateRasterizationOrderAMD {
@@ -11590,13 +13348,20 @@ impl<'s> From<PipelineRasterizationStateRasterizationOrderAmd<'s>> for vks::VkPi
 }
 
 
+impl<'s> From<vks::VkPipelineRasterizationStateRasterizationOrderAMD> for PipelineRasterizationStateRasterizationOrderAmd<'s> {
+    fn from(f: vks::VkPipelineRasterizationStateRasterizationOrderAMD) -> PipelineRasterizationStateRasterizationOrderAmd<'s> {
+        PipelineRasterizationStateRasterizationOrderAmd { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineRasterizationStateRasterizationOrderAMD`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineRasterizationStateRasterizationOrderAmdBuilder<'b> {
     raw: vks::VkPipelineRasterizationStateRasterizationOrderAMD,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineRasterizationStateRasterizationOrderAmdBuilder<'b> {
@@ -11642,16 +13407,20 @@ impl<'s> DebugMarkerObjectNameInfoExt<'s> {
         DebugMarkerObjectNameInfoExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn object_type(&self) {
+    pub fn object_type<'a>(&'a self) -> DebugReportObjectTypeExt {
+        self.raw.objectType.into()
     }
 
-    pub fn object(&self) {
+    pub fn object<'a>(&'a self) -> u64 {
+        self.raw.object.into()
     }
 
-    pub fn object_name(&self) {
+    pub fn object_name<'a>(&'a self) -> &'a CStr {
+        unsafe { CStr::from_ptr(self.raw.pObjectName) }
     }
 
     pub fn raw(&self) -> &vks::VkDebugMarkerObjectNameInfoEXT {
@@ -11667,6 +13436,13 @@ impl<'s> From<DebugMarkerObjectNameInfoExt<'s>> for vks::VkDebugMarkerObjectName
 }
 
 
+impl<'s> From<vks::VkDebugMarkerObjectNameInfoEXT> for DebugMarkerObjectNameInfoExt<'s> {
+    fn from(f: vks::VkDebugMarkerObjectNameInfoEXT) -> DebugMarkerObjectNameInfoExt<'s> {
+        DebugMarkerObjectNameInfoExt { raw: f, object_name: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDebugMarkerObjectNameInfoEXT`.
 ///
 /// 
@@ -11674,7 +13450,7 @@ impl<'s> From<DebugMarkerObjectNameInfoExt<'s>> for vks::VkDebugMarkerObjectName
 pub struct DebugMarkerObjectNameInfoExtBuilder<'b> {
     raw: vks::VkDebugMarkerObjectNameInfoEXT,
     object_name: Option<CharStr<'b>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DebugMarkerObjectNameInfoExtBuilder<'b> {
@@ -11736,22 +13512,28 @@ impl<'s> DebugMarkerObjectTagInfoExt<'s> {
         DebugMarkerObjectTagInfoExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn object_type(&self) {
+    pub fn object_type<'a>(&'a self) -> DebugReportObjectTypeExt {
+        self.raw.objectType.into()
     }
 
-    pub fn object(&self) {
+    pub fn object<'a>(&'a self) -> u64 {
+        self.raw.object.into()
     }
 
-    pub fn tag_name(&self) {
+    pub fn tag_name<'a>(&'a self) -> u64 {
+        self.raw.tagName.into()
     }
 
-    pub fn tag_size(&self) {
+    pub fn tag_size<'a>(&'a self) -> usize {
+        self.raw.tagSize.into()
     }
 
-    pub unsafe fn tag(&self) {
+    pub fn tag<'a>(&'a self) -> *const c_void {
+        self.raw.pTag
     }
 
     pub fn raw(&self) -> &vks::VkDebugMarkerObjectTagInfoEXT {
@@ -11767,13 +13549,20 @@ impl<'s> From<DebugMarkerObjectTagInfoExt<'s>> for vks::VkDebugMarkerObjectTagIn
 }
 
 
+impl<'s> From<vks::VkDebugMarkerObjectTagInfoEXT> for DebugMarkerObjectTagInfoExt<'s> {
+    fn from(f: vks::VkDebugMarkerObjectTagInfoEXT) -> DebugMarkerObjectTagInfoExt<'s> {
+        DebugMarkerObjectTagInfoExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDebugMarkerObjectTagInfoEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DebugMarkerObjectTagInfoExtBuilder<'b> {
     raw: vks::VkDebugMarkerObjectTagInfoEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DebugMarkerObjectTagInfoExtBuilder<'b> {
@@ -11839,13 +13628,16 @@ impl<'s> DebugMarkerMarkerInfoExt<'s> {
         DebugMarkerMarkerInfoExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn marker_name(&self) {
+    pub fn marker_name<'a>(&'a self) -> &'a CStr {
+        unsafe { CStr::from_ptr(self.raw.pMarkerName) }
     }
 
-    pub fn color(&self) {
+    pub fn color<'a>(&'a self) -> &[f32] {
+        unsafe { slice::from_raw_parts(&self.raw.color as *const _, 4 as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkDebugMarkerMarkerInfoEXT {
@@ -11861,6 +13653,13 @@ impl<'s> From<DebugMarkerMarkerInfoExt<'s>> for vks::VkDebugMarkerMarkerInfoEXT 
 }
 
 
+impl<'s> From<vks::VkDebugMarkerMarkerInfoEXT> for DebugMarkerMarkerInfoExt<'s> {
+    fn from(f: vks::VkDebugMarkerMarkerInfoEXT) -> DebugMarkerMarkerInfoExt<'s> {
+        DebugMarkerMarkerInfoExt { raw: f, marker_name: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDebugMarkerMarkerInfoEXT`.
 ///
 /// 
@@ -11868,7 +13667,7 @@ impl<'s> From<DebugMarkerMarkerInfoExt<'s>> for vks::VkDebugMarkerMarkerInfoEXT 
 pub struct DebugMarkerMarkerInfoExtBuilder<'b> {
     raw: vks::VkDebugMarkerMarkerInfoEXT,
     marker_name: Option<CharStr<'b>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DebugMarkerMarkerInfoExtBuilder<'b> {
@@ -11925,10 +13724,12 @@ impl<'s> DedicatedAllocationImageCreateInfoNv<'s> {
         DedicatedAllocationImageCreateInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn dedicated_allocation(&self) {
+    pub fn dedicated_allocation<'a>(&'a self) -> bool {
+        self.raw.dedicatedAllocation != 0
     }
 
     pub fn raw(&self) -> &vks::VkDedicatedAllocationImageCreateInfoNV {
@@ -11944,13 +13745,20 @@ impl<'s> From<DedicatedAllocationImageCreateInfoNv<'s>> for vks::VkDedicatedAllo
 }
 
 
+impl<'s> From<vks::VkDedicatedAllocationImageCreateInfoNV> for DedicatedAllocationImageCreateInfoNv<'s> {
+    fn from(f: vks::VkDedicatedAllocationImageCreateInfoNV) -> DedicatedAllocationImageCreateInfoNv<'s> {
+        DedicatedAllocationImageCreateInfoNv { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDedicatedAllocationImageCreateInfoNV`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DedicatedAllocationImageCreateInfoNvBuilder<'b> {
     raw: vks::VkDedicatedAllocationImageCreateInfoNV,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DedicatedAllocationImageCreateInfoNvBuilder<'b> {
@@ -11996,10 +13804,12 @@ impl<'s> DedicatedAllocationBufferCreateInfoNv<'s> {
         DedicatedAllocationBufferCreateInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn dedicated_allocation(&self) {
+    pub fn dedicated_allocation<'a>(&'a self) -> bool {
+        self.raw.dedicatedAllocation != 0
     }
 
     pub fn raw(&self) -> &vks::VkDedicatedAllocationBufferCreateInfoNV {
@@ -12015,13 +13825,20 @@ impl<'s> From<DedicatedAllocationBufferCreateInfoNv<'s>> for vks::VkDedicatedAll
 }
 
 
+impl<'s> From<vks::VkDedicatedAllocationBufferCreateInfoNV> for DedicatedAllocationBufferCreateInfoNv<'s> {
+    fn from(f: vks::VkDedicatedAllocationBufferCreateInfoNV) -> DedicatedAllocationBufferCreateInfoNv<'s> {
+        DedicatedAllocationBufferCreateInfoNv { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDedicatedAllocationBufferCreateInfoNV`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DedicatedAllocationBufferCreateInfoNvBuilder<'b> {
     raw: vks::VkDedicatedAllocationBufferCreateInfoNV,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DedicatedAllocationBufferCreateInfoNvBuilder<'b> {
@@ -12067,13 +13884,16 @@ impl<'s> DedicatedAllocationMemoryAllocateInfoNv<'s> {
         DedicatedAllocationMemoryAllocateInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn image(&self) {
+    pub fn image_handle<'a>(&'a self) -> vks::VkImage {
+        self.raw.image
     }
 
-    pub fn buffer(&self) {
+    pub fn buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.buffer
     }
 
     pub fn raw(&self) -> &vks::VkDedicatedAllocationMemoryAllocateInfoNV {
@@ -12089,13 +13909,20 @@ impl<'s> From<DedicatedAllocationMemoryAllocateInfoNv<'s>> for vks::VkDedicatedA
 }
 
 
+impl<'s> From<vks::VkDedicatedAllocationMemoryAllocateInfoNV> for DedicatedAllocationMemoryAllocateInfoNv<'s> {
+    fn from(f: vks::VkDedicatedAllocationMemoryAllocateInfoNV) -> DedicatedAllocationMemoryAllocateInfoNv<'s> {
+        DedicatedAllocationMemoryAllocateInfoNv { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDedicatedAllocationMemoryAllocateInfoNV`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
     raw: vks::VkDedicatedAllocationMemoryAllocateInfoNV,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
@@ -12141,16 +13968,23 @@ pub struct ExternalImageFormatPropertiesNv {
 }
 
 impl ExternalImageFormatPropertiesNv {
-    pub fn image_format_properties(&self) {
+    pub fn image_format_properties<'a>(&'a self) -> ImageFormatProperties {
+        self.raw.imageFormatProperties.into()
     }
 
-    pub fn external_memory_features(&self) {
+    pub fn external_memory_features<'a>(&'a self) -> ExternalMemoryFeatureFlagsNv {
+        ExternalMemoryFeatureFlagsNv::from_bits(self.raw.externalMemoryFeatures)
+            .expect("ExternalImageFormatPropertiesNv::external_memory_features: error converting flags")
     }
 
-    pub fn export_from_imported_handle_types(&self) {
+    pub fn export_from_imported_handle_types<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsNv {
+        ExternalMemoryHandleTypeFlagsNv::from_bits(self.raw.exportFromImportedHandleTypes)
+            .expect("ExternalImageFormatPropertiesNv::export_from_imported_handle_types: error converting flags")
     }
 
-    pub fn compatible_handle_types(&self) {
+    pub fn compatible_handle_types<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsNv {
+        ExternalMemoryHandleTypeFlagsNv::from_bits(self.raw.compatibleHandleTypes)
+            .expect("ExternalImageFormatPropertiesNv::compatible_handle_types: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkExternalImageFormatPropertiesNV {
@@ -12162,6 +13996,13 @@ impl ExternalImageFormatPropertiesNv {
 impl From<ExternalImageFormatPropertiesNv> for vks::VkExternalImageFormatPropertiesNV {
     fn from(f: ExternalImageFormatPropertiesNv) -> vks::VkExternalImageFormatPropertiesNV {
         f.raw
+    }
+}
+
+
+impl From<vks::VkExternalImageFormatPropertiesNV> for ExternalImageFormatPropertiesNv {
+    fn from(f: vks::VkExternalImageFormatPropertiesNV) -> ExternalImageFormatPropertiesNv {
+        ExternalImageFormatPropertiesNv { raw: f, }
     }
 }
 
@@ -12181,10 +14022,13 @@ impl<'s> ExternalMemoryImageCreateInfoNv<'s> {
         ExternalMemoryImageCreateInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_types(&self) {
+    pub fn handle_types<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsNv {
+        ExternalMemoryHandleTypeFlagsNv::from_bits(self.raw.handleTypes)
+            .expect("ExternalMemoryImageCreateInfoNv::handle_types: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkExternalMemoryImageCreateInfoNV {
@@ -12200,13 +14044,20 @@ impl<'s> From<ExternalMemoryImageCreateInfoNv<'s>> for vks::VkExternalMemoryImag
 }
 
 
+impl<'s> From<vks::VkExternalMemoryImageCreateInfoNV> for ExternalMemoryImageCreateInfoNv<'s> {
+    fn from(f: vks::VkExternalMemoryImageCreateInfoNV) -> ExternalMemoryImageCreateInfoNv<'s> {
+        ExternalMemoryImageCreateInfoNv { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkExternalMemoryImageCreateInfoNV`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ExternalMemoryImageCreateInfoNvBuilder<'b> {
     raw: vks::VkExternalMemoryImageCreateInfoNV,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ExternalMemoryImageCreateInfoNvBuilder<'b> {
@@ -12252,10 +14103,13 @@ impl<'s> ExportMemoryAllocateInfoNv<'s> {
         ExportMemoryAllocateInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_types(&self) {
+    pub fn handle_types<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsNv {
+        ExternalMemoryHandleTypeFlagsNv::from_bits(self.raw.handleTypes)
+            .expect("ExportMemoryAllocateInfoNv::handle_types: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkExportMemoryAllocateInfoNV {
@@ -12271,13 +14125,20 @@ impl<'s> From<ExportMemoryAllocateInfoNv<'s>> for vks::VkExportMemoryAllocateInf
 }
 
 
+impl<'s> From<vks::VkExportMemoryAllocateInfoNV> for ExportMemoryAllocateInfoNv<'s> {
+    fn from(f: vks::VkExportMemoryAllocateInfoNV) -> ExportMemoryAllocateInfoNv<'s> {
+        ExportMemoryAllocateInfoNv { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkExportMemoryAllocateInfoNV`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryAllocateInfoNvBuilder<'b> {
     raw: vks::VkExportMemoryAllocateInfoNV,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ExportMemoryAllocateInfoNvBuilder<'b> {
@@ -12323,13 +14184,17 @@ impl<'s> ImportMemoryWin32HandleInfoNv<'s> {
         ImportMemoryWin32HandleInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsNv {
+        ExternalMemoryHandleTypeFlagsNv::from_bits(self.raw.handleType)
+            .expect("ImportMemoryWin32HandleInfoNv::handle_type: error converting flags")
     }
 
-    pub fn handle(&self) {
+    pub fn handle<'a>(&'a self) -> HANDLE {
+        self.raw.handle.into()
     }
 
     pub fn raw(&self) -> &vks::VkImportMemoryWin32HandleInfoNV {
@@ -12345,13 +14210,20 @@ impl<'s> From<ImportMemoryWin32HandleInfoNv<'s>> for vks::VkImportMemoryWin32Han
 }
 
 
+impl<'s> From<vks::VkImportMemoryWin32HandleInfoNV> for ImportMemoryWin32HandleInfoNv<'s> {
+    fn from(f: vks::VkImportMemoryWin32HandleInfoNV) -> ImportMemoryWin32HandleInfoNv<'s> {
+        ImportMemoryWin32HandleInfoNv { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImportMemoryWin32HandleInfoNV`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportMemoryWin32HandleInfoNvBuilder<'b> {
     raw: vks::VkImportMemoryWin32HandleInfoNV,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImportMemoryWin32HandleInfoNvBuilder<'b> {
@@ -12402,13 +14274,16 @@ impl<'s> ExportMemoryWin32HandleInfoNv<'s> {
         ExportMemoryWin32HandleInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn attributes(&self) {
+    pub fn attributes<'a>(&'a self) -> &'a SECURITY_ATTRIBUTES {
+        unsafe { &*(self.raw.pAttributes as *const _) }
     }
 
-    pub fn dw_access(&self) {
+    pub fn dw_access<'a>(&'a self) -> DWORD {
+        self.raw.dwAccess.into()
     }
 
     pub fn raw(&self) -> &vks::VkExportMemoryWin32HandleInfoNV {
@@ -12424,13 +14299,20 @@ impl<'s> From<ExportMemoryWin32HandleInfoNv<'s>> for vks::VkExportMemoryWin32Han
 }
 
 
+impl<'s> From<vks::VkExportMemoryWin32HandleInfoNV> for ExportMemoryWin32HandleInfoNv<'s> {
+    fn from(f: vks::VkExportMemoryWin32HandleInfoNV) -> ExportMemoryWin32HandleInfoNv<'s> {
+        ExportMemoryWin32HandleInfoNv { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkExportMemoryWin32HandleInfoNV`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryWin32HandleInfoNvBuilder<'b> {
     raw: vks::VkExportMemoryWin32HandleInfoNV,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ExportMemoryWin32HandleInfoNvBuilder<'b> {
@@ -12446,8 +14328,8 @@ impl<'b> ExportMemoryWin32HandleInfoNvBuilder<'b> {
         self
     }
 
-    pub fn attributes<'m, 'a>(mut self, attributes: &'a [SECURITY_ATTRIBUTES]) -> ExportMemoryWin32HandleInfoNvBuilder<'b> {
-        self.raw.pAttributes = attributes.as_ptr() as *const _;
+    pub fn attributes<'m, 'a>(mut self, attributes: &'a SECURITY_ATTRIBUTES) -> ExportMemoryWin32HandleInfoNvBuilder<'b> {
+        self.raw.pAttributes = attributes;
         self
     }
 
@@ -12482,22 +14364,28 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
         Win32KeyedMutexAcquireReleaseInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn acquire_syncs(&self) {
+    pub fn acquire_syncs_handle<'a>(&'a self) -> &'a [vks::VkDeviceMemory] {
+        unsafe { slice::from_raw_parts(self.raw.pAcquireSyncs as *const _, self.raw.acquireCount as usize) }
     }
 
-    pub fn acquire_keys(&self) {
+    pub fn acquire_keys<'a>(&'a self) -> &'a [u64] {
+        unsafe { slice::from_raw_parts(self.raw.pAcquireKeys as *const _, self.raw.acquireCount as usize) }
     }
 
-    pub fn acquire_timeout_milliseconds(&self) {
+    pub fn acquire_timeout_milliseconds<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pAcquireTimeoutMilliseconds as *const _, self.raw.acquireCount as usize) }
     }
 
-    pub fn release_syncs(&self) {
+    pub fn release_syncs_handle<'a>(&'a self) -> &'a [vks::VkDeviceMemory] {
+        unsafe { slice::from_raw_parts(self.raw.pReleaseSyncs as *const _, self.raw.releaseCount as usize) }
     }
 
-    pub fn release_keys(&self) {
+    pub fn release_keys<'a>(&'a self) -> &'a [u64] {
+        unsafe { slice::from_raw_parts(self.raw.pReleaseKeys as *const _, self.raw.releaseCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkWin32KeyedMutexAcquireReleaseInfoNV {
@@ -12513,6 +14401,13 @@ impl<'s> From<Win32KeyedMutexAcquireReleaseInfoNv<'s>> for vks::VkWin32KeyedMute
 }
 
 
+impl<'s> From<vks::VkWin32KeyedMutexAcquireReleaseInfoNV> for Win32KeyedMutexAcquireReleaseInfoNv<'s> {
+    fn from(f: vks::VkWin32KeyedMutexAcquireReleaseInfoNV) -> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
+        Win32KeyedMutexAcquireReleaseInfoNv { raw: f, release_syncs: None, acquire_syncs: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkWin32KeyedMutexAcquireReleaseInfoNV`.
 ///
 /// 
@@ -12521,7 +14416,7 @@ pub struct Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV,
     release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
@@ -12539,51 +14434,51 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
         self
     }
 
-    pub fn acquire_syncs<'m, 'a>(mut self, acquire_syncs: &'a [DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> where 'a: 'b {
+    pub fn acquire_syncs<'m, 'a>(mut self, acquire_syncs: &'a [&'a DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> where 'a: 'b {
         self.acquire_syncs = Some(acquire_syncs.iter().map(|h| h.handle()).collect());
         {
             let acquire_syncs = self.acquire_syncs.as_ref().unwrap();
             self.raw.pAcquireSyncs = acquire_syncs.as_ptr();
-            assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_syncs.len() as u32, 
+            assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_syncs.len() as _, 
                 "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::acquire_syncs`.");
-            self.raw.acquireCount = acquire_syncs.len() as u32;
+            self.raw.acquireCount = acquire_syncs.len() as _;
         }
         self
     }
 
     pub fn acquire_keys<'m, 'a>(mut self, acquire_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
-        assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_keys.len() as u32, 
+        assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::acquire_keys`.");
-        self.raw.acquireCount = acquire_keys.len() as u32;
-        self.raw.pAcquireKeys = acquire_keys.as_ptr() as *const _;
+        self.raw.acquireCount = acquire_keys.len() as _;
+        self.raw.pAcquireKeys = acquire_keys.as_ptr() as *const u64 as *const _;
         self
     }
 
     pub fn acquire_timeout_milliseconds<'m, 'a>(mut self, acquire_timeout_milliseconds: &'a [u32]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
-        assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_timeout_milliseconds.len() as u32, 
+        assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_timeout_milliseconds.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::acquire_timeout_milliseconds`.");
-        self.raw.acquireCount = acquire_timeout_milliseconds.len() as u32;
-        self.raw.pAcquireTimeoutMilliseconds = acquire_timeout_milliseconds.as_ptr() as *const _;
+        self.raw.acquireCount = acquire_timeout_milliseconds.len() as _;
+        self.raw.pAcquireTimeoutMilliseconds = acquire_timeout_milliseconds.as_ptr() as *const u32 as *const _;
         self
     }
 
-    pub fn release_syncs<'m, 'a>(mut self, release_syncs: &'a [DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> where 'a: 'b {
+    pub fn release_syncs<'m, 'a>(mut self, release_syncs: &'a [&'a DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> where 'a: 'b {
         self.release_syncs = Some(release_syncs.iter().map(|h| h.handle()).collect());
         {
             let release_syncs = self.release_syncs.as_ref().unwrap();
             self.raw.pReleaseSyncs = release_syncs.as_ptr();
-            assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_syncs.len() as u32, 
+            assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_syncs.len() as _, 
                 "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::release_syncs`.");
-            self.raw.releaseCount = release_syncs.len() as u32;
+            self.raw.releaseCount = release_syncs.len() as _;
         }
         self
     }
 
     pub fn release_keys<'m, 'a>(mut self, release_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
-        assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_keys.len() as u32, 
+        assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::release_keys`.");
-        self.raw.releaseCount = release_keys.len() as u32;
-        self.raw.pReleaseKeys = release_keys.as_ptr() as *const _;
+        self.raw.releaseCount = release_keys.len() as _;
+        self.raw.pReleaseKeys = release_keys.as_ptr() as *const u64 as *const _;
         self
     }
 
@@ -12616,10 +14511,12 @@ impl<'s> DeviceGeneratedCommandsFeaturesNvx<'s> {
         DeviceGeneratedCommandsFeaturesNvxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn compute_binding_point_support(&self) {
+    pub fn compute_binding_point_support<'a>(&'a self) -> bool {
+        self.raw.computeBindingPointSupport != 0
     }
 
     pub fn raw(&self) -> &vks::VkDeviceGeneratedCommandsFeaturesNVX {
@@ -12636,6 +14533,14 @@ impl<'s> From<DeviceGeneratedCommandsFeaturesNvx<'s>> for vks::VkDeviceGenerated
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkDeviceGeneratedCommandsFeaturesNVX> for DeviceGeneratedCommandsFeaturesNvx<'s> {
+    fn from(f: vks::VkDeviceGeneratedCommandsFeaturesNVX) -> DeviceGeneratedCommandsFeaturesNvx<'s> {
+        DeviceGeneratedCommandsFeaturesNvx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceGeneratedCommandsFeaturesNVX`.
 ///
 /// 
@@ -12643,7 +14548,7 @@ impl<'s> From<DeviceGeneratedCommandsFeaturesNvx<'s>> for vks::VkDeviceGenerated
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGeneratedCommandsFeaturesNvxBuilder<'b> {
     raw: vks::VkDeviceGeneratedCommandsFeaturesNVX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -12692,22 +14597,28 @@ impl<'s> DeviceGeneratedCommandsLimitsNvx<'s> {
         DeviceGeneratedCommandsLimitsNvxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn max_indirect_commands_layout_token_count(&self) {
+    pub fn max_indirect_commands_layout_token_count<'a>(&'a self) -> u32 {
+        self.raw.maxIndirectCommandsLayoutTokenCount.into()
     }
 
-    pub fn max_object_entry_counts(&self) {
+    pub fn max_object_entry_counts<'a>(&'a self) -> u32 {
+        self.raw.maxObjectEntryCounts.into()
     }
 
-    pub fn min_sequence_count_buffer_offset_alignment(&self) {
+    pub fn min_sequence_count_buffer_offset_alignment<'a>(&'a self) -> u32 {
+        self.raw.minSequenceCountBufferOffsetAlignment.into()
     }
 
-    pub fn min_sequence_index_buffer_offset_alignment(&self) {
+    pub fn min_sequence_index_buffer_offset_alignment<'a>(&'a self) -> u32 {
+        self.raw.minSequenceIndexBufferOffsetAlignment.into()
     }
 
-    pub fn min_commands_token_buffer_offset_alignment(&self) {
+    pub fn min_commands_token_buffer_offset_alignment<'a>(&'a self) -> u32 {
+        self.raw.minCommandsTokenBufferOffsetAlignment.into()
     }
 
     pub fn raw(&self) -> &vks::VkDeviceGeneratedCommandsLimitsNVX {
@@ -12724,6 +14635,14 @@ impl<'s> From<DeviceGeneratedCommandsLimitsNvx<'s>> for vks::VkDeviceGeneratedCo
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkDeviceGeneratedCommandsLimitsNVX> for DeviceGeneratedCommandsLimitsNvx<'s> {
+    fn from(f: vks::VkDeviceGeneratedCommandsLimitsNVX) -> DeviceGeneratedCommandsLimitsNvx<'s> {
+        DeviceGeneratedCommandsLimitsNvx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceGeneratedCommandsLimitsNVX`.
 ///
 /// 
@@ -12731,7 +14650,7 @@ impl<'s> From<DeviceGeneratedCommandsLimitsNvx<'s>> for vks::VkDeviceGeneratedCo
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGeneratedCommandsLimitsNvxBuilder<'b> {
     raw: vks::VkDeviceGeneratedCommandsLimitsNVX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -12799,13 +14718,16 @@ impl IndirectCommandsTokenNvx {
         IndirectCommandsTokenNvxBuilder::new()
     }
 
-    pub fn token_type(&self) {
+    pub fn token_type<'a>(&'a self) -> IndirectCommandsTokenTypeNvx {
+        self.raw.tokenType.into()
     }
 
-    pub fn buffer(&self) {
+    pub fn buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.buffer
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> u64 {
+        self.raw.offset.into()
     }
 
     pub fn raw(&self) -> &vks::VkIndirectCommandsTokenNVX {
@@ -12818,6 +14740,14 @@ impl IndirectCommandsTokenNvx {
 impl From<IndirectCommandsTokenNvx> for vks::VkIndirectCommandsTokenNVX {
     fn from(f: IndirectCommandsTokenNvx) -> vks::VkIndirectCommandsTokenNVX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl From<vks::VkIndirectCommandsTokenNVX> for IndirectCommandsTokenNvx {
+    fn from(f: vks::VkIndirectCommandsTokenNVX) -> IndirectCommandsTokenNvx {
+        IndirectCommandsTokenNvx { raw: f, }
     }
 }
 
@@ -12879,16 +14809,20 @@ impl IndirectCommandsLayoutTokenNvx {
         IndirectCommandsLayoutTokenNvxBuilder::new()
     }
 
-    pub fn token_type(&self) {
+    pub fn token_type<'a>(&'a self) -> IndirectCommandsTokenTypeNvx {
+        self.raw.tokenType.into()
     }
 
-    pub fn binding_unit(&self) {
+    pub fn binding_unit<'a>(&'a self) -> u32 {
+        self.raw.bindingUnit.into()
     }
 
-    pub fn dynamic_count(&self) {
+    pub fn dynamic_count<'a>(&'a self) -> u32 {
+        self.raw.dynamicCount.into()
     }
 
-    pub fn divisor(&self) {
+    pub fn divisor<'a>(&'a self) -> u32 {
+        self.raw.divisor.into()
     }
 
     pub fn raw(&self) -> &vks::VkIndirectCommandsLayoutTokenNVX {
@@ -12901,6 +14835,14 @@ impl IndirectCommandsLayoutTokenNvx {
 impl From<IndirectCommandsLayoutTokenNvx> for vks::VkIndirectCommandsLayoutTokenNVX {
     fn from(f: IndirectCommandsLayoutTokenNvx) -> vks::VkIndirectCommandsLayoutTokenNVX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl From<vks::VkIndirectCommandsLayoutTokenNVX> for IndirectCommandsLayoutTokenNvx {
+    fn from(f: vks::VkIndirectCommandsLayoutTokenNVX) -> IndirectCommandsLayoutTokenNvx {
+        IndirectCommandsLayoutTokenNvx { raw: f, }
     }
 }
 
@@ -12968,16 +14910,21 @@ impl<'s> IndirectCommandsLayoutCreateInfoNvx<'s> {
         IndirectCommandsLayoutCreateInfoNvxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn pipeline_bind_point(&self) {
+    pub fn pipeline_bind_point<'a>(&'a self) -> PipelineBindPoint {
+        self.raw.pipelineBindPoint.into()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> IndirectCommandsLayoutUsageFlagsNvx {
+        IndirectCommandsLayoutUsageFlagsNvx::from_bits(self.raw.flags)
+            .expect("IndirectCommandsLayoutCreateInfoNvx::flags: error converting flags")
     }
 
-    pub fn tokens(&self) {
+    pub fn tokens<'a>(&'a self) -> &'a [IndirectCommandsLayoutTokenNvx] {
+        unsafe { slice::from_raw_parts(self.raw.pTokens as *const _, self.raw.tokenCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkIndirectCommandsLayoutCreateInfoNVX {
@@ -12994,6 +14941,14 @@ impl<'s> From<IndirectCommandsLayoutCreateInfoNvx<'s>> for vks::VkIndirectComman
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkIndirectCommandsLayoutCreateInfoNVX> for IndirectCommandsLayoutCreateInfoNvx<'s> {
+    fn from(f: vks::VkIndirectCommandsLayoutCreateInfoNVX) -> IndirectCommandsLayoutCreateInfoNvx<'s> {
+        IndirectCommandsLayoutCreateInfoNvx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkIndirectCommandsLayoutCreateInfoNVX`.
 ///
 /// 
@@ -13001,7 +14956,7 @@ impl<'s> From<IndirectCommandsLayoutCreateInfoNvx<'s>> for vks::VkIndirectComman
 #[derive(Debug, Clone, Default)]
 pub struct IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
     raw: vks::VkIndirectCommandsLayoutCreateInfoNVX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -13029,10 +14984,10 @@ impl<'b> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
     }
 
     pub fn tokens<'m, 'a>(mut self, tokens: &'a [IndirectCommandsLayoutTokenNvx]) -> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
-        assert!(self.raw.tokenCount == 0 || self.raw.tokenCount == tokens.len() as u32, 
+        assert!(self.raw.tokenCount == 0 || self.raw.tokenCount == tokens.len() as _, 
             "count inconsistency found when specifying `IndirectCommandsLayoutCreateInfoNvx::tokens`.");
-        self.raw.tokenCount = tokens.len() as u32;
-        self.raw.pTokens = tokens.as_ptr() as *const _;
+        self.raw.tokenCount = tokens.len() as _;
+        self.raw.pTokens = tokens.as_ptr() as *const vks::VkIndirectCommandsLayoutTokenNVX as *const _;
         self
     }
 
@@ -13063,34 +15018,44 @@ impl<'s> CmdProcessCommandsInfoNvx<'s> {
         CmdProcessCommandsInfoNvxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn object_table(&self) {
+    pub fn object_table_handle<'a>(&'a self) -> vks::VkObjectTableNVX {
+        self.raw.objectTable
     }
 
-    pub fn indirect_commands_layout(&self) {
+    pub fn indirect_commands_layout_handle<'a>(&'a self) -> vks::VkIndirectCommandsLayoutNVX {
+        self.raw.indirectCommandsLayout
     }
 
-    pub fn indirect_commands_tokens(&self) {
+    pub fn indirect_commands_tokens<'a>(&'a self) -> &'a [IndirectCommandsTokenNvx] {
+        unsafe { slice::from_raw_parts(self.raw.pIndirectCommandsTokens as *const _, self.raw.indirectCommandsTokenCount as usize) }
     }
 
-    pub fn max_sequences_count(&self) {
+    pub fn max_sequences_count<'a>(&'a self) -> u32 {
+        self.raw.maxSequencesCount.into()
     }
 
-    pub fn target_command_buffer(&self) {
+    pub fn target_command_buffer_handle<'a>(&'a self) -> vks::VkCommandBuffer {
+        self.raw.targetCommandBuffer
     }
 
-    pub fn sequences_count_buffer(&self) {
+    pub fn sequences_count_buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.sequencesCountBuffer
     }
 
-    pub fn sequences_count_offset(&self) {
+    pub fn sequences_count_offset<'a>(&'a self) -> u64 {
+        self.raw.sequencesCountOffset.into()
     }
 
-    pub fn sequences_index_buffer(&self) {
+    pub fn sequences_index_buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.sequencesIndexBuffer
     }
 
-    pub fn sequences_index_offset(&self) {
+    pub fn sequences_index_offset<'a>(&'a self) -> u64 {
+        self.raw.sequencesIndexOffset.into()
     }
 
     pub fn raw(&self) -> &vks::VkCmdProcessCommandsInfoNVX {
@@ -13107,6 +15072,14 @@ impl<'s> From<CmdProcessCommandsInfoNvx<'s>> for vks::VkCmdProcessCommandsInfoNV
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkCmdProcessCommandsInfoNVX> for CmdProcessCommandsInfoNvx<'s> {
+    fn from(f: vks::VkCmdProcessCommandsInfoNVX) -> CmdProcessCommandsInfoNvx<'s> {
+        CmdProcessCommandsInfoNvx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkCmdProcessCommandsInfoNVX`.
 ///
 /// 
@@ -13114,7 +15087,7 @@ impl<'s> From<CmdProcessCommandsInfoNvx<'s>> for vks::VkCmdProcessCommandsInfoNV
 #[derive(Debug, Clone, Default)]
 pub struct CmdProcessCommandsInfoNvxBuilder<'b> {
     raw: vks::VkCmdProcessCommandsInfoNVX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -13142,10 +15115,10 @@ impl<'b> CmdProcessCommandsInfoNvxBuilder<'b> {
     }
 
     pub fn indirect_commands_tokens<'m, 'a>(mut self, indirect_commands_tokens: &'a [IndirectCommandsTokenNvx]) -> CmdProcessCommandsInfoNvxBuilder<'b> {
-        assert!(self.raw.indirectCommandsTokenCount == 0 || self.raw.indirectCommandsTokenCount == indirect_commands_tokens.len() as u32, 
+        assert!(self.raw.indirectCommandsTokenCount == 0 || self.raw.indirectCommandsTokenCount == indirect_commands_tokens.len() as _, 
             "count inconsistency found when specifying `CmdProcessCommandsInfoNvx::indirect_commands_tokens`.");
-        self.raw.indirectCommandsTokenCount = indirect_commands_tokens.len() as u32;
-        self.raw.pIndirectCommandsTokens = indirect_commands_tokens.as_ptr() as *const _;
+        self.raw.indirectCommandsTokenCount = indirect_commands_tokens.len() as _;
+        self.raw.pIndirectCommandsTokens = indirect_commands_tokens.as_ptr() as *const vks::VkIndirectCommandsTokenNVX as *const _;
         self
     }
 
@@ -13206,16 +15179,20 @@ impl<'s> CmdReserveSpaceForCommandsInfoNvx<'s> {
         CmdReserveSpaceForCommandsInfoNvxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn object_table(&self) {
+    pub fn object_table_handle<'a>(&'a self) -> vks::VkObjectTableNVX {
+        self.raw.objectTable
     }
 
-    pub fn indirect_commands_layout(&self) {
+    pub fn indirect_commands_layout_handle<'a>(&'a self) -> vks::VkIndirectCommandsLayoutNVX {
+        self.raw.indirectCommandsLayout
     }
 
-    pub fn max_sequences_count(&self) {
+    pub fn max_sequences_count<'a>(&'a self) -> u32 {
+        self.raw.maxSequencesCount.into()
     }
 
     pub fn raw(&self) -> &vks::VkCmdReserveSpaceForCommandsInfoNVX {
@@ -13232,6 +15209,14 @@ impl<'s> From<CmdReserveSpaceForCommandsInfoNvx<'s>> for vks::VkCmdReserveSpaceF
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkCmdReserveSpaceForCommandsInfoNVX> for CmdReserveSpaceForCommandsInfoNvx<'s> {
+    fn from(f: vks::VkCmdReserveSpaceForCommandsInfoNVX) -> CmdReserveSpaceForCommandsInfoNvx<'s> {
+        CmdReserveSpaceForCommandsInfoNvx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkCmdReserveSpaceForCommandsInfoNVX`.
 ///
 /// 
@@ -13239,7 +15224,7 @@ impl<'s> From<CmdReserveSpaceForCommandsInfoNvx<'s>> for vks::VkCmdReserveSpaceF
 #[derive(Debug, Clone, Default)]
 pub struct CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
     raw: vks::VkCmdReserveSpaceForCommandsInfoNVX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -13298,31 +15283,40 @@ impl<'s> ObjectTableCreateInfoNvx<'s> {
         ObjectTableCreateInfoNvxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn object_entry_types(&self) {
+    pub fn object_entry_types<'a>(&'a self) -> &'a [ObjectEntryTypeNvx] {
+        unsafe { slice::from_raw_parts(self.raw.pObjectEntryTypes as *const _, self.raw.objectCount as usize) }
     }
 
-    pub fn object_entry_counts(&self) {
+    pub fn object_entry_counts<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pObjectEntryCounts as *const _, self.raw.objectCount as usize) }
     }
 
-    pub fn object_entry_usage_flags(&self) {
+    pub fn object_entry_usage_flags<'a>(&'a self) -> ObjectEntryUsageFlagsNvx {
+        unsafe { slice::from_raw_parts(self.raw.pObjectEntryUsageFlags as *const _, self.raw.objectCount as usize) }
     }
 
-    pub fn max_uniform_buffers_per_descriptor(&self) {
+    pub fn max_uniform_buffers_per_descriptor<'a>(&'a self) -> u32 {
+        self.raw.maxUniformBuffersPerDescriptor.into()
     }
 
-    pub fn max_storage_buffers_per_descriptor(&self) {
+    pub fn max_storage_buffers_per_descriptor<'a>(&'a self) -> u32 {
+        self.raw.maxStorageBuffersPerDescriptor.into()
     }
 
-    pub fn max_storage_images_per_descriptor(&self) {
+    pub fn max_storage_images_per_descriptor<'a>(&'a self) -> u32 {
+        self.raw.maxStorageImagesPerDescriptor.into()
     }
 
-    pub fn max_sampled_images_per_descriptor(&self) {
+    pub fn max_sampled_images_per_descriptor<'a>(&'a self) -> u32 {
+        self.raw.maxSampledImagesPerDescriptor.into()
     }
 
-    pub fn max_pipeline_layouts(&self) {
+    pub fn max_pipeline_layouts<'a>(&'a self) -> u32 {
+        self.raw.maxPipelineLayouts.into()
     }
 
     pub fn raw(&self) -> &vks::VkObjectTableCreateInfoNVX {
@@ -13339,6 +15333,14 @@ impl<'s> From<ObjectTableCreateInfoNvx<'s>> for vks::VkObjectTableCreateInfoNVX 
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkObjectTableCreateInfoNVX> for ObjectTableCreateInfoNvx<'s> {
+    fn from(f: vks::VkObjectTableCreateInfoNVX) -> ObjectTableCreateInfoNvx<'s> {
+        ObjectTableCreateInfoNvx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkObjectTableCreateInfoNVX`.
 ///
 /// 
@@ -13346,7 +15348,7 @@ impl<'s> From<ObjectTableCreateInfoNvx<'s>> for vks::VkObjectTableCreateInfoNVX 
 #[derive(Debug, Clone, Default)]
 pub struct ObjectTableCreateInfoNvxBuilder<'b> {
     raw: vks::VkObjectTableCreateInfoNVX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -13364,25 +15366,25 @@ impl<'b> ObjectTableCreateInfoNvxBuilder<'b> {
     }
 
     pub fn object_entry_types<'m, 'a>(mut self, object_entry_types: &'a [ObjectEntryTypeNvx]) -> ObjectTableCreateInfoNvxBuilder<'b> {
-        assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_types.len() as u32, 
+        assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_types.len() as _, 
             "count inconsistency found when specifying `ObjectTableCreateInfoNvx::object_entry_types`.");
-        self.raw.objectCount = object_entry_types.len() as u32;
-        self.raw.pObjectEntryTypes = object_entry_types.as_ptr() as *const _;
+        self.raw.objectCount = object_entry_types.len() as _;
+        self.raw.pObjectEntryTypes = object_entry_types.as_ptr() as *const ObjectEntryTypeNvx as *const _;
         self
     }
 
     pub fn object_entry_counts<'m, 'a>(mut self, object_entry_counts: &'a [u32]) -> ObjectTableCreateInfoNvxBuilder<'b> {
-        assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_counts.len() as u32, 
+        assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_counts.len() as _, 
             "count inconsistency found when specifying `ObjectTableCreateInfoNvx::object_entry_counts`.");
-        self.raw.objectCount = object_entry_counts.len() as u32;
-        self.raw.pObjectEntryCounts = object_entry_counts.as_ptr() as *const _;
+        self.raw.objectCount = object_entry_counts.len() as _;
+        self.raw.pObjectEntryCounts = object_entry_counts.as_ptr() as *const u32 as *const _;
         self
     }
 
     pub fn object_entry_usage_flags<'m>(mut self, object_entry_usage_flags: ObjectEntryUsageFlagsNvx) -> ObjectTableCreateInfoNvxBuilder<'b> {
-        assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_usage_flags.len() as u32, 
+        assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_usage_flags.len() as _, 
             "count inconsistency found when specifying `ObjectTableCreateInfoNvx::object_entry_usage_flags`.");
-        self.raw.objectCount = object_entry_usage_flags.len() as u32;
+        self.raw.objectCount = object_entry_usage_flags.len() as _;
         self.raw.pObjectEntryUsageFlags = object_entry_usage_flags.bits();
         self
     }
@@ -13438,10 +15440,13 @@ impl ObjectTableEntryNvx {
         ObjectTableEntryNvxBuilder::new()
     }
 
-    pub fn type_of(&self) {
+    pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
+        self.raw.type_.into()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> ObjectEntryUsageFlagsNvx {
+        ObjectEntryUsageFlagsNvx::from_bits(self.raw.flags)
+            .expect("ObjectTableEntryNvx::flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkObjectTableEntryNVX {
@@ -13454,6 +15459,14 @@ impl ObjectTableEntryNvx {
 impl From<ObjectTableEntryNvx> for vks::VkObjectTableEntryNVX {
     fn from(f: ObjectTableEntryNvx) -> vks::VkObjectTableEntryNVX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl From<vks::VkObjectTableEntryNVX> for ObjectTableEntryNvx {
+    fn from(f: vks::VkObjectTableEntryNVX) -> ObjectTableEntryNvx {
+        ObjectTableEntryNvx { raw: f, }
     }
 }
 
@@ -13510,13 +15523,17 @@ impl ObjectTablePipelineEntryNvx {
         ObjectTablePipelineEntryNvxBuilder::new()
     }
 
-    pub fn type_of(&self) {
+    pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
+        self.raw.type_.into()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> ObjectEntryUsageFlagsNvx {
+        ObjectEntryUsageFlagsNvx::from_bits(self.raw.flags)
+            .expect("ObjectTablePipelineEntryNvx::flags: error converting flags")
     }
 
-    pub fn pipeline(&self) {
+    pub fn pipeline_handle<'a>(&'a self) -> vks::VkPipeline {
+        self.raw.pipeline
     }
 
     pub fn raw(&self) -> &vks::VkObjectTablePipelineEntryNVX {
@@ -13529,6 +15546,14 @@ impl ObjectTablePipelineEntryNvx {
 impl From<ObjectTablePipelineEntryNvx> for vks::VkObjectTablePipelineEntryNVX {
     fn from(f: ObjectTablePipelineEntryNvx) -> vks::VkObjectTablePipelineEntryNVX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl From<vks::VkObjectTablePipelineEntryNVX> for ObjectTablePipelineEntryNvx {
+    fn from(f: vks::VkObjectTablePipelineEntryNVX) -> ObjectTablePipelineEntryNvx {
+        ObjectTablePipelineEntryNvx { raw: f, }
     }
 }
 
@@ -13590,16 +15615,21 @@ impl ObjectTableDescriptorSetEntryNvx {
         ObjectTableDescriptorSetEntryNvxBuilder::new()
     }
 
-    pub fn type_of(&self) {
+    pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
+        self.raw.type_.into()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> ObjectEntryUsageFlagsNvx {
+        ObjectEntryUsageFlagsNvx::from_bits(self.raw.flags)
+            .expect("ObjectTableDescriptorSetEntryNvx::flags: error converting flags")
     }
 
-    pub fn pipeline_layout(&self) {
+    pub fn pipeline_layout_handle<'a>(&'a self) -> vks::VkPipelineLayout {
+        self.raw.pipelineLayout
     }
 
-    pub fn descriptor_set(&self) {
+    pub fn descriptor_set_handle<'a>(&'a self) -> vks::VkDescriptorSet {
+        self.raw.descriptorSet
     }
 
     pub fn raw(&self) -> &vks::VkObjectTableDescriptorSetEntryNVX {
@@ -13612,6 +15642,14 @@ impl ObjectTableDescriptorSetEntryNvx {
 impl From<ObjectTableDescriptorSetEntryNvx> for vks::VkObjectTableDescriptorSetEntryNVX {
     fn from(f: ObjectTableDescriptorSetEntryNvx) -> vks::VkObjectTableDescriptorSetEntryNVX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl From<vks::VkObjectTableDescriptorSetEntryNVX> for ObjectTableDescriptorSetEntryNvx {
+    fn from(f: vks::VkObjectTableDescriptorSetEntryNVX) -> ObjectTableDescriptorSetEntryNvx {
+        ObjectTableDescriptorSetEntryNvx { raw: f, }
     }
 }
 
@@ -13678,13 +15716,17 @@ impl ObjectTableVertexBufferEntryNvx {
         ObjectTableVertexBufferEntryNvxBuilder::new()
     }
 
-    pub fn type_of(&self) {
+    pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
+        self.raw.type_.into()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> ObjectEntryUsageFlagsNvx {
+        ObjectEntryUsageFlagsNvx::from_bits(self.raw.flags)
+            .expect("ObjectTableVertexBufferEntryNvx::flags: error converting flags")
     }
 
-    pub fn buffer(&self) {
+    pub fn buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.buffer
     }
 
     pub fn raw(&self) -> &vks::VkObjectTableVertexBufferEntryNVX {
@@ -13697,6 +15739,14 @@ impl ObjectTableVertexBufferEntryNvx {
 impl From<ObjectTableVertexBufferEntryNvx> for vks::VkObjectTableVertexBufferEntryNVX {
     fn from(f: ObjectTableVertexBufferEntryNvx) -> vks::VkObjectTableVertexBufferEntryNVX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl From<vks::VkObjectTableVertexBufferEntryNVX> for ObjectTableVertexBufferEntryNvx {
+    fn from(f: vks::VkObjectTableVertexBufferEntryNVX) -> ObjectTableVertexBufferEntryNvx {
+        ObjectTableVertexBufferEntryNvx { raw: f, }
     }
 }
 
@@ -13758,16 +15808,21 @@ impl ObjectTableIndexBufferEntryNvx {
         ObjectTableIndexBufferEntryNvxBuilder::new()
     }
 
-    pub fn type_of(&self) {
+    pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
+        self.raw.type_.into()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> ObjectEntryUsageFlagsNvx {
+        ObjectEntryUsageFlagsNvx::from_bits(self.raw.flags)
+            .expect("ObjectTableIndexBufferEntryNvx::flags: error converting flags")
     }
 
-    pub fn buffer(&self) {
+    pub fn buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.buffer
     }
 
-    pub fn index_type(&self) {
+    pub fn index_type<'a>(&'a self) -> IndexType {
+        self.raw.indexType.into()
     }
 
     pub fn raw(&self) -> &vks::VkObjectTableIndexBufferEntryNVX {
@@ -13780,6 +15835,14 @@ impl ObjectTableIndexBufferEntryNvx {
 impl From<ObjectTableIndexBufferEntryNvx> for vks::VkObjectTableIndexBufferEntryNVX {
     fn from(f: ObjectTableIndexBufferEntryNvx) -> vks::VkObjectTableIndexBufferEntryNVX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl From<vks::VkObjectTableIndexBufferEntryNVX> for ObjectTableIndexBufferEntryNvx {
+    fn from(f: vks::VkObjectTableIndexBufferEntryNVX) -> ObjectTableIndexBufferEntryNvx {
+        ObjectTableIndexBufferEntryNvx { raw: f, }
     }
 }
 
@@ -13846,16 +15909,22 @@ impl ObjectTablePushConstantEntryNvx {
         ObjectTablePushConstantEntryNvxBuilder::new()
     }
 
-    pub fn type_of(&self) {
+    pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
+        self.raw.type_.into()
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> ObjectEntryUsageFlagsNvx {
+        ObjectEntryUsageFlagsNvx::from_bits(self.raw.flags)
+            .expect("ObjectTablePushConstantEntryNvx::flags: error converting flags")
     }
 
-    pub fn pipeline_layout(&self) {
+    pub fn pipeline_layout_handle<'a>(&'a self) -> vks::VkPipelineLayout {
+        self.raw.pipelineLayout
     }
 
-    pub fn stage_flags(&self) {
+    pub fn stage_flags<'a>(&'a self) -> ShaderStageFlags {
+        ShaderStageFlags::from_bits(self.raw.stageFlags)
+            .expect("ObjectTablePushConstantEntryNvx::stage_flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkObjectTablePushConstantEntryNVX {
@@ -13868,6 +15937,14 @@ impl ObjectTablePushConstantEntryNvx {
 impl From<ObjectTablePushConstantEntryNvx> for vks::VkObjectTablePushConstantEntryNVX {
     fn from(f: ObjectTablePushConstantEntryNvx) -> vks::VkObjectTablePushConstantEntryNVX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl From<vks::VkObjectTablePushConstantEntryNVX> for ObjectTablePushConstantEntryNvx {
+    fn from(f: vks::VkObjectTablePushConstantEntryNVX) -> ObjectTablePushConstantEntryNvx {
+        ObjectTablePushConstantEntryNvx { raw: f, }
     }
 }
 
@@ -13933,10 +16010,12 @@ impl<'s> PhysicalDeviceFeatures2Khr<'s> {
         PhysicalDeviceFeatures2KhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn features(&self) {
+    pub fn features<'a>(&'a self) -> PhysicalDeviceFeatures {
+        self.raw.features.into()
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceFeatures2KHR {
@@ -13952,13 +16031,20 @@ impl<'s> From<PhysicalDeviceFeatures2Khr<'s>> for vks::VkPhysicalDeviceFeatures2
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceFeatures2KHR> for PhysicalDeviceFeatures2Khr<'s> {
+    fn from(f: vks::VkPhysicalDeviceFeatures2KHR) -> PhysicalDeviceFeatures2Khr<'s> {
+        PhysicalDeviceFeatures2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceFeatures2KHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceFeatures2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceFeatures2KHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDeviceFeatures2KhrBuilder<'b> {
@@ -14000,10 +16086,12 @@ pub struct PhysicalDeviceProperties2Khr<'s> {
 }
 
 impl<'s> PhysicalDeviceProperties2Khr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn properties(&self) {
+    pub fn properties<'a>(&'a self) -> PhysicalDeviceProperties {
+        self.raw.properties.into()
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceProperties2KHR {
@@ -14019,6 +16107,13 @@ impl<'s> From<PhysicalDeviceProperties2Khr<'s>> for vks::VkPhysicalDevicePropert
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceProperties2KHR> for PhysicalDeviceProperties2Khr<'s> {
+    fn from(f: vks::VkPhysicalDeviceProperties2KHR) -> PhysicalDeviceProperties2Khr<'s> {
+        PhysicalDeviceProperties2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A `VkFormatProperties2KHR`.
 ///
 /// 
@@ -14030,10 +16125,12 @@ pub struct FormatProperties2Khr<'s> {
 }
 
 impl<'s> FormatProperties2Khr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn format_properties(&self) {
+    pub fn format_properties<'a>(&'a self) -> FormatProperties {
+        self.raw.formatProperties.into()
     }
 
     pub fn raw(&self) -> &vks::VkFormatProperties2KHR {
@@ -14049,6 +16146,13 @@ impl<'s> From<FormatProperties2Khr<'s>> for vks::VkFormatProperties2KHR {
 }
 
 
+impl<'s> From<vks::VkFormatProperties2KHR> for FormatProperties2Khr<'s> {
+    fn from(f: vks::VkFormatProperties2KHR) -> FormatProperties2Khr<'s> {
+        FormatProperties2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A `VkImageFormatProperties2KHR`.
 ///
 /// 
@@ -14060,10 +16164,12 @@ pub struct ImageFormatProperties2Khr<'s> {
 }
 
 impl<'s> ImageFormatProperties2Khr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn image_format_properties(&self) {
+    pub fn image_format_properties<'a>(&'a self) -> ImageFormatProperties {
+        self.raw.imageFormatProperties.into()
     }
 
     pub fn raw(&self) -> &vks::VkImageFormatProperties2KHR {
@@ -14075,6 +16181,13 @@ impl<'s> ImageFormatProperties2Khr<'s> {
 impl<'s> From<ImageFormatProperties2Khr<'s>> for vks::VkImageFormatProperties2KHR {
     fn from(f: ImageFormatProperties2Khr<'s>) -> vks::VkImageFormatProperties2KHR {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkImageFormatProperties2KHR> for ImageFormatProperties2Khr<'s> {
+    fn from(f: vks::VkImageFormatProperties2KHR) -> ImageFormatProperties2Khr<'s> {
+        ImageFormatProperties2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -14094,22 +16207,30 @@ impl<'s> PhysicalDeviceImageFormatInfo2Khr<'s> {
         PhysicalDeviceImageFormatInfo2KhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn format(&self) {
+    pub fn format<'a>(&'a self) -> Format {
+        self.raw.format.into()
     }
 
-    pub fn type_of(&self) {
+    pub fn type_of<'a>(&'a self) -> ImageType {
+        self.raw.type_.into()
     }
 
-    pub fn tiling(&self) {
+    pub fn tiling<'a>(&'a self) -> ImageTiling {
+        self.raw.tiling.into()
     }
 
-    pub fn usage(&self) {
+    pub fn usage<'a>(&'a self) -> ImageUsageFlags {
+        ImageUsageFlags::from_bits(self.raw.usage)
+            .expect("PhysicalDeviceImageFormatInfo2Khr::usage: error converting flags")
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> ImageCreateFlags {
+        ImageCreateFlags::from_bits(self.raw.flags)
+            .expect("PhysicalDeviceImageFormatInfo2Khr::flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceImageFormatInfo2KHR {
@@ -14125,13 +16246,20 @@ impl<'s> From<PhysicalDeviceImageFormatInfo2Khr<'s>> for vks::VkPhysicalDeviceIm
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceImageFormatInfo2KHR> for PhysicalDeviceImageFormatInfo2Khr<'s> {
+    fn from(f: vks::VkPhysicalDeviceImageFormatInfo2KHR) -> PhysicalDeviceImageFormatInfo2Khr<'s> {
+        PhysicalDeviceImageFormatInfo2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceImageFormatInfo2KHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceImageFormatInfo2KHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDeviceImageFormatInfo2KhrBuilder<'b> {
@@ -14193,10 +16321,12 @@ pub struct QueueFamilyProperties2Khr<'s> {
 }
 
 impl<'s> QueueFamilyProperties2Khr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn queue_family_properties(&self) {
+    pub fn queue_family_properties<'a>(&'a self) -> QueueFamilyProperties {
+        self.raw.queueFamilyProperties.into()
     }
 
     pub fn raw(&self) -> &vks::VkQueueFamilyProperties2KHR {
@@ -14212,6 +16342,13 @@ impl<'s> From<QueueFamilyProperties2Khr<'s>> for vks::VkQueueFamilyProperties2KH
 }
 
 
+impl<'s> From<vks::VkQueueFamilyProperties2KHR> for QueueFamilyProperties2Khr<'s> {
+    fn from(f: vks::VkQueueFamilyProperties2KHR) -> QueueFamilyProperties2Khr<'s> {
+        QueueFamilyProperties2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A `VkPhysicalDeviceMemoryProperties2KHR`.
 ///
 /// 
@@ -14223,10 +16360,12 @@ pub struct PhysicalDeviceMemoryProperties2Khr<'s> {
 }
 
 impl<'s> PhysicalDeviceMemoryProperties2Khr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn memory_properties(&self) {
+    pub fn memory_properties<'a>(&'a self) -> PhysicalDeviceMemoryProperties {
+        self.raw.memoryProperties.into()
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceMemoryProperties2KHR {
@@ -14242,6 +16381,13 @@ impl<'s> From<PhysicalDeviceMemoryProperties2Khr<'s>> for vks::VkPhysicalDeviceM
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceMemoryProperties2KHR> for PhysicalDeviceMemoryProperties2Khr<'s> {
+    fn from(f: vks::VkPhysicalDeviceMemoryProperties2KHR) -> PhysicalDeviceMemoryProperties2Khr<'s> {
+        PhysicalDeviceMemoryProperties2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A `VkSparseImageFormatProperties2KHR`.
 ///
 /// 
@@ -14253,10 +16399,12 @@ pub struct SparseImageFormatProperties2Khr<'s> {
 }
 
 impl<'s> SparseImageFormatProperties2Khr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn properties(&self) {
+    pub fn properties<'a>(&'a self) -> SparseImageFormatProperties {
+        self.raw.properties.into()
     }
 
     pub fn raw(&self) -> &vks::VkSparseImageFormatProperties2KHR {
@@ -14268,6 +16416,13 @@ impl<'s> SparseImageFormatProperties2Khr<'s> {
 impl<'s> From<SparseImageFormatProperties2Khr<'s>> for vks::VkSparseImageFormatProperties2KHR {
     fn from(f: SparseImageFormatProperties2Khr<'s>) -> vks::VkSparseImageFormatProperties2KHR {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkSparseImageFormatProperties2KHR> for SparseImageFormatProperties2Khr<'s> {
+    fn from(f: vks::VkSparseImageFormatProperties2KHR) -> SparseImageFormatProperties2Khr<'s> {
+        SparseImageFormatProperties2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -14287,22 +16442,30 @@ impl<'s> PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
         PhysicalDeviceSparseImageFormatInfo2KhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn format(&self) {
+    pub fn format<'a>(&'a self) -> Format {
+        self.raw.format.into()
     }
 
-    pub fn type_of(&self) {
+    pub fn type_of<'a>(&'a self) -> ImageType {
+        self.raw.type_.into()
     }
 
-    pub fn samples(&self) {
+    pub fn samples<'a>(&'a self) -> SampleCountFlags {
+        SampleCountFlags::from_bits(self.raw.samples)
+            .expect("PhysicalDeviceSparseImageFormatInfo2Khr::samples: error converting flags")
     }
 
-    pub fn usage(&self) {
+    pub fn usage<'a>(&'a self) -> ImageUsageFlags {
+        ImageUsageFlags::from_bits(self.raw.usage)
+            .expect("PhysicalDeviceSparseImageFormatInfo2Khr::usage: error converting flags")
     }
 
-    pub fn tiling(&self) {
+    pub fn tiling<'a>(&'a self) -> ImageTiling {
+        self.raw.tiling.into()
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceSparseImageFormatInfo2KHR {
@@ -14318,13 +16481,20 @@ impl<'s> From<PhysicalDeviceSparseImageFormatInfo2Khr<'s>> for vks::VkPhysicalDe
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceSparseImageFormatInfo2KHR> for PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
+    fn from(f: vks::VkPhysicalDeviceSparseImageFormatInfo2KHR) -> PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
+        PhysicalDeviceSparseImageFormatInfo2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceSparseImageFormatInfo2KHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceSparseImageFormatInfo2KHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDeviceSparseImageFormatInfo2KhrBuilder<'b> {
@@ -14390,10 +16560,12 @@ impl<'s> PhysicalDevicePushDescriptorPropertiesKhr<'s> {
         PhysicalDevicePushDescriptorPropertiesKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn max_push_descriptors(&self) {
+    pub fn max_push_descriptors<'a>(&'a self) -> u32 {
+        self.raw.maxPushDescriptors.into()
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDevicePushDescriptorPropertiesKHR {
@@ -14409,13 +16581,20 @@ impl<'s> From<PhysicalDevicePushDescriptorPropertiesKhr<'s>> for vks::VkPhysical
 }
 
 
+impl<'s> From<vks::VkPhysicalDevicePushDescriptorPropertiesKHR> for PhysicalDevicePushDescriptorPropertiesKhr<'s> {
+    fn from(f: vks::VkPhysicalDevicePushDescriptorPropertiesKHR) -> PhysicalDevicePushDescriptorPropertiesKhr<'s> {
+        PhysicalDevicePushDescriptorPropertiesKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDevicePushDescriptorPropertiesKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDevicePushDescriptorPropertiesKhrBuilder<'b> {
     raw: vks::VkPhysicalDevicePushDescriptorPropertiesKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDevicePushDescriptorPropertiesKhrBuilder<'b> {
@@ -14461,13 +16640,12 @@ impl<'s> PresentRegionsKhr<'s> {
         PresentRegionsKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn swapchain_count(&self) {
-    }
-
-    pub fn regions(&self) {
+    pub fn regions<'a>(&'a self) -> &'a [PresentRegionKhr] {
+        unsafe { slice::from_raw_parts(self.raw.pRegions as *const _, self.raw.swapchainCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPresentRegionsKHR {
@@ -14483,13 +16661,20 @@ impl<'s> From<PresentRegionsKhr<'s>> for vks::VkPresentRegionsKHR {
 }
 
 
+impl<'s> From<vks::VkPresentRegionsKHR> for PresentRegionsKhr<'s> {
+    fn from(f: vks::VkPresentRegionsKHR) -> PresentRegionsKhr<'s> {
+        PresentRegionsKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPresentRegionsKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentRegionsKhrBuilder<'b> {
     raw: vks::VkPresentRegionsKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PresentRegionsKhrBuilder<'b> {
@@ -14505,13 +16690,11 @@ impl<'b> PresentRegionsKhrBuilder<'b> {
         self
     }
 
-    pub fn swapchain_count<'m>(mut self, swapchain_count: u32) -> PresentRegionsKhrBuilder<'b> {
-        self.raw.swapchainCount = swapchain_count.into();
-        self
-    }
-
     pub fn regions<'m, 'a>(mut self, regions: &'a [PresentRegionKhr]) -> PresentRegionsKhrBuilder<'b> {
-        self.raw.pRegions = regions.as_ptr() as *const _;
+        assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == regions.len() as _, 
+            "count inconsistency found when specifying `PresentRegionsKhr::regions`.");
+        self.raw.swapchainCount = regions.len() as _;
+        self.raw.pRegions = regions.as_ptr() as *const vks::VkPresentRegionKHR as *const _;
         self
     }
 
@@ -14540,7 +16723,8 @@ impl<'s> PresentRegionKhr<'s> {
         PresentRegionKhrBuilder::new()
     }
 
-    pub fn rectangles(&self) {
+    pub fn rectangles<'a>(&'a self) -> &'a [RectLayerKhr] {
+        unsafe { slice::from_raw_parts(self.raw.pRectangles as *const _, self.raw.rectangleCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPresentRegionKHR {
@@ -14556,13 +16740,20 @@ impl<'s> From<PresentRegionKhr<'s>> for vks::VkPresentRegionKHR {
 }
 
 
+impl<'s> From<vks::VkPresentRegionKHR> for PresentRegionKhr<'s> {
+    fn from(f: vks::VkPresentRegionKHR) -> PresentRegionKhr<'s> {
+        PresentRegionKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPresentRegionKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentRegionKhrBuilder<'b> {
     raw: vks::VkPresentRegionKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PresentRegionKhrBuilder<'b> {
@@ -14574,10 +16765,10 @@ impl<'b> PresentRegionKhrBuilder<'b> {
     }
 
     pub fn rectangles<'m, 'a>(mut self, rectangles: &'a [RectLayerKhr]) -> PresentRegionKhrBuilder<'b> {
-        assert!(self.raw.rectangleCount == 0 || self.raw.rectangleCount == rectangles.len() as u32, 
+        assert!(self.raw.rectangleCount == 0 || self.raw.rectangleCount == rectangles.len() as _, 
             "count inconsistency found when specifying `PresentRegionKhr::rectangles`.");
-        self.raw.rectangleCount = rectangles.len() as u32;
-        self.raw.pRectangles = rectangles.as_ptr() as *const _;
+        self.raw.rectangleCount = rectangles.len() as _;
+        self.raw.pRectangles = rectangles.as_ptr() as *const vks::VkRectLayerKHR as *const _;
         self
     }
 
@@ -14605,13 +16796,16 @@ impl RectLayerKhr {
         RectLayerKhrBuilder::new()
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> Offset2d {
+        self.raw.offset.into()
     }
 
-    pub fn extent(&self) {
+    pub fn extent<'a>(&'a self) -> Extent2d {
+        self.raw.extent.into()
     }
 
-    pub fn layer(&self) {
+    pub fn layer<'a>(&'a self) -> u32 {
+        self.raw.layer.into()
     }
 
     pub fn raw(&self) -> &vks::VkRectLayerKHR {
@@ -14623,6 +16817,13 @@ impl RectLayerKhr {
 impl From<RectLayerKhr> for vks::VkRectLayerKHR {
     fn from(f: RectLayerKhr) -> vks::VkRectLayerKHR {
         f.raw
+    }
+}
+
+
+impl From<vks::VkRectLayerKHR> for RectLayerKhr {
+    fn from(f: vks::VkRectLayerKHR) -> RectLayerKhr {
+        RectLayerKhr { raw: f, }
     }
 }
 
@@ -14681,13 +16882,16 @@ impl<'s> PhysicalDeviceVariablePointerFeaturesKhr<'s> {
         PhysicalDeviceVariablePointerFeaturesKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn variable_pointers_storage_buffer(&self) {
+    pub fn variable_pointers_storage_buffer<'a>(&'a self) -> bool {
+        self.raw.variablePointersStorageBuffer != 0
     }
 
-    pub fn variable_pointers(&self) {
+    pub fn variable_pointers<'a>(&'a self) -> bool {
+        self.raw.variablePointers != 0
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceVariablePointerFeaturesKHR {
@@ -14703,13 +16907,20 @@ impl<'s> From<PhysicalDeviceVariablePointerFeaturesKhr<'s>> for vks::VkPhysicalD
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceVariablePointerFeaturesKHR> for PhysicalDeviceVariablePointerFeaturesKhr<'s> {
+    fn from(f: vks::VkPhysicalDeviceVariablePointerFeaturesKHR) -> PhysicalDeviceVariablePointerFeaturesKhr<'s> {
+        PhysicalDeviceVariablePointerFeaturesKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceVariablePointerFeaturesKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceVariablePointerFeaturesKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDeviceVariablePointerFeaturesKhrBuilder<'b> {
@@ -14755,13 +16966,19 @@ pub struct ExternalMemoryPropertiesKhr {
 }
 
 impl ExternalMemoryPropertiesKhr {
-    pub fn external_memory_features(&self) {
+    pub fn external_memory_features<'a>(&'a self) -> ExternalMemoryFeatureFlagsKhr {
+        ExternalMemoryFeatureFlagsKhr::from_bits(self.raw.externalMemoryFeatures)
+            .expect("ExternalMemoryPropertiesKhr::external_memory_features: error converting flags")
     }
 
-    pub fn export_from_imported_handle_types(&self) {
+    pub fn export_from_imported_handle_types<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsKhr {
+        ExternalMemoryHandleTypeFlagsKhr::from_bits(self.raw.exportFromImportedHandleTypes)
+            .expect("ExternalMemoryPropertiesKhr::export_from_imported_handle_types: error converting flags")
     }
 
-    pub fn compatible_handle_types(&self) {
+    pub fn compatible_handle_types<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsKhr {
+        ExternalMemoryHandleTypeFlagsKhr::from_bits(self.raw.compatibleHandleTypes)
+            .expect("ExternalMemoryPropertiesKhr::compatible_handle_types: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkExternalMemoryPropertiesKHR {
@@ -14773,6 +16990,13 @@ impl ExternalMemoryPropertiesKhr {
 impl From<ExternalMemoryPropertiesKhr> for vks::VkExternalMemoryPropertiesKHR {
     fn from(f: ExternalMemoryPropertiesKhr) -> vks::VkExternalMemoryPropertiesKHR {
         f.raw
+    }
+}
+
+
+impl From<vks::VkExternalMemoryPropertiesKHR> for ExternalMemoryPropertiesKhr {
+    fn from(f: vks::VkExternalMemoryPropertiesKHR) -> ExternalMemoryPropertiesKhr {
+        ExternalMemoryPropertiesKhr { raw: f, }
     }
 }
 
@@ -14792,10 +17016,13 @@ impl<'s> PhysicalDeviceExternalImageFormatInfoKhr<'s> {
         PhysicalDeviceExternalImageFormatInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsKhr {
+        ExternalMemoryHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("PhysicalDeviceExternalImageFormatInfoKhr::handle_type: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceExternalImageFormatInfoKHR {
@@ -14811,13 +17038,20 @@ impl<'s> From<PhysicalDeviceExternalImageFormatInfoKhr<'s>> for vks::VkPhysicalD
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceExternalImageFormatInfoKHR> for PhysicalDeviceExternalImageFormatInfoKhr<'s> {
+    fn from(f: vks::VkPhysicalDeviceExternalImageFormatInfoKHR) -> PhysicalDeviceExternalImageFormatInfoKhr<'s> {
+        PhysicalDeviceExternalImageFormatInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceExternalImageFormatInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalImageFormatInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalImageFormatInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDeviceExternalImageFormatInfoKhrBuilder<'b> {
@@ -14859,10 +17093,12 @@ pub struct ExternalImageFormatPropertiesKhr<'s> {
 }
 
 impl<'s> ExternalImageFormatPropertiesKhr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn external_memory_properties(&self) {
+    pub fn external_memory_properties<'a>(&'a self) -> ExternalMemoryPropertiesKhr {
+        self.raw.externalMemoryProperties.into()
     }
 
     pub fn raw(&self) -> &vks::VkExternalImageFormatPropertiesKHR {
@@ -14874,6 +17110,13 @@ impl<'s> ExternalImageFormatPropertiesKhr<'s> {
 impl<'s> From<ExternalImageFormatPropertiesKhr<'s>> for vks::VkExternalImageFormatPropertiesKHR {
     fn from(f: ExternalImageFormatPropertiesKhr<'s>) -> vks::VkExternalImageFormatPropertiesKHR {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkExternalImageFormatPropertiesKHR> for ExternalImageFormatPropertiesKhr<'s> {
+    fn from(f: vks::VkExternalImageFormatPropertiesKHR) -> ExternalImageFormatPropertiesKhr<'s> {
+        ExternalImageFormatPropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -14893,16 +17136,23 @@ impl<'s> PhysicalDeviceExternalBufferInfoKhr<'s> {
         PhysicalDeviceExternalBufferInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> BufferCreateFlags {
+        BufferCreateFlags::from_bits(self.raw.flags)
+            .expect("PhysicalDeviceExternalBufferInfoKhr::flags: error converting flags")
     }
 
-    pub fn usage(&self) {
+    pub fn usage<'a>(&'a self) -> BufferUsageFlags {
+        BufferUsageFlags::from_bits(self.raw.usage)
+            .expect("PhysicalDeviceExternalBufferInfoKhr::usage: error converting flags")
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsKhr {
+        ExternalMemoryHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("PhysicalDeviceExternalBufferInfoKhr::handle_type: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceExternalBufferInfoKHR {
@@ -14918,13 +17168,20 @@ impl<'s> From<PhysicalDeviceExternalBufferInfoKhr<'s>> for vks::VkPhysicalDevice
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceExternalBufferInfoKHR> for PhysicalDeviceExternalBufferInfoKhr<'s> {
+    fn from(f: vks::VkPhysicalDeviceExternalBufferInfoKHR) -> PhysicalDeviceExternalBufferInfoKhr<'s> {
+        PhysicalDeviceExternalBufferInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceExternalBufferInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalBufferInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDeviceExternalBufferInfoKhrBuilder<'b> {
@@ -14976,10 +17233,12 @@ pub struct ExternalBufferPropertiesKhr<'s> {
 }
 
 impl<'s> ExternalBufferPropertiesKhr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn external_memory_properties(&self) {
+    pub fn external_memory_properties<'a>(&'a self) -> ExternalMemoryPropertiesKhr {
+        self.raw.externalMemoryProperties.into()
     }
 
     pub fn raw(&self) -> &vks::VkExternalBufferPropertiesKHR {
@@ -14995,6 +17254,13 @@ impl<'s> From<ExternalBufferPropertiesKhr<'s>> for vks::VkExternalBufferProperti
 }
 
 
+impl<'s> From<vks::VkExternalBufferPropertiesKHR> for ExternalBufferPropertiesKhr<'s> {
+    fn from(f: vks::VkExternalBufferPropertiesKHR) -> ExternalBufferPropertiesKhr<'s> {
+        ExternalBufferPropertiesKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A `VkPhysicalDeviceIDPropertiesKHR`.
 ///
 /// 
@@ -15006,22 +17272,28 @@ pub struct PhysicalDeviceIDPropertiesKhr<'s> {
 }
 
 impl<'s> PhysicalDeviceIDPropertiesKhr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn device_uu_id(&self) {
+    pub fn device_uu_id<'a>(&'a self) -> &[u8] {
+        unsafe { slice::from_raw_parts(&self.raw.deviceUUID as *const _, vks::VK_UUID_SIZE as usize) }
     }
 
-    pub fn driver_uu_id(&self) {
+    pub fn driver_uu_id<'a>(&'a self) -> &[u8] {
+        unsafe { slice::from_raw_parts(&self.raw.driverUUID as *const _, vks::VK_UUID_SIZE as usize) }
     }
 
-    pub fn device_lu_id(&self) {
+    pub fn device_lu_id<'a>(&'a self) -> &[u8] {
+        unsafe { slice::from_raw_parts(&self.raw.deviceLUID as *const _, vks::VK_LUID_SIZE_KHR as usize) }
     }
 
-    pub fn device_node_mask(&self) {
+    pub fn device_node_mask<'a>(&'a self) -> u32 {
+        self.raw.deviceNodeMask.into()
     }
 
-    pub fn device_lu_id_valid(&self) {
+    pub fn device_lu_id_valid<'a>(&'a self) -> bool {
+        self.raw.deviceLUIDValid != 0
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceIDPropertiesKHR {
@@ -15033,6 +17305,13 @@ impl<'s> PhysicalDeviceIDPropertiesKhr<'s> {
 impl<'s> From<PhysicalDeviceIDPropertiesKhr<'s>> for vks::VkPhysicalDeviceIDPropertiesKHR {
     fn from(f: PhysicalDeviceIDPropertiesKhr<'s>) -> vks::VkPhysicalDeviceIDPropertiesKHR {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkPhysicalDeviceIDPropertiesKHR> for PhysicalDeviceIDPropertiesKhr<'s> {
+    fn from(f: vks::VkPhysicalDeviceIDPropertiesKHR) -> PhysicalDeviceIDPropertiesKhr<'s> {
+        PhysicalDeviceIDPropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -15052,10 +17331,13 @@ impl<'s> ExternalMemoryImageCreateInfoKhr<'s> {
         ExternalMemoryImageCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_types(&self) {
+    pub fn handle_types<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsKhr {
+        ExternalMemoryHandleTypeFlagsKhr::from_bits(self.raw.handleTypes)
+            .expect("ExternalMemoryImageCreateInfoKhr::handle_types: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkExternalMemoryImageCreateInfoKHR {
@@ -15071,13 +17353,20 @@ impl<'s> From<ExternalMemoryImageCreateInfoKhr<'s>> for vks::VkExternalMemoryIma
 }
 
 
+impl<'s> From<vks::VkExternalMemoryImageCreateInfoKHR> for ExternalMemoryImageCreateInfoKhr<'s> {
+    fn from(f: vks::VkExternalMemoryImageCreateInfoKHR) -> ExternalMemoryImageCreateInfoKhr<'s> {
+        ExternalMemoryImageCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkExternalMemoryImageCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ExternalMemoryImageCreateInfoKhrBuilder<'b> {
     raw: vks::VkExternalMemoryImageCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ExternalMemoryImageCreateInfoKhrBuilder<'b> {
@@ -15123,10 +17412,13 @@ impl<'s> ExternalMemoryBufferCreateInfoKhr<'s> {
         ExternalMemoryBufferCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_types(&self) {
+    pub fn handle_types<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsKhr {
+        ExternalMemoryHandleTypeFlagsKhr::from_bits(self.raw.handleTypes)
+            .expect("ExternalMemoryBufferCreateInfoKhr::handle_types: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkExternalMemoryBufferCreateInfoKHR {
@@ -15142,13 +17434,20 @@ impl<'s> From<ExternalMemoryBufferCreateInfoKhr<'s>> for vks::VkExternalMemoryBu
 }
 
 
+impl<'s> From<vks::VkExternalMemoryBufferCreateInfoKHR> for ExternalMemoryBufferCreateInfoKhr<'s> {
+    fn from(f: vks::VkExternalMemoryBufferCreateInfoKHR) -> ExternalMemoryBufferCreateInfoKhr<'s> {
+        ExternalMemoryBufferCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkExternalMemoryBufferCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ExternalMemoryBufferCreateInfoKhrBuilder<'b> {
     raw: vks::VkExternalMemoryBufferCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ExternalMemoryBufferCreateInfoKhrBuilder<'b> {
@@ -15194,10 +17493,13 @@ impl<'s> ExportMemoryAllocateInfoKhr<'s> {
         ExportMemoryAllocateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_types(&self) {
+    pub fn handle_types<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsKhr {
+        ExternalMemoryHandleTypeFlagsKhr::from_bits(self.raw.handleTypes)
+            .expect("ExportMemoryAllocateInfoKhr::handle_types: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkExportMemoryAllocateInfoKHR {
@@ -15213,13 +17515,20 @@ impl<'s> From<ExportMemoryAllocateInfoKhr<'s>> for vks::VkExportMemoryAllocateIn
 }
 
 
+impl<'s> From<vks::VkExportMemoryAllocateInfoKHR> for ExportMemoryAllocateInfoKhr<'s> {
+    fn from(f: vks::VkExportMemoryAllocateInfoKHR) -> ExportMemoryAllocateInfoKhr<'s> {
+        ExportMemoryAllocateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkExportMemoryAllocateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryAllocateInfoKhrBuilder<'b> {
     raw: vks::VkExportMemoryAllocateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ExportMemoryAllocateInfoKhrBuilder<'b> {
@@ -15265,16 +17574,21 @@ impl<'s> ImportMemoryWin32HandleInfoKhr<'s> {
         ImportMemoryWin32HandleInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsKhr {
+        ExternalMemoryHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("ImportMemoryWin32HandleInfoKhr::handle_type: error converting flags")
     }
 
-    pub fn handle(&self) {
+    pub fn handle<'a>(&'a self) -> HANDLE {
+        self.raw.handle.into()
     }
 
-    pub fn name(&self) {
+    pub fn name<'a>(&'a self) -> LPCWSTR {
+        self.raw.name.into()
     }
 
     pub fn raw(&self) -> &vks::VkImportMemoryWin32HandleInfoKHR {
@@ -15290,13 +17604,20 @@ impl<'s> From<ImportMemoryWin32HandleInfoKhr<'s>> for vks::VkImportMemoryWin32Ha
 }
 
 
+impl<'s> From<vks::VkImportMemoryWin32HandleInfoKHR> for ImportMemoryWin32HandleInfoKhr<'s> {
+    fn from(f: vks::VkImportMemoryWin32HandleInfoKHR) -> ImportMemoryWin32HandleInfoKhr<'s> {
+        ImportMemoryWin32HandleInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImportMemoryWin32HandleInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportMemoryWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkImportMemoryWin32HandleInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImportMemoryWin32HandleInfoKhrBuilder<'b> {
@@ -15352,16 +17673,20 @@ impl<'s> ExportMemoryWin32HandleInfoKhr<'s> {
         ExportMemoryWin32HandleInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn attributes(&self) {
+    pub fn attributes<'a>(&'a self) -> &'a SECURITY_ATTRIBUTES {
+        unsafe { &*(self.raw.pAttributes as *const _) }
     }
 
-    pub fn dw_access(&self) {
+    pub fn dw_access<'a>(&'a self) -> DWORD {
+        self.raw.dwAccess.into()
     }
 
-    pub fn name(&self) {
+    pub fn name<'a>(&'a self) -> LPCWSTR {
+        self.raw.name.into()
     }
 
     pub fn raw(&self) -> &vks::VkExportMemoryWin32HandleInfoKHR {
@@ -15377,13 +17702,20 @@ impl<'s> From<ExportMemoryWin32HandleInfoKhr<'s>> for vks::VkExportMemoryWin32Ha
 }
 
 
+impl<'s> From<vks::VkExportMemoryWin32HandleInfoKHR> for ExportMemoryWin32HandleInfoKhr<'s> {
+    fn from(f: vks::VkExportMemoryWin32HandleInfoKHR) -> ExportMemoryWin32HandleInfoKhr<'s> {
+        ExportMemoryWin32HandleInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkExportMemoryWin32HandleInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportMemoryWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkExportMemoryWin32HandleInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ExportMemoryWin32HandleInfoKhrBuilder<'b> {
@@ -15399,8 +17731,8 @@ impl<'b> ExportMemoryWin32HandleInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn attributes<'m, 'a>(mut self, attributes: &'a [SECURITY_ATTRIBUTES]) -> ExportMemoryWin32HandleInfoKhrBuilder<'b> {
-        self.raw.pAttributes = attributes.as_ptr() as *const _;
+    pub fn attributes<'m, 'a>(mut self, attributes: &'a SECURITY_ATTRIBUTES) -> ExportMemoryWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pAttributes = attributes;
         self
     }
 
@@ -15435,10 +17767,12 @@ pub struct MemoryWin32HandlePropertiesKhr<'s> {
 }
 
 impl<'s> MemoryWin32HandlePropertiesKhr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn memory_type_bits(&self) {
+    pub fn memory_type_bits<'a>(&'a self) -> u32 {
+        self.raw.memoryTypeBits.into()
     }
 
     pub fn raw(&self) -> &vks::VkMemoryWin32HandlePropertiesKHR {
@@ -15450,6 +17784,13 @@ impl<'s> MemoryWin32HandlePropertiesKhr<'s> {
 impl<'s> From<MemoryWin32HandlePropertiesKhr<'s>> for vks::VkMemoryWin32HandlePropertiesKHR {
     fn from(f: MemoryWin32HandlePropertiesKhr<'s>) -> vks::VkMemoryWin32HandlePropertiesKHR {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkMemoryWin32HandlePropertiesKHR> for MemoryWin32HandlePropertiesKhr<'s> {
+    fn from(f: vks::VkMemoryWin32HandlePropertiesKHR) -> MemoryWin32HandlePropertiesKhr<'s> {
+        MemoryWin32HandlePropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -15469,13 +17810,17 @@ impl<'s> MemoryGetWin32HandleInfoKhr<'s> {
         MemoryGetWin32HandleInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn memory(&self) {
+    pub fn memory_handle<'a>(&'a self) -> vks::VkDeviceMemory {
+        self.raw.memory
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsKhr {
+        ExternalMemoryHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("MemoryGetWin32HandleInfoKhr::handle_type: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkMemoryGetWin32HandleInfoKHR {
@@ -15491,13 +17836,20 @@ impl<'s> From<MemoryGetWin32HandleInfoKhr<'s>> for vks::VkMemoryGetWin32HandleIn
 }
 
 
+impl<'s> From<vks::VkMemoryGetWin32HandleInfoKHR> for MemoryGetWin32HandleInfoKhr<'s> {
+    fn from(f: vks::VkMemoryGetWin32HandleInfoKHR) -> MemoryGetWin32HandleInfoKhr<'s> {
+        MemoryGetWin32HandleInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkMemoryGetWin32HandleInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryGetWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkMemoryGetWin32HandleInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> MemoryGetWin32HandleInfoKhrBuilder<'b> {
@@ -15548,13 +17900,17 @@ impl<'s> ImportMemoryFdInfoKhr<'s> {
         ImportMemoryFdInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsKhr {
+        ExternalMemoryHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("ImportMemoryFdInfoKhr::handle_type: error converting flags")
     }
 
-    pub fn fd(&self) {
+    pub fn fd<'a>(&'a self) -> i32 {
+        self.raw.fd.into()
     }
 
     pub fn raw(&self) -> &vks::VkImportMemoryFdInfoKHR {
@@ -15570,13 +17926,20 @@ impl<'s> From<ImportMemoryFdInfoKhr<'s>> for vks::VkImportMemoryFdInfoKHR {
 }
 
 
+impl<'s> From<vks::VkImportMemoryFdInfoKHR> for ImportMemoryFdInfoKhr<'s> {
+    fn from(f: vks::VkImportMemoryFdInfoKHR) -> ImportMemoryFdInfoKhr<'s> {
+        ImportMemoryFdInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImportMemoryFdInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportMemoryFdInfoKhrBuilder<'b> {
     raw: vks::VkImportMemoryFdInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImportMemoryFdInfoKhrBuilder<'b> {
@@ -15623,10 +17986,12 @@ pub struct MemoryFdPropertiesKhr<'s> {
 }
 
 impl<'s> MemoryFdPropertiesKhr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn memory_type_bits(&self) {
+    pub fn memory_type_bits<'a>(&'a self) -> u32 {
+        self.raw.memoryTypeBits.into()
     }
 
     pub fn raw(&self) -> &vks::VkMemoryFdPropertiesKHR {
@@ -15638,6 +18003,13 @@ impl<'s> MemoryFdPropertiesKhr<'s> {
 impl<'s> From<MemoryFdPropertiesKhr<'s>> for vks::VkMemoryFdPropertiesKHR {
     fn from(f: MemoryFdPropertiesKhr<'s>) -> vks::VkMemoryFdPropertiesKHR {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkMemoryFdPropertiesKHR> for MemoryFdPropertiesKhr<'s> {
+    fn from(f: vks::VkMemoryFdPropertiesKHR) -> MemoryFdPropertiesKhr<'s> {
+        MemoryFdPropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -15657,13 +18029,17 @@ impl<'s> MemoryGetFdInfoKhr<'s> {
         MemoryGetFdInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn memory(&self) {
+    pub fn memory_handle<'a>(&'a self) -> vks::VkDeviceMemory {
+        self.raw.memory
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalMemoryHandleTypeFlagsKhr {
+        ExternalMemoryHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("MemoryGetFdInfoKhr::handle_type: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkMemoryGetFdInfoKHR {
@@ -15679,13 +18055,20 @@ impl<'s> From<MemoryGetFdInfoKhr<'s>> for vks::VkMemoryGetFdInfoKHR {
 }
 
 
+impl<'s> From<vks::VkMemoryGetFdInfoKHR> for MemoryGetFdInfoKhr<'s> {
+    fn from(f: vks::VkMemoryGetFdInfoKHR) -> MemoryGetFdInfoKhr<'s> {
+        MemoryGetFdInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkMemoryGetFdInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryGetFdInfoKhrBuilder<'b> {
     raw: vks::VkMemoryGetFdInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> MemoryGetFdInfoKhrBuilder<'b> {
@@ -15727,8 +18110,8 @@ impl<'b> MemoryGetFdInfoKhrBuilder<'b> {
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoKHR,
-    acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
+    acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -15737,22 +18120,28 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
         Win32KeyedMutexAcquireReleaseInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn acquire_syncs(&self) {
+    pub fn acquire_syncs_handle<'a>(&'a self) -> &'a [vks::VkDeviceMemory] {
+        unsafe { slice::from_raw_parts(self.raw.pAcquireSyncs as *const _, self.raw.acquireCount as usize) }
     }
 
-    pub fn acquire_keys(&self) {
+    pub fn acquire_keys<'a>(&'a self) -> &'a [u64] {
+        unsafe { slice::from_raw_parts(self.raw.pAcquireKeys as *const _, self.raw.acquireCount as usize) }
     }
 
-    pub fn acquire_timeouts(&self) {
+    pub fn acquire_timeouts<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pAcquireTimeouts as *const _, self.raw.acquireCount as usize) }
     }
 
-    pub fn release_syncs(&self) {
+    pub fn release_syncs_handle<'a>(&'a self) -> &'a [vks::VkDeviceMemory] {
+        unsafe { slice::from_raw_parts(self.raw.pReleaseSyncs as *const _, self.raw.releaseCount as usize) }
     }
 
-    pub fn release_keys(&self) {
+    pub fn release_keys<'a>(&'a self) -> &'a [u64] {
+        unsafe { slice::from_raw_parts(self.raw.pReleaseKeys as *const _, self.raw.releaseCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkWin32KeyedMutexAcquireReleaseInfoKHR {
@@ -15768,23 +18157,30 @@ impl<'s> From<Win32KeyedMutexAcquireReleaseInfoKhr<'s>> for vks::VkWin32KeyedMut
 }
 
 
+impl<'s> From<vks::VkWin32KeyedMutexAcquireReleaseInfoKHR> for Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
+    fn from(f: vks::VkWin32KeyedMutexAcquireReleaseInfoKHR) -> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
+        Win32KeyedMutexAcquireReleaseInfoKhr { raw: f, release_syncs: None, acquire_syncs: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkWin32KeyedMutexAcquireReleaseInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoKHR,
-    acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
-    _p: PhantomData<&'b ()>,
+    acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
     pub fn new() -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
         Win32KeyedMutexAcquireReleaseInfoKhrBuilder {
             raw: vks::VkWin32KeyedMutexAcquireReleaseInfoKHR::default(),
-            acquire_syncs: None,
             release_syncs: None,
+            acquire_syncs: None,
             _p: PhantomData,
         }
     }
@@ -15794,59 +18190,59 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn acquire_syncs<'m, 'a>(mut self, acquire_syncs: &'a [DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> where 'a: 'b {
+    pub fn acquire_syncs<'m, 'a>(mut self, acquire_syncs: &'a [&'a DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> where 'a: 'b {
         self.acquire_syncs = Some(acquire_syncs.iter().map(|h| h.handle()).collect());
         {
             let acquire_syncs = self.acquire_syncs.as_ref().unwrap();
             self.raw.pAcquireSyncs = acquire_syncs.as_ptr();
-            assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_syncs.len() as u32, 
+            assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_syncs.len() as _, 
                 "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::acquire_syncs`.");
-            self.raw.acquireCount = acquire_syncs.len() as u32;
+            self.raw.acquireCount = acquire_syncs.len() as _;
         }
         self
     }
 
     pub fn acquire_keys<'m, 'a>(mut self, acquire_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
-        assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_keys.len() as u32, 
+        assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::acquire_keys`.");
-        self.raw.acquireCount = acquire_keys.len() as u32;
-        self.raw.pAcquireKeys = acquire_keys.as_ptr() as *const _;
+        self.raw.acquireCount = acquire_keys.len() as _;
+        self.raw.pAcquireKeys = acquire_keys.as_ptr() as *const u64 as *const _;
         self
     }
 
     pub fn acquire_timeouts<'m, 'a>(mut self, acquire_timeouts: &'a [u32]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
-        assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_timeouts.len() as u32, 
+        assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_timeouts.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::acquire_timeouts`.");
-        self.raw.acquireCount = acquire_timeouts.len() as u32;
-        self.raw.pAcquireTimeouts = acquire_timeouts.as_ptr() as *const _;
+        self.raw.acquireCount = acquire_timeouts.len() as _;
+        self.raw.pAcquireTimeouts = acquire_timeouts.as_ptr() as *const u32 as *const _;
         self
     }
 
-    pub fn release_syncs<'m, 'a>(mut self, release_syncs: &'a [DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> where 'a: 'b {
+    pub fn release_syncs<'m, 'a>(mut self, release_syncs: &'a [&'a DeviceMemory]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> where 'a: 'b {
         self.release_syncs = Some(release_syncs.iter().map(|h| h.handle()).collect());
         {
             let release_syncs = self.release_syncs.as_ref().unwrap();
             self.raw.pReleaseSyncs = release_syncs.as_ptr();
-            assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_syncs.len() as u32, 
+            assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_syncs.len() as _, 
                 "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::release_syncs`.");
-            self.raw.releaseCount = release_syncs.len() as u32;
+            self.raw.releaseCount = release_syncs.len() as _;
         }
         self
     }
 
     pub fn release_keys<'m, 'a>(mut self, release_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
-        assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_keys.len() as u32, 
+        assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::release_keys`.");
-        self.raw.releaseCount = release_keys.len() as u32;
-        self.raw.pReleaseKeys = release_keys.as_ptr() as *const _;
+        self.raw.releaseCount = release_keys.len() as _;
+        self.raw.pReleaseKeys = release_keys.as_ptr() as *const u64 as *const _;
         self
     }
 
     pub fn build(self) -> Win32KeyedMutexAcquireReleaseInfoKhr<'b> {
         Win32KeyedMutexAcquireReleaseInfoKhr {
             raw: self.raw,
-            acquire_syncs: self.acquire_syncs,
             release_syncs: self.release_syncs,
+            acquire_syncs: self.acquire_syncs,
             _p: PhantomData,
         }
     }
@@ -15869,10 +18265,13 @@ impl<'s> PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
         PhysicalDeviceExternalSemaphoreInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalSemaphoreHandleTypeFlagsKhr {
+        ExternalSemaphoreHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("PhysicalDeviceExternalSemaphoreInfoKhr::handle_type: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceExternalSemaphoreInfoKHR {
@@ -15888,13 +18287,20 @@ impl<'s> From<PhysicalDeviceExternalSemaphoreInfoKhr<'s>> for vks::VkPhysicalDev
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceExternalSemaphoreInfoKHR> for PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
+    fn from(f: vks::VkPhysicalDeviceExternalSemaphoreInfoKHR) -> PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
+        PhysicalDeviceExternalSemaphoreInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceExternalSemaphoreInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalSemaphoreInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalSemaphoreInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDeviceExternalSemaphoreInfoKhrBuilder<'b> {
@@ -15936,16 +18342,23 @@ pub struct ExternalSemaphorePropertiesKhr<'s> {
 }
 
 impl<'s> ExternalSemaphorePropertiesKhr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn export_from_imported_handle_types(&self) {
+    pub fn export_from_imported_handle_types<'a>(&'a self) -> ExternalSemaphoreHandleTypeFlagsKhr {
+        ExternalSemaphoreHandleTypeFlagsKhr::from_bits(self.raw.exportFromImportedHandleTypes)
+            .expect("ExternalSemaphorePropertiesKhr::export_from_imported_handle_types: error converting flags")
     }
 
-    pub fn compatible_handle_types(&self) {
+    pub fn compatible_handle_types<'a>(&'a self) -> ExternalSemaphoreHandleTypeFlagsKhr {
+        ExternalSemaphoreHandleTypeFlagsKhr::from_bits(self.raw.compatibleHandleTypes)
+            .expect("ExternalSemaphorePropertiesKhr::compatible_handle_types: error converting flags")
     }
 
-    pub fn external_semaphore_features(&self) {
+    pub fn external_semaphore_features<'a>(&'a self) -> ExternalSemaphoreFeatureFlagsKhr {
+        ExternalSemaphoreFeatureFlagsKhr::from_bits(self.raw.externalSemaphoreFeatures)
+            .expect("ExternalSemaphorePropertiesKhr::external_semaphore_features: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkExternalSemaphorePropertiesKHR {
@@ -15957,6 +18370,13 @@ impl<'s> ExternalSemaphorePropertiesKhr<'s> {
 impl<'s> From<ExternalSemaphorePropertiesKhr<'s>> for vks::VkExternalSemaphorePropertiesKHR {
     fn from(f: ExternalSemaphorePropertiesKhr<'s>) -> vks::VkExternalSemaphorePropertiesKHR {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkExternalSemaphorePropertiesKHR> for ExternalSemaphorePropertiesKhr<'s> {
+    fn from(f: vks::VkExternalSemaphorePropertiesKHR) -> ExternalSemaphorePropertiesKhr<'s> {
+        ExternalSemaphorePropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -15976,10 +18396,13 @@ impl<'s> ExportSemaphoreCreateInfoKhr<'s> {
         ExportSemaphoreCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_types(&self) {
+    pub fn handle_types<'a>(&'a self) -> ExternalSemaphoreHandleTypeFlagsKhr {
+        ExternalSemaphoreHandleTypeFlagsKhr::from_bits(self.raw.handleTypes)
+            .expect("ExportSemaphoreCreateInfoKhr::handle_types: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkExportSemaphoreCreateInfoKHR {
@@ -15995,13 +18418,20 @@ impl<'s> From<ExportSemaphoreCreateInfoKhr<'s>> for vks::VkExportSemaphoreCreate
 }
 
 
+impl<'s> From<vks::VkExportSemaphoreCreateInfoKHR> for ExportSemaphoreCreateInfoKhr<'s> {
+    fn from(f: vks::VkExportSemaphoreCreateInfoKHR) -> ExportSemaphoreCreateInfoKhr<'s> {
+        ExportSemaphoreCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkExportSemaphoreCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportSemaphoreCreateInfoKhrBuilder<'b> {
     raw: vks::VkExportSemaphoreCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ExportSemaphoreCreateInfoKhrBuilder<'b> {
@@ -16047,22 +18477,30 @@ impl<'s> ImportSemaphoreWin32HandleInfoKhr<'s> {
         ImportSemaphoreWin32HandleInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn semaphore(&self) {
+    pub fn semaphore_handle<'a>(&'a self) -> vks::VkSemaphore {
+        self.raw.semaphore
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> SemaphoreImportFlagsKhr {
+        SemaphoreImportFlagsKhr::from_bits(self.raw.flags)
+            .expect("ImportSemaphoreWin32HandleInfoKhr::flags: error converting flags")
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalSemaphoreHandleTypeFlagsKhr {
+        ExternalSemaphoreHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("ImportSemaphoreWin32HandleInfoKhr::handle_type: error converting flags")
     }
 
-    pub fn handle(&self) {
+    pub fn handle<'a>(&'a self) -> HANDLE {
+        self.raw.handle.into()
     }
 
-    pub fn name(&self) {
+    pub fn name<'a>(&'a self) -> LPCWSTR {
+        self.raw.name.into()
     }
 
     pub fn raw(&self) -> &vks::VkImportSemaphoreWin32HandleInfoKHR {
@@ -16078,13 +18516,20 @@ impl<'s> From<ImportSemaphoreWin32HandleInfoKhr<'s>> for vks::VkImportSemaphoreW
 }
 
 
+impl<'s> From<vks::VkImportSemaphoreWin32HandleInfoKHR> for ImportSemaphoreWin32HandleInfoKhr<'s> {
+    fn from(f: vks::VkImportSemaphoreWin32HandleInfoKHR) -> ImportSemaphoreWin32HandleInfoKhr<'s> {
+        ImportSemaphoreWin32HandleInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImportSemaphoreWin32HandleInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkImportSemaphoreWin32HandleInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
@@ -16150,16 +18595,20 @@ impl<'s> ExportSemaphoreWin32HandleInfoKhr<'s> {
         ExportSemaphoreWin32HandleInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn attributes(&self) {
+    pub fn attributes<'a>(&'a self) -> &'a SECURITY_ATTRIBUTES {
+        unsafe { &*(self.raw.pAttributes as *const _) }
     }
 
-    pub fn dw_access(&self) {
+    pub fn dw_access<'a>(&'a self) -> DWORD {
+        self.raw.dwAccess.into()
     }
 
-    pub fn name(&self) {
+    pub fn name<'a>(&'a self) -> LPCWSTR {
+        self.raw.name.into()
     }
 
     pub fn raw(&self) -> &vks::VkExportSemaphoreWin32HandleInfoKHR {
@@ -16175,13 +18624,20 @@ impl<'s> From<ExportSemaphoreWin32HandleInfoKhr<'s>> for vks::VkExportSemaphoreW
 }
 
 
+impl<'s> From<vks::VkExportSemaphoreWin32HandleInfoKHR> for ExportSemaphoreWin32HandleInfoKhr<'s> {
+    fn from(f: vks::VkExportSemaphoreWin32HandleInfoKHR) -> ExportSemaphoreWin32HandleInfoKhr<'s> {
+        ExportSemaphoreWin32HandleInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkExportSemaphoreWin32HandleInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkExportSemaphoreWin32HandleInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
@@ -16197,8 +18653,8 @@ impl<'b> ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn attributes<'m, 'a>(mut self, attributes: &'a [SECURITY_ATTRIBUTES]) -> ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
-        self.raw.pAttributes = attributes.as_ptr() as *const _;
+    pub fn attributes<'m, 'a>(mut self, attributes: &'a SECURITY_ATTRIBUTES) -> ExportSemaphoreWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pAttributes = attributes;
         self
     }
 
@@ -16237,13 +18693,16 @@ impl<'s> D3d12FenceSubmitInfoKHR<'s> {
         D3d12FenceSubmitInfoKHRBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn wait_semaphore_values(&self) {
+    pub fn wait_semaphore_values<'a>(&'a self) -> &'a [u64] {
+        unsafe { slice::from_raw_parts(self.raw.pWaitSemaphoreValues as *const _, self.raw.waitSemaphoreValuesCount as usize) }
     }
 
-    pub fn signal_semaphore_values(&self) {
+    pub fn signal_semaphore_values<'a>(&'a self) -> &'a [u64] {
+        unsafe { slice::from_raw_parts(self.raw.pSignalSemaphoreValues as *const _, self.raw.signalSemaphoreValuesCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkD3D12FenceSubmitInfoKHR {
@@ -16259,13 +18718,20 @@ impl<'s> From<D3d12FenceSubmitInfoKHR<'s>> for vks::VkD3D12FenceSubmitInfoKHR {
 }
 
 
+impl<'s> From<vks::VkD3D12FenceSubmitInfoKHR> for D3d12FenceSubmitInfoKHR<'s> {
+    fn from(f: vks::VkD3D12FenceSubmitInfoKHR) -> D3d12FenceSubmitInfoKHR<'s> {
+        D3d12FenceSubmitInfoKHR { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkD3D12FenceSubmitInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct D3d12FenceSubmitInfoKHRBuilder<'b> {
     raw: vks::VkD3D12FenceSubmitInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> D3d12FenceSubmitInfoKHRBuilder<'b> {
@@ -16282,18 +18748,18 @@ impl<'b> D3d12FenceSubmitInfoKHRBuilder<'b> {
     }
 
     pub fn wait_semaphore_values<'m, 'a>(mut self, wait_semaphore_values: &'a [u64]) -> D3d12FenceSubmitInfoKHRBuilder<'b> {
-        assert!(self.raw.waitSemaphoreValuesCount == 0 || self.raw.waitSemaphoreValuesCount == wait_semaphore_values.len() as u32, 
+        assert!(self.raw.waitSemaphoreValuesCount == 0 || self.raw.waitSemaphoreValuesCount == wait_semaphore_values.len() as _, 
             "count inconsistency found when specifying `D3d12FenceSubmitInfoKHR::wait_semaphore_values`.");
-        self.raw.waitSemaphoreValuesCount = wait_semaphore_values.len() as u32;
-        self.raw.pWaitSemaphoreValues = wait_semaphore_values.as_ptr() as *const _;
+        self.raw.waitSemaphoreValuesCount = wait_semaphore_values.len() as _;
+        self.raw.pWaitSemaphoreValues = wait_semaphore_values.as_ptr() as *const u64 as *const _;
         self
     }
 
     pub fn signal_semaphore_values<'m, 'a>(mut self, signal_semaphore_values: &'a [u64]) -> D3d12FenceSubmitInfoKHRBuilder<'b> {
-        assert!(self.raw.signalSemaphoreValuesCount == 0 || self.raw.signalSemaphoreValuesCount == signal_semaphore_values.len() as u32, 
+        assert!(self.raw.signalSemaphoreValuesCount == 0 || self.raw.signalSemaphoreValuesCount == signal_semaphore_values.len() as _, 
             "count inconsistency found when specifying `D3d12FenceSubmitInfoKHR::signal_semaphore_values`.");
-        self.raw.signalSemaphoreValuesCount = signal_semaphore_values.len() as u32;
-        self.raw.pSignalSemaphoreValues = signal_semaphore_values.as_ptr() as *const _;
+        self.raw.signalSemaphoreValuesCount = signal_semaphore_values.len() as _;
+        self.raw.pSignalSemaphoreValues = signal_semaphore_values.as_ptr() as *const u64 as *const _;
         self
     }
 
@@ -16322,13 +18788,17 @@ impl<'s> SemaphoreGetWin32HandleInfoKhr<'s> {
         SemaphoreGetWin32HandleInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn semaphore(&self) {
+    pub fn semaphore_handle<'a>(&'a self) -> vks::VkSemaphore {
+        self.raw.semaphore
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalSemaphoreHandleTypeFlagsKhr {
+        ExternalSemaphoreHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("SemaphoreGetWin32HandleInfoKhr::handle_type: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkSemaphoreGetWin32HandleInfoKHR {
@@ -16344,13 +18814,20 @@ impl<'s> From<SemaphoreGetWin32HandleInfoKhr<'s>> for vks::VkSemaphoreGetWin32Ha
 }
 
 
+impl<'s> From<vks::VkSemaphoreGetWin32HandleInfoKHR> for SemaphoreGetWin32HandleInfoKhr<'s> {
+    fn from(f: vks::VkSemaphoreGetWin32HandleInfoKHR) -> SemaphoreGetWin32HandleInfoKhr<'s> {
+        SemaphoreGetWin32HandleInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSemaphoreGetWin32HandleInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkSemaphoreGetWin32HandleInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
@@ -16401,19 +18878,26 @@ impl<'s> ImportSemaphoreFdInfoKhr<'s> {
         ImportSemaphoreFdInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn semaphore(&self) {
+    pub fn semaphore_handle<'a>(&'a self) -> vks::VkSemaphore {
+        self.raw.semaphore
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> SemaphoreImportFlagsKhr {
+        SemaphoreImportFlagsKhr::from_bits(self.raw.flags)
+            .expect("ImportSemaphoreFdInfoKhr::flags: error converting flags")
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalSemaphoreHandleTypeFlagsKhr {
+        ExternalSemaphoreHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("ImportSemaphoreFdInfoKhr::handle_type: error converting flags")
     }
 
-    pub fn fd(&self) {
+    pub fn fd<'a>(&'a self) -> i32 {
+        self.raw.fd.into()
     }
 
     pub fn raw(&self) -> &vks::VkImportSemaphoreFdInfoKHR {
@@ -16429,13 +18913,20 @@ impl<'s> From<ImportSemaphoreFdInfoKhr<'s>> for vks::VkImportSemaphoreFdInfoKHR 
 }
 
 
+impl<'s> From<vks::VkImportSemaphoreFdInfoKHR> for ImportSemaphoreFdInfoKhr<'s> {
+    fn from(f: vks::VkImportSemaphoreFdInfoKHR) -> ImportSemaphoreFdInfoKhr<'s> {
+        ImportSemaphoreFdInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImportSemaphoreFdInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportSemaphoreFdInfoKhrBuilder<'b> {
     raw: vks::VkImportSemaphoreFdInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImportSemaphoreFdInfoKhrBuilder<'b> {
@@ -16496,13 +18987,17 @@ impl<'s> SemaphoreGetFdInfoKhr<'s> {
         SemaphoreGetFdInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn semaphore(&self) {
+    pub fn semaphore_handle<'a>(&'a self) -> vks::VkSemaphore {
+        self.raw.semaphore
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalSemaphoreHandleTypeFlagsKhr {
+        ExternalSemaphoreHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("SemaphoreGetFdInfoKhr::handle_type: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkSemaphoreGetFdInfoKHR {
@@ -16518,13 +19013,20 @@ impl<'s> From<SemaphoreGetFdInfoKhr<'s>> for vks::VkSemaphoreGetFdInfoKHR {
 }
 
 
+impl<'s> From<vks::VkSemaphoreGetFdInfoKHR> for SemaphoreGetFdInfoKhr<'s> {
+    fn from(f: vks::VkSemaphoreGetFdInfoKHR) -> SemaphoreGetFdInfoKhr<'s> {
+        SemaphoreGetFdInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSemaphoreGetFdInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SemaphoreGetFdInfoKhrBuilder<'b> {
     raw: vks::VkSemaphoreGetFdInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SemaphoreGetFdInfoKhrBuilder<'b> {
@@ -16575,10 +19077,13 @@ impl<'s> PhysicalDeviceExternalFenceInfoKhr<'s> {
         PhysicalDeviceExternalFenceInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalFenceHandleTypeFlagsKhr {
+        ExternalFenceHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("PhysicalDeviceExternalFenceInfoKhr::handle_type: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceExternalFenceInfoKHR {
@@ -16594,13 +19099,20 @@ impl<'s> From<PhysicalDeviceExternalFenceInfoKhr<'s>> for vks::VkPhysicalDeviceE
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceExternalFenceInfoKHR> for PhysicalDeviceExternalFenceInfoKhr<'s> {
+    fn from(f: vks::VkPhysicalDeviceExternalFenceInfoKHR) -> PhysicalDeviceExternalFenceInfoKhr<'s> {
+        PhysicalDeviceExternalFenceInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceExternalFenceInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceExternalFenceInfoKhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceExternalFenceInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDeviceExternalFenceInfoKhrBuilder<'b> {
@@ -16642,16 +19154,23 @@ pub struct ExternalFencePropertiesKhr<'s> {
 }
 
 impl<'s> ExternalFencePropertiesKhr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn export_from_imported_handle_types(&self) {
+    pub fn export_from_imported_handle_types<'a>(&'a self) -> ExternalFenceHandleTypeFlagsKhr {
+        ExternalFenceHandleTypeFlagsKhr::from_bits(self.raw.exportFromImportedHandleTypes)
+            .expect("ExternalFencePropertiesKhr::export_from_imported_handle_types: error converting flags")
     }
 
-    pub fn compatible_handle_types(&self) {
+    pub fn compatible_handle_types<'a>(&'a self) -> ExternalFenceHandleTypeFlagsKhr {
+        ExternalFenceHandleTypeFlagsKhr::from_bits(self.raw.compatibleHandleTypes)
+            .expect("ExternalFencePropertiesKhr::compatible_handle_types: error converting flags")
     }
 
-    pub fn external_fence_features(&self) {
+    pub fn external_fence_features<'a>(&'a self) -> ExternalFenceFeatureFlagsKhr {
+        ExternalFenceFeatureFlagsKhr::from_bits(self.raw.externalFenceFeatures)
+            .expect("ExternalFencePropertiesKhr::external_fence_features: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkExternalFencePropertiesKHR {
@@ -16663,6 +19182,13 @@ impl<'s> ExternalFencePropertiesKhr<'s> {
 impl<'s> From<ExternalFencePropertiesKhr<'s>> for vks::VkExternalFencePropertiesKHR {
     fn from(f: ExternalFencePropertiesKhr<'s>) -> vks::VkExternalFencePropertiesKHR {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkExternalFencePropertiesKHR> for ExternalFencePropertiesKhr<'s> {
+    fn from(f: vks::VkExternalFencePropertiesKHR) -> ExternalFencePropertiesKhr<'s> {
+        ExternalFencePropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -16682,10 +19208,13 @@ impl<'s> ExportFenceCreateInfoKhr<'s> {
         ExportFenceCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn handle_types(&self) {
+    pub fn handle_types<'a>(&'a self) -> ExternalFenceHandleTypeFlagsKhr {
+        ExternalFenceHandleTypeFlagsKhr::from_bits(self.raw.handleTypes)
+            .expect("ExportFenceCreateInfoKhr::handle_types: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkExportFenceCreateInfoKHR {
@@ -16701,13 +19230,20 @@ impl<'s> From<ExportFenceCreateInfoKhr<'s>> for vks::VkExportFenceCreateInfoKHR 
 }
 
 
+impl<'s> From<vks::VkExportFenceCreateInfoKHR> for ExportFenceCreateInfoKhr<'s> {
+    fn from(f: vks::VkExportFenceCreateInfoKHR) -> ExportFenceCreateInfoKhr<'s> {
+        ExportFenceCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkExportFenceCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportFenceCreateInfoKhrBuilder<'b> {
     raw: vks::VkExportFenceCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ExportFenceCreateInfoKhrBuilder<'b> {
@@ -16753,22 +19289,30 @@ impl<'s> ImportFenceWin32HandleInfoKhr<'s> {
         ImportFenceWin32HandleInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn fence(&self) {
+    pub fn fence_handle<'a>(&'a self) -> vks::VkFence {
+        self.raw.fence
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> FenceImportFlagsKhr {
+        FenceImportFlagsKhr::from_bits(self.raw.flags)
+            .expect("ImportFenceWin32HandleInfoKhr::flags: error converting flags")
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalFenceHandleTypeFlagsKhr {
+        ExternalFenceHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("ImportFenceWin32HandleInfoKhr::handle_type: error converting flags")
     }
 
-    pub fn handle(&self) {
+    pub fn handle<'a>(&'a self) -> HANDLE {
+        self.raw.handle.into()
     }
 
-    pub fn name(&self) {
+    pub fn name<'a>(&'a self) -> LPCWSTR {
+        self.raw.name.into()
     }
 
     pub fn raw(&self) -> &vks::VkImportFenceWin32HandleInfoKHR {
@@ -16784,13 +19328,20 @@ impl<'s> From<ImportFenceWin32HandleInfoKhr<'s>> for vks::VkImportFenceWin32Hand
 }
 
 
+impl<'s> From<vks::VkImportFenceWin32HandleInfoKHR> for ImportFenceWin32HandleInfoKhr<'s> {
+    fn from(f: vks::VkImportFenceWin32HandleInfoKHR) -> ImportFenceWin32HandleInfoKhr<'s> {
+        ImportFenceWin32HandleInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImportFenceWin32HandleInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportFenceWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkImportFenceWin32HandleInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImportFenceWin32HandleInfoKhrBuilder<'b> {
@@ -16856,16 +19407,20 @@ impl<'s> ExportFenceWin32HandleInfoKhr<'s> {
         ExportFenceWin32HandleInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn attributes(&self) {
+    pub fn attributes<'a>(&'a self) -> &'a SECURITY_ATTRIBUTES {
+        unsafe { &*(self.raw.pAttributes as *const _) }
     }
 
-    pub fn dw_access(&self) {
+    pub fn dw_access<'a>(&'a self) -> DWORD {
+        self.raw.dwAccess.into()
     }
 
-    pub fn name(&self) {
+    pub fn name<'a>(&'a self) -> LPCWSTR {
+        self.raw.name.into()
     }
 
     pub fn raw(&self) -> &vks::VkExportFenceWin32HandleInfoKHR {
@@ -16881,13 +19436,20 @@ impl<'s> From<ExportFenceWin32HandleInfoKhr<'s>> for vks::VkExportFenceWin32Hand
 }
 
 
+impl<'s> From<vks::VkExportFenceWin32HandleInfoKHR> for ExportFenceWin32HandleInfoKhr<'s> {
+    fn from(f: vks::VkExportFenceWin32HandleInfoKHR) -> ExportFenceWin32HandleInfoKhr<'s> {
+        ExportFenceWin32HandleInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkExportFenceWin32HandleInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ExportFenceWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkExportFenceWin32HandleInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ExportFenceWin32HandleInfoKhrBuilder<'b> {
@@ -16903,8 +19465,8 @@ impl<'b> ExportFenceWin32HandleInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn attributes<'m, 'a>(mut self, attributes: &'a [SECURITY_ATTRIBUTES]) -> ExportFenceWin32HandleInfoKhrBuilder<'b> {
-        self.raw.pAttributes = attributes.as_ptr() as *const _;
+    pub fn attributes<'m, 'a>(mut self, attributes: &'a SECURITY_ATTRIBUTES) -> ExportFenceWin32HandleInfoKhrBuilder<'b> {
+        self.raw.pAttributes = attributes;
         self
     }
 
@@ -16943,13 +19505,17 @@ impl<'s> FenceGetWin32HandleInfoKhr<'s> {
         FenceGetWin32HandleInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn fence(&self) {
+    pub fn fence_handle<'a>(&'a self) -> vks::VkFence {
+        self.raw.fence
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalFenceHandleTypeFlagsKhr {
+        ExternalFenceHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("FenceGetWin32HandleInfoKhr::handle_type: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkFenceGetWin32HandleInfoKHR {
@@ -16965,13 +19531,20 @@ impl<'s> From<FenceGetWin32HandleInfoKhr<'s>> for vks::VkFenceGetWin32HandleInfo
 }
 
 
+impl<'s> From<vks::VkFenceGetWin32HandleInfoKHR> for FenceGetWin32HandleInfoKhr<'s> {
+    fn from(f: vks::VkFenceGetWin32HandleInfoKHR) -> FenceGetWin32HandleInfoKhr<'s> {
+        FenceGetWin32HandleInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkFenceGetWin32HandleInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct FenceGetWin32HandleInfoKhrBuilder<'b> {
     raw: vks::VkFenceGetWin32HandleInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> FenceGetWin32HandleInfoKhrBuilder<'b> {
@@ -17022,19 +19595,26 @@ impl<'s> ImportFenceFdInfoKhr<'s> {
         ImportFenceFdInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn fence(&self) {
+    pub fn fence_handle<'a>(&'a self) -> vks::VkFence {
+        self.raw.fence
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> FenceImportFlagsKhr {
+        FenceImportFlagsKhr::from_bits(self.raw.flags)
+            .expect("ImportFenceFdInfoKhr::flags: error converting flags")
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalFenceHandleTypeFlagsKhr {
+        ExternalFenceHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("ImportFenceFdInfoKhr::handle_type: error converting flags")
     }
 
-    pub fn fd(&self) {
+    pub fn fd<'a>(&'a self) -> i32 {
+        self.raw.fd.into()
     }
 
     pub fn raw(&self) -> &vks::VkImportFenceFdInfoKHR {
@@ -17050,13 +19630,20 @@ impl<'s> From<ImportFenceFdInfoKhr<'s>> for vks::VkImportFenceFdInfoKHR {
 }
 
 
+impl<'s> From<vks::VkImportFenceFdInfoKHR> for ImportFenceFdInfoKhr<'s> {
+    fn from(f: vks::VkImportFenceFdInfoKHR) -> ImportFenceFdInfoKhr<'s> {
+        ImportFenceFdInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImportFenceFdInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImportFenceFdInfoKhrBuilder<'b> {
     raw: vks::VkImportFenceFdInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImportFenceFdInfoKhrBuilder<'b> {
@@ -17117,13 +19704,17 @@ impl<'s> FenceGetFdInfoKhr<'s> {
         FenceGetFdInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn fence(&self) {
+    pub fn fence_handle<'a>(&'a self) -> vks::VkFence {
+        self.raw.fence
     }
 
-    pub fn handle_type(&self) {
+    pub fn handle_type<'a>(&'a self) -> ExternalFenceHandleTypeFlagsKhr {
+        ExternalFenceHandleTypeFlagsKhr::from_bits(self.raw.handleType)
+            .expect("FenceGetFdInfoKhr::handle_type: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkFenceGetFdInfoKHR {
@@ -17139,13 +19730,20 @@ impl<'s> From<FenceGetFdInfoKhr<'s>> for vks::VkFenceGetFdInfoKHR {
 }
 
 
+impl<'s> From<vks::VkFenceGetFdInfoKHR> for FenceGetFdInfoKhr<'s> {
+    fn from(f: vks::VkFenceGetFdInfoKHR) -> FenceGetFdInfoKhr<'s> {
+        FenceGetFdInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkFenceGetFdInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct FenceGetFdInfoKhrBuilder<'b> {
     raw: vks::VkFenceGetFdInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> FenceGetFdInfoKhrBuilder<'b> {
@@ -17198,16 +19796,20 @@ impl<'s> PhysicalDeviceMultiviewFeaturesKhx<'s> {
         PhysicalDeviceMultiviewFeaturesKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn multiview(&self) {
+    pub fn multiview<'a>(&'a self) -> bool {
+        self.raw.multiview != 0
     }
 
-    pub fn multiview_geometry_shader(&self) {
+    pub fn multiview_geometry_shader<'a>(&'a self) -> bool {
+        self.raw.multiviewGeometryShader != 0
     }
 
-    pub fn multiview_tessellation_shader(&self) {
+    pub fn multiview_tessellation_shader<'a>(&'a self) -> bool {
+        self.raw.multiviewTessellationShader != 0
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceMultiviewFeaturesKHX {
@@ -17224,6 +19826,14 @@ impl<'s> From<PhysicalDeviceMultiviewFeaturesKhx<'s>> for vks::VkPhysicalDeviceM
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkPhysicalDeviceMultiviewFeaturesKHX> for PhysicalDeviceMultiviewFeaturesKhx<'s> {
+    fn from(f: vks::VkPhysicalDeviceMultiviewFeaturesKHX) -> PhysicalDeviceMultiviewFeaturesKhx<'s> {
+        PhysicalDeviceMultiviewFeaturesKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceMultiviewFeaturesKHX`.
 ///
 /// 
@@ -17231,7 +19841,7 @@ impl<'s> From<PhysicalDeviceMultiviewFeaturesKhx<'s>> for vks::VkPhysicalDeviceM
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceMultiviewFeaturesKhxBuilder<'b> {
     raw: vks::VkPhysicalDeviceMultiviewFeaturesKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -17286,13 +19896,16 @@ pub struct PhysicalDeviceMultiviewPropertiesKhx<'s> {
 
 #[cfg(feature = "experimental")]
 impl<'s> PhysicalDeviceMultiviewPropertiesKhx<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn max_multiview_view_count(&self) {
+    pub fn max_multiview_view_count<'a>(&'a self) -> u32 {
+        self.raw.maxMultiviewViewCount.into()
     }
 
-    pub fn max_multiview_instance_index(&self) {
+    pub fn max_multiview_instance_index<'a>(&'a self) -> u32 {
+        self.raw.maxMultiviewInstanceIndex.into()
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceMultiviewPropertiesKHX {
@@ -17305,6 +19918,14 @@ impl<'s> PhysicalDeviceMultiviewPropertiesKhx<'s> {
 impl<'s> From<PhysicalDeviceMultiviewPropertiesKhx<'s>> for vks::VkPhysicalDeviceMultiviewPropertiesKHX {
     fn from(f: PhysicalDeviceMultiviewPropertiesKhx<'s>) -> vks::VkPhysicalDeviceMultiviewPropertiesKHX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkPhysicalDeviceMultiviewPropertiesKHX> for PhysicalDeviceMultiviewPropertiesKhx<'s> {
+    fn from(f: vks::VkPhysicalDeviceMultiviewPropertiesKHX) -> PhysicalDeviceMultiviewPropertiesKhx<'s> {
+        PhysicalDeviceMultiviewPropertiesKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -17326,22 +19947,28 @@ impl<'s> RenderPassMultiviewCreateInfoKhx<'s> {
         RenderPassMultiviewCreateInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn subpass_count(&self) {
+    pub fn subpass_count<'a>(&'a self) -> u32 {
+        self.raw.subpassCount.into()
     }
 
-    pub fn view_masks(&self) {
+    pub fn view_masks<'a>(&'a self) -> &'a [u32] {
+        unsafe { &*(self.raw.pViewMasks as *const _) }
     }
 
-    pub fn dependency_count(&self) {
+    pub fn dependency_count<'a>(&'a self) -> u32 {
+        self.raw.dependencyCount.into()
     }
 
-    pub fn view_offsets(&self) {
+    pub fn view_offsets<'a>(&'a self) -> &'a [i32] {
+        unsafe { &*(self.raw.pViewOffsets as *const _) }
     }
 
-    pub fn correlation_masks(&self) {
+    pub fn correlation_masks<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pCorrelationMasks as *const _, self.raw.correlationMaskCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkRenderPassMultiviewCreateInfoKHX {
@@ -17358,6 +19985,14 @@ impl<'s> From<RenderPassMultiviewCreateInfoKhx<'s>> for vks::VkRenderPassMultivi
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkRenderPassMultiviewCreateInfoKHX> for RenderPassMultiviewCreateInfoKhx<'s> {
+    fn from(f: vks::VkRenderPassMultiviewCreateInfoKHX) -> RenderPassMultiviewCreateInfoKhx<'s> {
+        RenderPassMultiviewCreateInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkRenderPassMultiviewCreateInfoKHX`.
 ///
 /// 
@@ -17365,7 +20000,7 @@ impl<'s> From<RenderPassMultiviewCreateInfoKhx<'s>> for vks::VkRenderPassMultivi
 #[derive(Debug, Clone, Default)]
 pub struct RenderPassMultiviewCreateInfoKhxBuilder<'b> {
     raw: vks::VkRenderPassMultiviewCreateInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -17388,7 +20023,7 @@ impl<'b> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
     }
 
     pub fn view_masks<'m, 'a>(mut self, view_masks: &'a [u32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
-        self.raw.pViewMasks = view_masks.as_ptr() as *const _;
+        self.raw.pViewMasks = view_masks.as_ptr() as *const u32 as *const _;
         self
     }
 
@@ -17398,15 +20033,15 @@ impl<'b> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
     }
 
     pub fn view_offsets<'m, 'a>(mut self, view_offsets: &'a [i32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
-        self.raw.pViewOffsets = view_offsets.as_ptr() as *const _;
+        self.raw.pViewOffsets = view_offsets.as_ptr() as *const i32 as *const _;
         self
     }
 
     pub fn correlation_masks<'m, 'a>(mut self, correlation_masks: &'a [u32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
-        assert!(self.raw.correlationMaskCount == 0 || self.raw.correlationMaskCount == correlation_masks.len() as u32, 
+        assert!(self.raw.correlationMaskCount == 0 || self.raw.correlationMaskCount == correlation_masks.len() as _, 
             "count inconsistency found when specifying `RenderPassMultiviewCreateInfoKhx::correlation_masks`.");
-        self.raw.correlationMaskCount = correlation_masks.len() as u32;
-        self.raw.pCorrelationMasks = correlation_masks.as_ptr() as *const _;
+        self.raw.correlationMaskCount = correlation_masks.len() as _;
+        self.raw.pCorrelationMasks = correlation_masks.as_ptr() as *const u32 as *const _;
         self
     }
 
@@ -17431,40 +20066,57 @@ pub struct SurfaceCapabilities2Ext<'s> {
 }
 
 impl<'s> SurfaceCapabilities2Ext<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn min_image_count(&self) {
+    pub fn min_image_count<'a>(&'a self) -> u32 {
+        self.raw.minImageCount.into()
     }
 
-    pub fn max_image_count(&self) {
+    pub fn max_image_count<'a>(&'a self) -> u32 {
+        self.raw.maxImageCount.into()
     }
 
-    pub fn current_extent(&self) {
+    pub fn current_extent<'a>(&'a self) -> Extent2d {
+        self.raw.currentExtent.into()
     }
 
-    pub fn min_image_extent(&self) {
+    pub fn min_image_extent<'a>(&'a self) -> Extent2d {
+        self.raw.minImageExtent.into()
     }
 
-    pub fn max_image_extent(&self) {
+    pub fn max_image_extent<'a>(&'a self) -> Extent2d {
+        self.raw.maxImageExtent.into()
     }
 
-    pub fn max_image_array_layers(&self) {
+    pub fn max_image_array_layers<'a>(&'a self) -> u32 {
+        self.raw.maxImageArrayLayers.into()
     }
 
-    pub fn supported_transforms(&self) {
+    pub fn supported_transforms<'a>(&'a self) -> SurfaceTransformFlagsKhr {
+        SurfaceTransformFlagsKhr::from_bits(self.raw.supportedTransforms)
+            .expect("SurfaceCapabilities2Ext::supported_transforms: error converting flags")
     }
 
-    pub fn current_transform(&self) {
+    pub fn current_transform<'a>(&'a self) -> SurfaceTransformFlagsKhr {
+        SurfaceTransformFlagsKhr::from_bits(self.raw.currentTransform)
+            .expect("SurfaceCapabilities2Ext::current_transform: error converting flags")
     }
 
-    pub fn supported_composite_alpha(&self) {
+    pub fn supported_composite_alpha<'a>(&'a self) -> CompositeAlphaFlagsKhr {
+        CompositeAlphaFlagsKhr::from_bits(self.raw.supportedCompositeAlpha)
+            .expect("SurfaceCapabilities2Ext::supported_composite_alpha: error converting flags")
     }
 
-    pub fn supported_usage_flags(&self) {
+    pub fn supported_usage_flags<'a>(&'a self) -> ImageUsageFlags {
+        ImageUsageFlags::from_bits(self.raw.supportedUsageFlags)
+            .expect("SurfaceCapabilities2Ext::supported_usage_flags: error converting flags")
     }
 
-    pub fn supported_surface_counters(&self) {
+    pub fn supported_surface_counters<'a>(&'a self) -> SurfaceCounterFlagsExt {
+        SurfaceCounterFlagsExt::from_bits(self.raw.supportedSurfaceCounters)
+            .expect("SurfaceCapabilities2Ext::supported_surface_counters: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkSurfaceCapabilities2EXT {
@@ -17476,6 +20128,13 @@ impl<'s> SurfaceCapabilities2Ext<'s> {
 impl<'s> From<SurfaceCapabilities2Ext<'s>> for vks::VkSurfaceCapabilities2EXT {
     fn from(f: SurfaceCapabilities2Ext<'s>) -> vks::VkSurfaceCapabilities2EXT {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkSurfaceCapabilities2EXT> for SurfaceCapabilities2Ext<'s> {
+    fn from(f: vks::VkSurfaceCapabilities2EXT) -> SurfaceCapabilities2Ext<'s> {
+        SurfaceCapabilities2Ext { raw: f, _p: PhantomData }
     }
 }
 
@@ -17495,10 +20154,12 @@ impl<'s> DisplayPowerInfoExt<'s> {
         DisplayPowerInfoExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn power_state(&self) {
+    pub fn power_state<'a>(&'a self) -> DisplayPowerStateExt {
+        self.raw.powerState.into()
     }
 
     pub fn raw(&self) -> &vks::VkDisplayPowerInfoEXT {
@@ -17514,13 +20175,20 @@ impl<'s> From<DisplayPowerInfoExt<'s>> for vks::VkDisplayPowerInfoEXT {
 }
 
 
+impl<'s> From<vks::VkDisplayPowerInfoEXT> for DisplayPowerInfoExt<'s> {
+    fn from(f: vks::VkDisplayPowerInfoEXT) -> DisplayPowerInfoExt<'s> {
+        DisplayPowerInfoExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDisplayPowerInfoEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayPowerInfoExtBuilder<'b> {
     raw: vks::VkDisplayPowerInfoEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DisplayPowerInfoExtBuilder<'b> {
@@ -17566,10 +20234,12 @@ impl<'s> DeviceEventInfoExt<'s> {
         DeviceEventInfoExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn device_event(&self) {
+    pub fn device_event<'a>(&'a self) -> DeviceEventTypeExt {
+        self.raw.deviceEvent.into()
     }
 
     pub fn raw(&self) -> &vks::VkDeviceEventInfoEXT {
@@ -17585,13 +20255,20 @@ impl<'s> From<DeviceEventInfoExt<'s>> for vks::VkDeviceEventInfoEXT {
 }
 
 
+impl<'s> From<vks::VkDeviceEventInfoEXT> for DeviceEventInfoExt<'s> {
+    fn from(f: vks::VkDeviceEventInfoEXT) -> DeviceEventInfoExt<'s> {
+        DeviceEventInfoExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceEventInfoEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DeviceEventInfoExtBuilder<'b> {
     raw: vks::VkDeviceEventInfoEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DeviceEventInfoExtBuilder<'b> {
@@ -17637,10 +20314,12 @@ impl<'s> DisplayEventInfoExt<'s> {
         DisplayEventInfoExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn display_event(&self) {
+    pub fn display_event<'a>(&'a self) -> DisplayEventTypeExt {
+        self.raw.displayEvent.into()
     }
 
     pub fn raw(&self) -> &vks::VkDisplayEventInfoEXT {
@@ -17656,13 +20335,20 @@ impl<'s> From<DisplayEventInfoExt<'s>> for vks::VkDisplayEventInfoEXT {
 }
 
 
+impl<'s> From<vks::VkDisplayEventInfoEXT> for DisplayEventInfoExt<'s> {
+    fn from(f: vks::VkDisplayEventInfoEXT) -> DisplayEventInfoExt<'s> {
+        DisplayEventInfoExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDisplayEventInfoEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DisplayEventInfoExtBuilder<'b> {
     raw: vks::VkDisplayEventInfoEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DisplayEventInfoExtBuilder<'b> {
@@ -17708,10 +20394,13 @@ impl<'s> SwapchainCounterCreateInfoExt<'s> {
         SwapchainCounterCreateInfoExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn surface_counters(&self) {
+    pub fn surface_counters<'a>(&'a self) -> SurfaceCounterFlagsExt {
+        SurfaceCounterFlagsExt::from_bits(self.raw.surfaceCounters)
+            .expect("SwapchainCounterCreateInfoExt::surface_counters: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkSwapchainCounterCreateInfoEXT {
@@ -17727,13 +20416,20 @@ impl<'s> From<SwapchainCounterCreateInfoExt<'s>> for vks::VkSwapchainCounterCrea
 }
 
 
+impl<'s> From<vks::VkSwapchainCounterCreateInfoEXT> for SwapchainCounterCreateInfoExt<'s> {
+    fn from(f: vks::VkSwapchainCounterCreateInfoEXT) -> SwapchainCounterCreateInfoExt<'s> {
+        SwapchainCounterCreateInfoExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSwapchainCounterCreateInfoEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SwapchainCounterCreateInfoExtBuilder<'b> {
     raw: vks::VkSwapchainCounterCreateInfoEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SwapchainCounterCreateInfoExtBuilder<'b> {
@@ -17777,16 +20473,20 @@ pub struct PhysicalDeviceGroupPropertiesKhx<'s> {
 
 #[cfg(feature = "experimental")]
 impl<'s> PhysicalDeviceGroupPropertiesKhx<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn physical_device_count(&self) {
+    pub fn physical_device_count<'a>(&'a self) -> u32 {
+        self.raw.physicalDeviceCount.into()
     }
 
-    pub fn physical_devices(&self) {
+    pub fn physical_devices_handle<'a>(&'a self) -> vks::VkPhysicalDevice {
+        unsafe { slice::from_raw_parts(&self.raw.physicalDevices as *const _, vks::VK_MAX_DEVICE_GROUP_SIZE_KHX as usize) }
     }
 
-    pub fn subset_allocation(&self) {
+    pub fn subset_allocation<'a>(&'a self) -> bool {
+        self.raw.subsetAllocation != 0
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceGroupPropertiesKHX {
@@ -17799,6 +20499,14 @@ impl<'s> PhysicalDeviceGroupPropertiesKhx<'s> {
 impl<'s> From<PhysicalDeviceGroupPropertiesKhx<'s>> for vks::VkPhysicalDeviceGroupPropertiesKHX {
     fn from(f: PhysicalDeviceGroupPropertiesKhx<'s>) -> vks::VkPhysicalDeviceGroupPropertiesKHX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkPhysicalDeviceGroupPropertiesKHX> for PhysicalDeviceGroupPropertiesKhx<'s> {
+    fn from(f: vks::VkPhysicalDeviceGroupPropertiesKHX) -> PhysicalDeviceGroupPropertiesKhx<'s> {
+        PhysicalDeviceGroupPropertiesKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -17820,13 +20528,17 @@ impl<'s> MemoryAllocateFlagsInfoKhx<'s> {
         MemoryAllocateFlagsInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> MemoryAllocateFlagsKhx {
+        MemoryAllocateFlagsKhx::from_bits(self.raw.flags)
+            .expect("MemoryAllocateFlagsInfoKhx::flags: error converting flags")
     }
 
-    pub fn device_mask(&self) {
+    pub fn device_mask<'a>(&'a self) -> u32 {
+        self.raw.deviceMask.into()
     }
 
     pub fn raw(&self) -> &vks::VkMemoryAllocateFlagsInfoKHX {
@@ -17843,6 +20555,14 @@ impl<'s> From<MemoryAllocateFlagsInfoKhx<'s>> for vks::VkMemoryAllocateFlagsInfo
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkMemoryAllocateFlagsInfoKHX> for MemoryAllocateFlagsInfoKhx<'s> {
+    fn from(f: vks::VkMemoryAllocateFlagsInfoKHX) -> MemoryAllocateFlagsInfoKhx<'s> {
+        MemoryAllocateFlagsInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkMemoryAllocateFlagsInfoKHX`.
 ///
 /// 
@@ -17850,7 +20570,7 @@ impl<'s> From<MemoryAllocateFlagsInfoKhx<'s>> for vks::VkMemoryAllocateFlagsInfo
 #[derive(Debug, Clone, Default)]
 pub struct MemoryAllocateFlagsInfoKhxBuilder<'b> {
     raw: vks::VkMemoryAllocateFlagsInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -17904,10 +20624,12 @@ impl<'s> BindBufferMemoryDeviceGroupInfoKhx<'s> {
         BindBufferMemoryDeviceGroupInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn device_indices(&self) {
+    pub fn device_indices<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pDeviceIndices as *const _, self.raw.deviceIndexCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkBindBufferMemoryDeviceGroupInfoKHX {
@@ -17924,6 +20646,14 @@ impl<'s> From<BindBufferMemoryDeviceGroupInfoKhx<'s>> for vks::VkBindBufferMemor
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkBindBufferMemoryDeviceGroupInfoKHX> for BindBufferMemoryDeviceGroupInfoKhx<'s> {
+    fn from(f: vks::VkBindBufferMemoryDeviceGroupInfoKHX) -> BindBufferMemoryDeviceGroupInfoKhx<'s> {
+        BindBufferMemoryDeviceGroupInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkBindBufferMemoryDeviceGroupInfoKHX`.
 ///
 /// 
@@ -17931,7 +20661,7 @@ impl<'s> From<BindBufferMemoryDeviceGroupInfoKhx<'s>> for vks::VkBindBufferMemor
 #[derive(Debug, Clone, Default)]
 pub struct BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
     raw: vks::VkBindBufferMemoryDeviceGroupInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -17949,10 +20679,10 @@ impl<'b> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
     }
 
     pub fn device_indices<'m, 'a>(mut self, device_indices: &'a [u32]) -> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
-        assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as u32, 
+        assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as _, 
             "count inconsistency found when specifying `BindBufferMemoryDeviceGroupInfoKhx::device_indices`.");
-        self.raw.deviceIndexCount = device_indices.len() as u32;
-        self.raw.pDeviceIndices = device_indices.as_ptr() as *const _;
+        self.raw.deviceIndexCount = device_indices.len() as _;
+        self.raw.pDeviceIndices = device_indices.as_ptr() as *const u32 as *const _;
         self
     }
 
@@ -17983,13 +20713,16 @@ impl<'s> BindImageMemoryDeviceGroupInfoKhx<'s> {
         BindImageMemoryDeviceGroupInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn device_indices(&self) {
+    pub fn device_indices<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pDeviceIndices as *const _, self.raw.deviceIndexCount as usize) }
     }
 
-    pub fn s_fr_rects(&self) {
+    pub fn s_fr_rects<'a>(&'a self) -> &'a [Rect2d] {
+        unsafe { slice::from_raw_parts(self.raw.pSFRRects as *const _, self.raw.SFRRectCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkBindImageMemoryDeviceGroupInfoKHX {
@@ -18006,6 +20739,14 @@ impl<'s> From<BindImageMemoryDeviceGroupInfoKhx<'s>> for vks::VkBindImageMemoryD
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkBindImageMemoryDeviceGroupInfoKHX> for BindImageMemoryDeviceGroupInfoKhx<'s> {
+    fn from(f: vks::VkBindImageMemoryDeviceGroupInfoKHX) -> BindImageMemoryDeviceGroupInfoKhx<'s> {
+        BindImageMemoryDeviceGroupInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkBindImageMemoryDeviceGroupInfoKHX`.
 ///
 /// 
@@ -18013,7 +20754,7 @@ impl<'s> From<BindImageMemoryDeviceGroupInfoKhx<'s>> for vks::VkBindImageMemoryD
 #[derive(Debug, Clone, Default)]
 pub struct BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
     raw: vks::VkBindImageMemoryDeviceGroupInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -18031,18 +20772,18 @@ impl<'b> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
     }
 
     pub fn device_indices<'m, 'a>(mut self, device_indices: &'a [u32]) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
-        assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as u32, 
+        assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as _, 
             "count inconsistency found when specifying `BindImageMemoryDeviceGroupInfoKhx::device_indices`.");
-        self.raw.deviceIndexCount = device_indices.len() as u32;
-        self.raw.pDeviceIndices = device_indices.as_ptr() as *const _;
+        self.raw.deviceIndexCount = device_indices.len() as _;
+        self.raw.pDeviceIndices = device_indices.as_ptr() as *const u32 as *const _;
         self
     }
 
     pub fn s_fr_rects<'m, 'a>(mut self, s_fr_rects: &'a [Rect2d]) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
-        assert!(self.raw.SFRRectCount == 0 || self.raw.SFRRectCount == s_fr_rects.len() as u32, 
+        assert!(self.raw.SFRRectCount == 0 || self.raw.SFRRectCount == s_fr_rects.len() as _, 
             "count inconsistency found when specifying `BindImageMemoryDeviceGroupInfoKhx::s_fr_rects`.");
-        self.raw.SFRRectCount = s_fr_rects.len() as u32;
-        self.raw.pSFRRects = s_fr_rects.as_ptr() as *const _;
+        self.raw.SFRRectCount = s_fr_rects.len() as _;
+        self.raw.pSFRRects = s_fr_rects.as_ptr() as *const vks::VkRect2D as *const _;
         self
     }
 
@@ -18073,13 +20814,16 @@ impl<'s> DeviceGroupRenderPassBeginInfoKhx<'s> {
         DeviceGroupRenderPassBeginInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn device_mask(&self) {
+    pub fn device_mask<'a>(&'a self) -> u32 {
+        self.raw.deviceMask.into()
     }
 
-    pub fn device_render_areas(&self) {
+    pub fn device_render_areas<'a>(&'a self) -> &'a [Rect2d] {
+        unsafe { slice::from_raw_parts(self.raw.pDeviceRenderAreas as *const _, self.raw.deviceRenderAreaCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkDeviceGroupRenderPassBeginInfoKHX {
@@ -18096,6 +20840,14 @@ impl<'s> From<DeviceGroupRenderPassBeginInfoKhx<'s>> for vks::VkDeviceGroupRende
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkDeviceGroupRenderPassBeginInfoKHX> for DeviceGroupRenderPassBeginInfoKhx<'s> {
+    fn from(f: vks::VkDeviceGroupRenderPassBeginInfoKHX) -> DeviceGroupRenderPassBeginInfoKhx<'s> {
+        DeviceGroupRenderPassBeginInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceGroupRenderPassBeginInfoKHX`.
 ///
 /// 
@@ -18103,7 +20855,7 @@ impl<'s> From<DeviceGroupRenderPassBeginInfoKhx<'s>> for vks::VkDeviceGroupRende
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
     raw: vks::VkDeviceGroupRenderPassBeginInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -18126,10 +20878,10 @@ impl<'b> DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
     }
 
     pub fn device_render_areas<'m, 'a>(mut self, device_render_areas: &'a [Rect2d]) -> DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
-        assert!(self.raw.deviceRenderAreaCount == 0 || self.raw.deviceRenderAreaCount == device_render_areas.len() as u32, 
+        assert!(self.raw.deviceRenderAreaCount == 0 || self.raw.deviceRenderAreaCount == device_render_areas.len() as _, 
             "count inconsistency found when specifying `DeviceGroupRenderPassBeginInfoKhx::device_render_areas`.");
-        self.raw.deviceRenderAreaCount = device_render_areas.len() as u32;
-        self.raw.pDeviceRenderAreas = device_render_areas.as_ptr() as *const _;
+        self.raw.deviceRenderAreaCount = device_render_areas.len() as _;
+        self.raw.pDeviceRenderAreas = device_render_areas.as_ptr() as *const vks::VkRect2D as *const _;
         self
     }
 
@@ -18160,10 +20912,12 @@ impl<'s> DeviceGroupCommandBufferBeginInfoKhx<'s> {
         DeviceGroupCommandBufferBeginInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn device_mask(&self) {
+    pub fn device_mask<'a>(&'a self) -> u32 {
+        self.raw.deviceMask.into()
     }
 
     pub fn raw(&self) -> &vks::VkDeviceGroupCommandBufferBeginInfoKHX {
@@ -18180,6 +20934,14 @@ impl<'s> From<DeviceGroupCommandBufferBeginInfoKhx<'s>> for vks::VkDeviceGroupCo
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkDeviceGroupCommandBufferBeginInfoKHX> for DeviceGroupCommandBufferBeginInfoKhx<'s> {
+    fn from(f: vks::VkDeviceGroupCommandBufferBeginInfoKHX) -> DeviceGroupCommandBufferBeginInfoKhx<'s> {
+        DeviceGroupCommandBufferBeginInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceGroupCommandBufferBeginInfoKHX`.
 ///
 /// 
@@ -18187,7 +20949,7 @@ impl<'s> From<DeviceGroupCommandBufferBeginInfoKhx<'s>> for vks::VkDeviceGroupCo
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupCommandBufferBeginInfoKhxBuilder<'b> {
     raw: vks::VkDeviceGroupCommandBufferBeginInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -18236,16 +20998,20 @@ impl<'s> DeviceGroupSubmitInfoKhx<'s> {
         DeviceGroupSubmitInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn wait_semaphore_device_indices(&self) {
+    pub fn wait_semaphore_device_indices<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pWaitSemaphoreDeviceIndices as *const _, self.raw.waitSemaphoreCount as usize) }
     }
 
-    pub fn command_buffer_device_masks(&self) {
+    pub fn command_buffer_device_masks<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pCommandBufferDeviceMasks as *const _, self.raw.commandBufferCount as usize) }
     }
 
-    pub fn signal_semaphore_device_indices(&self) {
+    pub fn signal_semaphore_device_indices<'a>(&'a self) -> &'a [u32] {
+        unsafe { slice::from_raw_parts(self.raw.pSignalSemaphoreDeviceIndices as *const _, self.raw.signalSemaphoreCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkDeviceGroupSubmitInfoKHX {
@@ -18262,6 +21028,14 @@ impl<'s> From<DeviceGroupSubmitInfoKhx<'s>> for vks::VkDeviceGroupSubmitInfoKHX 
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkDeviceGroupSubmitInfoKHX> for DeviceGroupSubmitInfoKhx<'s> {
+    fn from(f: vks::VkDeviceGroupSubmitInfoKHX) -> DeviceGroupSubmitInfoKhx<'s> {
+        DeviceGroupSubmitInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceGroupSubmitInfoKHX`.
 ///
 /// 
@@ -18269,7 +21043,7 @@ impl<'s> From<DeviceGroupSubmitInfoKhx<'s>> for vks::VkDeviceGroupSubmitInfoKHX 
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupSubmitInfoKhxBuilder<'b> {
     raw: vks::VkDeviceGroupSubmitInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -18287,26 +21061,26 @@ impl<'b> DeviceGroupSubmitInfoKhxBuilder<'b> {
     }
 
     pub fn wait_semaphore_device_indices<'m, 'a>(mut self, wait_semaphore_device_indices: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
-        assert!(self.raw.waitSemaphoreCount == 0 || self.raw.waitSemaphoreCount == wait_semaphore_device_indices.len() as u32, 
+        assert!(self.raw.waitSemaphoreCount == 0 || self.raw.waitSemaphoreCount == wait_semaphore_device_indices.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::wait_semaphore_device_indices`.");
-        self.raw.waitSemaphoreCount = wait_semaphore_device_indices.len() as u32;
-        self.raw.pWaitSemaphoreDeviceIndices = wait_semaphore_device_indices.as_ptr() as *const _;
+        self.raw.waitSemaphoreCount = wait_semaphore_device_indices.len() as _;
+        self.raw.pWaitSemaphoreDeviceIndices = wait_semaphore_device_indices.as_ptr() as *const u32 as *const _;
         self
     }
 
     pub fn command_buffer_device_masks<'m, 'a>(mut self, command_buffer_device_masks: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
-        assert!(self.raw.commandBufferCount == 0 || self.raw.commandBufferCount == command_buffer_device_masks.len() as u32, 
+        assert!(self.raw.commandBufferCount == 0 || self.raw.commandBufferCount == command_buffer_device_masks.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::command_buffer_device_masks`.");
-        self.raw.commandBufferCount = command_buffer_device_masks.len() as u32;
-        self.raw.pCommandBufferDeviceMasks = command_buffer_device_masks.as_ptr() as *const _;
+        self.raw.commandBufferCount = command_buffer_device_masks.len() as _;
+        self.raw.pCommandBufferDeviceMasks = command_buffer_device_masks.as_ptr() as *const u32 as *const _;
         self
     }
 
     pub fn signal_semaphore_device_indices<'m, 'a>(mut self, signal_semaphore_device_indices: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
-        assert!(self.raw.signalSemaphoreCount == 0 || self.raw.signalSemaphoreCount == signal_semaphore_device_indices.len() as u32, 
+        assert!(self.raw.signalSemaphoreCount == 0 || self.raw.signalSemaphoreCount == signal_semaphore_device_indices.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::signal_semaphore_device_indices`.");
-        self.raw.signalSemaphoreCount = signal_semaphore_device_indices.len() as u32;
-        self.raw.pSignalSemaphoreDeviceIndices = signal_semaphore_device_indices.as_ptr() as *const _;
+        self.raw.signalSemaphoreCount = signal_semaphore_device_indices.len() as _;
+        self.raw.pSignalSemaphoreDeviceIndices = signal_semaphore_device_indices.as_ptr() as *const u32 as *const _;
         self
     }
 
@@ -18337,13 +21111,16 @@ impl<'s> DeviceGroupBindSparseInfoKhx<'s> {
         DeviceGroupBindSparseInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn resource_device_index(&self) {
+    pub fn resource_device_index<'a>(&'a self) -> u32 {
+        self.raw.resourceDeviceIndex.into()
     }
 
-    pub fn memory_device_index(&self) {
+    pub fn memory_device_index<'a>(&'a self) -> u32 {
+        self.raw.memoryDeviceIndex.into()
     }
 
     pub fn raw(&self) -> &vks::VkDeviceGroupBindSparseInfoKHX {
@@ -18360,6 +21137,14 @@ impl<'s> From<DeviceGroupBindSparseInfoKhx<'s>> for vks::VkDeviceGroupBindSparse
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkDeviceGroupBindSparseInfoKHX> for DeviceGroupBindSparseInfoKhx<'s> {
+    fn from(f: vks::VkDeviceGroupBindSparseInfoKHX) -> DeviceGroupBindSparseInfoKhx<'s> {
+        DeviceGroupBindSparseInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceGroupBindSparseInfoKHX`.
 ///
 /// 
@@ -18367,7 +21152,7 @@ impl<'s> From<DeviceGroupBindSparseInfoKhx<'s>> for vks::VkDeviceGroupBindSparse
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupBindSparseInfoKhxBuilder<'b> {
     raw: vks::VkDeviceGroupBindSparseInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -18417,13 +21202,17 @@ pub struct DeviceGroupPresentCapabilitiesKhx<'s> {
 
 #[cfg(feature = "experimental")]
 impl<'s> DeviceGroupPresentCapabilitiesKhx<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn present_mask(&self) {
+    pub fn present_mask<'a>(&'a self) -> &[u32] {
+        unsafe { slice::from_raw_parts(&self.raw.presentMask as *const _, vks::VK_MAX_DEVICE_GROUP_SIZE_KHX as usize) }
     }
 
-    pub fn modes(&self) {
+    pub fn modes<'a>(&'a self) -> DeviceGroupPresentModeFlagsKhx {
+        DeviceGroupPresentModeFlagsKhx::from_bits(self.raw.modes)
+            .expect("DeviceGroupPresentCapabilitiesKhx::modes: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkDeviceGroupPresentCapabilitiesKHX {
@@ -18436,6 +21225,14 @@ impl<'s> DeviceGroupPresentCapabilitiesKhx<'s> {
 impl<'s> From<DeviceGroupPresentCapabilitiesKhx<'s>> for vks::VkDeviceGroupPresentCapabilitiesKHX {
     fn from(f: DeviceGroupPresentCapabilitiesKhx<'s>) -> vks::VkDeviceGroupPresentCapabilitiesKHX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkDeviceGroupPresentCapabilitiesKHX> for DeviceGroupPresentCapabilitiesKhx<'s> {
+    fn from(f: vks::VkDeviceGroupPresentCapabilitiesKHX) -> DeviceGroupPresentCapabilitiesKhx<'s> {
+        DeviceGroupPresentCapabilitiesKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -18457,10 +21254,12 @@ impl<'s> ImageSwapchainCreateInfoKhx<'s> {
         ImageSwapchainCreateInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn swapchain(&self) {
+    pub fn swapchain_handle<'a>(&'a self) -> vks::VkSwapchainKHR {
+        self.raw.swapchain
     }
 
     pub fn raw(&self) -> &vks::VkImageSwapchainCreateInfoKHX {
@@ -18477,6 +21276,14 @@ impl<'s> From<ImageSwapchainCreateInfoKhx<'s>> for vks::VkImageSwapchainCreateIn
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkImageSwapchainCreateInfoKHX> for ImageSwapchainCreateInfoKhx<'s> {
+    fn from(f: vks::VkImageSwapchainCreateInfoKHX) -> ImageSwapchainCreateInfoKhx<'s> {
+        ImageSwapchainCreateInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImageSwapchainCreateInfoKHX`.
 ///
 /// 
@@ -18484,7 +21291,7 @@ impl<'s> From<ImageSwapchainCreateInfoKhx<'s>> for vks::VkImageSwapchainCreateIn
 #[derive(Debug, Clone, Default)]
 pub struct ImageSwapchainCreateInfoKhxBuilder<'b> {
     raw: vks::VkImageSwapchainCreateInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -18533,13 +21340,16 @@ impl<'s> BindImageMemorySwapchainInfoKhx<'s> {
         BindImageMemorySwapchainInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn swapchain(&self) {
+    pub fn swapchain_handle<'a>(&'a self) -> vks::VkSwapchainKHR {
+        self.raw.swapchain
     }
 
-    pub fn image_index(&self) {
+    pub fn image_index<'a>(&'a self) -> u32 {
+        self.raw.imageIndex.into()
     }
 
     pub fn raw(&self) -> &vks::VkBindImageMemorySwapchainInfoKHX {
@@ -18556,6 +21366,14 @@ impl<'s> From<BindImageMemorySwapchainInfoKhx<'s>> for vks::VkBindImageMemorySwa
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkBindImageMemorySwapchainInfoKHX> for BindImageMemorySwapchainInfoKhx<'s> {
+    fn from(f: vks::VkBindImageMemorySwapchainInfoKHX) -> BindImageMemorySwapchainInfoKhx<'s> {
+        BindImageMemorySwapchainInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkBindImageMemorySwapchainInfoKHX`.
 ///
 /// 
@@ -18563,7 +21381,7 @@ impl<'s> From<BindImageMemorySwapchainInfoKhx<'s>> for vks::VkBindImageMemorySwa
 #[derive(Debug, Clone, Default)]
 pub struct BindImageMemorySwapchainInfoKhxBuilder<'b> {
     raw: vks::VkBindImageMemorySwapchainInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -18617,22 +21435,28 @@ impl<'s> AcquireNextImageInfoKhx<'s> {
         AcquireNextImageInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn swapchain(&self) {
+    pub fn swapchain_handle<'a>(&'a self) -> vks::VkSwapchainKHR {
+        self.raw.swapchain
     }
 
-    pub fn timeout(&self) {
+    pub fn timeout<'a>(&'a self) -> u64 {
+        self.raw.timeout.into()
     }
 
-    pub fn semaphore(&self) {
+    pub fn semaphore_handle<'a>(&'a self) -> vks::VkSemaphore {
+        self.raw.semaphore
     }
 
-    pub fn fence(&self) {
+    pub fn fence_handle<'a>(&'a self) -> vks::VkFence {
+        self.raw.fence
     }
 
-    pub fn device_mask(&self) {
+    pub fn device_mask<'a>(&'a self) -> u32 {
+        self.raw.deviceMask.into()
     }
 
     pub fn raw(&self) -> &vks::VkAcquireNextImageInfoKHX {
@@ -18649,6 +21473,14 @@ impl<'s> From<AcquireNextImageInfoKhx<'s>> for vks::VkAcquireNextImageInfoKHX {
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkAcquireNextImageInfoKHX> for AcquireNextImageInfoKhx<'s> {
+    fn from(f: vks::VkAcquireNextImageInfoKHX) -> AcquireNextImageInfoKhx<'s> {
+        AcquireNextImageInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkAcquireNextImageInfoKHX`.
 ///
 /// 
@@ -18656,7 +21488,7 @@ impl<'s> From<AcquireNextImageInfoKhx<'s>> for vks::VkAcquireNextImageInfoKHX {
 #[derive(Debug, Clone, Default)]
 pub struct AcquireNextImageInfoKhxBuilder<'b> {
     raw: vks::VkAcquireNextImageInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -18725,16 +21557,21 @@ impl<'s> DeviceGroupPresentInfoKhx<'s> {
         DeviceGroupPresentInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn swapchain_count(&self) {
+    pub fn swapchain_count<'a>(&'a self) -> u32 {
+        self.raw.swapchainCount.into()
     }
 
-    pub fn device_masks(&self) {
+    pub fn device_masks<'a>(&'a self) -> &'a [u32] {
+        unsafe { &*(self.raw.pDeviceMasks as *const _) }
     }
 
-    pub fn mode(&self) {
+    pub fn mode<'a>(&'a self) -> DeviceGroupPresentModeFlagsKhx {
+        DeviceGroupPresentModeFlagsKhx::from_bits(self.raw.mode)
+            .expect("DeviceGroupPresentInfoKhx::mode: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkDeviceGroupPresentInfoKHX {
@@ -18751,6 +21588,14 @@ impl<'s> From<DeviceGroupPresentInfoKhx<'s>> for vks::VkDeviceGroupPresentInfoKH
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkDeviceGroupPresentInfoKHX> for DeviceGroupPresentInfoKhx<'s> {
+    fn from(f: vks::VkDeviceGroupPresentInfoKHX) -> DeviceGroupPresentInfoKhx<'s> {
+        DeviceGroupPresentInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceGroupPresentInfoKHX`.
 ///
 /// 
@@ -18758,7 +21603,7 @@ impl<'s> From<DeviceGroupPresentInfoKhx<'s>> for vks::VkDeviceGroupPresentInfoKH
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupPresentInfoKhxBuilder<'b> {
     raw: vks::VkDeviceGroupPresentInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -18781,7 +21626,7 @@ impl<'b> DeviceGroupPresentInfoKhxBuilder<'b> {
     }
 
     pub fn device_masks<'m, 'a>(mut self, device_masks: &'a [u32]) -> DeviceGroupPresentInfoKhxBuilder<'b> {
-        self.raw.pDeviceMasks = device_masks.as_ptr() as *const _;
+        self.raw.pDeviceMasks = device_masks.as_ptr() as *const u32 as *const _;
         self
     }
 
@@ -18817,10 +21662,12 @@ impl<'s> DeviceGroupDeviceCreateInfoKhx<'s> {
         DeviceGroupDeviceCreateInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn physical_devices(&self) {
+    pub fn physical_devices_handle<'a>(&'a self) -> &'a [vks::VkPhysicalDevice] {
+        unsafe { slice::from_raw_parts(self.raw.pPhysicalDevices as *const _, self.raw.physicalDeviceCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkDeviceGroupDeviceCreateInfoKHX {
@@ -18837,6 +21684,14 @@ impl<'s> From<DeviceGroupDeviceCreateInfoKhx<'s>> for vks::VkDeviceGroupDeviceCr
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkDeviceGroupDeviceCreateInfoKHX> for DeviceGroupDeviceCreateInfoKhx<'s> {
+    fn from(f: vks::VkDeviceGroupDeviceCreateInfoKHX) -> DeviceGroupDeviceCreateInfoKhx<'s> {
+        DeviceGroupDeviceCreateInfoKhx { raw: f, physical_devices: None, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceGroupDeviceCreateInfoKHX`.
 ///
 /// 
@@ -18845,7 +21700,7 @@ impl<'s> From<DeviceGroupDeviceCreateInfoKhx<'s>> for vks::VkDeviceGroupDeviceCr
 pub struct DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
     raw: vks::VkDeviceGroupDeviceCreateInfoKHX,
     physical_devices: Option<SmallVec<[vks::VkPhysicalDevice; 8]>>,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -18863,14 +21718,14 @@ impl<'b> DeviceGroupDeviceCreateInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn physical_devices<'m, 'a>(mut self, physical_devices: &'a [PhysicalDevice]) -> DeviceGroupDeviceCreateInfoKhxBuilder<'b> where 'a: 'b {
+    pub fn physical_devices<'m, 'a>(mut self, physical_devices: &'a [&'a PhysicalDevice]) -> DeviceGroupDeviceCreateInfoKhxBuilder<'b> where 'a: 'b {
         self.physical_devices = Some(physical_devices.iter().map(|h| h.handle()).collect());
         {
             let physical_devices = self.physical_devices.as_ref().unwrap();
             self.raw.pPhysicalDevices = physical_devices.as_ptr();
-            assert!(self.raw.physicalDeviceCount == 0 || self.raw.physicalDeviceCount == physical_devices.len() as u32, 
+            assert!(self.raw.physicalDeviceCount == 0 || self.raw.physicalDeviceCount == physical_devices.len() as _, 
                 "count inconsistency found when specifying `DeviceGroupDeviceCreateInfoKhx::physical_devices`.");
-            self.raw.physicalDeviceCount = physical_devices.len() as u32;
+            self.raw.physicalDeviceCount = physical_devices.len() as _;
         }
         self
     }
@@ -18903,10 +21758,13 @@ impl<'s> DeviceGroupSwapchainCreateInfoKhx<'s> {
         DeviceGroupSwapchainCreateInfoKhxBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn modes(&self) {
+    pub fn modes<'a>(&'a self) -> DeviceGroupPresentModeFlagsKhx {
+        DeviceGroupPresentModeFlagsKhx::from_bits(self.raw.modes)
+            .expect("DeviceGroupSwapchainCreateInfoKhx::modes: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkDeviceGroupSwapchainCreateInfoKHX {
@@ -18923,6 +21781,14 @@ impl<'s> From<DeviceGroupSwapchainCreateInfoKhx<'s>> for vks::VkDeviceGroupSwapc
 }
 
 
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkDeviceGroupSwapchainCreateInfoKHX> for DeviceGroupSwapchainCreateInfoKhx<'s> {
+    fn from(f: vks::VkDeviceGroupSwapchainCreateInfoKHX) -> DeviceGroupSwapchainCreateInfoKhx<'s> {
+        DeviceGroupSwapchainCreateInfoKhx { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDeviceGroupSwapchainCreateInfoKHX`.
 ///
 /// 
@@ -18930,7 +21796,7 @@ impl<'s> From<DeviceGroupSwapchainCreateInfoKhx<'s>> for vks::VkDeviceGroupSwapc
 #[derive(Debug, Clone, Default)]
 pub struct DeviceGroupSwapchainCreateInfoKhxBuilder<'b> {
     raw: vks::VkDeviceGroupSwapchainCreateInfoKHX,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 #[cfg(feature = "experimental")]
@@ -18976,22 +21842,28 @@ impl DescriptorUpdateTemplateEntryKhr {
         DescriptorUpdateTemplateEntryKhrBuilder::new()
     }
 
-    pub fn dst_binding(&self) {
+    pub fn dst_binding<'a>(&'a self) -> u32 {
+        self.raw.dstBinding.into()
     }
 
-    pub fn dst_array_element(&self) {
+    pub fn dst_array_element<'a>(&'a self) -> u32 {
+        self.raw.dstArrayElement.into()
     }
 
-    pub fn descriptor_count(&self) {
+    pub fn descriptor_count<'a>(&'a self) -> u32 {
+        self.raw.descriptorCount.into()
     }
 
-    pub fn descriptor_type(&self) {
+    pub fn descriptor_type<'a>(&'a self) -> DescriptorType {
+        self.raw.descriptorType.into()
     }
 
-    pub fn offset(&self) {
+    pub fn offset<'a>(&'a self) -> usize {
+        self.raw.offset.into()
     }
 
-    pub fn stride(&self) {
+    pub fn stride<'a>(&'a self) -> usize {
+        self.raw.stride.into()
     }
 
     pub fn raw(&self) -> &vks::VkDescriptorUpdateTemplateEntryKHR {
@@ -19003,6 +21875,13 @@ impl DescriptorUpdateTemplateEntryKhr {
 impl From<DescriptorUpdateTemplateEntryKhr> for vks::VkDescriptorUpdateTemplateEntryKHR {
     fn from(f: DescriptorUpdateTemplateEntryKhr) -> vks::VkDescriptorUpdateTemplateEntryKHR {
         f.raw
+    }
+}
+
+
+impl From<vks::VkDescriptorUpdateTemplateEntryKHR> for DescriptorUpdateTemplateEntryKhr {
+    fn from(f: vks::VkDescriptorUpdateTemplateEntryKHR) -> DescriptorUpdateTemplateEntryKhr {
+        DescriptorUpdateTemplateEntryKhr { raw: f, }
     }
 }
 
@@ -19076,28 +21955,37 @@ impl<'s> DescriptorUpdateTemplateCreateInfoKhr<'s> {
         DescriptorUpdateTemplateCreateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> DescriptorUpdateTemplateCreateFlagsKhr {
+        DescriptorUpdateTemplateCreateFlagsKhr::from_bits(self.raw.flags)
+            .expect("DescriptorUpdateTemplateCreateInfoKhr::flags: error converting flags")
     }
 
-    pub fn descriptor_update_entries(&self) {
+    pub fn descriptor_update_entries<'a>(&'a self) -> &'a [DescriptorUpdateTemplateEntryKhr] {
+        unsafe { slice::from_raw_parts(self.raw.pDescriptorUpdateEntries as *const _, self.raw.descriptorUpdateEntryCount as usize) }
     }
 
-    pub fn template_type(&self) {
+    pub fn template_type<'a>(&'a self) -> DescriptorUpdateTemplateTypeKhr {
+        self.raw.templateType.into()
     }
 
-    pub fn descriptor_set_layout(&self) {
+    pub fn descriptor_set_layout_handle<'a>(&'a self) -> vks::VkDescriptorSetLayout {
+        self.raw.descriptorSetLayout
     }
 
-    pub fn pipeline_bind_point(&self) {
+    pub fn pipeline_bind_point<'a>(&'a self) -> PipelineBindPoint {
+        self.raw.pipelineBindPoint.into()
     }
 
-    pub fn pipeline_layout(&self) {
+    pub fn pipeline_layout_handle<'a>(&'a self) -> vks::VkPipelineLayout {
+        self.raw.pipelineLayout
     }
 
-    pub fn set(&self) {
+    pub fn set<'a>(&'a self) -> u32 {
+        self.raw.set.into()
     }
 
     pub fn raw(&self) -> &vks::VkDescriptorUpdateTemplateCreateInfoKHR {
@@ -19113,13 +22001,20 @@ impl<'s> From<DescriptorUpdateTemplateCreateInfoKhr<'s>> for vks::VkDescriptorUp
 }
 
 
+impl<'s> From<vks::VkDescriptorUpdateTemplateCreateInfoKHR> for DescriptorUpdateTemplateCreateInfoKhr<'s> {
+    fn from(f: vks::VkDescriptorUpdateTemplateCreateInfoKHR) -> DescriptorUpdateTemplateCreateInfoKhr<'s> {
+        DescriptorUpdateTemplateCreateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkDescriptorUpdateTemplateCreateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
     raw: vks::VkDescriptorUpdateTemplateCreateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
@@ -19141,10 +22036,10 @@ impl<'b> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
     }
 
     pub fn descriptor_update_entries<'m, 'a>(mut self, descriptor_update_entries: &'a [DescriptorUpdateTemplateEntryKhr]) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
-        assert!(self.raw.descriptorUpdateEntryCount == 0 || self.raw.descriptorUpdateEntryCount == descriptor_update_entries.len() as u32, 
+        assert!(self.raw.descriptorUpdateEntryCount == 0 || self.raw.descriptorUpdateEntryCount == descriptor_update_entries.len() as _, 
             "count inconsistency found when specifying `DescriptorUpdateTemplateCreateInfoKhr::descriptor_update_entries`.");
-        self.raw.descriptorUpdateEntryCount = descriptor_update_entries.len() as u32;
-        self.raw.pDescriptorUpdateEntries = descriptor_update_entries.as_ptr() as *const _;
+        self.raw.descriptorUpdateEntryCount = descriptor_update_entries.len() as _;
+        self.raw.pDescriptorUpdateEntries = descriptor_update_entries.as_ptr() as *const vks::VkDescriptorUpdateTemplateEntryKHR as *const _;
         self
     }
 
@@ -19197,10 +22092,12 @@ impl XYColorExt {
         XYColorExtBuilder::new()
     }
 
-    pub fn x(&self) {
+    pub fn x<'a>(&'a self) -> f32 {
+        self.raw.x.into()
     }
 
-    pub fn y(&self) {
+    pub fn y<'a>(&'a self) -> f32 {
+        self.raw.y.into()
     }
 
     pub fn raw(&self) -> &vks::VkXYColorEXT {
@@ -19212,6 +22109,13 @@ impl XYColorExt {
 impl From<XYColorExt> for vks::VkXYColorEXT {
     fn from(f: XYColorExt) -> vks::VkXYColorEXT {
         f.raw
+    }
+}
+
+
+impl From<vks::VkXYColorEXT> for XYColorExt {
+    fn from(f: vks::VkXYColorEXT) -> XYColorExt {
+        XYColorExt { raw: f, }
     }
 }
 
@@ -19265,31 +22169,40 @@ impl<'s> HdrMetadataExt<'s> {
         HdrMetadataExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn display_primary_red(&self) {
+    pub fn display_primary_red<'a>(&'a self) -> XYColorExt {
+        self.raw.displayPrimaryRed.into()
     }
 
-    pub fn display_primary_green(&self) {
+    pub fn display_primary_green<'a>(&'a self) -> XYColorExt {
+        self.raw.displayPrimaryGreen.into()
     }
 
-    pub fn display_primary_blue(&self) {
+    pub fn display_primary_blue<'a>(&'a self) -> XYColorExt {
+        self.raw.displayPrimaryBlue.into()
     }
 
-    pub fn white_point(&self) {
+    pub fn white_point<'a>(&'a self) -> XYColorExt {
+        self.raw.whitePoint.into()
     }
 
-    pub fn max_luminance(&self) {
+    pub fn max_luminance<'a>(&'a self) -> f32 {
+        self.raw.maxLuminance.into()
     }
 
-    pub fn min_luminance(&self) {
+    pub fn min_luminance<'a>(&'a self) -> f32 {
+        self.raw.minLuminance.into()
     }
 
-    pub fn max_content_light_level(&self) {
+    pub fn max_content_light_level<'a>(&'a self) -> f32 {
+        self.raw.maxContentLightLevel.into()
     }
 
-    pub fn max_frame_average_light_level(&self) {
+    pub fn max_frame_average_light_level<'a>(&'a self) -> f32 {
+        self.raw.maxFrameAverageLightLevel.into()
     }
 
     pub fn raw(&self) -> &vks::VkHdrMetadataEXT {
@@ -19305,13 +22218,20 @@ impl<'s> From<HdrMetadataExt<'s>> for vks::VkHdrMetadataEXT {
 }
 
 
+impl<'s> From<vks::VkHdrMetadataEXT> for HdrMetadataExt<'s> {
+    fn from(f: vks::VkHdrMetadataEXT) -> HdrMetadataExt<'s> {
+        HdrMetadataExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkHdrMetadataEXT`.
 ///
 ///  From CTA 861.3
 #[derive(Debug, Clone, Default)]
 pub struct HdrMetadataExtBuilder<'b> {
     raw: vks::VkHdrMetadataEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> HdrMetadataExtBuilder<'b> {
@@ -19391,7 +22311,8 @@ impl RefreshCycleDurationGoogle {
         RefreshCycleDurationGoogleBuilder::new()
     }
 
-    pub fn refresh_duration(&self) {
+    pub fn refresh_duration<'a>(&'a self) -> u64 {
+        self.raw.refreshDuration.into()
     }
 
     pub fn raw(&self) -> &vks::VkRefreshCycleDurationGOOGLE {
@@ -19403,6 +22324,13 @@ impl RefreshCycleDurationGoogle {
 impl From<RefreshCycleDurationGoogle> for vks::VkRefreshCycleDurationGOOGLE {
     fn from(f: RefreshCycleDurationGoogle) -> vks::VkRefreshCycleDurationGOOGLE {
         f.raw
+    }
+}
+
+
+impl From<vks::VkRefreshCycleDurationGOOGLE> for RefreshCycleDurationGoogle {
+    fn from(f: vks::VkRefreshCycleDurationGOOGLE) -> RefreshCycleDurationGoogle {
+        RefreshCycleDurationGoogle { raw: f, }
     }
 }
 
@@ -19450,19 +22378,24 @@ impl PastPresentationTimingGoogle {
         PastPresentationTimingGoogleBuilder::new()
     }
 
-    pub fn present_id(&self) {
+    pub fn present_id<'a>(&'a self) -> u32 {
+        self.raw.presentID.into()
     }
 
-    pub fn desired_present_time(&self) {
+    pub fn desired_present_time<'a>(&'a self) -> u64 {
+        self.raw.desiredPresentTime.into()
     }
 
-    pub fn actual_present_time(&self) {
+    pub fn actual_present_time<'a>(&'a self) -> u64 {
+        self.raw.actualPresentTime.into()
     }
 
-    pub fn earliest_present_time(&self) {
+    pub fn earliest_present_time<'a>(&'a self) -> u64 {
+        self.raw.earliestPresentTime.into()
     }
 
-    pub fn present_margin(&self) {
+    pub fn present_margin<'a>(&'a self) -> u64 {
+        self.raw.presentMargin.into()
     }
 
     pub fn raw(&self) -> &vks::VkPastPresentationTimingGOOGLE {
@@ -19474,6 +22407,13 @@ impl PastPresentationTimingGoogle {
 impl From<PastPresentationTimingGoogle> for vks::VkPastPresentationTimingGOOGLE {
     fn from(f: PastPresentationTimingGoogle) -> vks::VkPastPresentationTimingGOOGLE {
         f.raw
+    }
+}
+
+
+impl From<vks::VkPastPresentationTimingGOOGLE> for PastPresentationTimingGoogle {
+    fn from(f: vks::VkPastPresentationTimingGOOGLE) -> PastPresentationTimingGoogle {
+        PastPresentationTimingGoogle { raw: f, }
     }
 }
 
@@ -19542,13 +22482,12 @@ impl<'s> PresentTimesInfoGoogle<'s> {
         PresentTimesInfoGoogleBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn swapchain_count(&self) {
-    }
-
-    pub fn times(&self) {
+    pub fn times<'a>(&'a self) -> &'a [PresentTimeGoogle] {
+        unsafe { slice::from_raw_parts(self.raw.pTimes as *const _, self.raw.swapchainCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPresentTimesInfoGOOGLE {
@@ -19564,13 +22503,20 @@ impl<'s> From<PresentTimesInfoGoogle<'s>> for vks::VkPresentTimesInfoGOOGLE {
 }
 
 
+impl<'s> From<vks::VkPresentTimesInfoGOOGLE> for PresentTimesInfoGoogle<'s> {
+    fn from(f: vks::VkPresentTimesInfoGOOGLE) -> PresentTimesInfoGoogle<'s> {
+        PresentTimesInfoGoogle { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPresentTimesInfoGOOGLE`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PresentTimesInfoGoogleBuilder<'b> {
     raw: vks::VkPresentTimesInfoGOOGLE,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PresentTimesInfoGoogleBuilder<'b> {
@@ -19586,13 +22532,11 @@ impl<'b> PresentTimesInfoGoogleBuilder<'b> {
         self
     }
 
-    pub fn swapchain_count<'m>(mut self, swapchain_count: u32) -> PresentTimesInfoGoogleBuilder<'b> {
-        self.raw.swapchainCount = swapchain_count.into();
-        self
-    }
-
     pub fn times<'m, 'a>(mut self, times: &'a [PresentTimeGoogle]) -> PresentTimesInfoGoogleBuilder<'b> {
-        self.raw.pTimes = times.as_ptr() as *const _;
+        assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == times.len() as _, 
+            "count inconsistency found when specifying `PresentTimesInfoGoogle::times`.");
+        self.raw.swapchainCount = times.len() as _;
+        self.raw.pTimes = times.as_ptr() as *const vks::VkPresentTimeGOOGLE as *const _;
         self
     }
 
@@ -19620,10 +22564,12 @@ impl PresentTimeGoogle {
         PresentTimeGoogleBuilder::new()
     }
 
-    pub fn present_id(&self) {
+    pub fn present_id<'a>(&'a self) -> u32 {
+        self.raw.presentID.into()
     }
 
-    pub fn desired_present_time(&self) {
+    pub fn desired_present_time<'a>(&'a self) -> u64 {
+        self.raw.desiredPresentTime.into()
     }
 
     pub fn raw(&self) -> &vks::VkPresentTimeGOOGLE {
@@ -19635,6 +22581,13 @@ impl PresentTimeGoogle {
 impl From<PresentTimeGoogle> for vks::VkPresentTimeGOOGLE {
     fn from(f: PresentTimeGoogle) -> vks::VkPresentTimeGOOGLE {
         f.raw
+    }
+}
+
+
+impl From<vks::VkPresentTimeGOOGLE> for PresentTimeGoogle {
+    fn from(f: vks::VkPresentTimeGOOGLE) -> PresentTimeGoogle {
+        PresentTimeGoogle { raw: f, }
     }
 }
 
@@ -19688,13 +22641,17 @@ impl<'s> IosSurfaceCreateInfoMvk<'s> {
         IosSurfaceCreateInfoMvkBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> IosSurfaceCreateFlagsMvk {
+        IosSurfaceCreateFlagsMvk::from_bits(self.raw.flags)
+            .expect("IosSurfaceCreateInfoMvk::flags: error converting flags")
     }
 
-    pub unsafe fn view(&self) {
+    pub fn view<'a>(&'a self) -> *const c_void {
+        self.raw.pView
     }
 
     pub fn raw(&self) -> &vks::VkIOSSurfaceCreateInfoMVK {
@@ -19710,13 +22667,20 @@ impl<'s> From<IosSurfaceCreateInfoMvk<'s>> for vks::VkIOSSurfaceCreateInfoMVK {
 }
 
 
+impl<'s> From<vks::VkIOSSurfaceCreateInfoMVK> for IosSurfaceCreateInfoMvk<'s> {
+    fn from(f: vks::VkIOSSurfaceCreateInfoMVK) -> IosSurfaceCreateInfoMvk<'s> {
+        IosSurfaceCreateInfoMvk { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkIOSSurfaceCreateInfoMVK`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct IosSurfaceCreateInfoMvkBuilder<'b> {
     raw: vks::VkIOSSurfaceCreateInfoMVK,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> IosSurfaceCreateInfoMvkBuilder<'b> {
@@ -19767,13 +22731,17 @@ impl<'s> MacOsSurfaceCreateInfoMvk<'s> {
         MacOsSurfaceCreateInfoMvkBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> MacOsSurfaceCreateFlagsMvk {
+        MacOsSurfaceCreateFlagsMvk::from_bits(self.raw.flags)
+            .expect("MacOsSurfaceCreateInfoMvk::flags: error converting flags")
     }
 
-    pub unsafe fn view(&self) {
+    pub fn view<'a>(&'a self) -> *const c_void {
+        self.raw.pView
     }
 
     pub fn raw(&self) -> &vks::VkMacOSSurfaceCreateInfoMVK {
@@ -19789,13 +22757,20 @@ impl<'s> From<MacOsSurfaceCreateInfoMvk<'s>> for vks::VkMacOSSurfaceCreateInfoMV
 }
 
 
+impl<'s> From<vks::VkMacOSSurfaceCreateInfoMVK> for MacOsSurfaceCreateInfoMvk<'s> {
+    fn from(f: vks::VkMacOSSurfaceCreateInfoMVK) -> MacOsSurfaceCreateInfoMvk<'s> {
+        MacOsSurfaceCreateInfoMvk { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkMacOSSurfaceCreateInfoMVK`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct MacOsSurfaceCreateInfoMvkBuilder<'b> {
     raw: vks::VkMacOSSurfaceCreateInfoMVK,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> MacOsSurfaceCreateInfoMvkBuilder<'b> {
@@ -19845,10 +22820,12 @@ impl ViewportWScalingNv {
         ViewportWScalingNvBuilder::new()
     }
 
-    pub fn xcoeff(&self) {
+    pub fn xcoeff<'a>(&'a self) -> f32 {
+        self.raw.xcoeff.into()
     }
 
-    pub fn ycoeff(&self) {
+    pub fn ycoeff<'a>(&'a self) -> f32 {
+        self.raw.ycoeff.into()
     }
 
     pub fn raw(&self) -> &vks::VkViewportWScalingNV {
@@ -19860,6 +22837,13 @@ impl ViewportWScalingNv {
 impl From<ViewportWScalingNv> for vks::VkViewportWScalingNV {
     fn from(f: ViewportWScalingNv) -> vks::VkViewportWScalingNV {
         f.raw
+    }
+}
+
+
+impl From<vks::VkViewportWScalingNV> for ViewportWScalingNv {
+    fn from(f: vks::VkViewportWScalingNV) -> ViewportWScalingNv {
+        ViewportWScalingNv { raw: f, }
     }
 }
 
@@ -19913,13 +22897,16 @@ impl<'s> PipelineViewportWScalingStateCreateInfoNv<'s> {
         PipelineViewportWScalingStateCreateInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn viewport_wscaling_enable(&self) {
+    pub fn viewport_wscaling_enable<'a>(&'a self) -> bool {
+        self.raw.viewportWScalingEnable != 0
     }
 
-    pub fn viewport_wscalings(&self) {
+    pub fn viewport_wscalings<'a>(&'a self) -> &'a [ViewportWScalingNv] {
+        unsafe { slice::from_raw_parts(self.raw.pViewportWScalings as *const _, self.raw.viewportCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPipelineViewportWScalingStateCreateInfoNV {
@@ -19935,13 +22922,20 @@ impl<'s> From<PipelineViewportWScalingStateCreateInfoNv<'s>> for vks::VkPipeline
 }
 
 
+impl<'s> From<vks::VkPipelineViewportWScalingStateCreateInfoNV> for PipelineViewportWScalingStateCreateInfoNv<'s> {
+    fn from(f: vks::VkPipelineViewportWScalingStateCreateInfoNV) -> PipelineViewportWScalingStateCreateInfoNv<'s> {
+        PipelineViewportWScalingStateCreateInfoNv { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineViewportWScalingStateCreateInfoNV`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineViewportWScalingStateCreateInfoNV,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
@@ -19963,10 +22957,10 @@ impl<'b> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
     }
 
     pub fn viewport_wscalings<'m, 'a>(mut self, viewport_wscalings: &'a [ViewportWScalingNv]) -> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
-        assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewport_wscalings.len() as u32, 
+        assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewport_wscalings.len() as _, 
             "count inconsistency found when specifying `PipelineViewportWScalingStateCreateInfoNv::viewport_wscalings`.");
-        self.raw.viewportCount = viewport_wscalings.len() as u32;
-        self.raw.pViewportWScalings = viewport_wscalings.as_ptr() as *const _;
+        self.raw.viewportCount = viewport_wscalings.len() as _;
+        self.raw.pViewportWScalings = viewport_wscalings.as_ptr() as *const vks::VkViewportWScalingNV as *const _;
         self
     }
 
@@ -19994,16 +22988,20 @@ impl ViewportSwizzleNv {
         ViewportSwizzleNvBuilder::new()
     }
 
-    pub fn x(&self) {
+    pub fn x<'a>(&'a self) -> ViewportCoordinateSwizzleNv {
+        self.raw.x.into()
     }
 
-    pub fn y(&self) {
+    pub fn y<'a>(&'a self) -> ViewportCoordinateSwizzleNv {
+        self.raw.y.into()
     }
 
-    pub fn z(&self) {
+    pub fn z<'a>(&'a self) -> ViewportCoordinateSwizzleNv {
+        self.raw.z.into()
     }
 
-    pub fn w(&self) {
+    pub fn w<'a>(&'a self) -> ViewportCoordinateSwizzleNv {
+        self.raw.w.into()
     }
 
     pub fn raw(&self) -> &vks::VkViewportSwizzleNV {
@@ -20015,6 +23013,13 @@ impl ViewportSwizzleNv {
 impl From<ViewportSwizzleNv> for vks::VkViewportSwizzleNV {
     fn from(f: ViewportSwizzleNv) -> vks::VkViewportSwizzleNV {
         f.raw
+    }
+}
+
+
+impl From<vks::VkViewportSwizzleNV> for ViewportSwizzleNv {
+    fn from(f: vks::VkViewportSwizzleNV) -> ViewportSwizzleNv {
+        ViewportSwizzleNv { raw: f, }
     }
 }
 
@@ -20078,13 +23083,17 @@ impl<'s> PipelineViewportSwizzleStateCreateInfoNv<'s> {
         PipelineViewportSwizzleStateCreateInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineViewportSwizzleStateCreateFlagsNv {
+        PipelineViewportSwizzleStateCreateFlagsNv::from_bits(self.raw.flags)
+            .expect("PipelineViewportSwizzleStateCreateInfoNv::flags: error converting flags")
     }
 
-    pub fn viewport_swizzles(&self) {
+    pub fn viewport_swizzles<'a>(&'a self) -> &'a [ViewportSwizzleNv] {
+        unsafe { slice::from_raw_parts(self.raw.pViewportSwizzles as *const _, self.raw.viewportCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPipelineViewportSwizzleStateCreateInfoNV {
@@ -20100,13 +23109,20 @@ impl<'s> From<PipelineViewportSwizzleStateCreateInfoNv<'s>> for vks::VkPipelineV
 }
 
 
+impl<'s> From<vks::VkPipelineViewportSwizzleStateCreateInfoNV> for PipelineViewportSwizzleStateCreateInfoNv<'s> {
+    fn from(f: vks::VkPipelineViewportSwizzleStateCreateInfoNV) -> PipelineViewportSwizzleStateCreateInfoNv<'s> {
+        PipelineViewportSwizzleStateCreateInfoNv { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineViewportSwizzleStateCreateInfoNV`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineViewportSwizzleStateCreateInfoNV,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
@@ -20128,10 +23144,10 @@ impl<'b> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
     }
 
     pub fn viewport_swizzles<'m, 'a>(mut self, viewport_swizzles: &'a [ViewportSwizzleNv]) -> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
-        assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewport_swizzles.len() as u32, 
+        assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewport_swizzles.len() as _, 
             "count inconsistency found when specifying `PipelineViewportSwizzleStateCreateInfoNv::viewport_swizzles`.");
-        self.raw.viewportCount = viewport_swizzles.len() as u32;
-        self.raw.pViewportSwizzles = viewport_swizzles.as_ptr() as *const _;
+        self.raw.viewportCount = viewport_swizzles.len() as _;
+        self.raw.pViewportSwizzles = viewport_swizzles.as_ptr() as *const vks::VkViewportSwizzleNV as *const _;
         self
     }
 
@@ -20160,10 +23176,12 @@ impl<'s> PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
         PhysicalDeviceDiscardRectanglePropertiesExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn max_discard_rectangles(&self) {
+    pub fn max_discard_rectangles<'a>(&'a self) -> u32 {
+        self.raw.maxDiscardRectangles.into()
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT {
@@ -20179,13 +23197,20 @@ impl<'s> From<PhysicalDeviceDiscardRectanglePropertiesExt<'s>> for vks::VkPhysic
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT> for PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
+    fn from(f: vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT) -> PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
+        PhysicalDeviceDiscardRectanglePropertiesExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceDiscardRectanglePropertiesEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceDiscardRectanglePropertiesExtBuilder<'b> {
     raw: vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDeviceDiscardRectanglePropertiesExtBuilder<'b> {
@@ -20231,16 +23256,21 @@ impl<'s> PipelineDiscardRectangleStateCreateInfoExt<'s> {
         PipelineDiscardRectangleStateCreateInfoExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineDiscardRectangleStateCreateFlagsExt {
+        PipelineDiscardRectangleStateCreateFlagsExt::from_bits(self.raw.flags)
+            .expect("PipelineDiscardRectangleStateCreateInfoExt::flags: error converting flags")
     }
 
-    pub fn discard_rectangle_mode(&self) {
+    pub fn discard_rectangle_mode<'a>(&'a self) -> DiscardRectangleModeExt {
+        self.raw.discardRectangleMode.into()
     }
 
-    pub fn discard_rectangles(&self) {
+    pub fn discard_rectangles<'a>(&'a self) -> &'a [Rect2d] {
+        unsafe { slice::from_raw_parts(self.raw.pDiscardRectangles as *const _, self.raw.discardRectangleCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPipelineDiscardRectangleStateCreateInfoEXT {
@@ -20256,13 +23286,20 @@ impl<'s> From<PipelineDiscardRectangleStateCreateInfoExt<'s>> for vks::VkPipelin
 }
 
 
+impl<'s> From<vks::VkPipelineDiscardRectangleStateCreateInfoEXT> for PipelineDiscardRectangleStateCreateInfoExt<'s> {
+    fn from(f: vks::VkPipelineDiscardRectangleStateCreateInfoEXT) -> PipelineDiscardRectangleStateCreateInfoExt<'s> {
+        PipelineDiscardRectangleStateCreateInfoExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineDiscardRectangleStateCreateInfoEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
     raw: vks::VkPipelineDiscardRectangleStateCreateInfoEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
@@ -20289,10 +23326,10 @@ impl<'b> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
     }
 
     pub fn discard_rectangles<'m, 'a>(mut self, discard_rectangles: &'a [Rect2d]) -> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
-        assert!(self.raw.discardRectangleCount == 0 || self.raw.discardRectangleCount == discard_rectangles.len() as u32, 
+        assert!(self.raw.discardRectangleCount == 0 || self.raw.discardRectangleCount == discard_rectangles.len() as _, 
             "count inconsistency found when specifying `PipelineDiscardRectangleStateCreateInfoExt::discard_rectangles`.");
-        self.raw.discardRectangleCount = discard_rectangles.len() as u32;
-        self.raw.pDiscardRectangles = discard_rectangles.as_ptr() as *const _;
+        self.raw.discardRectangleCount = discard_rectangles.len() as _;
+        self.raw.pDiscardRectangles = discard_rectangles.as_ptr() as *const vks::VkRect2D as *const _;
         self
     }
 
@@ -20319,10 +23356,12 @@ pub struct PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
 
 #[cfg(feature = "experimental")]
 impl<'s> PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn per_view_position_all_components(&self) {
+    pub fn per_view_position_all_components<'a>(&'a self) -> bool {
+        self.raw.perViewPositionAllComponents != 0
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
@@ -20335,6 +23374,14 @@ impl<'s> PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
 impl<'s> From<PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s>> for vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
     fn from(f: PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s>) -> vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
         f.raw
+    }
+}
+
+
+#[cfg(feature = "experimental")]
+impl<'s> From<vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX> for PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
+    fn from(f: vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX) -> PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
+        PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx { raw: f, _p: PhantomData }
     }
 }
 
@@ -20354,10 +23401,12 @@ impl<'s> PhysicalDeviceSurfaceInfo2Khr<'s> {
         PhysicalDeviceSurfaceInfo2KhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn surface(&self) {
+    pub fn surface_handle<'a>(&'a self) -> vks::VkSurfaceKHR {
+        self.raw.surface
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceSurfaceInfo2KHR {
@@ -20373,13 +23422,20 @@ impl<'s> From<PhysicalDeviceSurfaceInfo2Khr<'s>> for vks::VkPhysicalDeviceSurfac
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceSurfaceInfo2KHR> for PhysicalDeviceSurfaceInfo2Khr<'s> {
+    fn from(f: vks::VkPhysicalDeviceSurfaceInfo2KHR) -> PhysicalDeviceSurfaceInfo2Khr<'s> {
+        PhysicalDeviceSurfaceInfo2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceSurfaceInfo2KHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
     raw: vks::VkPhysicalDeviceSurfaceInfo2KHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
@@ -20421,10 +23477,12 @@ pub struct SurfaceCapabilities2Khr<'s> {
 }
 
 impl<'s> SurfaceCapabilities2Khr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn surface_capabilities(&self) {
+    pub fn surface_capabilities<'a>(&'a self) -> SurfaceCapabilitiesKhr {
+        self.raw.surfaceCapabilities.into()
     }
 
     pub fn raw(&self) -> &vks::VkSurfaceCapabilities2KHR {
@@ -20440,6 +23498,13 @@ impl<'s> From<SurfaceCapabilities2Khr<'s>> for vks::VkSurfaceCapabilities2KHR {
 }
 
 
+impl<'s> From<vks::VkSurfaceCapabilities2KHR> for SurfaceCapabilities2Khr<'s> {
+    fn from(f: vks::VkSurfaceCapabilities2KHR) -> SurfaceCapabilities2Khr<'s> {
+        SurfaceCapabilities2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A `VkSurfaceFormat2KHR`.
 ///
 /// 
@@ -20451,10 +23516,12 @@ pub struct SurfaceFormat2Khr<'s> {
 }
 
 impl<'s> SurfaceFormat2Khr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn surface_format(&self) {
+    pub fn surface_format<'a>(&'a self) -> SurfaceFormatKhr {
+        self.raw.surfaceFormat.into()
     }
 
     pub fn raw(&self) -> &vks::VkSurfaceFormat2KHR {
@@ -20470,6 +23537,13 @@ impl<'s> From<SurfaceFormat2Khr<'s>> for vks::VkSurfaceFormat2KHR {
 }
 
 
+impl<'s> From<vks::VkSurfaceFormat2KHR> for SurfaceFormat2Khr<'s> {
+    fn from(f: vks::VkSurfaceFormat2KHR) -> SurfaceFormat2Khr<'s> {
+        SurfaceFormat2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A `VkSharedPresentSurfaceCapabilitiesKHR`.
 ///
 /// 
@@ -20481,10 +23555,13 @@ pub struct SharedPresentSurfaceCapabilitiesKhr<'s> {
 }
 
 impl<'s> SharedPresentSurfaceCapabilitiesKhr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn shared_present_supported_usage_flags(&self) {
+    pub fn shared_present_supported_usage_flags<'a>(&'a self) -> ImageUsageFlags {
+        ImageUsageFlags::from_bits(self.raw.sharedPresentSupportedUsageFlags)
+            .expect("SharedPresentSurfaceCapabilitiesKhr::shared_present_supported_usage_flags: error converting flags")
     }
 
     pub fn raw(&self) -> &vks::VkSharedPresentSurfaceCapabilitiesKHR {
@@ -20496,6 +23573,13 @@ impl<'s> SharedPresentSurfaceCapabilitiesKhr<'s> {
 impl<'s> From<SharedPresentSurfaceCapabilitiesKhr<'s>> for vks::VkSharedPresentSurfaceCapabilitiesKHR {
     fn from(f: SharedPresentSurfaceCapabilitiesKhr<'s>) -> vks::VkSharedPresentSurfaceCapabilitiesKHR {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkSharedPresentSurfaceCapabilitiesKHR> for SharedPresentSurfaceCapabilitiesKhr<'s> {
+    fn from(f: vks::VkSharedPresentSurfaceCapabilitiesKHR) -> SharedPresentSurfaceCapabilitiesKhr<'s> {
+        SharedPresentSurfaceCapabilitiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -20515,19 +23599,24 @@ impl<'s> PhysicalDevice16BitStorageFeaturesKhr<'s> {
         PhysicalDevice16BitStorageFeaturesKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn storage_buffer_16_bit_access(&self) {
+    pub fn storage_buffer_16_bit_access<'a>(&'a self) -> bool {
+        self.raw.storageBuffer16BitAccess != 0
     }
 
-    pub fn uniform_and_storage_buffer_16_bit_access(&self) {
+    pub fn uniform_and_storage_buffer_16_bit_access<'a>(&'a self) -> bool {
+        self.raw.uniformAndStorageBuffer16BitAccess != 0
     }
 
-    pub fn storage_push_constant_16(&self) {
+    pub fn storage_push_constant_16<'a>(&'a self) -> bool {
+        self.raw.storagePushConstant16 != 0
     }
 
-    pub fn storage_input_output_16(&self) {
+    pub fn storage_input_output_16<'a>(&'a self) -> bool {
+        self.raw.storageInputOutput16 != 0
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDevice16BitStorageFeaturesKHR {
@@ -20543,13 +23632,20 @@ impl<'s> From<PhysicalDevice16BitStorageFeaturesKhr<'s>> for vks::VkPhysicalDevi
 }
 
 
+impl<'s> From<vks::VkPhysicalDevice16BitStorageFeaturesKHR> for PhysicalDevice16BitStorageFeaturesKhr<'s> {
+    fn from(f: vks::VkPhysicalDevice16BitStorageFeaturesKHR) -> PhysicalDevice16BitStorageFeaturesKhr<'s> {
+        PhysicalDevice16BitStorageFeaturesKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDevice16BitStorageFeaturesKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
     raw: vks::VkPhysicalDevice16BitStorageFeaturesKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDevice16BitStorageFeaturesKhrBuilder<'b> {
@@ -20610,10 +23706,12 @@ impl<'s> BufferMemoryRequirementsInfo2Khr<'s> {
         BufferMemoryRequirementsInfo2KhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn buffer(&self) {
+    pub fn buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.buffer
     }
 
     pub fn raw(&self) -> &vks::VkBufferMemoryRequirementsInfo2KHR {
@@ -20629,13 +23727,20 @@ impl<'s> From<BufferMemoryRequirementsInfo2Khr<'s>> for vks::VkBufferMemoryRequi
 }
 
 
+impl<'s> From<vks::VkBufferMemoryRequirementsInfo2KHR> for BufferMemoryRequirementsInfo2Khr<'s> {
+    fn from(f: vks::VkBufferMemoryRequirementsInfo2KHR) -> BufferMemoryRequirementsInfo2Khr<'s> {
+        BufferMemoryRequirementsInfo2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkBufferMemoryRequirementsInfo2KHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct BufferMemoryRequirementsInfo2KhrBuilder<'b> {
     raw: vks::VkBufferMemoryRequirementsInfo2KHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> BufferMemoryRequirementsInfo2KhrBuilder<'b> {
@@ -20681,10 +23786,12 @@ impl<'s> ImageMemoryRequirementsInfo2Khr<'s> {
         ImageMemoryRequirementsInfo2KhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn image(&self) {
+    pub fn image_handle<'a>(&'a self) -> vks::VkImage {
+        self.raw.image
     }
 
     pub fn raw(&self) -> &vks::VkImageMemoryRequirementsInfo2KHR {
@@ -20700,13 +23807,20 @@ impl<'s> From<ImageMemoryRequirementsInfo2Khr<'s>> for vks::VkImageMemoryRequire
 }
 
 
+impl<'s> From<vks::VkImageMemoryRequirementsInfo2KHR> for ImageMemoryRequirementsInfo2Khr<'s> {
+    fn from(f: vks::VkImageMemoryRequirementsInfo2KHR) -> ImageMemoryRequirementsInfo2Khr<'s> {
+        ImageMemoryRequirementsInfo2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImageMemoryRequirementsInfo2KHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageMemoryRequirementsInfo2KhrBuilder<'b> {
     raw: vks::VkImageMemoryRequirementsInfo2KHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImageMemoryRequirementsInfo2KhrBuilder<'b> {
@@ -20752,10 +23866,12 @@ impl<'s> ImageSparseMemoryRequirementsInfo2Khr<'s> {
         ImageSparseMemoryRequirementsInfo2KhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn image(&self) {
+    pub fn image_handle<'a>(&'a self) -> vks::VkImage {
+        self.raw.image
     }
 
     pub fn raw(&self) -> &vks::VkImageSparseMemoryRequirementsInfo2KHR {
@@ -20771,13 +23887,20 @@ impl<'s> From<ImageSparseMemoryRequirementsInfo2Khr<'s>> for vks::VkImageSparseM
 }
 
 
+impl<'s> From<vks::VkImageSparseMemoryRequirementsInfo2KHR> for ImageSparseMemoryRequirementsInfo2Khr<'s> {
+    fn from(f: vks::VkImageSparseMemoryRequirementsInfo2KHR) -> ImageSparseMemoryRequirementsInfo2Khr<'s> {
+        ImageSparseMemoryRequirementsInfo2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkImageSparseMemoryRequirementsInfo2KHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
     raw: vks::VkImageSparseMemoryRequirementsInfo2KHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
@@ -20819,10 +23942,12 @@ pub struct MemoryRequirements2Khr<'s> {
 }
 
 impl<'s> MemoryRequirements2Khr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn memory_requirements(&self) {
+    pub fn memory_requirements<'a>(&'a self) -> MemoryRequirements {
+        self.raw.memoryRequirements.into()
     }
 
     pub fn raw(&self) -> &vks::VkMemoryRequirements2KHR {
@@ -20838,6 +23963,13 @@ impl<'s> From<MemoryRequirements2Khr<'s>> for vks::VkMemoryRequirements2KHR {
 }
 
 
+impl<'s> From<vks::VkMemoryRequirements2KHR> for MemoryRequirements2Khr<'s> {
+    fn from(f: vks::VkMemoryRequirements2KHR) -> MemoryRequirements2Khr<'s> {
+        MemoryRequirements2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A `VkSparseImageMemoryRequirements2KHR`.
 ///
 /// 
@@ -20849,10 +23981,12 @@ pub struct SparseImageMemoryRequirements2Khr<'s> {
 }
 
 impl<'s> SparseImageMemoryRequirements2Khr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn memory_requirements(&self) {
+    pub fn memory_requirements<'a>(&'a self) -> SparseImageMemoryRequirements {
+        self.raw.memoryRequirements.into()
     }
 
     pub fn raw(&self) -> &vks::VkSparseImageMemoryRequirements2KHR {
@@ -20868,6 +24002,13 @@ impl<'s> From<SparseImageMemoryRequirements2Khr<'s>> for vks::VkSparseImageMemor
 }
 
 
+impl<'s> From<vks::VkSparseImageMemoryRequirements2KHR> for SparseImageMemoryRequirements2Khr<'s> {
+    fn from(f: vks::VkSparseImageMemoryRequirements2KHR) -> SparseImageMemoryRequirements2Khr<'s> {
+        SparseImageMemoryRequirements2Khr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A `VkMemoryDedicatedRequirementsKHR`.
 ///
 /// 
@@ -20879,13 +24020,16 @@ pub struct MemoryDedicatedRequirementsKhr<'s> {
 }
 
 impl<'s> MemoryDedicatedRequirementsKhr<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn prefers_dedicated_allocation(&self) {
+    pub fn prefers_dedicated_allocation<'a>(&'a self) -> bool {
+        self.raw.prefersDedicatedAllocation != 0
     }
 
-    pub fn requires_dedicated_allocation(&self) {
+    pub fn requires_dedicated_allocation<'a>(&'a self) -> bool {
+        self.raw.requiresDedicatedAllocation != 0
     }
 
     pub fn raw(&self) -> &vks::VkMemoryDedicatedRequirementsKHR {
@@ -20897,6 +24041,13 @@ impl<'s> MemoryDedicatedRequirementsKhr<'s> {
 impl<'s> From<MemoryDedicatedRequirementsKhr<'s>> for vks::VkMemoryDedicatedRequirementsKHR {
     fn from(f: MemoryDedicatedRequirementsKhr<'s>) -> vks::VkMemoryDedicatedRequirementsKHR {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkMemoryDedicatedRequirementsKHR> for MemoryDedicatedRequirementsKhr<'s> {
+    fn from(f: vks::VkMemoryDedicatedRequirementsKHR) -> MemoryDedicatedRequirementsKhr<'s> {
+        MemoryDedicatedRequirementsKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -20916,13 +24067,16 @@ impl<'s> MemoryDedicatedAllocateInfoKhr<'s> {
         MemoryDedicatedAllocateInfoKhrBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn image(&self) {
+    pub fn image_handle<'a>(&'a self) -> vks::VkImage {
+        self.raw.image
     }
 
-    pub fn buffer(&self) {
+    pub fn buffer_handle<'a>(&'a self) -> vks::VkBuffer {
+        self.raw.buffer
     }
 
     pub fn raw(&self) -> &vks::VkMemoryDedicatedAllocateInfoKHR {
@@ -20938,13 +24092,20 @@ impl<'s> From<MemoryDedicatedAllocateInfoKhr<'s>> for vks::VkMemoryDedicatedAllo
 }
 
 
+impl<'s> From<vks::VkMemoryDedicatedAllocateInfoKHR> for MemoryDedicatedAllocateInfoKhr<'s> {
+    fn from(f: vks::VkMemoryDedicatedAllocateInfoKHR) -> MemoryDedicatedAllocateInfoKhr<'s> {
+        MemoryDedicatedAllocateInfoKhr { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkMemoryDedicatedAllocateInfoKHR`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct MemoryDedicatedAllocateInfoKhrBuilder<'b> {
     raw: vks::VkMemoryDedicatedAllocateInfoKHR,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> MemoryDedicatedAllocateInfoKhrBuilder<'b> {
@@ -20991,10 +24152,12 @@ pub struct TextureLODGatherFormatPropertiesAmd<'s> {
 }
 
 impl<'s> TextureLODGatherFormatPropertiesAmd<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn supports_texture_gather_lo_dbias_am_d(&self) {
+    pub fn supports_texture_gather_lo_dbias_am_d<'a>(&'a self) -> bool {
+        self.raw.supportsTextureGatherLODBiasAMD != 0
     }
 
     pub fn raw(&self) -> &vks::VkTextureLODGatherFormatPropertiesAMD {
@@ -21006,6 +24169,13 @@ impl<'s> TextureLODGatherFormatPropertiesAmd<'s> {
 impl<'s> From<TextureLODGatherFormatPropertiesAmd<'s>> for vks::VkTextureLODGatherFormatPropertiesAMD {
     fn from(f: TextureLODGatherFormatPropertiesAmd<'s>) -> vks::VkTextureLODGatherFormatPropertiesAMD {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkTextureLODGatherFormatPropertiesAMD> for TextureLODGatherFormatPropertiesAmd<'s> {
+    fn from(f: vks::VkTextureLODGatherFormatPropertiesAMD) -> TextureLODGatherFormatPropertiesAmd<'s> {
+        TextureLODGatherFormatPropertiesAmd { raw: f, _p: PhantomData }
     }
 }
 
@@ -21025,16 +24195,21 @@ impl<'s> PipelineCoverageToColorStateCreateInfoNv<'s> {
         PipelineCoverageToColorStateCreateInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineCoverageToColorStateCreateFlagsNv {
+        PipelineCoverageToColorStateCreateFlagsNv::from_bits(self.raw.flags)
+            .expect("PipelineCoverageToColorStateCreateInfoNv::flags: error converting flags")
     }
 
-    pub fn coverage_to_color_enable(&self) {
+    pub fn coverage_to_color_enable<'a>(&'a self) -> bool {
+        self.raw.coverageToColorEnable != 0
     }
 
-    pub fn coverage_to_color_location(&self) {
+    pub fn coverage_to_color_location<'a>(&'a self) -> u32 {
+        self.raw.coverageToColorLocation.into()
     }
 
     pub fn raw(&self) -> &vks::VkPipelineCoverageToColorStateCreateInfoNV {
@@ -21050,13 +24225,20 @@ impl<'s> From<PipelineCoverageToColorStateCreateInfoNv<'s>> for vks::VkPipelineC
 }
 
 
+impl<'s> From<vks::VkPipelineCoverageToColorStateCreateInfoNV> for PipelineCoverageToColorStateCreateInfoNv<'s> {
+    fn from(f: vks::VkPipelineCoverageToColorStateCreateInfoNV) -> PipelineCoverageToColorStateCreateInfoNv<'s> {
+        PipelineCoverageToColorStateCreateInfoNv { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineCoverageToColorStateCreateInfoNV`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineCoverageToColorStateCreateInfoNV,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineCoverageToColorStateCreateInfoNvBuilder<'b> {
@@ -21108,13 +24290,16 @@ pub struct PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
 }
 
 impl<'s> PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn filter_minmax_single_component_formats(&self) {
+    pub fn filter_minmax_single_component_formats<'a>(&'a self) -> bool {
+        self.raw.filterMinmaxSingleComponentFormats != 0
     }
 
-    pub fn filter_minmax_image_component_mapping(&self) {
+    pub fn filter_minmax_image_component_mapping<'a>(&'a self) -> bool {
+        self.raw.filterMinmaxImageComponentMapping != 0
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
@@ -21126,6 +24311,13 @@ impl<'s> PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
 impl<'s> From<PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s>> for vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
     fn from(f: PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s>) -> vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT> for PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
+    fn from(f: vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT) -> PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
+        PhysicalDeviceSamplerFilterMinmaxPropertiesExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -21145,10 +24337,12 @@ impl<'s> SamplerReductionModeCreateInfoExt<'s> {
         SamplerReductionModeCreateInfoExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn reduction_mode(&self) {
+    pub fn reduction_mode<'a>(&'a self) -> SamplerReductionModeExt {
+        self.raw.reductionMode.into()
     }
 
     pub fn raw(&self) -> &vks::VkSamplerReductionModeCreateInfoEXT {
@@ -21164,13 +24358,20 @@ impl<'s> From<SamplerReductionModeCreateInfoExt<'s>> for vks::VkSamplerReduction
 }
 
 
+impl<'s> From<vks::VkSamplerReductionModeCreateInfoEXT> for SamplerReductionModeCreateInfoExt<'s> {
+    fn from(f: vks::VkSamplerReductionModeCreateInfoEXT) -> SamplerReductionModeCreateInfoExt<'s> {
+        SamplerReductionModeCreateInfoExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkSamplerReductionModeCreateInfoEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct SamplerReductionModeCreateInfoExtBuilder<'b> {
     raw: vks::VkSamplerReductionModeCreateInfoEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> SamplerReductionModeCreateInfoExtBuilder<'b> {
@@ -21216,10 +24417,12 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
         PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn advanced_blend_coherent_operations(&self) {
+    pub fn advanced_blend_coherent_operations<'a>(&'a self) -> bool {
+        self.raw.advancedBlendCoherentOperations != 0
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT {
@@ -21235,13 +24438,20 @@ impl<'s> From<PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s>> for vks::VkPh
 }
 
 
+impl<'s> From<vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT> for PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
+    fn from(f: vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT) -> PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
+        PhysicalDeviceBlendOperationAdvancedFeaturesExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder<'b> {
     raw: vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder<'b> {
@@ -21283,25 +24493,32 @@ pub struct PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
 }
 
 impl<'s> PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *mut c_void {
+        self.raw.pNext
     }
 
-    pub fn advanced_blend_max_color_attachments(&self) {
+    pub fn advanced_blend_max_color_attachments<'a>(&'a self) -> u32 {
+        self.raw.advancedBlendMaxColorAttachments.into()
     }
 
-    pub fn advanced_blend_independent_blend(&self) {
+    pub fn advanced_blend_independent_blend<'a>(&'a self) -> bool {
+        self.raw.advancedBlendIndependentBlend != 0
     }
 
-    pub fn advanced_blend_non_premultiplied_src_color(&self) {
+    pub fn advanced_blend_non_premultiplied_src_color<'a>(&'a self) -> bool {
+        self.raw.advancedBlendNonPremultipliedSrcColor != 0
     }
 
-    pub fn advanced_blend_non_premultiplied_dst_color(&self) {
+    pub fn advanced_blend_non_premultiplied_dst_color<'a>(&'a self) -> bool {
+        self.raw.advancedBlendNonPremultipliedDstColor != 0
     }
 
-    pub fn advanced_blend_correlated_overlap(&self) {
+    pub fn advanced_blend_correlated_overlap<'a>(&'a self) -> bool {
+        self.raw.advancedBlendCorrelatedOverlap != 0
     }
 
-    pub fn advanced_blend_all_operations(&self) {
+    pub fn advanced_blend_all_operations<'a>(&'a self) -> bool {
+        self.raw.advancedBlendAllOperations != 0
     }
 
     pub fn raw(&self) -> &vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
@@ -21313,6 +24530,13 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
 impl<'s> From<PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s>> for vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
     fn from(f: PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s>) -> vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
         f.raw
+    }
+}
+
+
+impl<'s> From<vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT> for PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
+    fn from(f: vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT) -> PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
+        PhysicalDeviceBlendOperationAdvancedPropertiesExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -21332,16 +24556,20 @@ impl<'s> PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
         PipelineColorBlendAdvancedStateCreateInfoExtBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn src_premultiplied(&self) {
+    pub fn src_premultiplied<'a>(&'a self) -> bool {
+        self.raw.srcPremultiplied != 0
     }
 
-    pub fn dst_premultiplied(&self) {
+    pub fn dst_premultiplied<'a>(&'a self) -> bool {
+        self.raw.dstPremultiplied != 0
     }
 
-    pub fn blend_overlap(&self) {
+    pub fn blend_overlap<'a>(&'a self) -> BlendOverlapExt {
+        self.raw.blendOverlap.into()
     }
 
     pub fn raw(&self) -> &vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT {
@@ -21357,13 +24585,20 @@ impl<'s> From<PipelineColorBlendAdvancedStateCreateInfoExt<'s>> for vks::VkPipel
 }
 
 
+impl<'s> From<vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT> for PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
+    fn from(f: vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT) -> PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
+        PipelineColorBlendAdvancedStateCreateInfoExt { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineColorBlendAdvancedStateCreateInfoEXT`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
     raw: vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineColorBlendAdvancedStateCreateInfoExtBuilder<'b> {
@@ -21419,19 +24654,25 @@ impl<'s> PipelineCoverageModulationStateCreateInfoNv<'s> {
         PipelineCoverageModulationStateCreateInfoNvBuilder::new()
     }
 
-    pub unsafe fn next(&self) {
+    pub fn next<'a>(&'a self) -> *const c_void {
+        self.raw.pNext
     }
 
-    pub fn flags(&self) {
+    pub fn flags<'a>(&'a self) -> PipelineCoverageModulationStateCreateFlagsNv {
+        PipelineCoverageModulationStateCreateFlagsNv::from_bits(self.raw.flags)
+            .expect("PipelineCoverageModulationStateCreateInfoNv::flags: error converting flags")
     }
 
-    pub fn coverage_modulation_mode(&self) {
+    pub fn coverage_modulation_mode<'a>(&'a self) -> CoverageModulationModeNv {
+        self.raw.coverageModulationMode.into()
     }
 
-    pub fn coverage_modulation_table_enable(&self) {
+    pub fn coverage_modulation_table_enable<'a>(&'a self) -> bool {
+        self.raw.coverageModulationTableEnable != 0
     }
 
-    pub fn coverage_modulation_table(&self) {
+    pub fn coverage_modulation_table<'a>(&'a self) -> &'a [f32] {
+        unsafe { slice::from_raw_parts(self.raw.pCoverageModulationTable as *const _, self.raw.coverageModulationTableCount as usize) }
     }
 
     pub fn raw(&self) -> &vks::VkPipelineCoverageModulationStateCreateInfoNV {
@@ -21447,13 +24688,20 @@ impl<'s> From<PipelineCoverageModulationStateCreateInfoNv<'s>> for vks::VkPipeli
 }
 
 
+impl<'s> From<vks::VkPipelineCoverageModulationStateCreateInfoNV> for PipelineCoverageModulationStateCreateInfoNv<'s> {
+    fn from(f: vks::VkPipelineCoverageModulationStateCreateInfoNV) -> PipelineCoverageModulationStateCreateInfoNv<'s> {
+        PipelineCoverageModulationStateCreateInfoNv { raw: f, _p: PhantomData }
+    }
+}
+
+
 /// A builder for `VkPipelineCoverageModulationStateCreateInfoNV`.
 ///
 /// 
 #[derive(Debug, Clone, Default)]
 pub struct PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
     raw: vks::VkPipelineCoverageModulationStateCreateInfoNV,
-    _p: PhantomData<&'b ()>,
+    _p: PhantomData<&'b ()>, 
 }
 
 impl<'b> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
@@ -21485,10 +24733,10 @@ impl<'b> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
     }
 
     pub fn coverage_modulation_table<'m, 'a>(mut self, coverage_modulation_table: &'a [f32]) -> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
-        assert!(self.raw.coverageModulationTableCount == 0 || self.raw.coverageModulationTableCount == coverage_modulation_table.len() as u32, 
+        assert!(self.raw.coverageModulationTableCount == 0 || self.raw.coverageModulationTableCount == coverage_modulation_table.len() as _, 
             "count inconsistency found when specifying `PipelineCoverageModulationStateCreateInfoNv::coverage_modulation_table`.");
-        self.raw.coverageModulationTableCount = coverage_modulation_table.len() as u32;
-        self.raw.pCoverageModulationTable = coverage_modulation_table.as_ptr() as *const _;
+        self.raw.coverageModulationTableCount = coverage_modulation_table.len() as _;
+        self.raw.pCoverageModulationTable = coverage_modulation_table.as_ptr() as *const f32 as *const _;
         self
     }
 

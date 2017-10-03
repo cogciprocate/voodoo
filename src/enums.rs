@@ -1,5 +1,6 @@
 
 use vks;
+use num_traits::FromPrimitive;
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
@@ -49,6 +50,12 @@ impl From<ResultEnum> for i32 {
 impl From<ResultEnum> for u32 {
     fn from(f: ResultEnum) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for ResultEnum {
+    fn from(f: u32) -> ResultEnum {
+        ResultEnum::from_u32(f).unwrap()
     }
 }
 
@@ -275,6 +282,12 @@ impl From<StructureType> for u32 {
     }
 }
 
+impl From<u32> for StructureType {
+    fn from(f: u32) -> StructureType {
+        StructureType::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum SystemAllocationScope {
@@ -297,6 +310,12 @@ impl From<SystemAllocationScope> for u32 {
     }
 }
 
+impl From<u32> for SystemAllocationScope {
+    fn from(f: u32) -> SystemAllocationScope {
+        SystemAllocationScope::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum InternalAllocationType {
@@ -312,6 +331,12 @@ impl From<InternalAllocationType> for i32 {
 impl From<InternalAllocationType> for u32 {
     fn from(f: InternalAllocationType) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for InternalAllocationType {
+    fn from(f: u32) -> InternalAllocationType {
+        InternalAllocationType::from_u32(f).unwrap()
     }
 }
 
@@ -525,6 +550,12 @@ impl From<Format> for u32 {
     }
 }
 
+impl From<u32> for Format {
+    fn from(f: u32) -> Format {
+        Format::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum ImageType {
@@ -545,6 +576,12 @@ impl From<ImageType> for u32 {
     }
 }
 
+impl From<u32> for ImageType {
+    fn from(f: u32) -> ImageType {
+        ImageType::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum ImageTiling {
@@ -561,6 +598,12 @@ impl From<ImageTiling> for i32 {
 impl From<ImageTiling> for u32 {
     fn from(f: ImageTiling) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for ImageTiling {
+    fn from(f: u32) -> ImageTiling {
+        ImageTiling::from_u32(f).unwrap()
     }
 }
 
@@ -586,6 +629,12 @@ impl From<PhysicalDeviceType> for u32 {
     }
 }
 
+impl From<u32> for PhysicalDeviceType {
+    fn from(f: u32) -> PhysicalDeviceType {
+        PhysicalDeviceType::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum QueryType {
@@ -606,6 +655,12 @@ impl From<QueryType> for u32 {
     }
 }
 
+impl From<u32> for QueryType {
+    fn from(f: u32) -> QueryType {
+        QueryType::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum SharingMode {
@@ -622,6 +677,12 @@ impl From<SharingMode> for i32 {
 impl From<SharingMode> for u32 {
     fn from(f: SharingMode) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for SharingMode {
+    fn from(f: u32) -> SharingMode {
+        SharingMode::from_u32(f).unwrap()
     }
 }
 
@@ -653,6 +714,12 @@ impl From<ImageLayout> for u32 {
     }
 }
 
+impl From<u32> for ImageLayout {
+    fn from(f: u32) -> ImageLayout {
+        ImageLayout::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum ImageViewType {
@@ -674,6 +741,12 @@ impl From<ImageViewType> for i32 {
 impl From<ImageViewType> for u32 {
     fn from(f: ImageViewType) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for ImageViewType {
+    fn from(f: u32) -> ImageViewType {
+        ImageViewType::from_u32(f).unwrap()
     }
 }
 
@@ -701,6 +774,13 @@ impl From<ComponentSwizzle> for u32 {
     }
 }
 
+impl From<u32> for ComponentSwizzle {
+    fn from(f: u32) -> ComponentSwizzle {
+        ComponentSwizzle::from_u32(f).unwrap()
+    }
+}
+
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum VertexInputRate {
@@ -717,6 +797,12 @@ impl From<VertexInputRate> for i32 {
 impl From<VertexInputRate> for u32 {
     fn from(f: VertexInputRate) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for VertexInputRate {
+    fn from(f: u32) -> VertexInputRate {
+        VertexInputRate::from_u32(f).unwrap()
     }
 }
 
@@ -748,6 +834,12 @@ impl From<PrimitiveTopology> for u32 {
     }
 }
 
+impl From<u32> for PrimitiveTopology {
+    fn from(f: u32) -> PrimitiveTopology {
+        PrimitiveTopology::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum PolygonMode {
@@ -769,6 +861,12 @@ impl From<PolygonMode> for u32 {
     }
 }
 
+impl From<u32> for PolygonMode {
+    fn from(f: u32) -> PolygonMode {
+        PolygonMode::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum FrontFace {
@@ -785,6 +883,12 @@ impl From<FrontFace> for i32 {
 impl From<FrontFace> for u32 {
     fn from(f: FrontFace) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for FrontFace {
+    fn from(f: u32) -> FrontFace {
+        FrontFace::from_u32(f).unwrap()
     }
 }
 
@@ -813,6 +917,12 @@ impl From<CompareOp> for u32 {
     }
 }
 
+impl From<u32> for CompareOp {
+    fn from(f: u32) -> CompareOp {
+        CompareOp::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum StencilOp {
@@ -835,6 +945,12 @@ impl From<StencilOp> for i32 {
 impl From<StencilOp> for u32 {
     fn from(f: StencilOp) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for StencilOp {
+    fn from(f: u32) -> StencilOp {
+        StencilOp::from_u32(f).unwrap()
     }
 }
 
@@ -871,6 +987,12 @@ impl From<LogicOp> for u32 {
     }
 }
 
+impl From<u32> for LogicOp {
+    fn from(f: u32) -> LogicOp {
+        LogicOp::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum BlendFactor {
@@ -904,6 +1026,12 @@ impl From<BlendFactor> for i32 {
 impl From<BlendFactor> for u32 {
     fn from(f: BlendFactor) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for BlendFactor {
+    fn from(f: u32) -> BlendFactor {
+        BlendFactor::from_u32(f).unwrap()
     }
 }
 
@@ -975,6 +1103,12 @@ impl From<BlendOp> for u32 {
     }
 }
 
+impl From<u32> for BlendOp {
+    fn from(f: u32) -> BlendOp {
+        BlendOp::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum DynamicState {
@@ -1003,6 +1137,12 @@ impl From<DynamicState> for u32 {
     }
 }
 
+impl From<u32> for DynamicState {
+    fn from(f: u32) -> DynamicState {
+        DynamicState::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum Filter {
@@ -1023,6 +1163,12 @@ impl From<Filter> for u32 {
     }
 }
 
+impl From<u32> for Filter {
+    fn from(f: u32) -> Filter {
+        Filter::from_u32(f).unwrap()
+    }
+}
+
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum SamplerMipmapMode {
@@ -1039,6 +1185,12 @@ impl From<SamplerMipmapMode> for i32 {
 impl From<SamplerMipmapMode> for u32 {
     fn from(f: SamplerMipmapMode) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for SamplerMipmapMode {
+    fn from(f: u32) -> SamplerMipmapMode {
+        SamplerMipmapMode::from_u32(f).unwrap()
     }
 }
 
@@ -1064,6 +1216,12 @@ impl From<SamplerAddressMode> for u32 {
     }
 }
 
+impl From<u32> for SamplerAddressMode {
+    fn from(f: u32) -> SamplerAddressMode {
+        SamplerAddressMode::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
@@ -1085,6 +1243,12 @@ impl From<BorderColor> for i32 {
 impl From<BorderColor> for u32 {
     fn from(f: BorderColor) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for BorderColor {
+    fn from(f: u32) -> BorderColor {
+        BorderColor::from_u32(f).unwrap()
     }
 }
 
@@ -1117,6 +1281,12 @@ impl From<DescriptorType> for u32 {
     }
 }
 
+impl From<u32> for DescriptorType {
+    fn from(f: u32) -> DescriptorType {
+        DescriptorType::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
@@ -1135,6 +1305,12 @@ impl From<AttachmentLoadOp> for i32 {
 impl From<AttachmentLoadOp> for u32 {
     fn from(f: AttachmentLoadOp) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for AttachmentLoadOp {
+    fn from(f: u32) -> AttachmentLoadOp {
+        AttachmentLoadOp::from_u32(f).unwrap()
     }
 }
 
@@ -1158,6 +1334,12 @@ impl From<AttachmentStoreOp> for u32 {
     }
 }
 
+impl From<u32> for AttachmentStoreOp {
+    fn from(f: u32) -> AttachmentStoreOp {
+        AttachmentStoreOp::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
@@ -1175,6 +1357,12 @@ impl From<PipelineBindPoint> for i32 {
 impl From<PipelineBindPoint> for u32 {
     fn from(f: PipelineBindPoint) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for PipelineBindPoint {
+    fn from(f: u32) -> PipelineBindPoint {
+        PipelineBindPoint::from_u32(f).unwrap()
     }
 }
 
@@ -1198,6 +1386,12 @@ impl From<CommandBufferLevel> for u32 {
     }
 }
 
+impl From<u32> for CommandBufferLevel {
+    fn from(f: u32) -> CommandBufferLevel {
+        CommandBufferLevel::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
@@ -1218,6 +1412,12 @@ impl From<IndexType> for u32 {
     }
 }
 
+impl From<u32> for IndexType {
+    fn from(f: u32) -> IndexType {
+        IndexType::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
@@ -1235,6 +1435,12 @@ impl From<SubpassContents> for i32 {
 impl From<SubpassContents> for u32 {
     fn from(f: SubpassContents) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for SubpassContents {
+    fn from(f: u32) -> SubpassContents {
+        SubpassContents::from_u32(f).unwrap()
     }
 }
 
@@ -1292,6 +1498,12 @@ impl From<ObjectType> for u32 {
     }
 }
 
+impl From<u32> for ObjectType {
+    fn from(f: u32) -> ObjectType {
+        ObjectType::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1329,6 +1541,12 @@ impl From<ColorSpaceKhr> for u32 {
     }
 }
 
+impl From<u32> for ColorSpaceKhr {
+    fn from(f: u32) -> ColorSpaceKhr {
+        ColorSpaceKhr::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1357,6 +1575,12 @@ impl From<PresentModeKhr> for u32 {
     }
 }
 
+impl From<u32> for PresentModeKhr {
+    fn from(f: u32) -> PresentModeKhr {
+        PresentModeKhr::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1378,6 +1602,12 @@ impl From<DescriptorUpdateTemplateTypeKhr> for i32 {
 impl From<DescriptorUpdateTemplateTypeKhr> for u32 {
     fn from(f: DescriptorUpdateTemplateTypeKhr) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for DescriptorUpdateTemplateTypeKhr {
+    fn from(f: u32) -> DescriptorUpdateTemplateTypeKhr {
+        DescriptorUpdateTemplateTypeKhr::from_u32(f).unwrap()
     }
 }
 
@@ -1407,6 +1637,13 @@ impl From<PointClippingBehaviorKhr> for u32 {
     }
 }
 
+#[cfg(feature = "experimental")]
+impl From<u32> for PointClippingBehaviorKhr {
+    fn from(f: u32) -> PointClippingBehaviorKhr {
+        PointClippingBehaviorKhr::from_u32(f).unwrap()
+    }
+}
+
 
 #[cfg(feature = "experimental")]
 #[repr(i32)]
@@ -1429,6 +1666,13 @@ impl From<TessellationDomainOriginKhr> for i32 {
 impl From<TessellationDomainOriginKhr> for u32 {
     fn from(f: TessellationDomainOriginKhr) -> u32 {
         f as u32
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<u32> for TessellationDomainOriginKhr {
+    fn from(f: u32) -> TessellationDomainOriginKhr {
+        TessellationDomainOriginKhr::from_u32(f).unwrap()
     }
 }
 
@@ -1460,6 +1704,13 @@ impl From<SamplerYcbcrModelConversionKhr> for u32 {
     }
 }
 
+#[cfg(feature = "experimental")]
+impl From<u32> for SamplerYcbcrModelConversionKhr {
+    fn from(f: u32) -> SamplerYcbcrModelConversionKhr {
+        SamplerYcbcrModelConversionKhr::from_u32(f).unwrap()
+    }
+}
+
 
 #[cfg(feature = "experimental")]
 #[repr(i32)]
@@ -1485,6 +1736,13 @@ impl From<SamplerYcbcrRangeKhr> for u32 {
     }
 }
 
+#[cfg(feature = "experimental")]
+impl From<u32> for SamplerYcbcrRangeKhr {
+    fn from(f: u32) -> SamplerYcbcrRangeKhr {
+        SamplerYcbcrRangeKhr::from_u32(f).unwrap()
+    }
+}
+
 
 #[cfg(feature = "experimental")]
 #[repr(i32)]
@@ -1507,6 +1765,13 @@ impl From<ChromaLocationKhr> for i32 {
 impl From<ChromaLocationKhr> for u32 {
     fn from(f: ChromaLocationKhr) -> u32 {
         f as u32
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<u32> for ChromaLocationKhr {
+    fn from(f: u32) -> ChromaLocationKhr {
+        ChromaLocationKhr::from_u32(f).unwrap()
     }
 }
 
@@ -1572,6 +1837,12 @@ impl From<DebugReportObjectTypeExt> for u32 {
     }
 }
 
+impl From<u32> for DebugReportObjectTypeExt {
+    fn from(f: u32) -> DebugReportObjectTypeExt {
+        DebugReportObjectTypeExt::from_u32(f).unwrap()
+    }
+}
+
 
 
 #[repr(i32)]
@@ -1597,6 +1868,12 @@ impl From<RasterizationOrderAmd> for u32 {
     }
 }
 
+impl From<u32> for RasterizationOrderAmd {
+    fn from(f: u32) -> RasterizationOrderAmd {
+        RasterizationOrderAmd::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1618,6 +1895,12 @@ impl From<ValidationCheckExt> for i32 {
 impl From<ValidationCheckExt> for u32 {
     fn from(f: ValidationCheckExt) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for ValidationCheckExt {
+    fn from(f: u32) -> ValidationCheckExt {
+        ValidationCheckExt::from_u32(f).unwrap()
     }
 }
 
@@ -1652,6 +1935,13 @@ impl From<IndirectCommandsTokenTypeNvx> for u32 {
     }
 }
 
+#[cfg(feature = "experimental")]
+impl From<u32> for IndirectCommandsTokenTypeNvx {
+    fn from(f: u32) -> IndirectCommandsTokenTypeNvx {
+        IndirectCommandsTokenTypeNvx::from_u32(f).unwrap()
+    }
+}
+
 
 #[cfg(feature = "experimental")]
 #[repr(i32)]
@@ -1680,6 +1970,13 @@ impl From<ObjectEntryTypeNvx> for u32 {
     }
 }
 
+#[cfg(feature = "experimental")]
+impl From<u32> for ObjectEntryTypeNvx {
+    fn from(f: u32) -> ObjectEntryTypeNvx {
+        ObjectEntryTypeNvx::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1702,6 +1999,12 @@ impl From<DisplayPowerStateExt> for i32 {
 impl From<DisplayPowerStateExt> for u32 {
     fn from(f: DisplayPowerStateExt) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for DisplayPowerStateExt {
+    fn from(f: u32) -> DisplayPowerStateExt {
+        DisplayPowerStateExt::from_u32(f).unwrap()
     }
 }
 
@@ -1728,6 +2031,12 @@ impl From<DeviceEventTypeExt> for u32 {
     }
 }
 
+impl From<u32> for DeviceEventTypeExt {
+    fn from(f: u32) -> DeviceEventTypeExt {
+        DeviceEventTypeExt::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1748,6 +2057,12 @@ impl From<DisplayEventTypeExt> for i32 {
 impl From<DisplayEventTypeExt> for u32 {
     fn from(f: DisplayEventTypeExt) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for DisplayEventTypeExt {
+    fn from(f: u32) -> DisplayEventTypeExt {
+        DisplayEventTypeExt::from_u32(f).unwrap()
     }
 }
 
@@ -1781,6 +2096,12 @@ impl From<ViewportCoordinateSwizzleNv> for u32 {
     }
 }
 
+impl From<u32> for ViewportCoordinateSwizzleNv {
+    fn from(f: u32) -> ViewportCoordinateSwizzleNv {
+        ViewportCoordinateSwizzleNv::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1802,6 +2123,12 @@ impl From<DiscardRectangleModeExt> for i32 {
 impl From<DiscardRectangleModeExt> for u32 {
     fn from(f: DiscardRectangleModeExt) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for DiscardRectangleModeExt {
+    fn from(f: u32) -> DiscardRectangleModeExt {
+        DiscardRectangleModeExt::from_u32(f).unwrap()
     }
 }
 
@@ -1830,6 +2157,12 @@ impl From<SamplerReductionModeExt> for u32 {
     }
 }
 
+impl From<u32> for SamplerReductionModeExt {
+    fn from(f: u32) -> SamplerReductionModeExt {
+        SamplerReductionModeExt::from_u32(f).unwrap()
+    }
+}
+
 
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
@@ -1852,6 +2185,12 @@ impl From<BlendOverlapExt> for i32 {
 impl From<BlendOverlapExt> for u32 {
     fn from(f: BlendOverlapExt) -> u32 {
         f as u32
+    }
+}
+
+impl From<u32> for BlendOverlapExt {
+    fn from(f: u32) -> BlendOverlapExt {
+        BlendOverlapExt::from_u32(f).unwrap()
     }
 }
 
@@ -1881,6 +2220,12 @@ impl From<CoverageModulationModeNv> for u32 {
     }
 }
 
+impl From<u32> for CoverageModulationModeNv {
+    fn from(f: u32) -> CoverageModulationModeNv {
+        CoverageModulationModeNv::from_u32(f).unwrap()
+    }
+}
+
 
 #[cfg(feature = "experimental")]
 #[repr(i32)]
@@ -1901,5 +2246,12 @@ impl From<ValidationCacheHeaderVersionExt> for i32 {
 impl From<ValidationCacheHeaderVersionExt> for u32 {
     fn from(f: ValidationCacheHeaderVersionExt) -> u32 {
         f as u32
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<u32> for ValidationCacheHeaderVersionExt {
+    fn from(f: u32) -> ValidationCacheHeaderVersionExt {
+        ValidationCacheHeaderVersionExt::from_u32(f).unwrap()
     }
 }

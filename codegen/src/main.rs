@@ -254,7 +254,7 @@ struct Member {
     optional: bool,
     noautovalidity: bool,
     externsync: bool,
-    array_size: Option<String>,
+    array_len: Option<String>,
     comment: Option<String>,
     values: Option<String>,
     len: Option<String>,
@@ -279,7 +279,7 @@ impl Member {
             optional: false,
             noautovalidity: false,
             externsync: false,
-            array_size: None,
+            array_len: None,
             comment: None,
             values: None,
             len: None,
@@ -482,18 +482,33 @@ impl Struct {
             };
             assert!(ptr_pre == "pp" || ptr_pre == "p");
             // Compensate for pointer member name irregularities:
-            let ptr_tail = ptr_tail_
+            let mut ptr_tail = ptr_tail_
+                .replace("ImageIndices", "Swapchains")
+                .replace("ResolveAttachments", "ColorAttachments")
                 .replace("Indices", "Indexes")
                 .replace("Entries", "Entrys")
                 .replace("Dependencies", "Dependencys");
+            if self.orig_name == "VkPresentInfoKHR" {
+                ptr_tail = ptr_tail.replace("Results", "Swapchains");
+            } else if self.orig_name == "VkPresentRegionsKHR" {
+                ptr_tail = ptr_tail.replace("Regions", "Swapchains");
+            } else if self.orig_name == "VkPresentTimesInfoGOOGLE"  {
+                ptr_tail = ptr_tail.replace("Times", "Swapchains");
+            }
+
             let (ptr_tail_first, ptr_tail_tail) = ptr_tail.split_at(1);
             let ptr_tail_lower = format!("{}{}", ptr_tail_first.to_lowercase(), ptr_tail_tail);
             for cnt_m in self.members.iter_mut().filter(|cnt_m| cnt_m.orig_name.len() > 5) {
-                let (cnt_head_, cnt_tail) = cnt_m.orig_name.split_at(cnt_m.orig_name.len() - 5);
                 // Compensate for count member name irregularities:
-                let cnt_head = cnt_head_
+                let cnt_orig_name = cnt_m.orig_name
                     .replace("descriptorSet", "setLayout")
-                    .replace("SFRRect", "sFRRect");
+                    .replace("SFRRect", "sFRRect")
+                    .replace("codeSize", "codeCount");
+                let (cnt_head, cnt_tail) = cnt_orig_name.split_at(cnt_orig_name.len() - 5);
+                // // Compensate for count member name irregularities:
+                // let cnt_head = cnt_head_
+                //     .replace("descriptorSet", "setLayout")
+                //     .replace("SFRRect", "sFRRect");
                 if ptr_tail_lower.contains(&cnt_head) && cnt_tail == "Count" {
                     assert!(ptr_tail_lower.starts_with(&cnt_head));
                     if PRINT { println!("Count member found matching pointer member: \
@@ -503,7 +518,9 @@ impl Struct {
                     //         ptr: \"{}\", cnt: \"{}\"", ptr_tail_lower, cnt_head);
 
                     // Damn irregularities ("pCoverageModulationTable")....
-                    assert!(m.orig_name.ends_with("s") || m.orig_name == "pCoverageModulationTable");
+                    assert!(m.orig_name.ends_with("s") ||
+                        m.orig_name == "pCoverageModulationTable" ||
+                        m.orig_name == "pCode");
                     m.ptr_count_member_orig_name = Some(cnt_m.orig_name.clone());
                     cnt_m.is_ptr_count = true;
                 }
@@ -563,7 +580,7 @@ fn parse_stray_text(s: &str, m: &mut Member) {
                 assert!(!m.is_ptr);
                 m.is_ptr = true;
             } else if s.starts_with("[") {
-                let mut array_size = String::with_capacity(4);
+                let mut array_len = String::with_capacity(4);
                 for (char_idx, c) in s.chars().enumerate() {
                     match c {
                         '[' => (),
@@ -572,11 +589,11 @@ fn parse_stray_text(s: &str, m: &mut Member) {
                             assert!(digit.is_numeric(),
                                 "unexpected character found \
                                 while parsing array size: {}", c);
-                            array_size.push(digit);
+                            array_len.push(digit);
                         },
                     }
                 }
-                m.array_size = Some(array_size);
+                m.array_len = Some(array_len);
             } else {
                 panic!("unknown characters present: {}", s)
             }
@@ -607,7 +624,7 @@ fn parse_structs() -> (HashMap<String, Struct>, Vec<String>) {
     let mut member_start_depth = 0;
     let mut parsing_member_type = false;
     let mut parsing_member_name = false;
-    let mut parsing_member_array_size = false;
+    let mut parsing_member_array_len = false;
     let mut parsing_member_comment = false;
 
     let mut depth = 0;
@@ -641,7 +658,7 @@ fn parse_structs() -> (HashMap<String, Struct>, Vec<String>) {
                             parsing_member_name = true;
                         },
                         "enum" => {
-                            parsing_member_array_size = true;
+                            parsing_member_array_len = true;
                         },
                         "comment" => {
                             if current_member.is_some() {
@@ -697,9 +714,9 @@ fn parse_structs() -> (HashMap<String, Struct>, Vec<String>) {
                         } else if parsing_member_name {
                             cur_mem.set_name(s);
                             parsing_member_name = false;
-                        } else if parsing_member_array_size {
-                            cur_mem.array_size = Some(s);
-                            parsing_member_array_size = false;
+                        } else if parsing_member_array_len {
+                            cur_mem.array_len = Some(s);
+                            parsing_member_array_len = false;
                         } else if parsing_member_comment {
                             cur_mem.comment = Some(s);
                             parsing_member_comment = false;
@@ -807,270 +824,256 @@ fn is_experimental(orig_name: &str) -> bool {
     orig_name.contains("KHX") || orig_name.contains("NVX")
 }
 
-/// The getter and setter type signatures of a struct member.
+/// Returns true if the argument is to be interpreted as a slice rather than a
+/// reference. This is fiddly, fragile, and contains irregularities.
+fn arg_is_slice(m: &Member, fn_name: &str) -> bool {
+    m.is_ptr && (fn_name.ends_with("s")
+        && fn_name != "enabled_features"
+        && fn_name != "attributes"
+        || fn_name == "code"
+        || fn_name == "coverage_modulation_table")
+
+}
+
+/// The getter and setter signatures of a struct member. And all kinds of
+/// other stuff.
 struct MemberSig {
-    // Untamable:
+    fn_name: String,
     arg_lifetime: &'static str,
     unsafe_to_set: bool,
     arg_is_slice: bool,
     arg_is_struct: bool,
+    arg_is_repr_c: bool,
     convert_arg: bool,
     convert_arg_twice: bool,
     convert_to_bits: bool,
-    arg_type_sig: String,
+    convert_return: bool,
+    convert_return_to_c_str: bool,
+    convert_return_to_slice: bool,
+    convert_return_to_flags: bool,
+    // cast_return_as_voodoo_type: bool,
+    arg_type: String,
+    return_type: String,
     where_clause: String,
-    fn_type_params: String,
+    set_fn_type_params: String,
+    get_fn_type_params: String,
 }
 
 impl MemberSig {
     fn new(m: &Member, s: &Struct, structs: &HashMap<String, Struct>,
-            fn_name: &str, bldr_type_params: &str,) -> MemberSig {
+            bldr_type_params: &str,) -> MemberSig {
+        // The function name, blemishes removed:
+        let fn_name = match filter_function_name(&m.orig_name) {
+            Some(filtered_name) => filtered_name,
+            None => m.voodoo_name.clone(),
+        };
+
+        let arg_is_slice = arg_is_slice(m, &fn_name);
+        let arg_is_repr_c = match structs.get(&m.voodoo_type) {
+            Some(ts) => ts.is_repr_c(),
+            None => false,
+        };
+
         let mut sig = MemberSig {
+            fn_name,
             arg_lifetime: "'a",
             unsafe_to_set: function_is_unsafe(&m),
-            arg_is_slice: arg_is_slice(m, &fn_name),
+            arg_is_slice,
             arg_is_struct: structs.contains_key(&m.voodoo_type),
+            arg_is_repr_c,
             convert_arg: false,
             convert_arg_twice: false,
             convert_to_bits: false,
-            arg_type_sig: String::new(),
-            where_clause: String::new(),
-            fn_type_params: "'m".to_string(),
+            convert_return: false,
+            convert_return_to_c_str: false,
+            convert_return_to_slice: false,
+            convert_return_to_flags: false,
+            arg_type: String::with_capacity(128),
+            return_type: String::with_capacity(128),
+            where_clause: String::with_capacity(128),
+            set_fn_type_params: "'m".to_string(),
+            get_fn_type_params: "'a".to_string(),
         };
 
         // Type signature:
-        if let Some(ref size) = m.array_size {
-            sig.arg_type_sig.push_str("[");
-            sig.arg_type_sig.push_str(&m.voodoo_type);
-            sig.arg_type_sig.push_str("; ");
-            sig.arg_type_sig.push_str(size);
-            sig.arg_type_sig.push_str("]");
+        if let Some(ref len) = m.array_len {
+            if m.voodoo_type == "i8" {
+                sig.convert_return_to_c_str = true;
+                sig.return_type.push_str("&'a CStr");
+            } else {
+                sig.convert_return_to_slice = true;
+                sig.arg_type.push_str("[");
+                sig.arg_type.push_str(&m.voodoo_type);
+                sig.arg_type.push_str("; ");
+                match len.parse::<usize>() {
+                    Ok(_) => sig.arg_type.push_str(len),
+                    Err(_) => {
+                        sig.arg_type.push_str(ORIG_PRE);
+                        sig.arg_type.push_str(len);
+                    },
+                }
+                sig.arg_type.push_str("]");
+                sig.return_type.push_str(&format!("&[{}]", m.voodoo_type));
+            }
         } else if m.voodoo_type == "i8" {
             assert!(s.special_field(&m.voodoo_name).is_some());
             sig.convert_arg = true;
-            sig.fn_type_params.push_str(", ");
-            sig.fn_type_params.push_str(sig.arg_lifetime);
-            sig.fn_type_params.push_str(", T");
-            sig.arg_type_sig.push_str("T");
+            sig.set_fn_type_params.push_str(", ");
+            sig.set_fn_type_params.push_str(sig.arg_lifetime);
+            sig.set_fn_type_params.push_str(", T");
+            sig.arg_type.push_str("T");
             if m.is_ptr {
                 assert!(bldr_type_params.contains("'b"));
                 sig.where_clause = format!(" where {a}: 'b, T: Into<CharStr<{a}>>", a=sig.arg_lifetime);
+                sig.return_type.push_str("&'a CStr");
+                sig.convert_return_to_c_str = true;
             } else if m.is_ptr_ptr {
                 assert!(bldr_type_params.contains("'b"));
                 sig.where_clause = format!(" where {a}: 'b, T: Into<CharStrs<{a}>>", a=sig.arg_lifetime);
+                sig.return_type.push_str("&'a [*const c_char]");
+                sig.convert_return_to_slice = true;
             }
         } else if m.voodoo_type == "u32" && m.orig_name.contains("Version") {
             sig.convert_arg = true;
             sig.convert_arg_twice = true;
-            sig.fn_type_params.push_str(", T");
-            sig.arg_type_sig.push_str("T");
+            sig.convert_return = true;
+            sig.set_fn_type_params.push_str(", T");
+            sig.arg_type.push_str("T");
             sig.where_clause = format!(" where T: Into<Version>");
+            sig.return_type.push_str("Version");
         } else if m.voodoo_type.contains("Flags") {
             if m.voodoo_type == "PipelineStageFlags" {
-                if !m.is_ptr {
-                    sig.convert_to_bits = true;
+                // Irregularity.
+                if m.is_ptr {
+                    sig.set_fn_type_params.push_str(", ");
+                    sig.set_fn_type_params.push_str(sig.arg_lifetime);
+                    sig.arg_type.push_str("&");
+                    sig.arg_type.push_str(sig.arg_lifetime);
+                    sig.arg_type.push_str(" ");
                 } else {
-                    sig.fn_type_params.push_str(", ");
-                    sig.fn_type_params.push_str(sig.arg_lifetime);
-                    sig.arg_type_sig.push_str("&");
-                    sig.arg_type_sig.push_str(sig.arg_lifetime);
-                    sig.arg_type_sig.push_str(" ");
+                    sig.convert_to_bits = true;
+                    sig.convert_return_to_flags = true;
                 }
             } else {
                 sig.convert_to_bits = true;
+                sig.convert_return_to_flags = true;
             }
-            sig.arg_type_sig.push_str(&m.voodoo_type);
+            sig.arg_type.push_str(&m.voodoo_type);
+            sig.return_type.push_str(&sig.arg_type);
         } else if sig.arg_is_slice {
-            sig.fn_type_params.push_str(", ");
-            sig.fn_type_params.push_str(sig.arg_lifetime);
-            sig.arg_type_sig.push_str("&");
-            sig.arg_type_sig.push_str(sig.arg_lifetime);
-            sig.arg_type_sig.push_str(" ");
+            sig.set_fn_type_params.push_str(", ");
+            sig.set_fn_type_params.push_str(sig.arg_lifetime);
+            sig.arg_type.push_str("&");
+            sig.arg_type.push_str(sig.arg_lifetime);
+            sig.arg_type.push_str(" ");
             assert!(!m.is_const_const);
             if !m.is_const {
-                sig.arg_type_sig.push_str("mut ");
+                sig.arg_type.push_str("mut ");
             }
-            sig.arg_type_sig.push_str("[");
-            sig.arg_type_sig.push_str(&m.voodoo_type);
-            sig.arg_type_sig.push_str("]");
+            sig.arg_type.push_str("[");
             if m.is_handle_type {
+                sig.arg_type.push_str("&");
+                sig.arg_type.push_str(sig.arg_lifetime);
+                sig.arg_type.push_str(" ");
                 assert!(bldr_type_params.contains("'b"));
                 sig.where_clause = format!(" where {a}: 'b", a=sig.arg_lifetime);
             }
+            sig.arg_type.push_str(&m.voodoo_type);
+            sig.arg_type.push_str("]");
+            if sig.arg_is_repr_c {
+                sig.return_type.push_str(&sig.arg_type);
+            } else {
+                sig.return_type.push_str("&");
+                sig.return_type.push_str(sig.arg_lifetime);
+                sig.return_type.push_str(" ");
+                sig.return_type.push_str("[");
+                // if m.is_const {
+                //     sig.return_type.push_str("*const ");
+                // } else {
+                //     sig.return_type.push_str("*mut ");
+                // }
+                if sig.arg_is_struct || m.is_handle_type {
+                    sig.return_type.push_str(ORIG_PRE);
+                    sig.return_type.push_str(&m.orig_type);
+                } else {
+                    sig.return_type.push_str(&m.voodoo_type);
+                }
+                sig.return_type.push_str("]");
+            }
         } else if m.is_ptr && sig.unsafe_to_set {
             if m.is_const {
-                sig.arg_type_sig.push_str("*const ");
+                sig.arg_type.push_str("*const ");
             } else {
-                sig.arg_type_sig.push_str("*mut ");
+                sig.arg_type.push_str("*mut ");
             }
-            sig.arg_type_sig.push_str(&m.voodoo_type);
+            sig.arg_type.push_str(&m.voodoo_type);
+            sig.return_type.push_str(&sig.arg_type);
         } else {
             if m.is_ptr || m.is_handle_type {
-                sig.fn_type_params.push_str(", ");
-                sig.fn_type_params.push_str(sig.arg_lifetime);
-                sig.arg_type_sig.push_str("&");
-                sig.arg_type_sig.push_str(sig.arg_lifetime);
-                sig.arg_type_sig.push_str(" ");
+                sig.set_fn_type_params.push_str(", ");
+                sig.set_fn_type_params.push_str(sig.arg_lifetime);
+                sig.arg_type.push_str("&");
+                sig.arg_type.push_str(sig.arg_lifetime);
+                sig.arg_type.push_str(" ");
             }
-            sig.arg_type_sig.push_str(&m.voodoo_type);
+            sig.arg_type.push_str(&m.voodoo_type);
             if !m.is_handle_type {
+                // Irregularities:
                 if m.orig_name != "pSampleMask" &&
                     m.orig_name != "pCoverageModulationTable" {
                     sig.convert_arg = true;
+                    sig.convert_return = true;
                 }
             }
+            sig.return_type.push_str(&sig.arg_type);
         }
 
         sig
     }
 }
 
-fn arg_is_slice(m: &Member, fn_name: &str) -> bool {
-    m.is_ptr && (fn_name.ends_with("s") || fn_name == "code" || fn_name == "coverage_modulation_table")
-}
 
 /// Writes a setter function to the output buffer.
 fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_params: &str,
         structs: &HashMap<String, Struct>, is_for_builder: bool) -> io::Result<()> {
     let t = INDENT;
-    // Skip excluded members and "Count" members that have associated
+    // Skip excluded members and "...Count" members that have associated
     // pointer members (stuff that gets merged into a slice).
     if member_is_excluded(&m.orig_name) { return Ok(()); }
     if m.is_ptr_count { return Ok(()); }
 
     // let fn_is_unsafe = function_is_unsafe(&m);
 
-    // The function name, blemishes removed:
-    let fn_name = match filter_function_name(&m.orig_name) {
-        Some(filtered_name) => filtered_name,
-        None => m.voodoo_name.clone(),
-    };
+    // // The function name, blemishes removed:
+    // let fn_name = match filter_function_name(&m.orig_name) {
+    //     Some(filtered_name) => filtered_name,
+    //     None => m.voodoo_name.clone(),
+    // };
 
-    // let arg_lifetime = "'a";
-    // // let mut arg_is_slice = false;
-    // let mut arg_is_slice = arg_is_slice(m, &fn_name);
-    // let mut arg_is_struct = structs.contains_key(&m.voodoo_type);
-    // let mut convert_arg = false;
-    // let mut convert_arg_twice = false;
-    // let mut convert_to_bits = false;
-    // let mut arg_type_sig = String::new();
-    // let mut where_clause = String::new();
-    // let mut fn_type_params = "'m".to_string();
-    let mut sig = MemberSig::new(m, s, structs, &fn_name, bldr_type_params);
-
-
-
-    // // Type signature:
-    // if let Some(ref size) = m.array_size {
-    //     sig.arg_type_sig.push_str("[");
-    //     sig.arg_type_sig.push_str(&m.voodoo_type);
-    //     sig.arg_type_sig.push_str("; ");
-    //     sig.arg_type_sig.push_str(size);
-    //     sig.arg_type_sig.push_str("]");
-    // } else if m.voodoo_type == "i8" {
-    //     assert!(s.special_field(&m.voodoo_name).is_some());
-    //     sig.convert_arg = true;
-    //     sig.fn_type_params.push_str(", ");
-    //     sig.fn_type_params.push_str(sig.arg_lifetime);
-    //     sig.fn_type_params.push_str(", T");
-    //     sig.arg_type_sig.push_str("T");
-    //     if m.is_ptr {
-    //         assert!(bldr_type_params.contains("'b"));
-    //         sig.where_clause = format!(" where {a}: 'b, T: Into<CharStr<{a}>>", a=sig.arg_lifetime);
-    //     } else if m.is_ptr_ptr {
-    //         assert!(bldr_type_params.contains("'b"));
-    //         sig.where_clause = format!(" where {a}: 'b, T: Into<CharStrs<{a}>>", a=sig.arg_lifetime);
-    //     }
-    // } else if m.voodoo_type == "u32" && m.orig_name.contains("Version") {
-    //     sig.convert_arg = true;
-    //     sig.convert_arg_twice = true;
-    //     sig.fn_type_params.push_str(", T");
-    //     sig.arg_type_sig.push_str("T");
-    //     sig.where_clause = format!(" where T: Into<Version>");
-    // } else if m.voodoo_type.contains("Flags") {
-    //     if m.voodoo_type == "PipelineStageFlags" {
-    //         if !m.is_ptr {
-    //             sig.convert_to_bits = true;
-    //         } else {
-    //             sig.fn_type_params.push_str(", ");
-    //             sig.fn_type_params.push_str(sig.arg_lifetime);
-    //             sig.arg_type_sig.push_str("&");
-    //             sig.arg_type_sig.push_str(sig.arg_lifetime);
-    //             sig.arg_type_sig.push_str(" ");
-    //         }
-    //     } else {
-    //         sig.convert_to_bits = true;
-    //     }
-    //     sig.arg_type_sig.push_str(&m.voodoo_type);
-    // } else if sig.arg_is_slice {
-    //     sig.fn_type_params.push_str(", ");
-    //     sig.fn_type_params.push_str(sig.arg_lifetime);
-    //     sig.arg_type_sig.push_str("&");
-    //     sig.arg_type_sig.push_str(sig.arg_lifetime);
-    //     sig.arg_type_sig.push_str(" ");
-    //     assert!(!m.is_const_const);
-    //     if !m.is_const {
-    //         sig.arg_type_sig.push_str("mut ");
-    //     }
-    //     sig.arg_type_sig.push_str("[");
-    //     sig.arg_type_sig.push_str(&m.voodoo_type);
-    //     sig.arg_type_sig.push_str("]");
-    //     if m.is_handle_type {
-    //         assert!(bldr_type_params.contains("'b"));
-    //         sig.where_clause = format!(" where {a}: 'b", a=sig.arg_lifetime);
-    //     }
-    // } else if m.is_ptr && fn_is_unsafe {
-    //     if m.is_const {
-    //         sig.arg_type_sig.push_str("*const ");
-    //     } else {
-    //         sig.arg_type_sig.push_str("*mut ");
-    //     }
-    //     sig.arg_type_sig.push_str(&m.voodoo_type);
-    // } else {
-    //     if m.is_ptr || m.is_handle_type {
-    //         sig.fn_type_params.push_str(", ");
-    //         sig.fn_type_params.push_str(sig.arg_lifetime);
-    //         sig.arg_type_sig.push_str("&");
-    //         sig.arg_type_sig.push_str(sig.arg_lifetime);
-    //         sig.arg_type_sig.push_str(" ");
-    //     }
-    //     sig.arg_type_sig.push_str(&m.voodoo_type);
-    //     if !m.is_handle_type {
-    //         if m.orig_name != "pSampleMask" &&
-    //             m.orig_name != "pCoverageModulationTable" {
-    //             sig.convert_arg = true;
-    //         }
-    //     }
-    // }
+    // Signature and all kinds of other stuff:
+    let sig = MemberSig::new(m, s, structs, bldr_type_params);
 
     // Are you wearing a seatbelt?
     let unsafe_str = if sig.unsafe_to_set { " unsafe" } else { "" };
 
     // Function signature:
     writeln!(o, "{t}pub{} fn {}<{}>(mut self, {}: {}) -> {}Builder{}{} {{",
-        unsafe_str, fn_name, sig.fn_type_params, fn_name, sig.arg_type_sig,
+        unsafe_str, sig.fn_name, sig.set_fn_type_params, sig.fn_name, sig.arg_type,
         s.voodoo_name, bldr_type_params, sig.where_clause, t=t)?;
-
-    // if let Some(ref count_orig_name) = m.ptr_count_member_orig_name {
-    //     writeln!(o, "{t}{t}assert!(self.raw.{c} == 0 || self.raw.{c} == {f}.len() as u32, \n\
-    //         {t}{t}{t}\"count inconsistency found when specifying `{s}::{f}`.\");",
-    //         c=count_orig_name, f=fn_name, s=s.voodoo_name, t=t)?;
-    //     writeln!(o, "{t}{t}self.raw.{c} = {f}.len() as u32;", c=count_orig_name, f=fn_name, t=t)?;
-    // }
 
     let set_counts = |o: &mut BufWriter<File>, extra_indent: &str| -> io::Result<()> {
         if let Some(ref count_orig_name) = m.ptr_count_member_orig_name {
-            writeln!(o, "{t}{t}{x}assert!(self.raw.{c} == 0 || self.raw.{c} == {f}.len() as u32, \n\
+            writeln!(o, "{t}{t}{x}assert!(self.raw.{c} == 0 || self.raw.{c} == {f}.len() as _, \n\
                 {t}{t}{t}{x}\"count inconsistency found when specifying `{s}::{f}`.\");",
-                c=count_orig_name, f=fn_name, s=s.voodoo_name, t=t, x=extra_indent)?;
-            writeln!(o, "{t}{t}{x}self.raw.{c} = {f}.len() as u32;", c=count_orig_name, f=fn_name,
+                c=count_orig_name, f=sig.fn_name, s=s.voodoo_name, t=t, x=extra_indent)?;
+            writeln!(o, "{t}{t}{x}self.raw.{c} = {f}.len() as _;", c=count_orig_name, f=sig.fn_name,
                 t=t, x=extra_indent)?;
         }
         Ok(())
     };
 
     if s.special_field(&m.voodoo_name).is_some() {
-        write!(o, "{t}{t}self.{} = Some({}", m.voodoo_name, fn_name, t=t)?;
+        write!(o, "{t}{t}self.{} = Some({}", m.voodoo_name, sig.fn_name, t=t)?;
         if sig.arg_is_slice {
             if m.is_handle_type {
                 write!(o, ".iter().map(|h| h.handle()).collect()")?;
@@ -1082,7 +1085,7 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_param
         }
         writeln!(o, ");")?;
         writeln!(o, "{t}{t}{{", t=t)?;
-        writeln!(o, "{t}{t}{t}let {} = self.{}.as_ref().unwrap();", m.voodoo_name, fn_name, t=t)?;
+        writeln!(o, "{t}{t}{t}let {} = self.{}.as_ref().unwrap();", m.voodoo_name, sig.fn_name, t=t)?;
         writeln!(o, "{t}{t}{t}self.raw.{} = {}.as_ptr();",
             m.orig_name, m.voodoo_name, t=t)?;
         set_counts(o, t)?;
@@ -1092,24 +1095,26 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_param
         write!(o, "{t}{t}self.raw.{} = ", m.orig_name, t=t)?;
         if sig.arg_is_struct {
             if m.is_ptr {
-                if sig.arg_is_slice && structs[&m.voodoo_type].is_repr_c() {
+                if sig.arg_is_slice && sig.arg_is_repr_c {
                     if m.is_const {
-                        write!(o, "{}.as_ptr() as *const _", fn_name)?;
+                        write!(o, "{}.as_ptr() as *const ", sig.fn_name)?;
+                        write!(o, "{}{} as *const _", ORIG_PRE, m.orig_type)?;
                     } else {
-                        write!(o, "{}.as_mut_ptr() as *mut _", fn_name)?;
+                        write!(o, "{}.as_mut_ptr() as *mut ", sig.fn_name)?;
+                        write!(o, "{}{} as *mut _", ORIG_PRE, m.orig_type)?;
                     }
                 } else {
-                    write!(o, "{}.raw()", fn_name)?;
+                    write!(o, "{}.raw()", sig.fn_name)?;
                 }
             } else {
-                if let Some(ref size) = m.array_size {
+                if let Some(ref len) = m.array_len {
                     write!(o, "[")?;
-                    for idx in 0..size.parse::<u32>().unwrap() {
-                        write!(o, "{}[{}].raw, ", fn_name, idx)?;
+                    for idx in 0..len.parse::<u32>().unwrap() {
+                        write!(o, "{}[{}].raw, ", sig.fn_name, idx)?;
                     }
                     write!(o, "]")?;
                 } else {
-                    write!(o, "{}.raw", fn_name)?;
+                    write!(o, "{}.raw", sig.fn_name)?;
                 }
             }
         } else {
@@ -1117,33 +1122,33 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_param
                 if sig.arg_is_slice {
                     assert!(s.special_fields.contains_key(&m.voodoo_name),
                         "\"{}\" is lacking a special field for {{ {}: {} }}",
-                        s.voodoo_name, fn_name, sig.arg_type_sig);
-                    write!(o, "{}", fn_name)?;
+                        s.voodoo_name, sig.fn_name, sig.arg_type);
+                    write!(o, "{}", sig.fn_name)?;
                 } else {
                     if m.is_ptr {
                         write!(o, "&")?;
                     }
-                    write!(o, "{}.handle()", fn_name)?;
+                    write!(o, "{}.handle()", sig.fn_name)?;
                 }
             } else if m.voodoo_type.as_str() == "bool" {
-                write!(o, "{} as u32", fn_name)?;
+                write!(o, "{} as u32", sig.fn_name)?;
             } else if sig.convert_to_bits {
-                write!(o, "{}.bits()", fn_name)?;
+                write!(o, "{}.bits()", sig.fn_name)?;
             } else if sig.arg_is_slice {
                 if m.is_const {
-                    write!(o, "{}.as_ptr() as *const _", fn_name)?;
+                    write!(o, "{}.as_ptr() as *const {} as *const _", sig.fn_name, m.voodoo_type)?;
                 } else {
-                    write!(o, "{}.as_mut_ptr() as *mut _", fn_name)?;
+                    write!(o, "{}.as_mut_ptr() as *mut {} as *mut _", sig.fn_name, m.voodoo_type)?;
                 }
-            } else if sig.convert_arg {
-                write!(o, "{}.into()", fn_name)?;
+            } else if sig.convert_arg && !m.is_ptr {
+                write!(o, "{}.into()", sig.fn_name)?;
                 if sig.convert_arg_twice {
                     write!(o, ".into()")?;
                 }
             } else if m.voodoo_type == "PipelineStageFlags" && m.is_ptr {
-                write!(o, "{} as *const PipelineStageFlags as *const _", fn_name)?;
+                write!(o, "{} as *const PipelineStageFlags as *const _", sig.fn_name)?;
             } else {
-                write!(o, "{}", fn_name)?;
+                write!(o, "{}", sig.fn_name)?;
             }
         }
         writeln!(o, ";")?;
@@ -1154,6 +1159,143 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_param
 
     Ok(())
 }
+
+
+/// Writes a getter function to the output buffer.
+fn write_get_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, bldr_type_params: &str,
+        structs: &HashMap<String, Struct>, is_for_builder: bool) -> io::Result<()> {
+    let t = INDENT;
+    if member_is_excluded(&m.orig_name) || m.is_ptr_count { return Ok(()); }
+    let sig = MemberSig::new(m, s, structs, bldr_type_params);
+
+    let fn_name = if m.is_handle_type {
+        format!("{}_handle", sig.fn_name)
+    } else {
+        sig.fn_name
+    };
+
+    let return_type = if m.is_handle_type {
+        if let Some(_) = m.ptr_count_member_orig_name {
+            format!("&'a [{}{}]", ORIG_PRE, m.orig_type)
+        } else if m.is_ptr {
+            format!("&'a {}{}", ORIG_PRE, m.orig_type)
+        } else {
+            format!("{}{}", ORIG_PRE, m.orig_type)
+        }
+    } else {
+        sig.return_type
+    };
+
+    writeln!(o, "{t}pub fn {}<{}>(&'a self) -> {} {{", fn_name, sig.get_fn_type_params,
+        return_type, t=t)?;
+
+    if sig.arg_is_struct {
+        if m.is_ptr {
+            if sig.arg_is_slice {
+                if let Some(ref count_orig_name) = m.ptr_count_member_orig_name {
+                    if sig.arg_is_repr_c {
+                        write!(o, "{t}{t}", t=t)?;
+                        write!(o, "unsafe {{ slice::from_raw_parts(self.raw.{} as *const _, \
+                            self.raw.{} as usize) }}", m.orig_name, count_orig_name)?;
+                    } else {
+                        write!(o, "{t}{t}", t=t)?;
+                        write!(o, "unsafe {{ slice::from_raw_parts(self.raw.{} as *const _, \
+                            self.raw.{} as usize) }}", m.orig_name, count_orig_name)?;
+                    }
+                } else {
+                    // write!(o, "{t}{t}&*(self.raw.{} as *const {}{} as *const _)", m.orig_name,
+                    //     ORIG_PRE, m.orig_type, t=t)?;
+                    // write!(o, "{t}{t}", t=t)?;
+                    // write!(o, "unsafe {{ slice::from_raw_parts(self.raw.{} as *const _, \
+                    //     self.raw.{} as usize) }}", m.orig_name, count_orig_name)?;
+                }
+            } else {
+                write!(o, "{t}{t}unsafe {{ &*(self.raw.{} as *const {}{} as *const _) }}", m.orig_name,
+                    ORIG_PRE, m.orig_type, t=t)?;
+            }
+        } else {
+            if let Some(ref len) = m.array_len {
+                write!(o, "{t}{t}", t=t)?;
+                write!(o, "unsafe {{ slice::from_raw_parts(&self.raw.{} \
+                    as *const {}{} as *const _, ", m.orig_name, ORIG_PRE, m.orig_type)?;
+                match len.parse::<usize>() {
+                    Ok(_) => write!(o, "{} as usize) ", len)?,
+                    Err(_) => write!(o, "{}{} as usize) ", ORIG_PRE, len)?,
+                }
+                write!(o, "}}",  )?;
+            } else {
+                // write!(o, "{}.raw", sig.fn_name)?;
+                write!(o, "{t}{t}self.raw.{}", m.orig_name, t=t)?;
+                write!(o, ".into()")?;
+            }
+        }
+    } else {
+        // write!(o, "{t}{t}self.raw.{}", m.orig_name, t=t)?;
+        if let Some(ref count_orig_name) = m.ptr_count_member_orig_name {
+            write!(o, "{t}{t}", t=t)?;
+            write!(o, "unsafe {{ slice::from_raw_parts(self.raw.{} as *const _, self.raw.{} as usize) }}",
+                m.orig_name, count_orig_name)?;
+        } else if sig.convert_return_to_c_str {
+            write!(o, "{t}{t}", t=t)?;
+            write!(o, "unsafe {{ CStr::from_ptr(")?;
+            match m.array_len {
+                Some(_) => write!(o, "&self.raw.{} as *const _", m.orig_name)?,
+                None => write!(o, "self.raw.{}", m.orig_name)?,
+            }
+            write!(o, ") }}")?;
+        } else if sig.convert_return_to_slice {
+            match m.array_len {
+                Some(ref len) => {
+                    // write!(o, "{t}{t}", t=t)?;
+                    // write!(o, "unsafe {{ slice::from_raw_parts(self.raw.{} as *const _, \
+                    //     {} as usize) }}", m.orig_name, len)?;
+
+                    write!(o, "{t}{t}", t=t)?;
+                    write!(o, "unsafe {{ slice::from_raw_parts(&self.raw.{} as *const _, ", m.orig_name)?;
+                    match len.parse::<usize>() {
+                        Ok(_) => write!(o, "{} as usize) ", len)?,
+                        Err(_) => write!(o, "{}{} as usize) ", ORIG_PRE, len)?,
+                    }
+                    write!(o, "}}",  )?;
+                },
+                None => panic!("supposed to convert to slice but no len avail"),
+            }
+        } else if sig.convert_return_to_flags {
+            write!(o, "{t}{t}{}::from_bits(self.raw.{})\n{t}{t}{t}\
+                .expect(\"{}::{}: error converting flags\")",
+                m.voodoo_type, m.orig_name, s.voodoo_name, fn_name, t=t)?;
+        } else if m.voodoo_type.as_str() == "bool" {
+            write!(o, "{t}{t}self.raw.{} != 0", m.orig_name, t=t)?;
+        } else if sig.convert_return && !m.is_ptr {
+            write!(o, "{t}{t}self.raw.{}", m.orig_name, t=t)?;
+            write!(o, ".into()")?;
+        } else if m.is_handle_type && m.is_ptr {
+            write!(o, "{t}{t}unsafe {{ &*(self.raw.{} as *const _) }}", m.orig_name, t=t)?;
+        } else if m.is_ptr {
+            if sig.unsafe_to_set {
+                write!(o, "{t}{t}self.raw.{}", m.orig_name, t=t)?;
+            // } else if sig.arg_is_slice {
+
+            } else {
+                write!(o, "{t}{t}unsafe {{ &*(self.raw.{} as *const _) }}", m.orig_name, t=t)?;
+            }
+        } else {
+            write!(o, "{t}{t}self.raw.{}", m.orig_name, t=t)?;
+        }
+    }
+
+
+    // IF IS_REPR_C:
+    // unsafe { *(&self.raw.memoryTypes
+    //         as *const [vks::VkMemoryType; vks::VK_MAX_MEMORY_TYPES]
+    //         as *const [MemoryType; vks::VK_MAX_MEMORY_TYPES]) }
+
+    write!(o, "\n")?;
+
+    write!(o, "{t}}}\n\n", t=t)?;
+    Ok(())
+}
+
 
 /// Writes struct and corresponding builder definitions to an output file
 /// which is overwritten if it exists.
@@ -1178,7 +1320,8 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
     writeln!(o, "use std::ptr;")?;
     writeln!(o, "use std::ffi::{{CString, CStr}};")?;
     writeln!(o, "use std::marker::PhantomData;")?;
-    writeln!(o, "use libc::c_void;")?;
+    writeln!(o, "use std::slice;")?;
+    writeln!(o, "use libc::{{c_void, c_char}};")?;
     writeln!(o, "use num_traits::ToPrimitive;")?;
     writeln!(o, "use smallvec::SmallVec;")?;
     writeln!(o, "use ::*;")?;
@@ -1240,16 +1383,8 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
         }
 
         for m in &s.members {
-            if member_is_excluded(&m.orig_name) || m.is_ptr_count { continue; }
-            let unsafe_str = if function_is_unsafe(&m) { " unsafe" } else { "" };
-            let filtered_fn_name = filter_function_name(&m.orig_name);
-            let fn_name = match filtered_fn_name {
-                Some(ref n) => n.as_str(),
-                None => m.voodoo_name.as_str(),
-            };
-            writeln!(o, "{t}pub{} fn {}(&self) {{", unsafe_str, fn_name, t=t)?;
-
-            write!(o, "{t}}}\n\n", t=t)?;
+            // Write getter function:
+            write_get_fn(o, s, m, bldr_type_param, structs, false)?;
         }
 
         writeln!(o, "{t}pub fn raw(&self) -> &{}{} {{", ORIG_PRE, s.orig_name, t=t)?;
@@ -1266,15 +1401,33 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
         write!(o, "impl{} From<{}{}> for {}{}", struct_type_param, s.voodoo_name, struct_type_param,
             ORIG_PRE, s.orig_name,)?;
         writeln!(o, " {{")?;
-
         writeln!(o, "{t}fn from(f: {}{}) -> {}{} {{", s.voodoo_name, struct_type_param,
             ORIG_PRE, s.orig_name, t=t)?;
         writeln!(o, "{t}{t}f.raw", t=t)?;
         writeln!(o, "{t}}}", t=t)?;
+        write!(o, "}}\n\n\n")?;
+
+        if is_experimental(&s.orig_name) {
+            writeln!(o, "#[cfg(feature = \"experimental\")]")?;
+        }
+        write!(o, "impl{} From<{}{}> for {}{}", struct_type_param, ORIG_PRE, s.orig_name,
+            s.voodoo_name, struct_type_param)?;
+        writeln!(o, " {{")?;
+        writeln!(o, "{t}fn from(f: {}{}) -> {}{} {{", ORIG_PRE, s.orig_name,
+            s.voodoo_name, struct_type_param, t=t)?;
+        write!(o, "{t}{t}{} {{ raw: f, ", s.voodoo_name, t=t)?;
+        for (_, field) in &s.special_fields {
+            write!(o, "{}: {}, ", field.name, field.default_val)?;
+        }
+        if s.contains_ptr {
+            write!(o, "_p: PhantomData ")?;
+        }
+        writeln!(o, "}}")?;
+        writeln!(o, "{t}}}", t=t)?;
 
         write!(o, "}}\n\n\n")?;
 
-        // BEGIN BUILDER STRUCT
+        // ################ BUILDER ################
         if !s.returnedonly {
             writeln!(o, "/// A builder for `{}`.", s.orig_name)?;
             writeln!(o, "///")?;
@@ -1295,7 +1448,7 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
             }
             // Phantom data:
             if s.contains_ptr {
-                writeln!(o, "{t}_p: PhantomData<&'b ()>,", t=t)?;
+                writeln!(o, "{t}_p: PhantomData<&'b ()>, ", t=t)?;
             }
             write!(o, "}}\n\n")?;
         }
@@ -1326,6 +1479,7 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
             write!(o, "{t}}}\n\n", t=t)?;
 
             for m in &s.members {
+                // Write setter function:
                 write_set_fn(o, s, m, bldr_type_param, &structs, true)?
             }
 
