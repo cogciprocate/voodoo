@@ -181,28 +181,57 @@ fn create_device(instance: Instance, surface: &Surface, physical_device: Physica
         .build(physical_device)
 }
 
-fn choose_swap_surface_format(available_formats: &[vks::khr_surface::VkSurfaceFormatKHR])
-        -> vks::khr_surface::VkSurfaceFormatKHR {
-    if available_formats.len() == 1 && available_formats[0].format == vks::VK_FORMAT_UNDEFINED {
-        return vks::khr_surface::VkSurfaceFormatKHR {
-            format: vks::VK_FORMAT_B8G8R8A8_UNORM,
-            colorSpace: vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-        };
+// fn choose_swap_surface_format(available_formats: &[vks::khr_surface::VkSurfaceFormatKHR])
+//         -> vks::khr_surface::VkSurfaceFormatKHR {
+//     if available_formats.len() == 1 && available_formats[0].format == vks::VK_FORMAT_UNDEFINED {
+//         return vks::khr_surface::VkSurfaceFormatKHR {
+//             format: vks::VK_FORMAT_B8G8R8A8_UNORM,
+//             colorSpace: vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+//         };
+//     }
+//     for available_format in available_formats {
+//         if available_format.format == Format::B8G8R8A8Unorm as u32 &&
+//                 available_format.colorSpace ==
+//                 vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR {
+//             return vks::khr_surface::VkSurfaceFormatKHR {
+//                 format: vks::VK_FORMAT_B8G8R8A8_UNORM,
+//                 colorSpace: vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+//             };
+//         }
+//     }
+//     vks::khr_surface::VkSurfaceFormatKHR {
+//         format: available_formats[0].format,
+//         colorSpace: available_formats[0].colorSpace,
+//     }
+// }
+
+fn choose_swap_surface_format(available_formats: &[voo::SurfaceFormatKhr])
+        -> voo::SurfaceFormatKhr {
+    if available_formats.len() == 1 && available_formats[0].format() == voo::Format::Undefined {
+        return voo::SurfaceFormatKhr::builder()
+            .format(voo::Format::B8G8R8A8Unorm)
+            .color_space(voo::ColorSpaceKhr::SrgbNonlinearKhr)
+            .build();
     }
     for available_format in available_formats {
-        if available_format.format == Format::B8G8R8A8Unorm as u32 &&
-                available_format.colorSpace ==
-                vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR {
-            return vks::khr_surface::VkSurfaceFormatKHR {
-                format: vks::VK_FORMAT_B8G8R8A8_UNORM,
-                colorSpace: vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-            };
+        if available_format.format() == Format::B8G8R8A8Unorm &&
+                available_format.color_space() ==
+                voo::ColorSpaceKhr::SrgbNonlinearKhr {
+            // return vks::khr_surface::VkSurfaceFormatKHR {
+            //     format: vks::VK_FORMAT_B8G8R8A8_UNORM,
+            //     colorSpace: vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+
+            // };
+            return voo::SurfaceFormatKhr::builder()
+                .format(voo::Format::B8G8R8A8Unorm)
+                .color_space(voo::ColorSpaceKhr::SrgbNonlinearKhr)
+                .build()
         }
     }
-    vks::khr_surface::VkSurfaceFormatKHR {
-        format: available_formats[0].format,
-        colorSpace: available_formats[0].colorSpace,
-    }
+    voo::SurfaceFormatKhr::builder()
+        .format(available_formats[0].format())
+        .color_space(available_formats[0].color_space())
+        .build()
 }
 
 fn choose_swap_present_mode(available_present_modes: &[vks::khr_surface::VkPresentModeKHR])

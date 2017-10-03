@@ -63,18 +63,18 @@ impl PhysicalDevice {
         }
     }
 
-    pub fn capabilities(&self, surface: &Surface) -> vks::VkSurfaceCapabilitiesKHR {
+    pub fn capabilities(&self, surface: &Surface) -> ::SurfaceCapabilitiesKhr {
         unsafe {
             let mut capabilities = mem::uninitialized();
             self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
                 self.handle(), surface.handle(), &mut capabilities);
-            capabilities
+            capabilities.into()
         }
     }
 
-    pub fn formats(&self, surface: &Surface) -> SmallVec<[vks::VkSurfaceFormatKHR; 64]> {
+    pub fn formats(&self, surface: &Surface) -> SmallVec<[::SurfaceFormatKhr; 64]> {
         let mut format_count = 0u32;
-        let mut formats = SmallVec::new();
+        let mut formats: SmallVec<[::SurfaceFormatKhr; 64]> = SmallVec::new();
         unsafe {
             self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(self.handle(),
                 surface.handle(), &mut format_count, ptr::null_mut());
@@ -82,16 +82,16 @@ impl PhysicalDevice {
             formats.set_len(format_count as usize);
             if format_count != 0 {
                 self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(self.handle(),
-                    surface.handle(), &mut format_count, formats.as_mut_ptr());
+                    surface.handle(), &mut format_count, formats.as_mut_ptr() as *mut vks::VkSurfaceFormatKHR);
             }
         }
         if PRINT { println!("Physical device format count: {:?}", formats.len()); }
         formats
     }
 
-    pub fn present_modes(&self, surface: &Surface) -> SmallVec<[vks::VkPresentModeKHR; 16]> {
+    pub fn present_modes(&self, surface: &Surface) -> SmallVec<[::PresentModeKhr; 16]> {
         let mut present_mode_count = 0u32;
-        let mut present_modes = SmallVec::new();
+        let mut present_modes: SmallVec<[::PresentModeKhr; 16]> = SmallVec::new();
         unsafe {
             self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(self.handle(),
                 surface.handle(), &mut present_mode_count, ptr::null_mut());
@@ -99,7 +99,7 @@ impl PhysicalDevice {
             present_modes.set_len(present_mode_count as usize);
             if present_mode_count != 0 {
                 self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(self.handle(),
-                    surface.handle(), &mut present_mode_count, present_modes.as_mut_ptr());
+                    surface.handle(), &mut present_mode_count, present_modes.as_mut_ptr() as *mut _);
             }
         }
         if PRINT { println!("Physical device present mode count: {:?}", present_modes.len()); }

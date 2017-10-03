@@ -223,6 +223,7 @@ impl CommandBuffer {
     }
 }
 
+
 pub struct Fence(vks::VkFence);
 
 impl Fence {
@@ -231,12 +232,20 @@ impl Fence {
     }
 }
 
-// pub type DisplayModeKhr = vks::VkDisplayModeKHR;
 
 pub struct DisplayModeKhr(vks::VkDisplayModeKHR);
 
 impl DisplayModeKhr {
     pub fn handle(&self) -> vks::VkDisplayModeKHR {
+        self.0
+    }
+}
+
+
+pub struct DisplayKhr(vks::VkDisplayKHR);
+
+impl DisplayKhr {
+    pub fn handle(&self) -> vks::VkDisplayKHR {
         self.0
     }
 }

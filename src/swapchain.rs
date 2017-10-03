@@ -9,10 +9,16 @@ use vks;
 use ::{queue, VooResult, Instance, Surface, Device, PhysicalDevice};
 
 
+// pub struct SwapchainSupportDetails {
+//     pub capabilities: vks::khr_surface::VkSurfaceCapabilitiesKHR,
+//     pub formats: SmallVec<[vks::khr_surface::VkSurfaceFormatKHR; 64]>,
+//     pub present_modes: SmallVec<[vks::khr_surface::VkPresentModeKHR; 16]>,
+// }
+
 pub struct SwapchainSupportDetails {
-    pub capabilities: vks::khr_surface::VkSurfaceCapabilitiesKHR,
-    pub formats: SmallVec<[vks::khr_surface::VkSurfaceFormatKHR; 64]>,
-    pub present_modes: SmallVec<[vks::khr_surface::VkPresentModeKHR; 16]>,
+    pub capabilities: ::SurfaceCapabilitiesKhr,
+    pub formats: SmallVec<[::SurfaceFormatKhr; 64]>,
+    pub present_modes: SmallVec<[::PresentModeKhr; 16]>,
 }
 
 impl SwapchainSupportDetails {
