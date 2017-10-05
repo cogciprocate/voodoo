@@ -6,7 +6,7 @@ use std::marker::PhantomData;
 use libc::c_char;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, Surface, PhysicalDevice, SwapchainSupportDetails,
+use ::{VooResult, Instance, PhysicalDevice, SwapchainSupportDetails,
     DeviceQueueCreateInfo, CharStrs, PhysicalDeviceFeatures, PRINT, Handle};
 use queue::{self, Queue};
 use instance;
@@ -14,7 +14,7 @@ use instance;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DeviceHandle(pub(crate) vks::VkDevice);
+pub struct DeviceHandle(pub vks::VkDevice);
 
 impl Handle for DeviceHandle {
     type Target = DeviceHandle;

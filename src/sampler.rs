@@ -8,7 +8,7 @@ use ::{util, VooResult, Device, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct SamplerHandle(pub(crate) vks::VkSampler);
+pub struct SamplerHandle(pub vks::VkSampler);
 
 impl Handle for SamplerHandle {
     type Target = SamplerHandle;

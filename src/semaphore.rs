@@ -2,17 +2,26 @@
 use std::sync::Arc;
 use std::ptr;
 use vks;
-use ::{util, VooResult, Device};
+use ::{util, VooResult, Device, Handle};
 
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct SemaphoreHandle(pub(crate) vks::VkSemaphore);
+pub struct SemaphoreHandle(pub vks::VkSemaphore);
+
+impl Handle for SemaphoreHandle {
+    type Target = SemaphoreHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkSemaphore,
+    handle: SemaphoreHandle,
     device: Device,
 }
 
@@ -37,13 +46,13 @@ impl Semaphore {
 
         Ok(Semaphore {
             inner: Arc::new(Inner {
-                handle,
+                handle: SemaphoreHandle(handle),
                 device,
             })
         })
     }
 
-    pub fn handle(&self) -> vks::VkSemaphore {
+    pub fn handle(&self) -> SemaphoreHandle {
         self.inner.handle
     }
 
@@ -53,10 +62,19 @@ impl Semaphore {
     }
 }
 
+impl<'h> Handle for &'h Semaphore {
+    type Target = SemaphoreHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroySemaphore(self.device.handle().0, self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroySemaphore(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }

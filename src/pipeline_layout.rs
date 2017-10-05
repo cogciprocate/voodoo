@@ -4,12 +4,12 @@ use std::ptr;
 use std::marker::PhantomData;
 use vks;
 use smallvec::SmallVec;
-use ::{util, VooResult, Device, ShaderModule, DescriptorSetLayout, Handle};
+use ::{util, VooResult, Device, ShaderModule, DescriptorSetLayoutHandle, DescriptorSetLayout, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct PipelineLayoutHandle(pub(crate) vks::VkPipelineLayout);
+pub struct PipelineLayoutHandle(pub vks::VkPipelineLayout);
 
 impl Handle for PipelineLayoutHandle {
     type Target = PipelineLayoutHandle;
@@ -94,11 +94,11 @@ impl<'b> PipelineLayoutBuilder<'b> {
 
     /// Specifies a list of VkDescriptorSetLayout objects.
     pub fn set_layouts<'s, 'p>(&'s mut self,
-            set_layouts: &'p [vks::VkDescriptorSetLayout])
+            set_layouts: &'p [DescriptorSetLayoutHandle])
             -> &'s mut PipelineLayoutBuilder<'b>
             where 'p: 'b {
         self.create_info.setLayoutCount = set_layouts.len() as u32;
-        self.create_info.pSetLayouts = set_layouts.as_ptr();
+        self.create_info.pSetLayouts = set_layouts.as_ptr() as *const vks::VkDescriptorSetLayout;
         self
     }
 

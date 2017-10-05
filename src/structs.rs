@@ -17850,7 +17850,7 @@ impl<'s> DisplayPropertiesKhr<'s> {
     }
 
     pub fn set_display<'m, H>(&mut self, display: H)
-            where H: Handle<Target=DisplayHandle> {
+            where H: Handle<Target=DisplayKhrHandle> {
         self.raw.display = display.handle().0;
     }
 
@@ -17915,7 +17915,7 @@ impl<'b> DisplayPropertiesKhrBuilder<'b> {
     }
 
     pub fn display<'m, H>(mut self, display: H) -> DisplayPropertiesKhrBuilder<'b>
-            where H: Handle<Target=DisplayHandle> {
+            where H: Handle<Target=DisplayKhrHandle> {
         self.raw.display = display.handle().0;
         self
     }
@@ -18012,7 +18012,7 @@ impl DisplayPlanePropertiesKhr {
     }
 
     pub fn set_current_display<'m, H>(&mut self, current_display: H)
-            where H: Handle<Target=DisplayHandle> {
+            where H: Handle<Target=DisplayKhrHandle> {
         self.raw.currentDisplay = current_display.handle().0;
     }
 
@@ -18054,7 +18054,7 @@ impl DisplayPlanePropertiesKhrBuilder {
     }
 
     pub fn current_display<'m, H>(mut self, current_display: H) -> DisplayPlanePropertiesKhrBuilder
-            where H: Handle<Target=DisplayHandle> {
+            where H: Handle<Target=DisplayKhrHandle> {
         self.raw.currentDisplay = current_display.handle().0;
         self
     }
@@ -18192,7 +18192,7 @@ impl DisplayModePropertiesKhr {
     }
 
     pub fn set_display_mode<'m, H>(&mut self, display_mode: H)
-            where H: Handle<Target=DisplayModeHandle> {
+            where H: Handle<Target=DisplayModeKhrHandle> {
         self.raw.displayMode = display_mode.handle().0;
     }
 
@@ -18234,7 +18234,7 @@ impl DisplayModePropertiesKhrBuilder {
     }
 
     pub fn display_mode<'m, H>(mut self, display_mode: H) -> DisplayModePropertiesKhrBuilder
-            where H: Handle<Target=DisplayModeHandle> {
+            where H: Handle<Target=DisplayModeKhrHandle> {
         self.raw.displayMode = display_mode.handle().0;
         self
     }
@@ -18645,7 +18645,7 @@ impl<'s> DisplaySurfaceCreateInfoKhr<'s> {
     }
 
     pub fn set_display_mode<'m, H>(&mut self, display_mode: H)
-            where H: Handle<Target=DisplayModeHandle> {
+            where H: Handle<Target=DisplayModeKhrHandle> {
         self.raw.displayMode = display_mode.handle().0;
     }
 
@@ -18719,7 +18719,7 @@ impl<'b> DisplaySurfaceCreateInfoKhrBuilder<'b> {
     }
 
     pub fn display_mode<'m, H>(mut self, display_mode: H) -> DisplaySurfaceCreateInfoKhrBuilder<'b>
-            where H: Handle<Target=DisplayModeHandle> {
+            where H: Handle<Target=DisplayModeKhrHandle> {
         self.raw.displayMode = display_mode.handle().0;
         self
     }
@@ -20212,7 +20212,7 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
     }
 
     pub fn set_surface<'m, H>(&mut self, surface: H)
-            where H: Handle<Target=SurfaceHandle> {
+            where H: Handle<Target=SurfaceKhrHandle> {
         self.raw.surface = surface.handle().0;
     }
 
@@ -20268,7 +20268,7 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
     }
 
     pub fn set_old_swapchain<'m, H>(&mut self, old_swapchain: H)
-            where H: Handle<Target=SwapchainHandle> {
+            where H: Handle<Target=SwapchainKhrHandle> {
         self.raw.oldSwapchain = old_swapchain.handle().0;
     }
 
@@ -20318,7 +20318,7 @@ impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
     }
 
     pub fn surface<'m, H>(mut self, surface: H) -> SwapchainCreateInfoKhrBuilder<'b>
-            where H: Handle<Target=SurfaceHandle> {
+            where H: Handle<Target=SurfaceKhrHandle> {
         self.raw.surface = surface.handle().0;
         self
     }
@@ -20387,7 +20387,7 @@ impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
     }
 
     pub fn old_swapchain<'m, H>(mut self, old_swapchain: H) -> SwapchainCreateInfoKhrBuilder<'b>
-            where H: Handle<Target=SwapchainHandle> {
+            where H: Handle<Target=SwapchainKhrHandle> {
         self.raw.oldSwapchain = old_swapchain.handle().0;
         self
     }
@@ -20516,7 +20516,7 @@ impl<'s> PresentInfoKhr<'s> {
         self.raw.pWaitSemaphores = wait_semaphores.as_ptr() as *const vks::VkSemaphore;
     }
 
-    pub fn set_swapchains<'m, 'a>(&mut self, swapchains: &'a [SwapchainHandle])
+    pub fn set_swapchains<'m, 'a>(&mut self, swapchains: &'a [SwapchainKhrHandle])
             where 'a: 's {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == swapchains.len() as _, 
             "count inconsistency found when specifying `PresentInfoKhr::swapchains`.");
@@ -20587,7 +20587,7 @@ impl<'b> PresentInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn swapchains<'m, 'a>(mut self, swapchains: &'a [SwapchainHandle]) -> PresentInfoKhrBuilder<'b>
+    pub fn swapchains<'m, 'a>(mut self, swapchains: &'a [SwapchainKhrHandle]) -> PresentInfoKhrBuilder<'b>
             where 'a: 'b {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == swapchains.len() as _, 
             "count inconsistency found when specifying `PresentInfoKhr::swapchains`.");
@@ -32127,7 +32127,7 @@ impl<'s> ImageSwapchainCreateInfoKhx<'s> {
     }
 
     pub fn set_swapchain<'m, H>(&mut self, swapchain: H)
-            where H: Handle<Target=SwapchainHandle> {
+            where H: Handle<Target=SwapchainKhrHandle> {
         self.raw.swapchain = swapchain.handle().0;
     }
 
@@ -32176,7 +32176,7 @@ impl<'b> ImageSwapchainCreateInfoKhxBuilder<'b> {
     }
 
     pub fn swapchain<'m, H>(mut self, swapchain: H) -> ImageSwapchainCreateInfoKhxBuilder<'b>
-            where H: Handle<Target=SwapchainHandle> {
+            where H: Handle<Target=SwapchainKhrHandle> {
         self.raw.swapchain = swapchain.handle().0;
         self
     }
@@ -32232,7 +32232,7 @@ impl<'s> BindImageMemorySwapchainInfoKhx<'s> {
     }
 
     pub fn set_swapchain<'m, H>(&mut self, swapchain: H)
-            where H: Handle<Target=SwapchainHandle> {
+            where H: Handle<Target=SwapchainKhrHandle> {
         self.raw.swapchain = swapchain.handle().0;
     }
 
@@ -32285,7 +32285,7 @@ impl<'b> BindImageMemorySwapchainInfoKhxBuilder<'b> {
     }
 
     pub fn swapchain<'m, H>(mut self, swapchain: H) -> BindImageMemorySwapchainInfoKhxBuilder<'b>
-            where H: Handle<Target=SwapchainHandle> {
+            where H: Handle<Target=SwapchainKhrHandle> {
         self.raw.swapchain = swapchain.handle().0;
         self
     }
@@ -32362,7 +32362,7 @@ impl<'s> AcquireNextImageInfoKhx<'s> {
     }
 
     pub fn set_swapchain<'m, H>(&mut self, swapchain: H)
-            where H: Handle<Target=SwapchainHandle> {
+            where H: Handle<Target=SwapchainKhrHandle> {
         self.raw.swapchain = swapchain.handle().0;
     }
 
@@ -32429,7 +32429,7 @@ impl<'b> AcquireNextImageInfoKhxBuilder<'b> {
     }
 
     pub fn swapchain<'m, H>(mut self, swapchain: H) -> AcquireNextImageInfoKhxBuilder<'b>
-            where H: Handle<Target=SwapchainHandle> {
+            where H: Handle<Target=SwapchainKhrHandle> {
         self.raw.swapchain = swapchain.handle().0;
         self
     }
@@ -34922,7 +34922,7 @@ impl<'s> PhysicalDeviceSurfaceInfo2Khr<'s> {
     }
 
     pub fn set_surface<'m, H>(&mut self, surface: H)
-            where H: Handle<Target=SurfaceHandle> {
+            where H: Handle<Target=SurfaceKhrHandle> {
         self.raw.surface = surface.handle().0;
     }
 
@@ -34967,7 +34967,7 @@ impl<'b> PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
     }
 
     pub fn surface<'m, H>(mut self, surface: H) -> PhysicalDeviceSurfaceInfo2KhrBuilder<'b>
-            where H: Handle<Target=SurfaceHandle> {
+            where H: Handle<Target=SurfaceKhrHandle> {
         self.raw.surface = surface.handle().0;
         self
     }

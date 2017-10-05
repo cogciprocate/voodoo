@@ -20,7 +20,7 @@ use image::{ImageFormat, DynamicImage};
 use cgmath::{SquareMatrix, One, Rotation, Rotation3, Basis3, Matrix3, Matrix4, Vector3};
 use voo::winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
 use voo::{voodoo_winit, vks, util, device, queue, Result as VooResult, Version, Instance, Device,
-    Surface, Swapchain,
+    SurfaceKhr, SwapchainKhr,
     ImageView, PipelineLayout, RenderPass, GraphicsPipeline, Framebuffer, CommandPool, Semaphore,
     Buffer, DeviceMemory, Vertex, DescriptorSetLayout, UniformBufferObject, DescriptorPool,
     Image, Sampler, Loader, SwapchainSupportDetails, PhysicalDevice, PhysicalDeviceFeatures,
@@ -110,7 +110,7 @@ fn init_instance() -> VooResult<Instance> {
 /// Returns true if the specified physical device has the required features,
 /// extensions, queue families and if the supported swap chain has the correct
 /// presentation modes.
-fn device_is_suitable(instance: &Instance, surface: &Surface,
+fn device_is_suitable(instance: &Instance, surface: &SurfaceKhr,
         physical_device: &PhysicalDevice, queue_flags: QueueFlags) -> bool {
     let device_features = physical_device.features();
 
@@ -136,7 +136,7 @@ fn device_is_suitable(instance: &Instance, surface: &Surface,
 
 /// Returns a physical device from the list of available physical devices if
 /// it meets the criteria specified in the above function.
-fn choose_physical_device(instance: &Instance, surface: &Surface, queue_flags: QueueFlags)
+fn choose_physical_device(instance: &Instance, surface: &SurfaceKhr, queue_flags: QueueFlags)
         -> VooResult<PhysicalDevice> {
     let mut preferred_device = None;
 
@@ -155,7 +155,7 @@ fn choose_physical_device(instance: &Instance, surface: &Surface, queue_flags: Q
 
 }
 
-fn create_device(instance: Instance, surface: &Surface, physical_device: PhysicalDevice,
+fn create_device(instance: Instance, surface: &SurfaceKhr, physical_device: PhysicalDevice,
         queue_familiy_flags: QueueFlags) -> VooResult<Device> {
     let queue_family_idx = queue::queue_families(&instance, surface,
         &physical_device, queue_familiy_flags).family_idxs()[0] as u32;
@@ -230,9 +230,9 @@ fn choose_swap_extent(capabilities: &voo::SurfaceCapabilitiesKhr,
     }
 }
 
-fn create_swapchain(surface: Surface, device: Device, queue_flags: QueueFlags,
-        window_size: Option<voo::Extent2d>, old_swapchain: Option<&Swapchain>)
-        -> VooResult<Swapchain> {
+fn create_swapchain(surface: SurfaceKhr, device: Device, queue_flags: QueueFlags,
+        window_size: Option<voo::Extent2d>, old_swapchain: Option<&SwapchainKhr>)
+        -> VooResult<SwapchainKhr> {
     let swapchain_details: SwapchainSupportDetails = SwapchainSupportDetails::new(
         device.instance(), &surface, device.physical_device());
     let surface_format = choose_swap_surface_format(&swapchain_details.formats);
@@ -250,7 +250,7 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: QueueFlags,
     let queue_family_indices = [indices.flag_idxs[0] as u32,
         indices.presentation_support_idxs[0] as u32];
 
-    let mut bldr = Swapchain::builder();
+    let mut bldr = SwapchainKhr::builder();
     bldr.surface(&surface)
         .min_image_count(image_count)
         .image_format(surface_format.format())
@@ -280,9 +280,9 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: QueueFlags,
     bldr.build(device)
 }
 
-fn create_swapchain_fake(surface: Surface, device: Device, queue_flags: QueueFlags,
-        window_size: Option<voo::Extent2d>, old_swapchain: Option<&Swapchain>)
-        -> VooResult<Swapchain> {
+fn create_swapchain_fake(surface: SurfaceKhr, device: Device, queue_flags: QueueFlags,
+        window_size: Option<voo::Extent2d>, old_swapchain: Option<&SwapchainKhr>)
+        -> VooResult<SwapchainKhr> {
         // -> VooResult<()> {
     let swapchain_details: SwapchainSupportDetails = SwapchainSupportDetails::new(
         device.instance(), &surface, device.physical_device());
@@ -301,7 +301,7 @@ fn create_swapchain_fake(surface: Surface, device: Device, queue_flags: QueueFla
     let queue_family_indices = [indices.flag_idxs[0] as u32,
         indices.presentation_support_idxs[0] as u32];
 
-    let mut bldr = Swapchain::builder();
+    let mut bldr = SwapchainKhr::builder();
     bldr.surface(&surface)
         .min_image_count(image_count)
         .image_format(surface_format.format())
@@ -333,7 +333,7 @@ fn create_swapchain_fake(surface: Surface, device: Device, queue_flags: QueueFla
     // Ok(())
 }
 
-pub fn create_image_views(swapchain: &Swapchain) -> VooResult<Vec<ImageView>> {
+pub fn create_image_views(swapchain: &SwapchainKhr) -> VooResult<Vec<ImageView>> {
     swapchain.images().iter().map(|&image| {
         ImageView::builder()
             .image(image)
@@ -821,15 +821,15 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         .depth_stencil_state(&depth_stencil)
         .color_blend_state(&color_blending)
         // .dynamic_state(&dynamic_state)
-        .layout(&pipeline_layout)
-        .render_pass(&render_pass)
+        .layout(pipeline_layout)
+        .render_pass(render_pass)
         .subpass(0)
         // .base_pipeline(0)
         .base_pipeline_index(-1)
         .build(device)
 }
 
-fn create_command_pool(device: Device, surface: &Surface, queue_family_flags: QueueFlags)
+fn create_command_pool(device: Device, surface: &SurfaceKhr, queue_family_flags: QueueFlags)
         -> VooResult<CommandPool> {
     let queue_family_idx = voo::queue_families(device.instance(), surface,
         device.physical_device(), queue_family_flags).family_idxs()[0] as u32;
@@ -870,7 +870,7 @@ fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
     let mut command_buffer = ptr::null_mut();
     unsafe {
         voo::check(device.proc_addr_loader().core.vkAllocateCommandBuffers(device.handle().0,
-            alloc_info.raw(), &mut command_buffer));
+            alloc_info.as_raw(), &mut command_buffer));
     }
 
     let begin_info = voo::CommandBufferBeginInfo::builder()
@@ -882,7 +882,7 @@ fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
         .build();
 
     unsafe {
-        device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer, begin_info.raw());
+        device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer, begin_info.as_raw());
     }
     // Ok(voo::CommandBuffer::new(command_buffer))
     Ok(command_buffer)
@@ -892,7 +892,7 @@ fn end_single_time_commands(device: &Device, command_pool: &CommandPool,
         // command_buffer: voo::CommandBuffer) -> VooResult<()> {
         command_buffer: vks::VkCommandBuffer) -> VooResult<()> {
     unsafe {
-        // voo::check(device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.handle()));
+        // voo::check(device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.handle().0));
         voo::check(device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer));
     }
     // let command_buffers = [&command_buffer];
@@ -933,8 +933,8 @@ fn end_single_time_commands(device: &Device, command_pool: &CommandPool,
             &submit_info, 0));
         voo::check(device.proc_addr_loader().core.vkQueueWaitIdle(device.queue(0)));
         device.proc_addr_loader().core.vkFreeCommandBuffers(device.handle().0,
-            // command_pool.handle(), 1, command_buffer.handle()
-            command_pool.handle(), 1,
+            // command_pool.handle(), 1, command_buffer.handle().0
+            command_pool.handle().0, 1,
             // &command_buffer as *const vks::VkCommandBuffer);
             cmd_buf_handles.as_ptr());
     }
@@ -1028,13 +1028,13 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
 
     unsafe {
         device.proc_addr_loader().vkCmdPipelineBarrier(
-            // command_buffer.handle(),
+            // command_buffer.handle().0,
             command_buffer,
             source_stage.bits(), destination_stage.bits(),
             0,
             0, ptr::null(),
             0, ptr::null(),
-            1, barrier.raw() as *const _ as *const vks::VkImageMemoryBarrier
+            1, barrier.as_raw() as *const _ as *const vks::VkImageMemoryBarrier
         );
     }
 
@@ -1065,10 +1065,10 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
 
     unsafe {
         device.proc_addr_loader().vkCmdCopyBufferToImage(
-            // command_buffer.handle(),
+            // command_buffer.handle().0,
             command_buffer,
-            buffer.handle(),
-            image.handle(),
+            buffer.handle().0,
+            image.handle().0,
             // voo::IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
             voo::ImageLayout::TransferDstOptimal as u32,
             1,
@@ -1094,9 +1094,9 @@ fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
         .size(size)
         .build();
 
-    // unsafe { device.proc_addr_loader().core.vkCmdCopyBuffer(command_buffer.handle(),
+    // unsafe { device.proc_addr_loader().core.vkCmdCopyBuffer(command_buffer.handle().0,
     unsafe { device.proc_addr_loader().core.vkCmdCopyBuffer(command_buffer,
-        src_buffer.handle(), dst_buffer.handle(), 1, &copy_region as *const _
+        src_buffer.handle().0, dst_buffer.handle().0, 1, &copy_region as *const _
         as *const vks::VkBufferCopy); }
 
 
@@ -1437,7 +1437,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
 
     unsafe {
         voo::check(device.proc_addr_loader().vkAllocateCommandBuffers(device.handle().0,
-            alloc_info.raw(), command_buffers.as_mut_ptr() as *mut _
+            alloc_info.as_raw(), command_buffers.as_mut_ptr() as *mut _
             as *mut vks::VkCommandBuffer));
     }
 
@@ -1460,8 +1460,8 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             .build();
 
         unsafe {
-            voo::check(device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer.handle(),
-                begin_info.raw()));
+            voo::check(device.proc_addr_loader().core.vkBeginCommandBuffer(
+                command_buffer.handle().0, begin_info.as_raw()));
         }
 
         // let clear_color = voo::ClearValue {
@@ -1489,21 +1489,22 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             .build();
 
         unsafe {
-            device.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer.handle(),
-                render_pass_info.raw(), voo::SubpassContents::Inline.into());
-            device.proc_addr_loader().core.vkCmdBindPipeline(command_buffer.handle(),
-                voo::PipelineBindPoint::Graphics as u32, graphics_pipeline.handle());
+            device.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer.handle().0,
+                render_pass_info.as_raw(), voo::SubpassContents::Inline.into());
+            device.proc_addr_loader().core.vkCmdBindPipeline(command_buffer.handle().0,
+                voo::PipelineBindPoint::Graphics as u32, graphics_pipeline.handle().0);
 
             let vertex_buffers = [vertex_buffer.handle()];
             let offsets = [0];
             device.proc_addr_loader().core.vkCmdBindVertexBuffers(
-                command_buffer.handle(), 0, 1, vertex_buffers.as_ptr(), offsets.as_ptr());
-            device.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer.handle(),
-                index_buffer.handle(), 0, voo::IndexType::Uint32 as u32);
+                command_buffer.handle().0, 0, 1, vertex_buffers.as_ptr() as *const vks::VkBuffer,
+                offsets.as_ptr());
+            device.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer.handle().0,
+                index_buffer.handle().0, 0, voo::IndexType::Uint32 as u32);
 
-            device.proc_addr_loader().core.vkCmdBindDescriptorSets(command_buffer.handle(),
-                voo::PipelineBindPoint::Graphics as u32, pipeline_layout.handle(), 0, 1,
-                &descriptor_set.handle(), 0, ptr::null());
+            device.proc_addr_loader().core.vkCmdBindDescriptorSets(command_buffer.handle().0,
+                voo::PipelineBindPoint::Graphics as u32, pipeline_layout.handle().0, 0, 1,
+                &descriptor_set.handle().0, 0, ptr::null());
 
             // // * vertexCount: Even though we don't have a vertex buffer, we
             // //   technically still have 3 vertices to draw.
@@ -1514,11 +1515,11 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             // // * firstInstance: Used as an offset for instanced rendering,
             // //   defines the lowest value of gl_InstanceIndex.
             // device.proc_addr_loader().core.vkCmdDraw(command_buffer, vertex_count, 1, 0, 0);
-            device.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer.handle(), index_count,
+            device.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer.handle().0, index_count,
                 1, 0, 0, 0);
 
-            device.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer.handle());
-            device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.handle());
+            device.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer.handle().0);
+            device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.handle().0);
         }
     }
     Ok(command_buffers)
@@ -1542,7 +1543,7 @@ struct App {
     events_loop: EventsLoop,
     queue_family_flags: QueueFlags,
     device: Device,
-    surface: Surface,
+    surface: SurfaceKhr,
     descriptor_set_layout: DescriptorSetLayout,
     pipeline_layout: PipelineLayout,
     vert_shader_code: Vec<u8>,
@@ -1565,7 +1566,7 @@ struct App {
     image_available_semaphore: Semaphore,
     render_finished_semaphore: Semaphore,
     start_time: time::Instant,
-    swapchain: Option<Swapchain>,
+    swapchain: Option<SwapchainKhr>,
     swapchain_components: Option<SwapchainComponents>,
     command_buffers: Option<Vec<voo::CommandBuffer>>,
 }
@@ -1674,7 +1675,7 @@ impl App {
         self.swapchain_components = None;
         unsafe {
             self.device.proc_addr_loader().core.vkFreeCommandBuffers(self.device.handle().0,
-                self.command_pool.handle(),
+                self.command_pool.handle().0,
                 self.command_buffers.as_ref().unwrap().len() as u32,
                 self.command_buffers.as_mut().unwrap().as_mut_ptr() as *mut _
                 as *mut vks::VkCommandBuffer);
@@ -1684,7 +1685,7 @@ impl App {
 
     fn recreate_swapchain(&mut self, current_extent: voo::Extent2d) -> VooResult<()> {
         unsafe { voo::check(self.device.proc_addr_loader().vkDeviceWaitIdle(
-            self.device.handle())); }
+            self.device.handle().0)); }
 
         let swapchain = create_swapchain(self.surface.clone(), self.device.clone(),
             self.queue_family_flags, Some(current_extent), self.swapchain.as_ref().take())?;
@@ -1757,8 +1758,8 @@ impl App {
         let mut image_index = 0u32;
         let acq_res = unsafe {
             self.device.proc_addr_loader().khr_swapchain.vkAcquireNextImageKHR(
-                self.device.handle().0, self.swapchain.as_ref().unwrap().handle(),
-                u64::max_value(), self.image_available_semaphore.handle(), 0, &mut image_index)
+                self.device.handle().0, self.swapchain.as_ref().unwrap().handle().0,
+                u64::max_value(), self.image_available_semaphore.handle().0, 0, &mut image_index)
         };
         if acq_res == voo::ResultEnum::ErrorOutOfDateKhr as i32 {
             let dims = self.window.get_inner_size_pixels().unwrap();
@@ -1769,11 +1770,11 @@ impl App {
                 voo::ResultEnum::SuboptimalKhr as i32 {
             panic!("Unable to present swap chain image");
         }
-        let wait_semaphores = [&self.image_available_semaphore];
+        let wait_semaphores = [self.image_available_semaphore.handle()];
         // let wait_stages = [voo::PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT];
         let wait_stages = voo::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT;
-        let signal_semaphores = [&self.render_finished_semaphore];
-        let command_buffers = [self.command_buffers.as_ref().unwrap().get(image_index as usize).unwrap()];
+        let signal_semaphores = [self.render_finished_semaphore.handle()];
+        let command_buffers = [self.command_buffers.as_ref().unwrap().get(image_index as usize).unwrap().handle()];
 
         let submit_info = voo::SubmitInfo::builder()
             // .s_type: voo::StructureType::SubmitInfo,
@@ -1788,9 +1789,9 @@ impl App {
             .build();
 
         unsafe { voo::check(self.device.proc_addr_loader().core.vkQueueSubmit(
-            self.device.queue(0), 1, submit_info.raw(), 0)); }
+            self.device.queue(0), 1, submit_info.as_raw(), 0)); }
 
-        let swapchains = [self.swapchain.as_ref().unwrap()];
+        let swapchains = [self.swapchain.as_ref().unwrap().handle()];
 
         let present_info = voo::PresentInfoKhr::builder()
             // sType(voo::StructureType::PRESENT_INFO_KHR,
@@ -1805,7 +1806,7 @@ impl App {
 
         unsafe {
             voo::check(self.device.proc_addr_loader().khr_swapchain.vkQueuePresentKHR(
-                self.device.queue(0), present_info.raw()));
+                self.device.queue(0), present_info.as_raw()));
             voo::check(self.device.proc_addr_loader().core.vkQueueWaitIdle(
                 self.device.queue(0)));
         }
@@ -1843,7 +1844,7 @@ impl App {
         }
 
         unsafe { voo::check(self.device.proc_addr_loader().core.vkDeviceWaitIdle(
-            self.device.handle())); }
+            self.device.handle().0)); }
         Ok(())
     }
 }
@@ -1855,71 +1856,71 @@ impl Drop for App {
 }
 
 
-#[allow(unused_unsafe)]
-pub unsafe fn make_everything() -> VooResult<()> {
-    let instance = init_instance()?;
-    let (window, events_loop) = init_window();
-    let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
-    // let queue_family_flags = voo::QUEUE_GRAPHICS_BIT;
-    let queue_family_flags = QueueFlags::GRAPHICS;
-    let physical_device = choose_physical_device(&instance, &surface,
-        queue_family_flags)?;
-    let device = create_device(instance.clone(), &surface, physical_device,
-        queue_family_flags)?;
-    let swapchain = create_swapchain_fake(surface.clone(), device.clone(), queue_family_flags,
-        None, None)?;
-    // let image_views = create_image_views(&swapchain)?;
-    // let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;
-    // let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
-    // let pipeline_layout = create_pipeline_layout(device.clone(),
-    //     Some(&descriptor_set_layout))?;
-    // let vert_shader_code = util::read_file("/src/voodoo/shaders/vert.spv")?;
-    // let frag_shader_code = util::read_file("/src/voodoo/shaders/frag.spv")?;
-    // let graphics_pipeline = create_graphics_pipeline(device.clone(), &pipeline_layout,
-    //     &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
-    // let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;
-    // let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(&device,
-    //     &command_pool, swapchain.extent().clone())?;
-    // let framebuffers = create_framebuffers(&device, &render_pass,
-    //     &image_views, &depth_image_view, swapchain.extent().clone())?;
-    // let (texture_image, texture_image_memory) = create_texture_image(&device,
-    //     &command_pool)?;
-    // let texture_image_view = create_texture_image_view(device.clone(),
-    //     &texture_image)?;
-    // let texture_sampler = create_texture_sampler(device.clone())?;
-    // // let (vertices, indices) = load_model(&device)?;
-    // let vertices = VERTICES[..].to_owned();
-    // let indices = INDICES[..].to_owned();
-    // let (vertex_buffer, vertex_buffer_memory) = create_vertex_buffer(&device, &command_pool,
-    //     &vertices)?;
-    // let (index_buffer, index_buffer_memory) = create_index_buffer(&device, &command_pool,
-    //     &indices)?;
-    // let (uniform_buffer, uniform_buffer_memory) = create_uniform_buffer(&device,
-    //     &command_pool, swapchain.extent().clone())?;
-    // let descriptor_pool = create_descriptor_pool(device.clone())?;
-    // let descriptor_sets = create_descriptor_sets(&device, &descriptor_set_layout,
-    //     &descriptor_pool, &uniform_buffer, &texture_image_view, &texture_sampler)?;
-    // let command_buffers = create_command_buffers(&device, &command_pool, &render_pass,
-    //     &graphics_pipeline, &framebuffers, swapchain.extent(),
-    //     &vertex_buffer, &index_buffer,
-    //     vertices.len() as u32, vertices.len() as u32, &pipeline_layout,
-    //     descriptor_sets[0].clone())?;
-    // let image_available_semaphore = Semaphore::new(device.clone())?;
-    // let render_finished_semaphore = Semaphore::new(device.clone())?;
-    // let start_time = time::Instant::now();
+// #[allow(unused_unsafe)]
+// pub unsafe fn make_everything() -> VooResult<()> {
+//     let instance = init_instance()?;
+//     let (window, events_loop) = init_window();
+//     let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
+//     // let queue_family_flags = voo::QUEUE_GRAPHICS_BIT;
+//     let queue_family_flags = QueueFlags::GRAPHICS;
+//     let physical_device = choose_physical_device(&instance, &surface,
+//         queue_family_flags)?;
+//     let device = create_device(instance.clone(), &surface, physical_device,
+//         queue_family_flags)?;
+//     let swapchain = create_swapchain_fake(surface.clone(), device.clone(), queue_family_flags,
+//         None, None)?;
+//     // let image_views = create_image_views(&swapchain)?;
+//     // let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;
+//     // let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
+//     // let pipeline_layout = create_pipeline_layout(device.clone(),
+//     //     Some(&descriptor_set_layout))?;
+//     // let vert_shader_code = util::read_file("/src/voodoo/shaders/vert.spv")?;
+//     // let frag_shader_code = util::read_file("/src/voodoo/shaders/frag.spv")?;
+//     // let graphics_pipeline = create_graphics_pipeline(device.clone(), &pipeline_layout,
+//     //     &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
+//     // let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;
+//     // let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(&device,
+//     //     &command_pool, swapchain.extent().clone())?;
+//     // let framebuffers = create_framebuffers(&device, &render_pass,
+//     //     &image_views, &depth_image_view, swapchain.extent().clone())?;
+//     // let (texture_image, texture_image_memory) = create_texture_image(&device,
+//     //     &command_pool)?;
+//     // let texture_image_view = create_texture_image_view(device.clone(),
+//     //     &texture_image)?;
+//     // let texture_sampler = create_texture_sampler(device.clone())?;
+//     // // let (vertices, indices) = load_model(&device)?;
+//     // let vertices = VERTICES[..].to_owned();
+//     // let indices = INDICES[..].to_owned();
+//     // let (vertex_buffer, vertex_buffer_memory) = create_vertex_buffer(&device, &command_pool,
+//     //     &vertices)?;
+//     // let (index_buffer, index_buffer_memory) = create_index_buffer(&device, &command_pool,
+//     //     &indices)?;
+//     // let (uniform_buffer, uniform_buffer_memory) = create_uniform_buffer(&device,
+//     //     &command_pool, swapchain.extent().clone())?;
+//     // let descriptor_pool = create_descriptor_pool(device.clone())?;
+//     // let descriptor_sets = create_descriptor_sets(&device, &descriptor_set_layout,
+//     //     &descriptor_pool, &uniform_buffer, &texture_image_view, &texture_sampler)?;
+//     // let command_buffers = create_command_buffers(&device, &command_pool, &render_pass,
+//     //     &graphics_pipeline, &framebuffers, swapchain.extent(),
+//     //     &vertex_buffer, &index_buffer,
+//     //     vertices.len() as u32, vertices.len() as u32, &pipeline_layout,
+//     //     descriptor_sets[0].clone())?;
+//     // let image_available_semaphore = Semaphore::new(device.clone())?;
+//     // let render_finished_semaphore = Semaphore::new(device.clone())?;
+//     // let start_time = time::Instant::now();
 
-    // let swapchain_components = SwapchainComponents {
-    //     image_views: image_views,
-    //     render_pass: render_pass,
-    //     graphics_pipeline: graphics_pipeline,
-    //     depth_image,
-    //     depth_image_memory,
-    //     depth_image_view,
-    //     framebuffers: framebuffers,
-    // };
+//     // let swapchain_components = SwapchainComponents {
+//     //     image_views: image_views,
+//     //     render_pass: render_pass,
+//     //     graphics_pipeline: graphics_pipeline,
+//     //     depth_image,
+//     //     depth_image_memory,
+//     //     depth_image_view,
+//     //     framebuffers: framebuffers,
+//     // };
 
-    Ok(())
-}
+//     Ok(())
+// }
 
 
 

@@ -1,13 +1,13 @@
 use std::ptr;
 use winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
-use ::{VooResult, Instance, Surface};
+use ::{VooResult, Instance, SurfaceKhr};
 
 
 #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
-pub fn create_surface(instance: Instance, window: &Window) -> VooResult<Surface> {
+pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
     use winit::os::unix::WindowExt;
 
-    let mut sb = Surface::builder();
+    let mut sb = SurfaceKhr::builder();
     unsafe {
         match (window.get_wayland_display(), window.get_wayland_surface()) {
             (Some(display), Some(surface)) => {
@@ -29,29 +29,29 @@ pub fn create_surface(instance: Instance, window: &Window) -> VooResult<Surface>
 }
 
 #[cfg(target_os = "windows")]
-pub fn create_surface(instance: Instance, window: &Window) -> VooResult<Surface> {
+pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
     use winit::os::windows::WindowExt;
 
     unsafe {
-        Surface::builder()
+        SurfaceKhr::builder()
             .win32(ptr::null_mut(), window.get_hwnd() as *mut _)
             .build(instance)
     }
 }
 
 #[cfg(target_os = "android")]
-pub fn create_surface(instance: Instance, window: &Window) -> VooResult<Surface> {
+pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
     use winit::os::android::WindowExt;
 
     unsafe {
-        Surface::builder()
+        SurfaceKhr::builder()
             .android(window.get_native_window())
             .build(instance)
     }
 }
 
 #[cfg(target_os = "macos")]
-pub fn create_surface(instance: Instance, window: &Window) -> VooResult<Surface> {
+pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
     use winit::os::macos::WindowExt;
     let wnd: cocoa_id = mem::transmute(window.get_nswindow());
 
@@ -65,7 +65,7 @@ pub fn create_surface(instance: Instance, window: &Window) -> VooResult<Surface>
     view.setLayer(mem::transmute(layer.0));
 
     unsafe {
-        Surface::builder()
+        SurfaceKhr::builder()
             .macos(window.get_nsview() as *const _)
             .build(instance)
     }

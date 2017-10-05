@@ -2,12 +2,12 @@
 use std::sync::Arc;
 use std::ptr;
 use vks;
-use ::{VooResult, Swapchain, Device, ImageHandle, Handle};
+use ::{VooResult, SwapchainKhr, Device, ImageHandle, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct ImageViewHandle(pub(crate) vks::VkImageView);
+pub struct ImageViewHandle(pub vks::VkImageView);
 
 impl Handle for ImageViewHandle {
     type Target = ImageViewHandle;
@@ -22,7 +22,7 @@ impl Handle for ImageViewHandle {
 pub struct Inner {
     handle: ImageViewHandle,
     device: Device,
-    swapchain: Option<Swapchain>,
+    swapchain: Option<SwapchainKhr>,
 }
 
 #[derive(Debug, Clone)]
@@ -111,7 +111,7 @@ impl<'b> ImageViewBuilder<'b> {
         self
     }
 
-    pub fn build(&self, device: Device, swapchain: Option<Swapchain>) -> VooResult<ImageView> {
+    pub fn build(&self, device: Device, swapchain: Option<SwapchainKhr>) -> VooResult<ImageView> {
         let mut handle = 0;
 
         unsafe {

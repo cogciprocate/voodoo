@@ -9,7 +9,7 @@ use ::{util, VooResult, Device, DeviceMemory, PRINT, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct BufferHandle(pub(crate) vks::VkBuffer);
+pub struct BufferHandle(pub vks::VkBuffer);
 
 impl Handle for BufferHandle {
     type Target = BufferHandle;

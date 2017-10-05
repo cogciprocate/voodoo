@@ -11,7 +11,7 @@ use ::{VooResult, Device, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct ShaderModuleHandle(pub(crate) vks::VkShaderModule);
+pub struct ShaderModuleHandle(pub vks::VkShaderModule);
 
 impl Handle for ShaderModuleHandle {
     type Target = ShaderModuleHandle;

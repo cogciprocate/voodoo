@@ -9,7 +9,7 @@ use ::{util, VooResult, Device, DeviceMemory, PRINT, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct ImageHandle(pub(crate) vks::VkImage);
+pub struct ImageHandle(pub vks::VkImage);
 
 impl Handle for ImageHandle {
     type Target = ImageHandle;

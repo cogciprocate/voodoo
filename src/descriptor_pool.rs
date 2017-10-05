@@ -9,7 +9,7 @@ use ::{util, VooResult, Device, DescriptorSetLayout, DescriptorSetLayoutHandle, 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DescriptorPoolHandle(pub(crate) vks::VkDescriptorPool);
+pub struct DescriptorPoolHandle(pub vks::VkDescriptorPool);
 
 impl Handle for DescriptorPoolHandle {
     type Target = DescriptorPoolHandle;

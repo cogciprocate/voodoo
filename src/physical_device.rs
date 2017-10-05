@@ -5,7 +5,7 @@ use std::ffi::CStr;
 use libc::c_char;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, Surface, SwapchainSupportDetails, PRINT, Handle};
+use ::{VooResult, Instance, SurfaceKhr, SwapchainSupportDetails, PRINT, Handle};
 use queue::{self, Queue};
 use instance;
 
@@ -13,7 +13,7 @@ use instance;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct PhysicalDeviceHandle(pub(crate) vks::VkPhysicalDevice);
+pub struct PhysicalDeviceHandle(pub vks::VkPhysicalDevice);
 
 impl Handle for PhysicalDeviceHandle {
     type Target = PhysicalDeviceHandle;
@@ -79,7 +79,7 @@ impl PhysicalDevice {
         }
     }
 
-    pub fn capabilities(&self, surface: &Surface) -> ::SurfaceCapabilitiesKhr {
+    pub fn capabilities(&self, surface: &SurfaceKhr) -> ::SurfaceCapabilitiesKhr {
         unsafe {
             let mut capabilities = mem::uninitialized();
             self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
@@ -88,7 +88,7 @@ impl PhysicalDevice {
         }
     }
 
-    pub fn formats(&self, surface: &Surface) -> SmallVec<[::SurfaceFormatKhr; 64]> {
+    pub fn formats(&self, surface: &SurfaceKhr) -> SmallVec<[::SurfaceFormatKhr; 64]> {
         let mut format_count = 0u32;
         let mut formats: SmallVec<[::SurfaceFormatKhr; 64]> = SmallVec::new();
         unsafe {
@@ -106,7 +106,7 @@ impl PhysicalDevice {
         formats
     }
 
-    pub fn present_modes(&self, surface: &Surface) -> SmallVec<[::PresentModeKhr; 16]> {
+    pub fn present_modes(&self, surface: &SurfaceKhr) -> SmallVec<[::PresentModeKhr; 16]> {
         let mut present_mode_count = 0u32;
         let mut present_modes: SmallVec<[::PresentModeKhr; 16]> = SmallVec::new();
         unsafe {
@@ -139,7 +139,7 @@ impl PhysicalDevice {
         queue_families
     }
 
-    pub fn surface_support_khr(&self, queue_family_index: u32, surface: &Surface) -> bool {
+    pub fn surface_support_khr(&self, queue_family_index: u32, surface: &SurfaceKhr) -> bool {
         let mut supported: vks::VkBool32 = vks::VK_FALSE;
         unsafe {
             ::check(self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceSupportKHR(

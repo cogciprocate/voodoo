@@ -12,7 +12,7 @@ use ::{util, VooResult, Device, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DeviceMemoryHandle(pub(crate) vks::VkDeviceMemory);
+pub struct DeviceMemoryHandle(pub vks::VkDeviceMemory);
 
 impl Handle for DeviceMemoryHandle {
     type Target = DeviceMemoryHandle;

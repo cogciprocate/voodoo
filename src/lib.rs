@@ -166,9 +166,9 @@ pub use version::Version;
 pub use instance::{InstanceHandle, Instance};
 pub use physical_device::{PhysicalDeviceHandle, PhysicalDevice};
 pub use device::{DeviceHandle, Device};
-pub use surface::{SurfaceHandle, Surface};
+pub use surface::{SurfaceKhrHandle, SurfaceKhr};
 pub use queue::{queue_families, QueueHandle, Queue};
-pub use swapchain::{SwapchainHandle, Swapchain, SwapchainSupportDetails};
+pub use swapchain::{SwapchainKhrHandle, SwapchainKhr, SwapchainSupportDetails};
 pub use image_view::{ImageViewHandle, ImageView};
 pub use shader_module::{ShaderModuleHandle, ShaderModule};
 pub use pipeline_layout::{PipelineLayoutHandle, PipelineLayout};
@@ -200,7 +200,7 @@ pub trait Handle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct CommandBufferHandle(pub(crate) vks::VkCommandBuffer);
+pub struct CommandBufferHandle(pub vks::VkCommandBuffer);
 
 impl Handle for CommandBufferHandle {
     type Target = CommandBufferHandle;
@@ -213,7 +213,7 @@ impl Handle for CommandBufferHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct FenceHandle(pub(crate) vks::VkFence);
+pub struct FenceHandle(pub vks::VkFence);
 
 impl Handle for FenceHandle {
     type Target = FenceHandle;
@@ -226,7 +226,7 @@ impl Handle for FenceHandle {
 
 // #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 // #[repr(C)]
-// pub struct DeviceMemoryHandle(pub(crate) vks::VkDeviceMemory);
+// pub struct DeviceMemoryHandle(pub vks::VkDeviceMemory);
 
 // impl Handle for DeviceMemoryHandle {
 //     type Target = DeviceMemoryHandle;
@@ -239,7 +239,7 @@ impl Handle for FenceHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct EventHandle(pub(crate) vks::VkEvent);
+pub struct EventHandle(pub vks::VkEvent);
 
 impl Handle for EventHandle {
     type Target = EventHandle;
@@ -252,7 +252,7 @@ impl Handle for EventHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct QueryPoolHandle(pub(crate) vks::VkQueryPool);
+pub struct QueryPoolHandle(pub vks::VkQueryPool);
 
 impl Handle for QueryPoolHandle {
     type Target = QueryPoolHandle;
@@ -265,7 +265,7 @@ impl Handle for QueryPoolHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct BufferViewHandle(pub(crate) vks::VkBufferView);
+pub struct BufferViewHandle(pub vks::VkBufferView);
 
 impl Handle for BufferViewHandle {
     type Target = BufferViewHandle;
@@ -278,7 +278,7 @@ impl Handle for BufferViewHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct PipelineCacheHandle(pub(crate) vks::VkPipelineCache);
+pub struct PipelineCacheHandle(pub vks::VkPipelineCache);
 
 impl Handle for PipelineCacheHandle {
     type Target = PipelineCacheHandle;
@@ -291,7 +291,7 @@ impl Handle for PipelineCacheHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct PipelineHandle(pub(crate) vks::VkPipeline);
+pub struct PipelineHandle(pub vks::VkPipeline);
 
 impl Handle for PipelineHandle {
     type Target = PipelineHandle;
@@ -304,7 +304,7 @@ impl Handle for PipelineHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DescriptorSetHandle(pub(crate) vks::VkDescriptorSet);
+pub struct DescriptorSetHandle(pub vks::VkDescriptorSet);
 
 impl Handle for DescriptorSetHandle {
     type Target = DescriptorSetHandle;
@@ -317,23 +317,10 @@ impl Handle for DescriptorSetHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DisplayHandle(pub(crate) vks::VkDisplayKHR);
+pub struct DisplayKhrHandle(pub vks::VkDisplayKHR);
 
-impl Handle for DisplayHandle {
-    type Target = DisplayHandle;
-
-    fn handle(&self) -> Self::Target {
-        *self
-    }
-}
-
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct DisplayModeHandle(pub(crate) vks::VkDisplayModeKHR);
-
-impl Handle for DisplayModeHandle {
-    type Target = DisplayModeHandle;
+impl Handle for DisplayKhrHandle {
+    type Target = DisplayKhrHandle;
 
     fn handle(&self) -> Self::Target {
         *self
@@ -343,7 +330,20 @@ impl Handle for DisplayModeHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DescriptorUpdateTemplateHandle(pub(crate) vks::VkDescriptorUpdateTemplateKHR);
+pub struct DisplayModeKhrHandle(pub vks::VkDisplayModeKHR);
+
+impl Handle for DisplayModeKhrHandle {
+    type Target = DisplayModeKhrHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct DescriptorUpdateTemplateHandle(pub vks::VkDescriptorUpdateTemplateKHR);
 
 impl Handle for DescriptorUpdateTemplateHandle {
     type Target = DescriptorUpdateTemplateHandle;
@@ -356,7 +356,7 @@ impl Handle for DescriptorUpdateTemplateHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DebugReportCallbackExtHandle(pub(crate) vks::VkDebugReportCallbackEXT);
+pub struct DebugReportCallbackExtHandle(pub vks::VkDebugReportCallbackEXT);
 
 impl Handle for DebugReportCallbackExtHandle {
     type Target = DebugReportCallbackExtHandle;
@@ -430,36 +430,76 @@ impl DescriptorSet {
     }
 }
 
+impl Handle for DescriptorSet {
+    type Target = DescriptorSetHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.0
+    }
+}
+
+impl<'h> Handle for &'h DescriptorSet {
+    type Target = DescriptorSetHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.0
+    }
+}
+
 
 #[derive(Clone, Debug)]
-pub struct BufferView(vks::VkBufferView);
+pub struct BufferView(BufferViewHandle);
 
 impl BufferView {
-    pub fn handle(&self) -> vks::VkBufferView {
+    pub fn handle(&self) -> BufferViewHandle {
+        self.0
+    }
+}
+
+impl<'h> Handle for &'h BufferView {
+    type Target = BufferViewHandle;
+
+    fn handle(&self) -> Self::Target {
         self.0
     }
 }
 
 
 #[derive(Clone, Debug)]
-pub struct Pipeline(vks::VkPipeline);
+pub struct Pipeline(PipelineHandle);
 
 impl Pipeline {
-    pub fn handle(&self) -> vks::VkPipeline {
+    pub fn handle(&self) -> PipelineHandle {
+        self.0
+    }
+}
+
+impl<'h> Handle for &'h Pipeline {
+    type Target = PipelineHandle;
+
+    fn handle(&self) -> Self::Target {
         self.0
     }
 }
 
 
 #[derive(Clone, Debug)]
-pub struct CommandBuffer(vks::VkCommandBuffer);
+pub struct CommandBuffer(CommandBufferHandle);
 
 impl CommandBuffer {
-    pub fn new(h: vks::VkCommandBuffer) -> CommandBuffer {
+    pub fn new(h: CommandBufferHandle) -> CommandBuffer {
         CommandBuffer(h)
     }
 
-    pub fn handle(&self) -> vks::VkCommandBuffer {
+    pub fn handle(&self) -> CommandBufferHandle {
+        self.0
+    }
+}
+
+impl<'h> Handle for &'h CommandBuffer {
+    type Target = CommandBufferHandle;
+
+    fn handle(&self) -> Self::Target {
         self.0
     }
 }
@@ -470,30 +510,54 @@ impl CommandBuffer {
 
 
 #[derive(Clone, Debug)]
-pub struct Fence(vks::VkFence);
+pub struct Fence(FenceHandle);
 
 impl Fence {
-    pub fn handle(&self) -> vks::VkFence {
+    pub fn handle(&self) -> FenceHandle {
+        self.0
+    }
+}
+
+impl<'h> Handle for &'h Fence {
+    type Target = FenceHandle;
+
+    fn handle(&self) -> Self::Target {
         self.0
     }
 }
 
 
 #[derive(Clone, Debug)]
-pub struct DisplayModeKhr(vks::VkDisplayModeKHR);
+pub struct DisplayModeKhr(DisplayModeKhrHandle);
 
 impl DisplayModeKhr {
-    pub fn handle(&self) -> vks::VkDisplayModeKHR {
+    pub fn handle(&self) -> DisplayModeKhrHandle {
+        self.0
+    }
+}
+
+impl<'h> Handle for &'h DisplayModeKhr {
+    type Target = DisplayModeKhrHandle;
+
+    fn handle(&self) -> Self::Target {
         self.0
     }
 }
 
 
 #[derive(Clone, Debug)]
-pub struct DisplayKhr(vks::VkDisplayKHR);
+pub struct DisplayKhr(DisplayKhrHandle);
 
 impl DisplayKhr {
-    pub fn handle(&self) -> vks::VkDisplayKHR {
+    pub fn handle(&self) -> DisplayKhrHandle {
+        self.0
+    }
+}
+
+impl<'h> Handle for &'h DisplayKhr {
+    type Target = DisplayKhrHandle;
+
+    fn handle(&self) -> Self::Target {
         self.0
     }
 }

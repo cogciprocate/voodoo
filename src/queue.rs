@@ -1,13 +1,13 @@
 use std::ptr;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, PhysicalDevice, Device, Surface, QueueFlags};
+use ::{VooResult, Instance, PhysicalDevice, Device, SurfaceKhr, QueueFlags};
 
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct QueueHandle(pub(crate) vks::VkQueue);
+pub struct QueueHandle(pub vks::VkQueue);
 
 
 pub struct QueueFamilyIndices {
@@ -48,7 +48,7 @@ impl QueueFamilyIndices {
     }
 }
 
-pub fn queue_families(instance: &Instance, surface: &Surface, physical_device: &PhysicalDevice,
+pub fn queue_families(instance: &Instance, surface: &SurfaceKhr, physical_device: &PhysicalDevice,
         queue_flags: QueueFlags) -> QueueFamilyIndices {
     let mut indices = QueueFamilyIndices::new(physical_device.clone(), queue_flags);
     let queue_families = physical_device.queue_families();

@@ -3,12 +3,12 @@ use std::sync::Arc;
 use std::ptr;
 use std::marker::PhantomData;
 use vks;
-use ::{util, VooResult, Device, Surface, Handle};
+use ::{util, VooResult, Device, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct CommandPoolHandle(pub(crate) vks::VkCommandPool);
+pub struct CommandPoolHandle(pub vks::VkCommandPool);
 
 impl Handle for CommandPoolHandle {
     type Target = CommandPoolHandle;

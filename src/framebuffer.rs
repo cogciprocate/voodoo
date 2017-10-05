@@ -9,7 +9,7 @@ use ::{util, VooResult, Device, RenderPass, ImageViewHandle, ImageView, Handle, 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct FramebufferHandle(pub(crate) vks::VkFramebuffer);
+pub struct FramebufferHandle(pub vks::VkFramebuffer);
 
 impl Handle for FramebufferHandle {
     type Target = FramebufferHandle;

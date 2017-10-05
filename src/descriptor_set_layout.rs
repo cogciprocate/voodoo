@@ -8,7 +8,7 @@ use ::{util, VooResult, Device, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DescriptorSetLayoutHandle(pub(crate) vks::VkDescriptorSetLayout);
+pub struct DescriptorSetLayoutHandle(pub vks::VkDescriptorSetLayout);
 
 impl Handle for DescriptorSetLayoutHandle {
     type Target = DescriptorSetLayoutHandle;

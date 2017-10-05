@@ -20,7 +20,7 @@ unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct InstanceHandle(pub(crate) vks::VkInstance);
+pub struct InstanceHandle(pub vks::VkInstance);
 
 impl Handle for InstanceHandle {
     type Target = InstanceHandle;

@@ -8,7 +8,7 @@ use ::{util, VooResult, Device, ShaderModule, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct RenderPassHandle(pub(crate) vks::VkRenderPass);
+pub struct RenderPassHandle(pub vks::VkRenderPass);
 
 impl Handle for RenderPassHandle {
     type Target = RenderPassHandle;

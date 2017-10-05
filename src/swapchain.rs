@@ -6,16 +6,16 @@ use std::fmt;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{queue, VooResult, Instance, Surface, Device, PhysicalDevice, ImageHandle,
-    Image, SurfaceHandle, Handle};
+use ::{queue, VooResult, Instance, SurfaceKhr, Device, PhysicalDevice, ImageHandle,
+    Image, SurfaceKhrHandle, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct SwapchainHandle(pub(crate) vks::VkSwapchainKHR);
+pub struct SwapchainKhrHandle(pub vks::VkSwapchainKHR);
 
-impl Handle for SwapchainHandle {
-    type Target = SwapchainHandle;
+impl Handle for SwapchainKhrHandle {
+    type Target = SwapchainKhrHandle;
 
     fn handle(&self) -> Self::Target {
         *self
@@ -36,7 +36,7 @@ pub struct SwapchainSupportDetails {
 }
 
 impl SwapchainSupportDetails {
-    pub fn new(instance: &Instance, surface: &Surface, physical_device: &PhysicalDevice)
+    pub fn new(instance: &Instance, surface: &SurfaceKhr, physical_device: &PhysicalDevice)
             -> SwapchainSupportDetails {
         let capabilities = physical_device.capabilities(surface);
         let formats = physical_device.formats(surface);
@@ -53,9 +53,9 @@ impl SwapchainSupportDetails {
 
 #[derive(Debug)]
 struct Inner {
-    handle: SwapchainHandle,
+    handle: SwapchainKhrHandle,
     device: Device,
-    surface: Surface,
+    surface: SurfaceKhr,
     // TODO: Revisit whether we should simply store a handle.
     images: SmallVec<[ImageHandle; 8]>,
     image_format: ::Format,
@@ -63,13 +63,13 @@ struct Inner {
 }
 
 #[derive(Debug, Clone)]
-pub struct Swapchain {
+pub struct SwapchainKhr {
     inner: Arc<Inner>,
 }
 
-impl Swapchain {
-    pub fn builder<'b>() -> SwapchainBuilder<'b> {
-        SwapchainBuilder::new()
+impl SwapchainKhr {
+    pub fn builder<'b>() -> SwapchainKhrBuilder<'b> {
+        SwapchainKhrBuilder::new()
     }
 
     pub fn images(&self) -> &[ImageHandle] {
@@ -84,7 +84,7 @@ impl Swapchain {
         &self.inner.extent
     }
 
-    pub fn handle(&self) -> SwapchainHandle {
+    pub fn handle(&self) -> SwapchainKhrHandle {
         self.inner.handle
     }
 
@@ -94,8 +94,8 @@ impl Swapchain {
     }
 }
 
-impl<'s> Handle for &'s Swapchain {
-    type Target = SwapchainHandle;
+impl<'s> Handle for &'s SwapchainKhr {
+    type Target = SwapchainKhrHandle;
 
     fn handle(&self) -> Self::Target {
         self.inner.handle
@@ -112,7 +112,7 @@ impl Drop for Inner {
     }
 }
 
-unsafe impl Sync for Swapchain {}
+unsafe impl Sync for SwapchainKhr {}
 
 
 /// A Swapchain builder.
@@ -139,17 +139,17 @@ unsafe impl Sync for Swapchain {}
 // } VkSwapchainCreateInfoKHR;
 //
 #[derive(Debug, Clone)]
-pub struct SwapchainBuilder<'b> {
+pub struct SwapchainKhrBuilder<'b> {
     create_info: ::SwapchainCreateInfoKhr<'b>,
     // Must keep alive to maintain destruction order:
-    surface: Option<&'b Surface>,
+    surface: Option<&'b SurfaceKhr>,
     _p: PhantomData<&'b ()>,
 }
 
-impl<'b> SwapchainBuilder<'b> {
+impl<'b> SwapchainKhrBuilder<'b> {
     /// Returns a new swapchain builder.
-    pub fn new() -> SwapchainBuilder<'b> {
-        SwapchainBuilder {
+    pub fn new() -> SwapchainKhrBuilder<'b> {
+        SwapchainKhrBuilder {
             create_info: ::SwapchainCreateInfoKhr::default(),
             surface: None,
             _p: PhantomData,
@@ -158,14 +158,14 @@ impl<'b> SwapchainBuilder<'b> {
 
     /// Specifies the parameters of swapchain creation.
     pub fn flags<'s>(&'s mut self, flags: ::SwapchainCreateFlagsKhr)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_flags(flags);
         self
     }
 
     /// Specifies the surface that the swapchain will present images to.
-    pub fn surface<'s, 'p>(&'s mut self, surface: &'p Surface)
-            -> &'s mut SwapchainBuilder<'b>
+    pub fn surface<'s, 'p>(&'s mut self, surface: &'p SurfaceKhr)
+            -> &'s mut SwapchainKhrBuilder<'b>
             where 'p: 'b {
         self.create_info.set_surface(surface.handle());
         self.surface = Some(surface);
@@ -176,7 +176,7 @@ impl<'b> SwapchainBuilder<'b> {
     /// application needs. The platform will either create the swapchain with
     /// at least that many images, or will fail to create the swapchain.
     pub fn min_image_count<'s>(&'s mut self, min_image_count: u32)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_min_image_count(min_image_count);
         self
     }
@@ -184,7 +184,7 @@ impl<'b> SwapchainBuilder<'b> {
     /// Specifies the format that is valid for swapchains on the specified
     /// surface.
     pub fn image_format<'s>(&'s mut self, image_format: ::Format)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_image_format(image_format);
         self
     }
@@ -192,7 +192,7 @@ impl<'b> SwapchainBuilder<'b> {
     /// Specifies the color space that is valid for swapchains on the
     /// specified surface.
     pub fn image_color_space<'s>(&'s mut self, image_color_space: ::ColorSpaceKhr)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_image_color_space(image_color_space);
         self
     }
@@ -201,7 +201,7 @@ impl<'b> SwapchainBuilder<'b> {
     /// platform-dependent when the image extent does not match the surface’s
     /// current extent as returned by `vkGetPhysicalDeviceSurfaceCapabilitiesKHR`.
     pub fn image_extent<'s>(&'s mut self, image_extent: ::Extent2d)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_image_extent(image_extent);
         self
     }
@@ -209,7 +209,7 @@ impl<'b> SwapchainBuilder<'b> {
     /// Specifies the number of views in a multiview/stereo surface. For
     /// non-stereoscopic-3D applications, this value is 1.
     pub fn image_array_layers<'s>(&'s mut self, image_array_layers: u32)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_image_array_layers(image_array_layers);
         self
     }
@@ -217,14 +217,14 @@ impl<'b> SwapchainBuilder<'b> {
     /// Specifies the bitmask of `ImageUsageFlagBits`, indicating how the
     /// application will use the swapchain’s presentable images
     pub fn image_usage<'s>(&'s mut self, image_usage: ::ImageUsageFlags)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_image_usage(image_usage);
         self
     }
 
     /// Specifies the sharing mode used for the images of the swapchain.
     pub fn image_sharing_mode<'s>(&'s mut self, image_sharing_mode: ::SharingMode)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_image_sharing_mode(image_sharing_mode);
         self
     }
@@ -232,7 +232,7 @@ impl<'b> SwapchainBuilder<'b> {
     /// Specifies the queue family indices having access to the images of the
     /// swapchain in case imageSharingMode is VK_SHARING_MODE_CONCURRENT.
     pub fn queue_family_indices<'s, 'qfi>(&'s mut self, queue_family_indices: &'qfi [u32])
-            -> &'s mut SwapchainBuilder<'b>
+            -> &'s mut SwapchainKhrBuilder<'b>
             where 'qfi: 'b {
         self.create_info.set_queue_family_indices(queue_family_indices);
         self
@@ -245,7 +245,7 @@ impl<'b> SwapchainBuilder<'b> {
     /// vkGetPhysicalDeviceSurfaceCapabilitiesKHR, the presentation engine
     /// will transform the image content as part of the presentation operation.
     pub fn pre_transform<'s>(&'s mut self, pre_transform: ::SurfaceTransformFlagsKhr)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_pre_transform(pre_transform);
         self
     }
@@ -254,7 +254,7 @@ impl<'b> SwapchainBuilder<'b> {
     /// alpha compositing mode to use when this surface is composited together
     /// with other surfaces on certain window systems.
     pub fn composite_alpha<'s>(&'s mut self, composite_alpha: ::CompositeAlphaFlagsKhr)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_composite_alpha(composite_alpha);
         self
     }
@@ -263,7 +263,7 @@ impl<'b> SwapchainBuilder<'b> {
     /// present mode determines how incoming present requests will be
     /// processed and queued internally.
     pub fn present_mode<'s>(&'s mut self, present_mode: ::PresentModeKhr)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_present_mode(present_mode);
         self
     }
@@ -293,7 +293,7 @@ impl<'b> SwapchainBuilder<'b> {
     /// in the presentable image.
     ///
     pub fn clipped<'s>(&'s mut self, clipped: bool)
-            -> &'s mut SwapchainBuilder<'b> {
+            -> &'s mut SwapchainKhrBuilder<'b> {
         self.create_info.set_clipped(clipped);
         self
     }
@@ -319,14 +319,14 @@ impl<'b> SwapchainBuilder<'b> {
     /// the new swapchain, as long as it has not entered a state that causes
     /// it to return VK_ERROR_OUT_OF_DATE_KHR.
     pub fn old_swapchain<'s, H>(&'s mut self, old_swapchain: H)
-            -> &'s mut SwapchainBuilder<'b>
-            where H: Handle<Target=SwapchainHandle> {
+            -> &'s mut SwapchainKhrBuilder<'b>
+            where H: Handle<Target=SwapchainKhrHandle> {
         self.create_info.set_old_swapchain(old_swapchain);
         self
     }
 
-    /// Builds and returns a new `Swapchain`.
-    pub fn build(&mut self, device: Device) -> VooResult<Swapchain> {
+    /// Builds and returns a new `SwapchainKhr`.
+    pub fn build(&mut self, device: Device) -> VooResult<SwapchainKhr> {
         let image_format = self.create_info.image_format().clone();
         let extent = self.create_info.image_extent().clone();
 
@@ -353,9 +353,9 @@ impl<'b> SwapchainBuilder<'b> {
         // let images = image_handles.into_iter().map(|handle| Image::from_handle(device.clone(), handle))
         //     .collect::<Result<SmallVec<[Image; 8]>, _>>()?;
 
-        Ok(Swapchain {
+        Ok(SwapchainKhr {
             inner: Arc::new(Inner {
-                handle: SwapchainHandle(handle),
+                handle: SwapchainKhrHandle(handle),
                 device,
                 surface: self.surface.cloned()
                     .expect("unable to create swapchain: no surface specified"),
