@@ -6,7 +6,7 @@ use std::fmt;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{queue, VooResult, Instance, Surface, Device, PhysicalDevice};
+use ::{queue, VooResult, Instance, Surface, Device, PhysicalDevice, Image};
 
 
 // pub struct SwapchainSupportDetails {
@@ -42,7 +42,8 @@ struct Inner {
     handle: vks::khr_swapchain::VkSwapchainKHR,
     device: Device,
     surface: Surface,
-    images: SmallVec<[::Image; 8]>,
+    // TODO: Revisit whether we should simply store a handle.
+    images: SmallVec<[vks::VkImage; 8]>,
     image_format: ::Format,
     extent: ::Extent2d,
 }
@@ -57,7 +58,7 @@ impl Swapchain {
         SwapchainBuilder::new()
     }
 
-    pub fn images(&self) -> &[::Image] {
+    pub fn images(&self) -> &[vks::VkImage] {
         &self.inner.images
     }
 
@@ -307,19 +308,25 @@ impl<'b> SwapchainBuilder<'b> {
         let mut handle = 0;
         let res = unsafe { device.proc_addr_loader().vkCreateSwapchainKHR(device.handle(),
             self.create_info.raw(), ptr::null(), &mut handle) };
+
         if res != vks::VK_SUCCESS {
             panic!("failed to create swap chain!");
         }
 
         let mut image_count = 0;
-        let mut images = SmallVec::<[::Image; 8]>::new();
+        let mut image_handles = SmallVec::<[vks::VkImage; 8]>::new();
         unsafe {
             ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle(), handle,
                 &mut image_count, ptr::null_mut()));
-            images.set_len(image_count as usize);
+            assert!(image_count as usize <= image_handles.inline_size());
+            image_handles.set_len(image_count as usize);
             ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle(), handle,
-                &mut image_count, images.as_mut_ptr() as *mut vks::VkImage));
+                &mut image_count, image_handles.as_mut_ptr() as *mut vks::VkImage));
         }
+
+        // let images = image_handles.iter()
+        // let images = image_handles.into_iter().map(|handle| Image::from_handle(device.clone(), handle))
+        //     .collect::<Result<SmallVec<[Image; 8]>, _>>()?;
 
         Ok(Swapchain {
             inner: Arc::new(Inner {
@@ -327,7 +334,7 @@ impl<'b> SwapchainBuilder<'b> {
                 device,
                 surface: self.surface.cloned()
                     .expect("unable to create swapchain: no surface specified"),
-                images,
+                images: image_handles,
                 image_format: image_format,
                 extent,
             })

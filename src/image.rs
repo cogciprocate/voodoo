@@ -24,6 +24,24 @@ impl Image {
         ImageBuilder::new()
     }
 
+    pub fn from_handle(device: Device, handle: vks::VkImage) -> VooResult<Image> {
+        // Memory Requirements:
+        let mut memory_requirements: vks::VkMemoryRequirements;
+        unsafe {
+            memory_requirements = mem::uninitialized();
+            device.proc_addr_loader().core.vkGetImageMemoryRequirements(device.handle(), handle,
+                &mut memory_requirements);
+        }
+
+        Ok(Image {
+            inner: Arc::new(Inner {
+                handle,
+                memory_requirements: memory_requirements.into(),
+                device,
+            })
+        })
+    }
+
     pub fn handle(&self) -> vks::VkImage {
         self.inner.handle
     }
@@ -206,20 +224,21 @@ impl<'b> ImageBuilder<'b> {
                 self.create_info.raw(), ptr::null(), &mut handle));
         }
 
-        // Memory Requirements:
-        let mut memory_requirements: vks::VkMemoryRequirements;
-        unsafe {
-            memory_requirements = mem::uninitialized();
-            device.proc_addr_loader().core.vkGetImageMemoryRequirements(device.handle(), handle,
-                &mut memory_requirements);
-        }
+        // // Memory Requirements:
+        // let mut memory_requirements: vks::VkMemoryRequirements;
+        // unsafe {
+        //     memory_requirements = mem::uninitialized();
+        //     device.proc_addr_loader().core.vkGetImageMemoryRequirements(device.handle(), handle,
+        //         &mut memory_requirements);
+        // }
 
-        Ok(Image {
-            inner: Arc::new(Inner {
-                handle,
-                memory_requirements: memory_requirements.into(),
-                device,
-            })
-        })
+        // Ok(Image {
+        //     inner: Arc::new(Inner {
+        //         handle,
+        //         memory_requirements: memory_requirements.into(),
+        //         device,
+        //     })
+        // })
+        Image::from_handle(device, handle)
     }
 }

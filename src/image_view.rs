@@ -55,8 +55,8 @@ impl<'b> ImageViewBuilder<'b> {
     }
 
     /// Specifies the image on which the view will be created.
-    pub fn image<'s>(&'s mut self, image: &::Image) -> &'s mut ImageViewBuilder<'b> {
-        self.create_info.set_image(image);
+    pub fn image<'s>(&'s mut self, image: vks::VkImage) -> &'s mut ImageViewBuilder<'b> {
+        self.create_info.set_image_handle(image);
         self
     }
 
