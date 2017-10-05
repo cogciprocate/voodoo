@@ -853,7 +853,8 @@ pub fn create_framebuffers(device: &Device, render_pass: &RenderPass,
 
 
 fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
-        -> VooResult<voo::CommandBuffer> {
+        // -> VooResult<voo::CommandBuffer> {
+        -> VooResult<vks::VkCommandBuffer> {
     let alloc_info = voo::CommandBufferAllocateInfo::builder()
         // .sType(voo::STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO)
         // .pNext(ptr::null())
@@ -880,35 +881,62 @@ fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
     unsafe {
         device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer, begin_info.raw());
     }
-    Ok(voo::CommandBuffer::new(command_buffer))
+    // Ok(voo::CommandBuffer::new(command_buffer))
+    Ok(command_buffer)
 }
 
 fn end_single_time_commands(device: &Device, command_pool: &CommandPool,
-        command_buffer: voo::CommandBuffer) -> VooResult<()> {
+        // command_buffer: voo::CommandBuffer) -> VooResult<()> {
+        command_buffer: vks::VkCommandBuffer) -> VooResult<()> {
     unsafe {
-        voo::check(device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.handle()));
+        // voo::check(device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.handle()));
+        voo::check(device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer));
     }
-    let command_buffers = [&command_buffer];
+    // let command_buffers = [&command_buffer];
 
-    let submit_info = voo::SubmitInfo::builder()
-        // .sType(voo::STRUCTURE_TYPE_SUBMIT_INFO)
-        // .pNext(ptr::null())
-        // .wait_semaphore_count(0)
-        // .p_wait_semaphores(ptr::null())
-        // .p_wait_dst_stage_mask(ptr::null())
-        // .command_buffer_count(1)
-        .command_buffers(&command_buffers)
-        // .signal_semaphore_count(0)
-        // .p_signal_semaphores(ptr::null())
-        .build();
+    // let submit_info = voo::SubmitInfo::builder()
+    //     // .sType(voo::STRUCTURE_TYPE_SUBMIT_INFO)
+    //     // .pNext(ptr::null())
+    //     // .wait_semaphore_count(0)
+    //     // .p_wait_semaphores(ptr::null())
+    //     // .p_wait_dst_stage_mask(ptr::null())
+    //     // .command_buffer_count(1)
+    //     .command_buffers(&command_buffers)
+    //     // .signal_semaphore_count(0)
+    //     // .p_signal_semaphores(ptr::null())
+    //     .build();
+
+    let cmd_buf_handles = [command_buffer];
+
+    let submit_info = vks::VkSubmitInfo {
+        sType: vks::VK_STRUCTURE_TYPE_SUBMIT_INFO,
+        pNext: ptr::null(),
+        waitSemaphoreCount: 0,
+        pWaitSemaphores: ptr::null(),
+        pWaitDstStageMask: ptr::null(),
+        // commandBufferCount: cmd_buf_handles.len() as u32,
+        commandBufferCount: 1,
+        pCommandBuffers: cmd_buf_handles.as_ptr(),
+        // pCommandBuffers: &command_buffer,
+        signalSemaphoreCount: 0,
+        pSignalSemaphores: ptr::null(),
+    };
+
+    println!("1000");
 
     unsafe {
         voo::check(device.proc_addr_loader().core.vkQueueSubmit(device.queue(0), 1,
-            submit_info.raw(), 0));
+            // submit_info.raw(), 0));
+            &submit_info, 0));
         voo::check(device.proc_addr_loader().core.vkQueueWaitIdle(device.queue(0)));
         device.proc_addr_loader().core.vkFreeCommandBuffers(device.handle(),
-            command_pool.handle(), 1, &command_buffer as *const _ as *const vks::VkCommandBuffer);
+            // command_pool.handle(), 1, command_buffer.handle()
+            command_pool.handle(), 1,
+            // &command_buffer as *const vks::VkCommandBuffer);
+            cmd_buf_handles.as_ptr());
     }
+
+    println!("1001");
 
     Ok(())
 }
@@ -936,8 +964,8 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
     let mut barrier = voo::ImageMemoryBarrier::builder()
         // .sType(voo::STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER)
         // .pNext(ptr::null())
-        // .src_access_mask(0)
-        // .dst_access_mask(0)
+        .src_access_mask(voo::AccessFlags::empty())
+        .dst_access_mask(voo::AccessFlags::empty())
         .old_layout(old_layout)
         .new_layout(new_layout)
         .src_queue_family_index(voo::QUEUE_FAMILY_IGNORED)
@@ -948,13 +976,17 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
 
     // if new_layout == voo::IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL {
     if new_layout == voo::ImageLayout::DepthStencilAttachmentOptimal {
-        barrier.subresource_range().set_aspect_mask(voo::ImageAspectFlags::DEPTH);
+        let mut subresource_range = barrier.subresource_range();
+        subresource_range.set_aspect_mask(voo::ImageAspectFlags::DEPTH);
         if has_stencil_component(format) {
-            barrier.subresource_range().set_aspect_mask(
-                barrier.subresource_range().aspect_mask() | voo::ImageAspectFlags::STENCIL);
+            let aspect_mask = subresource_range.aspect_mask() | voo::ImageAspectFlags::STENCIL;
+            subresource_range.set_aspect_mask(aspect_mask);
         }
+        barrier.set_subresource_range(subresource_range);
     } else {
-        barrier.subresource_range().set_aspect_mask(voo::ImageAspectFlags::COLOR);
+        let mut subresource_range = barrier.subresource_range();
+        subresource_range.set_aspect_mask(voo::ImageAspectFlags::COLOR);
+        barrier.set_subresource_range(subresource_range);
     }
 
     let source_stage: voo::PipelineStageFlags;
@@ -964,7 +996,7 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
             // new_layout == voo::IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
             new_layout == voo::ImageLayout::TransferDstOptimal
     {
-        barrier.set_src_access_mask(voo::AccessFlags::NONE);
+        barrier.set_src_access_mask(voo::AccessFlags::empty());
         // barrier.dst_access_mask() = voo::ACCESS_TRANSFER_WRITE_BIT;
         // source_stage = voo::PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         // destination_stage = voo::PIPELINE_STAGE_TRANSFER_BIT;
@@ -982,7 +1014,7 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
             // new_layout == voo::IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
             new_layout == voo::ImageLayout::DepthStencilAttachmentOptimal
         {
-        barrier.set_src_access_mask(voo::AccessFlags::NONE);
+        barrier.set_src_access_mask(voo::AccessFlags::empty());
         barrier.set_dst_access_mask(voo::AccessFlags::DEPTH_STENCIL_ATTACHMENT_READ |
             voo::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE);
         source_stage = voo::PipelineStageFlags::TOP_OF_PIPE;
@@ -993,14 +1025,17 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
 
     unsafe {
         device.proc_addr_loader().vkCmdPipelineBarrier(
-            command_buffer.handle(),
+            // command_buffer.handle(),
+            command_buffer,
             source_stage.bits(), destination_stage.bits(),
             0,
             0, ptr::null(),
             0, ptr::null(),
-            1, &barrier as *const _ as *const vks::VkImageMemoryBarrier
+            1, barrier.raw() as *const _ as *const vks::VkImageMemoryBarrier
         );
     }
+
+    println!("A");
 
     end_single_time_commands(device, command_pool, command_buffer)
 }
@@ -1027,7 +1062,8 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
 
     unsafe {
         device.proc_addr_loader().vkCmdCopyBufferToImage(
-            command_buffer.handle(),
+            // command_buffer.handle(),
+            command_buffer,
             buffer.handle(),
             image.handle(),
             // voo::IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -1036,6 +1072,8 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
             &region as *const _ as *const vks::VkBufferImageCopy
         );
     }
+
+    println!("B");
 
     end_single_time_commands(device, command_pool, command_buffer)
 }
@@ -1053,9 +1091,13 @@ fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
         .size(size)
         .build();
 
-    unsafe { device.proc_addr_loader().core.vkCmdCopyBuffer(command_buffer.handle(),
+    // unsafe { device.proc_addr_loader().core.vkCmdCopyBuffer(command_buffer.handle(),
+    unsafe { device.proc_addr_loader().core.vkCmdCopyBuffer(command_buffer,
         src_buffer.handle(), dst_buffer.handle(), 1, &copy_region as *const _
         as *const vks::VkBufferCopy); }
+
+
+    println!("C");
 
     end_single_time_commands(device, command_pool, command_buffer)
 }

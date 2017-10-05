@@ -33,28 +33,38 @@ impl DescriptorPool {
     }
 
     /// Updates descriptor sets.
-    pub fn allocate_descriptor_sets(&self, descriptor_sets: &[&DescriptorSetLayout])
+    pub fn allocate_descriptor_sets(&self, layouts: &[&DescriptorSetLayout])
             -> SmallVec<[::DescriptorSet; 8]> {
-        // let descriptor_set_handles: SmallVec<[_; 8]> =
-        //     descriptor_sets.iter().map(|dsl| dsl).collect();
-        let len = descriptor_sets.len();
+        let layout_handles: SmallVec<[_; 8]> =
+            layouts.iter().map(|dsl| dsl.handle()).collect();
+
+        let len = layouts.len();
+
+        // let alloc_info = vks::VkDescriptorSetAllocateInfo {
+        //     sType: vks::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+        //     pNext: ptr::null(),
+        //     descriptorPool: self.inner.handle,
+        //     descriptorSetCount: layout_handles.len() as u32,
+        //     pSetLayouts: layout_handles.as_ptr(),
+        // };
 
         let alloc_info = ::DescriptorSetAllocateInfo::builder()
-            // sType: vks::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-            // pNext: ptr::null(),
             .descriptor_pool(self)
-            // .descriptor_set_count(descriptor_set_handles.len() as u32,
-            .set_layouts(descriptor_sets)
+            .set_layouts(layouts)
             .build();
+
 
         let mut descriptor_sets = SmallVec::<[::DescriptorSet; 8]>::new();
         descriptor_sets.reserve_exact(len);
         unsafe {
             descriptor_sets.set_len(len);
             ::check(self.inner.device.proc_addr_loader().vkAllocateDescriptorSets(
-                self.inner.device.handle(), alloc_info.raw(),
+                self.inner.device.handle(),
+                // &alloc_info,
+                alloc_info.raw(),
                 descriptor_sets.as_mut_ptr() as *mut vks::VkDescriptorSet));
         }
+
         descriptor_sets
     }
 

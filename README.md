@@ -15,6 +15,11 @@
 * Useful documentation
 
 
+#### Status
+
+Stability ~= 40%.
+
+
 #### Other Vulkan libraries in Rust
 
 For a higher level, more opinionated Vulkan API (that does more for you) see
