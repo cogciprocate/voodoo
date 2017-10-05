@@ -74,7 +74,8 @@ impl PhysicalDevice {
 
     pub fn formats(&self, surface: &Surface) -> SmallVec<[::SurfaceFormatKhr; 64]> {
         let mut format_count = 0u32;
-        let mut formats: SmallVec<[::SurfaceFormatKhr; 64]> = SmallVec::new();
+        // let mut formats: SmallVec<[::SurfaceFormatKhr; 64]> = SmallVec::new();
+        let mut formats = SmallVec::new();
         unsafe {
             self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(self.handle(),
                 surface.handle(), &mut format_count, ptr::null_mut());

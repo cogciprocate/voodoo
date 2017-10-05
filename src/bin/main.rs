@@ -234,10 +234,12 @@ fn choose_swap_surface_format(available_formats: &[voo::SurfaceFormatKhr])
         .build()
 }
 
-fn choose_swap_present_mode(available_present_modes: &[vks::khr_surface::VkPresentModeKHR])
+fn choose_swap_present_mode(available_present_modes: &[voo::PresentModeKhr])
         -> vks::khr_surface::VkPresentModeKHR {
+    let available_present_modes: Vec<vks::khr_surface::VkPresentModeKHR> =
+        available_present_modes.iter().map(|&mode| mode as u32).collect();
     let mut best_mode = vks::khr_surface::VK_PRESENT_MODE_MAILBOX_KHR;
-    for &available_present_mode in available_present_modes {
+    for available_present_mode in available_present_modes {
         if available_present_mode == vks::khr_surface::VK_PRESENT_MODE_FIFO_KHR {
             return available_present_mode;
         } else if available_present_mode == vks::khr_surface::VK_PRESENT_MODE_IMMEDIATE_KHR {
@@ -247,8 +249,10 @@ fn choose_swap_present_mode(available_present_modes: &[vks::khr_surface::VkPrese
     best_mode
 }
 
-fn choose_swap_extent(capabilities: &vks::khr_surface::VkSurfaceCapabilitiesKHR,
+fn choose_swap_extent(capabilities: &voo::SurfaceCapabilitiesKhr,
         window_size: Option<vks::VkExtent2D>) -> vks::VkExtent2D {
+
+    let capabilities: &vks::khr_surface::VkSurfaceCapabilitiesKHR = capabilities.raw();
     if capabilities.currentExtent.width != u32::max_value() {
         return capabilities.currentExtent.clone();
     } else {
@@ -268,14 +272,14 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: QueueFlags,
     let swapchain_details: SwapchainSupportDetails = SwapchainSupportDetails::new(
         device.instance(), &surface, device.physical_device());
     let surface_format = choose_swap_surface_format(&swapchain_details.formats);
-    let present_mode = choose_swap_present_mode(&swapchain_details.present_modes);
+    let present_mode = choose_swap_present_mode(&swapchain_details.present_modes[..]);
     let extent = choose_swap_extent(&swapchain_details.capabilities, window_size);
 
     // TODO: REVISIT THIS: https://vulkan-tutorial.com/Drawing_a_triangle/Presentation/Swap_chain
-    let mut image_count = swapchain_details.capabilities.minImageCount + 1;
-    if swapchain_details.capabilities.maxImageCount > 0 &&
-            image_count > swapchain_details.capabilities.maxImageCount {
-        image_count = swapchain_details.capabilities.maxImageCount;
+    let mut image_count = swapchain_details.capabilities.raw().minImageCount + 1;
+    if swapchain_details.capabilities.raw().maxImageCount > 0 &&
+            image_count > swapchain_details.capabilities.raw().maxImageCount {
+        image_count = swapchain_details.capabilities.raw().maxImageCount;
     }
     let indices = queue::queue_families(device.instance(), &surface,
         device.physical_device(), queue_flags);
@@ -285,12 +289,12 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: QueueFlags,
     let mut bldr = Swapchain::builder();
     bldr.surface(&surface)
         .min_image_count(image_count)
-        .image_format(surface_format.format)
-        .image_color_space(surface_format.colorSpace)
+        .image_format(surface_format.raw().format)
+        .image_color_space(surface_format.raw().colorSpace)
         .image_extent(extent.clone())
         .image_array_layers(1)
         .image_usage(vks::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
-        .pre_transform(swapchain_details.capabilities.currentTransform)
+        .pre_transform(swapchain_details.capabilities.raw().currentTransform)
         .composite_alpha(vks::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
         .present_mode(present_mode)
         .clipped(true)
