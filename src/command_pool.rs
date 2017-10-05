@@ -6,6 +6,11 @@ use vks;
 use ::{util, VooResult, Device, Surface};
 
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct CommandPoolHandle(pub(crate) vks::VkCommandPool);
+
+
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkCommandPool,

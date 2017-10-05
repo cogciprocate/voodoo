@@ -12,6 +12,11 @@ use queue::{self, Queue};
 use instance;
 
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct DeviceHandle(pub(crate) vks::VkDevice);
+
+
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkDevice,
@@ -178,12 +183,12 @@ impl<'db> DeviceBuilder<'db> {
     pub fn enabled_layer_names<'s, 'cs, Cs>(&'s mut self, enabled_layer_names: Cs)
             -> &'s mut DeviceBuilder<'db>
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
-        // self.enabled_layer_names = Some(enabled_layer_names.into());
-        // if let Some(ref elns) = self.enabled_layer_names {
-        //     self.create_info.enabledLayerCount = elns.len() as u32;
-        //     self.create_info.enabled_layer_names = elns.as_ptr() as *const _;
-        // }
-        self.create_info.set_enabled_layer_names(enabled_layer_names);
+        self.enabled_layer_names = Some(enabled_layer_names.into());
+        if let Some(ref elns) = self.enabled_layer_names {
+            // self.create_info.set_enabled_layer_count(elns.len() as u32);
+            self.create_info.set_enabled_layer_names(elns.as_ptr_slice());
+        }
+        // self.create_info.set_enabled_layer_names(enabled_layer_names);
         self
     }
 
@@ -192,12 +197,13 @@ impl<'db> DeviceBuilder<'db> {
     pub fn enabled_extension_names<'s, 'cs, Cs>(&'s mut self, enabled_extension_names: Cs)
             -> &'s mut DeviceBuilder<'db>
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
-        // self.enabled_extension_names = Some(enabled_extension_names.into());
-        // if let Some(ref eens) = self.enabled_extension_names {
-        //     // self.create_info.enabledExtensionCount = eens.len() as u32;
-        //     self.create_info.enabled_extension_names = eens.as_ptr() as *const _;
-        // }
-        self.create_info.set_enabled_extension_names(enabled_extension_names);
+        self.enabled_extension_names = Some(enabled_extension_names.into());
+        if let Some(ref eens) = self.enabled_extension_names {
+            // self.create_info.enabledExtensionCount = eens.len() as u32;
+            // self.create_info.enabled_extension_names = eens.as_ptr() as *const _;
+            self.create_info.set_enabled_extension_names(eens.as_ptr_slice());
+        }
+        // self.create_info.set_enabled_extension_names(enabled_extension_names);
         self
     }
 
@@ -216,7 +222,7 @@ impl<'db> DeviceBuilder<'db> {
         let mut handle = ptr::null_mut();
         unsafe {
             ::check(physical_device.instance().proc_addr_loader().core.vkCreateDevice(physical_device.handle(),
-                self.create_info.raw(), ptr::null(), &mut handle));
+                self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         let mut loader = vks::DeviceProcAddrLoader::from_get_device_proc_addr(

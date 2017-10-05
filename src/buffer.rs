@@ -6,6 +6,12 @@ use std::marker::PhantomData;
 use vks;
 use ::{util, VooResult, Device, DeviceMemory, PRINT};
 
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct BufferHandle(pub(crate) vks::VkBuffer);
+
+
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkBuffer,
@@ -133,7 +139,7 @@ impl<'b> BufferBuilder<'b> {
         let mut handle = 0;
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateBuffer(device.handle(),
-                self.create_info.raw(), ptr::null(), &mut handle));
+                self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         // Memory Requirements:

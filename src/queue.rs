@@ -3,6 +3,13 @@ use smallvec::SmallVec;
 use vks;
 use ::{VooResult, Instance, PhysicalDevice, Device, Surface, QueueFlags};
 
+
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct QueueHandle(pub(crate) vks::VkQueue);
+
+
 pub struct QueueFamilyIndices {
     physical_device: PhysicalDevice,
     flags: ::QueueFlags,

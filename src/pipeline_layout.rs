@@ -7,6 +7,11 @@ use smallvec::SmallVec;
 use ::{util, VooResult, Device, ShaderModule, DescriptorSetLayout};
 
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct PipelineLayoutHandle(pub(crate) vks::VkPipelineLayout);
+
+
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkPipelineLayout,

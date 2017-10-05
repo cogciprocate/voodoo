@@ -1,10 +1,14 @@
 
-
-
 use std::sync::Arc;
 use std::ptr;
 use vks;
 use ::{util, VooResult, Device};
+
+
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct SemaphoreHandle(pub(crate) vks::VkSemaphore);
 
 #[derive(Debug)]
 struct Inner {

@@ -7,9 +7,20 @@ use vks;
 use ::{VooResult, Instance};
 
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct SurfaceHandle(pub(crate) vks::VkSurfaceKHR);
+
+impl SurfaceHandle {
+    pub fn raw(&self) -> vks::VkSurfaceKHR {
+        self.0
+    }
+}
+
+
 #[derive(Debug)]
 struct Inner {
-    handle: vks::khr_surface::VkSurfaceKHR,
+    handle: SurfaceHandle,
     instance: Instance,
     active: AtomicBool,
 }
@@ -24,7 +35,7 @@ impl Surface {
         SurfaceBuilder::new()
     }
 
-    pub unsafe fn from_raw(instance: Instance, handle: vks::VkSurfaceKHR) -> VooResult<Surface> {
+    pub unsafe fn from_raw(instance: Instance, handle: SurfaceHandle) -> VooResult<Surface> {
         Ok(Surface {
             inner: Arc::new(Inner {
                 handle: handle,
@@ -34,7 +45,7 @@ impl Surface {
         })
     }
 
-    pub fn handle(&self) -> vks::VkSurfaceKHR {
+    pub fn handle(&self) -> SurfaceHandle {
         self.inner.handle
     }
 }
@@ -42,7 +53,7 @@ impl Surface {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.instance.proc_addr_loader().khr_surface.vkDestroySurfaceKHR(self.instance.handle(), self.handle, ptr::null());
+            self.instance.proc_addr_loader().khr_surface.vkDestroySurfaceKHR(self.instance.handle(), self.handle.0, ptr::null());
         }
     }
 }
@@ -175,7 +186,7 @@ impl SurfaceBuilder {
 
         Ok(Surface {
             inner: Arc::new(Inner {
-                handle: handle,
+                handle: SurfaceHandle(handle),
                 instance: instance,
                 active: AtomicBool::new(false),
             })

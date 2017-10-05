@@ -9,6 +9,13 @@ use ::{VooResult, Instance, Surface, SwapchainSupportDetails, PRINT};
 use queue::{self, Queue};
 use instance;
 
+
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct PhysicalDeviceHandle(pub(crate) vks::VkPhysicalDevice);
+
+
 #[derive(Debug, Clone)]
 pub struct PhysicalDevice {
     handle: vks::VkPhysicalDevice,
@@ -67,7 +74,7 @@ impl PhysicalDevice {
         unsafe {
             let mut capabilities = mem::uninitialized();
             self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-                self.handle(), surface.handle(), &mut capabilities);
+                self.handle(), surface.handle().0, &mut capabilities);
             capabilities.into()
         }
     }
@@ -77,12 +84,12 @@ impl PhysicalDevice {
         let mut formats: SmallVec<[::SurfaceFormatKhr; 64]> = SmallVec::new();
         unsafe {
             self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(self.handle(),
-                surface.handle(), &mut format_count, ptr::null_mut());
+                surface.handle().0, &mut format_count, ptr::null_mut());
             assert!(format_count as usize <= formats.inline_size());
             formats.set_len(format_count as usize);
             if format_count != 0 {
                 self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(self.handle(),
-                    surface.handle(), &mut format_count, formats.as_mut_ptr() as *mut vks::VkSurfaceFormatKHR);
+                    surface.handle().0, &mut format_count, formats.as_mut_ptr() as *mut vks::VkSurfaceFormatKHR);
             }
         }
         if PRINT { println!("Physical device format count: {:?}", formats.len()); }
@@ -94,12 +101,12 @@ impl PhysicalDevice {
         let mut present_modes: SmallVec<[::PresentModeKhr; 16]> = SmallVec::new();
         unsafe {
             self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(self.handle(),
-                surface.handle(), &mut present_mode_count, ptr::null_mut());
+                surface.handle().0, &mut present_mode_count, ptr::null_mut());
             assert!(present_mode_count as usize <= present_modes.inline_size());
             present_modes.set_len(present_mode_count as usize);
             if present_mode_count != 0 {
                 self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(self.handle(),
-                    surface.handle(), &mut present_mode_count, present_modes.as_mut_ptr() as *mut _);
+                    surface.handle().0, &mut present_mode_count, present_modes.as_mut_ptr() as *mut _);
             }
         }
         if PRINT { println!("Physical device present mode count: {:?}", present_modes.len()); }
@@ -126,7 +133,7 @@ impl PhysicalDevice {
         let mut supported: vks::VkBool32 = vks::VK_FALSE;
         unsafe {
             ::check(self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceSupportKHR(
-                self.handle, queue_family_index, surface.handle(), &mut supported));
+                self.handle, queue_family_index, surface.handle().0, &mut supported));
         }
         supported == vks::VK_TRUE
     }

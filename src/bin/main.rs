@@ -12,7 +12,7 @@ use std::ptr;
 use std::time;
 use std::path::Path;
 use std::collections::HashMap;
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 use std::cmp;
 use libc::c_char;
 use smallvec::SmallVec;
@@ -87,10 +87,13 @@ fn enabled_layer_names<'ln>(loader: &Loader)
 
 /// Initializes a loader and returns a new instance.
 fn init_instance() -> VooResult<Instance> {
+    let app_name = CString::new("Hello Triangle").unwrap();
+    let eng_name = CString::new("None").unwrap();
+
     let app_info = voo::ApplicationInfo::builder()
-        .application_name("Hello Triangle")
+        .application_name(&app_name)
         .application_version((1, 0, 0))
-        .engine_name("No Engine")
+        .engine_name(&eng_name)
         .engine_version((1, 0, 0))
         .api_version((1, 0, 0))
         .build();
@@ -263,7 +266,7 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: QueueFlags,
         .clipped(true);
 
     if let Some(old_sc) = old_swapchain {
-        bldr.old_swapchain(old_sc);
+        bldr.old_swapchain(old_sc.handle());
     }
 
     if queue_family_indices[0] != queue_family_indices[1] {

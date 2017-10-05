@@ -5,6 +5,12 @@ use std::marker::PhantomData;
 use vks;
 use ::{util, VooResult, Device};
 
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct DescriptorSetLayoutHandle(pub(crate) vks::VkDescriptorSetLayout);
+
+
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkDescriptorSetLayout,
@@ -129,7 +135,7 @@ impl<'b> DescriptorSetLayoutBuilder<'b> {
         let mut handle = 0;
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateDescriptorSetLayout(device.handle(),
-                self.create_info.raw(), ptr::null(), &mut handle));
+                self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         Ok(DescriptorSetLayout {

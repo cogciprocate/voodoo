@@ -7,6 +7,11 @@ use vks;
 use ::{util, VooResult, Device, RenderPass, ImageView};
 
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct FramebufferHandle(pub(crate) vks::VkFramebuffer);
+
+
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkFramebuffer,

@@ -6,6 +6,11 @@ use vks;
 use ::{util, VooResult, Device, ShaderModule};
 
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct RenderPassHandle(pub(crate) vks::VkRenderPass);
+
+
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkRenderPass,
@@ -112,7 +117,7 @@ impl<'b> RenderPassBuilder<'b> {
         let mut handle = 0;
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateRenderPass(device.handle(),
-                self.create_info.raw(), ptr::null(), &mut handle));
+                self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         Ok(RenderPass {

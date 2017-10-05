@@ -5,7 +5,8 @@ use std::ffi::CStr;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{util, VooResult, Device, ShaderModule, PipelineLayout, RenderPass, Vertex};
+use ::{util, VooResult, Device, ShaderModule, PipelineLayoutHandle, PipelineLayout,
+    RenderPassHandle, RenderPass, PipelineHandle, Vertex};
 
 
 
@@ -38,7 +39,7 @@ impl GraphicsPipeline {
         pipelines.reserve_exact(builders.len());
 
         for builder in builders {
-            create_infos.push(builder.as_ref().raw().clone());
+            create_infos.push(builder.as_ref().as_raw().clone());
         }
 
         unsafe {
@@ -233,7 +234,7 @@ impl<'b> GraphicsPipelineBuilder<'b> {
 
     /// Specifies the binding locations used by both the pipeline and
     /// descriptor sets used with the pipeline.
-    pub fn layout<'s>(&'s mut self, layout: &PipelineLayout)
+    pub fn layout<'s>(&'s mut self, layout: PipelineLayoutHandle)
             -> &'s mut GraphicsPipelineBuilder<'b> {
         self.create_info.set_layout(layout);
         self
@@ -242,7 +243,7 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// Specifies the environment in which the pipeline will be used; the
     /// pipeline must only be used with an instance of any render pass
     /// compatible with the one provided.
-    pub fn render_pass<'s>(&'s mut self, render_pass: &RenderPass)
+    pub fn render_pass<'s>(&'s mut self, render_pass: RenderPassHandle)
             -> &'s mut GraphicsPipelineBuilder<'b> {
         self.create_info.set_render_pass(render_pass);
         self
@@ -257,7 +258,7 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     }
 
     /// Specifies the pipeline to derive from.
-    pub fn base_pipeline<'s>(&'s mut self, base_pipeline: &::Pipeline)
+    pub fn base_pipeline<'s>(&'s mut self, base_pipeline: PipelineHandle)
             -> &'s mut GraphicsPipelineBuilder<'b> {
         self.create_info.set_base_pipeline_handle(base_pipeline);
         self
@@ -277,7 +278,7 @@ impl<'b> GraphicsPipelineBuilder<'b> {
         let mut handle = 0;
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle(),
-                0, 1, self.create_info.raw(), ptr::null(), &mut handle));
+                0, 1, self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         Ok(GraphicsPipeline {

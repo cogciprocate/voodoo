@@ -122,7 +122,7 @@ fn replace_suffix(orig: &str) -> String {
 }
 
 /// Converts C/Vulkan names into Rust/Voodoo conventions.
-fn convert_type_name(orig_type: &str) -> String {
+fn to_voodoo_type(orig_type: &str) -> String {
     match orig_type {
         "float" => "f32".to_string(),
         "int32_t" => "i32".to_string(),
@@ -140,6 +140,9 @@ fn convert_type_name(orig_type: &str) -> String {
         "VkResult" => "ResultEnum".to_string(),
         "VkSurfaceKHR" => "Surface".to_string(),
         "VkSwapchainKHR" => "Swapchain".to_string(),
+        "VkDisplayKHR" => "Display".to_string(),
+        "VkDisplayModeKHR" => "DisplayMode".to_string(),
+        "VkDescriptorUpdateTemplateKHR" => "DescriptorUpdateTemplate".to_string(),
         "Window" => "u32".to_string(),
         other @ _ => {
             if other.len() > 2 && other.split_at(2).0 == "Vk" {
@@ -334,7 +337,7 @@ impl Member {
         if orig_type.contains("FlagBits") || orig_type.contains("Flags") {
             self.is_flags_type = true;
         }
-        self.voodoo_type = convert_type_name(&orig_type);
+        self.voodoo_type = to_voodoo_type(&orig_type);
         self.orig_type = orig_type;
     }
 }
@@ -427,7 +430,7 @@ impl Struct {
                 "category" => (),
                 "name" => {
                     let name = attrib.value.clone();
-                    voodoo_name = Some(convert_type_name(&name));
+                    voodoo_name = Some(to_voodoo_type(&name));
                     is_handle_type = struct_is_handle_type(&name);
                     orig_name = Some(name);
                 },
@@ -539,10 +542,10 @@ impl Struct {
     }
 
     fn add_member(&mut self, mut m: Member) {
-        if let Some(sf) = special_field(&m) {
-            self.special_fields.reserve(4);
-            self.special_fields.insert(m.voodoo_name.clone(), sf);
-        }
+        // if let Some(sf) = special_field(&m) {
+        //     self.special_fields.reserve(4);
+        //     self.special_fields.insert(m.voodoo_name.clone(), sf);
+        // }
         self.match_ptr_count_member(&mut m);
         self.members.push(m);
     }
@@ -854,6 +857,7 @@ struct MemberSig {
     arg_is_slice: bool,
     arg_is_struct: bool,
     arg_is_repr_c: bool,
+    arg_is_c_str: bool,
     convert_arg: bool,
     convert_arg_twice: bool,
     convert_to_bits: bool,
@@ -891,6 +895,7 @@ impl MemberSig {
             arg_is_slice,
             arg_is_struct: structs.contains_key(&m.voodoo_type),
             arg_is_repr_c,
+            arg_is_c_str: false,
             convert_arg: false,
             convert_arg_twice: false,
             convert_to_bits: false,
@@ -926,22 +931,28 @@ impl MemberSig {
                 sig.return_type.push_str(&format!("&[{}]", m.voodoo_type));
             }
         } else if m.voodoo_type == "i8" {
-            assert!(s.special_field(&m.voodoo_name).is_some());
-            sig.convert_arg = true;
+            // assert!(s.special_field(&m.voodoo_name).is_some());
+            // sig.convert_arg = true;
+            sig.arg_is_c_str = true;
             sig.set_fn_type_params.push_str(", ");
             sig.set_fn_type_params.push_str(sig.arg_lifetime);
-            sig.set_fn_type_params.push_str(", T");
-            sig.arg_type.push_str("T");
+            // sig.set_fn_type_params.push_str(", T");
+            // sig.arg_type.push_str("T");
+            // sig.arg_type.push_str("&'a CStr");
             if m.is_ptr {
+                sig.arg_type.push_str("&'a CStr");
                 // assert!(impl_type_param.contains("'b"));
-                sig.where_clause = format!("where {a}: {i}, T: Into<CharStr<{a}>>",
-                    a=sig.arg_lifetime, i=impl_type_param);
+                // sig.where_clause = format!("where {a}: {i}, T: Into<CharStr<{a}>>",
+                //     a=sig.arg_lifetime, i=impl_type_param);
+                sig.where_clause = format!("where {a}: {i}", a=sig.arg_lifetime, i=impl_type_param);
                 sig.return_type.push_str("&'a CStr");
                 sig.convert_return_to_c_str = true;
             } else if m.is_ptr_ptr {
+                sig.arg_type.push_str("&'a [*const c_char]");
                 // assert!(impl_type_param.contains("'b"));
-                sig.where_clause = format!("where {a}: {i}, T: Into<CharStrs<{a}>>",
-                    a=sig.arg_lifetime, i=impl_type_param);
+                // sig.where_clause = format!("where {a}: {i}, T: Into<CharStrs<{a}>>",
+                //     a=sig.arg_lifetime, i=impl_type_param);
+                sig.where_clause = format!("where {a}: {i}", a=sig.arg_lifetime, i=impl_type_param);
                 sig.return_type.push_str("&'a [*const c_char]");
                 sig.convert_return_to_slice = true;
             }
@@ -983,14 +994,17 @@ impl MemberSig {
                 sig.arg_type.push_str("mut ");
             }
             sig.arg_type.push_str("[");
+            // if m.is_handle_type {
+            //     // sig.arg_type.push_str("&");
+            //     // sig.arg_type.push_str(sig.arg_lifetime);
+            //     // sig.arg_type.push_str(" ");
+            //     // assert!(impl_type_param.contains("'b"));
+            // }
+            sig.arg_type.push_str(&m.voodoo_type);
             if m.is_handle_type {
-                sig.arg_type.push_str("&");
-                sig.arg_type.push_str(sig.arg_lifetime);
-                sig.arg_type.push_str(" ");
-                // assert!(impl_type_param.contains("'b"));
+                sig.arg_type.push_str("Handle");
                 sig.where_clause = format!("where {a}: {i}", a=sig.arg_lifetime, i=impl_type_param);
             }
-            sig.arg_type.push_str(&m.voodoo_type);
             sig.arg_type.push_str("]");
             if sig.arg_is_repr_c {
                 sig.return_type.push_str(&sig.arg_type);
@@ -1021,7 +1035,7 @@ impl MemberSig {
             sig.arg_type.push_str(&m.voodoo_type);
             sig.return_type.push_str(&sig.arg_type);
         } else {
-            if m.is_ptr || m.is_handle_type {
+            if m.is_ptr {
                 sig.set_fn_type_params.push_str(", ");
                 sig.set_fn_type_params.push_str(sig.arg_lifetime);
                 sig.arg_type.push_str("&");
@@ -1032,7 +1046,9 @@ impl MemberSig {
                 sig.where_clause = format!("where {a}: {i}", a=sig.arg_lifetime, i=impl_type_param);
             }
             sig.arg_type.push_str(&m.voodoo_type);
-            if !m.is_handle_type {
+            if m.is_handle_type {
+                sig.arg_type.push_str("Handle");
+            } else {
                 // Irregularities:
                 if m.orig_name != "pSampleMask" &&
                     m.orig_name != "pCoverageModulationTable" {
@@ -1092,25 +1108,25 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
         Ok(())
     };
 
-    if s.special_field(&m.voodoo_name).is_some() {
-        write!(o, "{t}{t}self.{} = Some({}", m.voodoo_name, sig.fn_name, t=t)?;
-        if sig.arg_is_slice {
-            if m.is_handle_type {
-                write!(o, ".iter().map(|h| h.handle()).collect()")?;
-            } else if sig.arg_is_struct {
-                write!(o, ".iter().map(|h| h.raw).collect()")?;
-            }
-        } else if sig.convert_arg {
-            write!(o, ".into()")?;
-        }
-        writeln!(o, ");")?;
-        writeln!(o, "{t}{t}{{", t=t)?;
-        writeln!(o, "{t}{t}{t}let {} = self.{}.as_ref().unwrap();", m.voodoo_name, sig.fn_name, t=t)?;
-        writeln!(o, "{t}{t}{t}self.raw.{} = {}.as_ptr();",
-            m.orig_name, m.voodoo_name, t=t)?;
-        set_counts(o, t)?;
-        writeln!(o, "{t}{t}}}", t=t)?;
-    } else {
+    // if s.special_field(&m.voodoo_name).is_some() {
+    //     write!(o, "{t}{t}self.{} = Some({}", m.voodoo_name, sig.fn_name, t=t)?;
+    //     if sig.arg_is_slice {
+    //         if m.is_handle_type {
+    //             write!(o, ".iter().map(|h| h.handle()).collect()")?;
+    //         } else if sig.arg_is_struct {
+    //             write!(o, ".iter().map(|h| h.raw).collect()")?;
+    //         }
+    //     } else if sig.convert_arg {
+    //         write!(o, ".into()")?;
+    //     }
+    //     writeln!(o, ");")?;
+    //     writeln!(o, "{t}{t}{{", t=t)?;
+    //     writeln!(o, "{t}{t}{t}let {} = self.{}.as_ref().unwrap();", m.voodoo_name, sig.fn_name, t=t)?;
+    //     writeln!(o, "{t}{t}{t}self.raw.{} = {}.as_ptr();",
+    //         m.orig_name, m.voodoo_name, t=t)?;
+    //     set_counts(o, t)?;
+    //     writeln!(o, "{t}{t}}}", t=t)?;
+    // } else {
         set_counts(o, "")?;
         write!(o, "{t}{t}self.raw.{} = ", m.orig_name, t=t)?;
         if sig.arg_is_struct {
@@ -1124,7 +1140,7 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
                         write!(o, "{}{} as *mut _", ORIG_PRE, m.orig_type)?;
                     }
                 } else {
-                    write!(o, "{}.raw()", sig.fn_name)?;
+                    write!(o, "{}.as_raw()", sig.fn_name)?;
                 }
             } else {
                 if let Some(ref len) = m.array_len {
@@ -1155,15 +1171,16 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
         } else {
             if m.is_handle_type {
                 if sig.arg_is_slice {
-                    assert!(s.special_fields.contains_key(&m.voodoo_name),
-                        "\"{}\" is lacking a special field for {{ {}: {} }}",
-                        s.voodoo_name, sig.fn_name, sig.arg_type);
-                    write!(o, "{}", sig.fn_name)?;
+                    // assert!(s.special_fields.contains_key(&m.voodoo_name),
+                    //     "\"{}\" is lacking a special field for {{ {}: {} }}",
+                    //     s.voodoo_name, sig.fn_name, sig.arg_type);
+                    write!(o, "{}.as_ptr() as *const {}{}", sig.fn_name, ORIG_PRE, m.orig_type)?;
                 } else {
                     if m.is_ptr {
                         write!(o, "&")?;
                     }
-                    write!(o, "{}.handle()", sig.fn_name)?;
+                    // write!(o, "{}.handle()", sig.fn_name)?;
+                    write!(o, "{}.0", sig.fn_name)?;
                 }
             } else if m.voodoo_type.as_str() == "bool" {
                 write!(o, "{} as u32", sig.fn_name)?;
@@ -1182,12 +1199,14 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
                 }
             } else if m.voodoo_type == "PipelineStageFlags" && m.is_ptr {
                 write!(o, "{} as *const PipelineStageFlags as *const _", sig.fn_name)?;
+            } else if sig.arg_is_c_str {
+                write!(o, "{}.as_ptr()", sig.fn_name)?;
             } else {
                 write!(o, "{}", sig.fn_name)?;
             }
         }
         writeln!(o, ";")?;
-    }
+    // }
     if is_for_builder {
         writeln!(o, "{t}{t}self", t=t)?;
     }
@@ -1444,7 +1463,7 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
             write_set_fn(o, s, m, struct_type_param, &struct_type_param_block, structs, false)?;
         }
 
-        writeln!(o, "{t}pub fn raw(&self) -> &{}{} {{", ORIG_PRE, s.orig_name, t=t)?;
+        writeln!(o, "{t}pub fn as_raw(&self) -> &{}{} {{", ORIG_PRE, s.orig_name, t=t)?;
         writeln!(o, "{t}{t}&self.raw", t=t)?;
         writeln!(o, "{t}}}", t=t)?;
 

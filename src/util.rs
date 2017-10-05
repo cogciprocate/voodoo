@@ -5,6 +5,7 @@ use std::path::Path;
 use std::fs::File;
 use std::io::{Read, BufReader};
 use std::ops::Deref;
+use std::slice;
 use libc::c_char;
 use smallvec::SmallVec;
 use vks;
@@ -96,6 +97,16 @@ impl<'cs> CharStrs<'cs> {
             CharStrs::OwnedPtr { ref ptrs } => ptrs.as_ptr(),
             CharStrs::OwnedOwned {ref ptrs, .. } => ptrs.as_ptr(),
         }
+    }
+
+    pub fn as_ptr_slice(&self) -> &'cs [*const c_char] {
+        // match *self {
+        //     CharStrs::Ptr { ptr, len } => unsafe { slice::from_raw_parts(ptr, len) },
+        //     CharStrs::RefPtr { ref ptrs } => ptrs,
+        //     CharStrs::OwnedPtr { ref ptrs } => ptrs.as_slice(),
+        //     CharStrs::OwnedOwned {ref ptrs, .. } => ptrs.as_slice(),
+        // }
+        unsafe { slice::from_raw_parts(self.as_ptr(), self.len()) }
     }
 }
 

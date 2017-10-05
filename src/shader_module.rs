@@ -8,12 +8,17 @@ use vks;
 use ::{VooResult, Device};
 
 
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct ShaderModuleHandle(pub(crate) vks::VkShaderModule);
+
+
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkShaderModule,
     device: Device,
 }
-
 
 // The following object types are consumed when they are passed into a Vulkan
 // command and not further accessed by the objects they are used to create.

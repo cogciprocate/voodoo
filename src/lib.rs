@@ -163,27 +163,27 @@ pub use util::{CharStr, CharStrs};
 pub use loader::Loader;
 pub use error::{Error, Result};
 pub use version::Version;
-pub use instance::Instance;
+pub use instance::{InstanceHandle, Instance};
 pub use physical_device::{PhysicalDevice};
-pub use device::Device;
-pub use surface::Surface;
-pub use queue::{queue_families, Queue};
-pub use swapchain::{Swapchain, SwapchainSupportDetails};
-pub use image_view::{ImageView};
-pub use shader_module::ShaderModule;
-pub use pipeline_layout::PipelineLayout;
-pub use render_pass::RenderPass;
+pub use device::{DeviceHandle, Device};
+pub use surface::{SurfaceHandle, Surface};
+pub use queue::{queue_families, QueueHandle, Queue};
+pub use swapchain::{SwapchainHandle, Swapchain, SwapchainSupportDetails};
+pub use image_view::{ImageViewHandle, ImageView};
+pub use shader_module::{ShaderModuleHandle, ShaderModule};
+pub use pipeline_layout::{PipelineLayoutHandle, PipelineLayout};
+pub use render_pass::{RenderPassHandle, RenderPass};
 pub use graphics_pipeline::GraphicsPipeline;
-pub use framebuffer::{Framebuffer};
-pub use command_pool::CommandPool;
+pub use framebuffer::{FramebufferHandle, Framebuffer};
+pub use command_pool::{CommandPoolHandle, CommandPool};
 // pub use command_buffers::create_command_buffers;
-pub use semaphore::Semaphore;
-pub use buffer::Buffer;
-pub use image::Image;
-pub use sampler::Sampler;
+pub use semaphore::{SemaphoreHandle, Semaphore};
+pub use buffer::{BufferHandle, Buffer};
+pub use image::{ImageHandle, Image};
+pub use sampler::{SamplerHandle, Sampler};
 pub use device_memory::DeviceMemory;
-pub use descriptor_set_layout::DescriptorSetLayout;
-pub use descriptor_pool::DescriptorPool;
+pub use descriptor_set_layout::{DescriptorSetLayoutHandle, DescriptorSetLayout};
+pub use descriptor_pool::{DescriptorPoolHandle, DescriptorPool};
 pub use structs::*;
 pub use enums::*;
 pub use bitflags::*;
@@ -191,26 +191,12 @@ pub use bitflags::*;
 /////////////// TEMP /////////////////
 // pub type DescriptorSet = vks::VkDescriptorSet;
 
+pub trait Handle {
+    type Handle;
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct InstanceHandle(pub(crate) vks::VkInstance);
+    fn handle(&self) -> Self::Handle;
+}
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct PhysicalDeviceHandle(pub(crate) vks::VkPhysicalDevice);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct DeviceHandle(pub(crate) vks::VkDevice);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct QueueHandle(pub(crate) vks::VkQueue);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct SemaphoreHandle(pub(crate) vks::VkSemaphore);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
@@ -226,14 +212,6 @@ pub struct DeviceMemoryHandle(pub(crate) vks::VkDeviceMemory);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct BufferHandle(pub(crate) vks::VkBuffer);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct ImageHandle(pub(crate) vks::VkImage);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
 pub struct EventHandle(pub(crate) vks::VkEvent);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -246,23 +224,7 @@ pub struct BufferViewHandle(pub(crate) vks::VkBufferView);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct ImageViewHandle(pub(crate) vks::VkImageView);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct ShaderModuleHandle(pub(crate) vks::VkShaderModule);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
 pub struct PipelineCacheHandle(pub(crate) vks::VkPipelineCache);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct PipelineLayoutHandle(pub(crate) vks::VkPipelineLayout);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct RenderPassHandle(pub(crate) vks::VkRenderPass);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
@@ -270,56 +232,28 @@ pub struct PipelineHandle(pub(crate) vks::VkPipeline);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DescriptorSetLayoutHandle(pub(crate) vks::VkDescriptorSetLayout);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct SamplerHandle(pub(crate) vks::VkSampler);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct DescriptorPoolHandle(pub(crate) vks::VkDescriptorPool);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
 pub struct DescriptorSetHandle(pub(crate) vks::VkDescriptorSet);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct FramebufferHandle(pub(crate) vks::VkFramebuffer);
+pub struct DisplayHandle(pub(crate) vks::VkDisplayKHR);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct CommandPoolHandle(pub(crate) vks::VkCommandPool);
+pub struct DisplayModeHandle(pub(crate) vks::VkDisplayModeKHR);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct SurfaceKhrHandle(pub(crate) vks::VkSurfaceKHR);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct SwapchainKhrHandle(pub(crate) vks::VkSwapchainKHR);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct DisplayKhrHandle(pub(crate) vks::VkDisplayKHR);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct DisplayModeKhrHandle(pub(crate) vks::VkDisplayModeKHR);
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct DescriptorUpdateTemplateKhrHandle(pub(crate) vks::VkDescriptorUpdateTemplateKHR);
+pub struct DescriptorUpdateTemplateHandle(pub(crate) vks::VkDescriptorUpdateTemplateKHR);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct DebugReportCallbackExtHandle(pub(crate) vks::VkDebugReportCallbackEXT);
 
-// pub struct SamplerYcbcrConversionKhrHandle(pub(crate) vks::VkSamplerYcbcrConversionKHR);
-// pub struct ObjectTableNvxHandle(pub(crate) vks::VkObjectTableNVX);
-// pub struct IndirectCommandsLayoutNvxHandle(pub(crate) vks::VkIndirectCommandsLayoutNVX);
-// pub struct ValidationCacheExtHandle(pub(crate) vks::VkValidationCacheEXT);
+pub struct SamplerYcbcrConversionKhrHandle(pub(crate) u64);
+pub struct ObjectTableNvxHandle(pub(crate) u64);
+pub struct IndirectCommandsLayoutNvxHandle(pub(crate) u64);
+pub struct ValidationCacheExtHandle(pub(crate) u64);
 
 
 

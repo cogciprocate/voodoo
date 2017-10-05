@@ -17,6 +17,12 @@ unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,
     vks::VK_FALSE
 }
 
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct InstanceHandle(pub(crate) vks::VkInstance);
+
+
 fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::InstanceProcAddrLoader)
         -> SmallVec<[vks::VkPhysicalDevice; 16]> {
     let mut device_count = 0;
@@ -31,7 +37,6 @@ fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::InstanceP
     if PRINT { println!("Available devices: {:?}", devices_raw); }
     devices_raw
 }
-
 
 #[derive(Debug)]
 struct Inner {
@@ -140,7 +145,7 @@ impl<'ib> InstanceBuilder<'ib> {
     pub fn application_info<'ai, 's>(&'s mut self, application_info: &'ai ApplicationInfo)
             -> &'s mut InstanceBuilder<'ib>
             where 'ai: 'ib {
-        self.create_info.pApplicationInfo = application_info.raw();
+        self.create_info.pApplicationInfo = application_info.as_raw();
         self
     }
 

@@ -5,6 +5,12 @@ use std::marker::PhantomData;
 use vks;
 use ::{util, VooResult, Device};
 
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct SamplerHandle(pub(crate) vks::VkSampler);
+
+
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkSampler,
@@ -278,7 +284,7 @@ impl<'b> SamplerBuilder<'b> {
         let mut handle = 0;
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateSampler(device.handle(),
-                self.create_info.raw(), ptr::null(), &mut handle));
+                self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         Ok(Sampler {

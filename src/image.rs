@@ -6,6 +6,12 @@ use std::marker::PhantomData;
 use vks;
 use ::{util, VooResult, Device, DeviceMemory, PRINT};
 
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct ImageHandle(pub(crate) vks::VkImage);
+
+
 #[derive(Debug)]
 struct Inner {
     handle: vks::VkImage,
@@ -221,7 +227,7 @@ impl<'b> ImageBuilder<'b> {
         let mut handle = 0;
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateImage(device.handle(),
-                self.create_info.raw(), ptr::null(), &mut handle));
+                self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         // // Memory Requirements:

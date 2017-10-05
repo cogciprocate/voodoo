@@ -6,8 +6,12 @@ use std::fmt;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{queue, VooResult, Instance, Surface, Device, PhysicalDevice, Image};
+use ::{queue, VooResult, Instance, Surface, Device, PhysicalDevice, Image, SurfaceHandle};
 
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct SwapchainHandle(pub(crate) vks::VkSwapchainKHR);
 
 // pub struct SwapchainSupportDetails {
 //     pub capabilities: vks::khr_surface::VkSurfaceCapabilitiesKHR,
@@ -39,7 +43,7 @@ impl SwapchainSupportDetails {
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::khr_swapchain::VkSwapchainKHR,
+    handle: SwapchainHandle,
     device: Device,
     surface: Surface,
     // TODO: Revisit whether we should simply store a handle.
@@ -70,7 +74,7 @@ impl Swapchain {
         &self.inner.extent
     }
 
-    pub fn handle(&self) -> vks::VkSwapchainKHR {
+    pub fn handle(&self) -> SwapchainHandle {
         self.inner.handle
     }
 
@@ -83,7 +87,8 @@ impl Swapchain {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().vkDestroySwapchainKHR(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().vkDestroySwapchainKHR(self.device.handle(),
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -143,7 +148,7 @@ impl<'b> SwapchainBuilder<'b> {
     pub fn surface<'s, 'p>(&'s mut self, surface: &'p Surface)
             -> &'s mut SwapchainBuilder<'b>
             where 'p: 'b {
-        self.create_info.set_surface(surface);
+        self.create_info.set_surface(surface.handle());
         self.surface = Some(surface);
         self
     }
@@ -294,7 +299,7 @@ impl<'b> SwapchainBuilder<'b> {
     /// obtained from oldSwapchain until a presentable image is acquired from
     /// the new swapchain, as long as it has not entered a state that causes
     /// it to return VK_ERROR_OUT_OF_DATE_KHR.
-    pub fn old_swapchain<'s>(&'s mut self, old_swapchain: &Swapchain)
+    pub fn old_swapchain<'s>(&'s mut self, old_swapchain: SwapchainHandle)
             -> &'s mut SwapchainBuilder<'b> {
         self.create_info.set_old_swapchain(old_swapchain);
         self
@@ -307,7 +312,7 @@ impl<'b> SwapchainBuilder<'b> {
 
         let mut handle = 0;
         let res = unsafe { device.proc_addr_loader().vkCreateSwapchainKHR(device.handle(),
-            self.create_info.raw(), ptr::null(), &mut handle) };
+            self.create_info.as_raw(), ptr::null(), &mut handle) };
 
         if res != vks::VK_SUCCESS {
             panic!("failed to create swap chain!");
@@ -330,7 +335,7 @@ impl<'b> SwapchainBuilder<'b> {
 
         Ok(Swapchain {
             inner: Arc::new(Inner {
-                handle,
+                handle: SwapchainHandle(handle),
                 device,
                 surface: self.surface.cloned()
                     .expect("unable to create swapchain: no surface specified"),

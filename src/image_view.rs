@@ -2,7 +2,12 @@
 use std::sync::Arc;
 use std::ptr;
 use vks;
-use ::{VooResult, Swapchain, Device};
+use ::{VooResult, Swapchain, Device, ImageHandle};
+
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct ImageViewHandle(pub(crate) vks::VkImageView);
 
 
 #[derive(Debug)]
@@ -55,8 +60,8 @@ impl<'b> ImageViewBuilder<'b> {
     }
 
     /// Specifies the image on which the view will be created.
-    pub fn image<'s>(&'s mut self, image: vks::VkImage) -> &'s mut ImageViewBuilder<'b> {
-        self.create_info.set_image_handle(image);
+    pub fn image<'s>(&'s mut self, image: ImageHandle) -> &'s mut ImageViewBuilder<'b> {
+        self.create_info.set_image(image);
         self
     }
 
@@ -94,7 +99,7 @@ impl<'b> ImageViewBuilder<'b> {
 
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateImageView(device.handle(),
-                self.create_info.raw(), ptr::null(), &mut handle));
+                self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         Ok(ImageView {
