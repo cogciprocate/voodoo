@@ -191,6 +191,7 @@ pub use bitflags::*;
 /////////////// TEMP /////////////////
 // pub type DescriptorSet = vks::VkDescriptorSet;
 
+#[derive(Clone, Debug)]
 pub struct DescriptorSet(vks::VkDescriptorSet);
 
 impl DescriptorSet {
@@ -199,6 +200,8 @@ impl DescriptorSet {
     }
 }
 
+
+#[derive(Clone, Debug)]
 pub struct BufferView(vks::VkBufferView);
 
 impl BufferView {
@@ -207,6 +210,8 @@ impl BufferView {
     }
 }
 
+
+#[derive(Clone, Debug)]
 pub struct Pipeline(vks::VkPipeline);
 
 impl Pipeline {
@@ -215,15 +220,26 @@ impl Pipeline {
     }
 }
 
+
+#[derive(Clone, Debug)]
 pub struct CommandBuffer(vks::VkCommandBuffer);
 
 impl CommandBuffer {
+    pub fn new(h: vks::VkCommandBuffer) -> CommandBuffer {
+        CommandBuffer(h)
+    }
+
     pub fn handle(&self) -> vks::VkCommandBuffer {
         self.0
     }
 }
 
+// impl From<vks::VkCommandBuffer> for CommandBuffer {
+//     fn from
+// }
 
+
+#[derive(Clone, Debug)]
 pub struct Fence(vks::VkFence);
 
 impl Fence {
@@ -233,6 +249,7 @@ impl Fence {
 }
 
 
+#[derive(Clone, Debug)]
 pub struct DisplayModeKhr(vks::VkDisplayModeKHR);
 
 impl DisplayModeKhr {
@@ -242,6 +259,7 @@ impl DisplayModeKhr {
 }
 
 
+#[derive(Clone, Debug)]
 pub struct DisplayKhr(vks::VkDisplayKHR);
 
 impl DisplayKhr {
@@ -250,8 +268,23 @@ impl DisplayKhr {
     }
 }
 
+
+// typedef union VkClearColorValue {
+//     float       float32[4];
+//     int32_t     int32[4];
+//     uint32_t    uint32[4];
+// } VkClearColorValue;
+// pub enum ClearColorValue {
+//     Float([f32; 4]),
+//     I32([i32; 4]),
+//     U32([u32; 4]),
+// }
+
+pub type ClearColorValue = vks::VkClearColorValue;
+
 // pub type SurfaceKhr = vks::VkSurfaceKHR;
 // pub type SwapchainKhr = vks::VkSwapchainKHR;
+pub type DeviceSize = vks::VkDeviceSize;
 pub type Display = vks::Display;
 pub type MirConnection = vks::MirConnection;
 pub type MirSurface = vks::MirSurface;
@@ -278,11 +311,25 @@ pub type DWORD = vks::DWORD;
 pub type LPCWSTR = vks::LPCWSTR;
 
 
-
-
-
 // TODO: MAKE THESE UNIONS ENUMS:
 pub type ClearValue = vks::VkClearValue;
+
+
+pub const LOD_CLAMP_NONE: f32 = 1000.0f32;
+pub const REMAINING_MIP_LEVELS: u32 = !0;
+pub const REMAINING_ARRAY_LAYERS: u32= !0;
+pub const WHOLE_SIZE: u64 = !0;
+pub const ATTACHMENT_UNUSED: u32 = !0;
+pub const TRUE: i32 = 1;
+pub const FALSE: i32 = 0;
+pub const QUEUE_FAMILY_IGNORED: u32 = !0;
+pub const SUBPASS_EXTERNAL: u32 = !0;
+pub const MAX_PHYSICAL_DEVICE_NAME_SIZE: usize = 256;
+pub const UUID_SIZE: usize = 16;
+pub const MAX_MEMORY_TYPES: usize = 32;
+pub const MAX_MEMORY_HEAPS: usize = 16;
+pub const MAX_EXTENSION_NAME_SIZE: usize = 256;
+pub const MAX_DESCRIPTION_SIZE: usize = 256;
 
 
 //////////////////////////////////////
@@ -328,38 +375,42 @@ pub struct Vertex {
 }
 
 impl Vertex {
-    pub fn binding_description() -> vks::VkVertexInputBindingDescription {
-        vks::VkVertexInputBindingDescription {
-            binding: 0,
-            stride: mem::size_of::<Vertex>() as u32,
+    pub fn binding_description() -> VertexInputBindingDescription {
+        VertexInputBindingDescription::builder()
+            .binding(0)
+            .stride(mem::size_of::<Vertex>() as u32)
             // * VERTEX_INPUT_RATE_VERTEX: Move to the next data entry
             //   after each vertex
             // * VERTEX_INPUT_RATE_INSTANCE: Move to the next data entry
             //   after each instance
-            inputRate: vks::VK_VERTEX_INPUT_RATE_VERTEX,
-        }
+            // .input_rate(vks::VK_VERTEX_INPUT_RATE_VERTEX)
+            .input_rate(VertexInputRate::Vertex)
+            .build()
     }
 
-    pub fn attribute_descriptions() -> [vks::VkVertexInputAttributeDescription; 3] {
+    pub fn attribute_descriptions() -> [VertexInputAttributeDescription; 3] {
         [
-            vks::VkVertexInputAttributeDescription {
-                binding: 0,
-                location: 0,
-                format: vks::VK_FORMAT_R32G32B32_SFLOAT,
-                offset: offset_of!(Vertex, pos),
-            },
-            vks::VkVertexInputAttributeDescription {
-                binding: 0,
-                location: 1,
-                format: vks::VK_FORMAT_R32G32B32_SFLOAT,
-                offset: offset_of!(Vertex, color),
-            },
-            vks::VkVertexInputAttributeDescription {
-                binding: 0,
-                location: 2,
-                format: vks::VK_FORMAT_R32G32_SFLOAT,
-                offset: offset_of!(Vertex, tex_coord),
-            },
+            VertexInputAttributeDescription::builder()
+                .binding(0)
+                .location(0)
+                // .format(vks::VK_FORMAT_R32G32B32_SFLOAT)
+                .format(Format::R32G32B32Sfloat)
+                .offset(offset_of!(Vertex, pos))
+                .build(),
+            VertexInputAttributeDescription::builder()
+                .binding(0)
+                .location(1)
+                // .format(vks::VK_FORMAT_R32G32B32_SFLOAT)
+                .format(Format::R32G32B32Sfloat)
+                .offset(offset_of!(Vertex, color))
+                .build(),
+            VertexInputAttributeDescription::builder()
+                .binding(0)
+                .location(2)
+                // .format(vks::VK_FORMAT_R32G32_SFLOAT)
+                .format(Format::R32G32Sfloat)
+                .offset(offset_of!(Vertex, tex_coord))
+                .build(),
         ]
     }
 }

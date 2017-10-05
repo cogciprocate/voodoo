@@ -136,7 +136,7 @@ fn device_is_suitable(instance: &Instance, surface: &Surface,
     queue::queue_families(instance, surface, &physical_device, queue_flags).is_complete() &&
         extensions_supported &&
         swap_chain_adequate &&
-        device_features.samplerAnisotropy != 0
+        device_features.sampler_anisotropy()
 }
 
 /// Returns a physical device from the list of available physical devices if
@@ -181,30 +181,6 @@ fn create_device(instance: Instance, surface: &Surface, physical_device: Physica
         .build(physical_device)
 }
 
-// fn choose_swap_surface_format(available_formats: &[vks::khr_surface::VkSurfaceFormatKHR])
-//         -> vks::khr_surface::VkSurfaceFormatKHR {
-//     if available_formats.len() == 1 && available_formats[0].format == vks::VK_FORMAT_UNDEFINED {
-//         return vks::khr_surface::VkSurfaceFormatKHR {
-//             format: vks::VK_FORMAT_B8G8R8A8_UNORM,
-//             colorSpace: vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-//         };
-//     }
-//     for available_format in available_formats {
-//         if available_format.format == Format::B8G8R8A8Unorm as u32 &&
-//                 available_format.colorSpace ==
-//                 vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR {
-//             return vks::khr_surface::VkSurfaceFormatKHR {
-//                 format: vks::VK_FORMAT_B8G8R8A8_UNORM,
-//                 colorSpace: vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-//             };
-//         }
-//     }
-//     vks::khr_surface::VkSurfaceFormatKHR {
-//         format: available_formats[0].format,
-//         colorSpace: available_formats[0].colorSpace,
-//     }
-// }
-
 fn choose_swap_surface_format(available_formats: &[voo::SurfaceFormatKhr])
         -> voo::SurfaceFormatKhr {
     if available_formats.len() == 1 && available_formats[0].format() == voo::Format::Undefined {
@@ -215,17 +191,11 @@ fn choose_swap_surface_format(available_formats: &[voo::SurfaceFormatKhr])
     }
     for available_format in available_formats {
         if available_format.format() == Format::B8G8R8A8Unorm &&
-                available_format.color_space() ==
-                voo::ColorSpaceKhr::SrgbNonlinearKhr {
-            // return vks::khr_surface::VkSurfaceFormatKHR {
-            //     format: vks::VK_FORMAT_B8G8R8A8_UNORM,
-            //     colorSpace: vks::khr_surface::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-
-            // };
+                available_format.color_space() == voo::ColorSpaceKhr::SrgbNonlinearKhr {
             return voo::SurfaceFormatKhr::builder()
                 .format(voo::Format::B8G8R8A8Unorm)
                 .color_space(voo::ColorSpaceKhr::SrgbNonlinearKhr)
-                .build()
+                .build();
         }
     }
     voo::SurfaceFormatKhr::builder()
@@ -234,36 +204,39 @@ fn choose_swap_surface_format(available_formats: &[voo::SurfaceFormatKhr])
         .build()
 }
 
-fn choose_swap_present_mode(available_present_modes: &[vks::khr_surface::VkPresentModeKHR])
-        -> vks::khr_surface::VkPresentModeKHR {
-    let mut best_mode = vks::khr_surface::VK_PRESENT_MODE_MAILBOX_KHR;
+fn choose_swap_present_mode(available_present_modes: &[voo::PresentModeKhr])
+        -> voo::PresentModeKhr {
+    let mut best_mode = voo::PresentModeKhr::MailboxKhr;
     for &available_present_mode in available_present_modes {
-        if available_present_mode == vks::khr_surface::VK_PRESENT_MODE_FIFO_KHR {
+        if available_present_mode == voo::PresentModeKhr::FifoKhr {
             return available_present_mode;
-        } else if available_present_mode == vks::khr_surface::VK_PRESENT_MODE_IMMEDIATE_KHR {
+        } else if available_present_mode == voo::PresentModeKhr::ImmediateKhr {
             best_mode = available_present_mode;
         }
     }
     best_mode
 }
 
-fn choose_swap_extent(capabilities: &vks::khr_surface::VkSurfaceCapabilitiesKHR,
-        window_size: Option<vks::VkExtent2D>) -> vks::VkExtent2D {
-    if capabilities.currentExtent.width != u32::max_value() {
-        return capabilities.currentExtent.clone();
+fn choose_swap_extent(capabilities: &voo::SurfaceCapabilitiesKhr,
+        window_size: Option<voo::Extent2d>) -> voo::Extent2d {
+    if capabilities.current_extent().width() != u32::max_value() {
+        return capabilities.current_extent().clone();
     } else {
+
         let mut actual_extent = window_size
-            .unwrap_or(vks::VkExtent2D { width: 1024, height: 768 });
-        actual_extent.width = cmp::max(capabilities.minImageExtent.width,
-            cmp::min(capabilities.maxImageExtent.width, actual_extent.width));
-        actual_extent.height = cmp::max(capabilities.minImageExtent.height,
-            cmp::min(capabilities.maxImageExtent.height, actual_extent.height));
+            .unwrap_or(voo::Extent2d::builder().width(1024).height(768).build());
+        let actual_extent_width = actual_extent.width();
+        let actual_extent_height = actual_extent.height();
+        actual_extent.set_width(cmp::max(capabilities.min_image_extent().width(),
+            cmp::min(capabilities.max_image_extent().width(), actual_extent_width)));
+        actual_extent.set_height(cmp::max(capabilities.min_image_extent().height(),
+            cmp::min(capabilities.max_image_extent().height(), actual_extent_height)));
         return actual_extent
     }
 }
 
 fn create_swapchain(surface: Surface, device: Device, queue_flags: QueueFlags,
-        window_size: Option<vks::VkExtent2D>, old_swapchain: Option<Swapchain>)
+        window_size: Option<voo::Extent2d>, old_swapchain: Option<&Swapchain>)
         -> VooResult<Swapchain> {
     let swapchain_details: SwapchainSupportDetails = SwapchainSupportDetails::new(
         device.instance(), &surface, device.physical_device());
@@ -272,10 +245,10 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: QueueFlags,
     let extent = choose_swap_extent(&swapchain_details.capabilities, window_size);
 
     // TODO: REVISIT THIS: https://vulkan-tutorial.com/Drawing_a_triangle/Presentation/Swap_chain
-    let mut image_count = swapchain_details.capabilities.minImageCount + 1;
-    if swapchain_details.capabilities.maxImageCount > 0 &&
-            image_count > swapchain_details.capabilities.maxImageCount {
-        image_count = swapchain_details.capabilities.maxImageCount;
+    let mut image_count = swapchain_details.capabilities.min_image_count() + 1;
+    if swapchain_details.capabilities.max_image_count() > 0 &&
+            image_count > swapchain_details.capabilities.max_image_count() {
+        image_count = swapchain_details.capabilities.max_image_count();
     }
     let indices = queue::queue_families(device.instance(), &surface,
         device.physical_device(), queue_flags);
@@ -285,111 +258,180 @@ fn create_swapchain(surface: Surface, device: Device, queue_flags: QueueFlags,
     let mut bldr = Swapchain::builder();
     bldr.surface(&surface)
         .min_image_count(image_count)
-        .image_format(surface_format.format)
-        .image_color_space(surface_format.colorSpace)
+        .image_format(surface_format.format())
+        .image_color_space(surface_format.color_space())
         .image_extent(extent.clone())
         .image_array_layers(1)
-        .image_usage(vks::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
-        .pre_transform(swapchain_details.capabilities.currentTransform)
-        .composite_alpha(vks::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
+        // .image_usage(voo::IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
+        .image_usage(voo::ImageUsageFlags::COLOR_ATTACHMENT)
+        .pre_transform(swapchain_details.capabilities.current_transform())
+        // .composite_alpha(voo::COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
+        .composite_alpha(voo::CompositeAlphaFlagsKhr::OPAQUE)
         .present_mode(present_mode)
-        .clipped(true)
-        .old_swapchain(old_swapchain.map(|sc| sc.handle()).unwrap_or(0));
+        .clipped(true);
+
+    if let Some(old_sc) = old_swapchain {
+        bldr.old_swapchain(old_sc);
+    }
 
     if queue_family_indices[0] != queue_family_indices[1] {
-        bldr.image_sharing_mode(vks::VK_SHARING_MODE_CONCURRENT);
+        // bldr.image_sharing_mode(voo::SHARING_MODE_CONCURRENT);
+        bldr.image_sharing_mode(voo::SharingMode::Concurrent);
         bldr.queue_family_indices(&queue_family_indices[..]);
     } else {
-        bldr.image_sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE);
+        // bldr.image_sharing_mode(voo::SHARING_MODE_EXCLUSIVE);
+        bldr.image_sharing_mode(voo::SharingMode::Exclusive);
     }
     bldr.build(device)
 }
 
 pub fn create_image_views(swapchain: &Swapchain) -> VooResult<Vec<ImageView>> {
-    swapchain.images().iter().map(|&image| {
+    swapchain.images().iter().map(|image| {
         ImageView::builder()
             .image(image)
-            .view_type(vks::VK_IMAGE_VIEW_TYPE_2D)
+            // .view_type(voo::IMAGE_VIEW_TYPE_2D)
+            .view_type(voo::ImageViewType::Type2d)
             .format(swapchain.image_format())
-            .components(vks::VkComponentMapping::default())
-            .subresource_range(vks::VkImageSubresourceRange {
-                aspectMask: vks::VK_IMAGE_ASPECT_COLOR_BIT,
-                baseMipLevel: 0,
-                levelCount: 1,
-                baseArrayLayer: 0,
-                layerCount: 1,
-            })
+            .components(voo::ComponentMapping::default())
+            .subresource_range(voo::ImageSubresourceRange::builder()
+                .aspect_mask(voo::ImageAspectFlags::COLOR)
+                .base_mip_level(0)
+                .level_count(1)
+                .base_array_layer(0)
+                .layer_count(1)
+                .build()
+            )
             .build(swapchain.device().clone(), Some(swapchain.clone()))
 
     }).collect::<Result<Vec<_>, _>>()
 }
 
-fn find_depth_format(device: &Device) -> VooResult<vks::VkFormat> {
-    find_supported_format(device, &[vks::VK_FORMAT_D32_SFLOAT, vks::VK_FORMAT_D32_SFLOAT_S8_UINT,
-        vks::VK_FORMAT_D24_UNORM_S8_UINT], vks::VK_IMAGE_TILING_OPTIMAL,
-        vks::VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+fn find_supported_format(device: &Device, candidates: &[voo::Format], tiling: voo::ImageTiling,
+        features: voo::FormatFeatureFlags) -> VooResult<voo::Format> {
+    for &format in candidates {
+        // let mut props: voo::FormatProperties;
+        // unsafe {
+        //     props = mem::uninitialized();
+        //     device.instance().proc_addr_loader().vkGetPhysicalDeviceFormatProperties(
+        //         device.physical_device().handle(), format, &mut props);
+        // }
+
+        let props = device.instance().physical_device_format_properties(device.physical_device(),
+            format);
+
+        // if tiling == voo::IMAGE_TILING_LINEAR &&
+        //         (props.linearTilingFeatures & features) == features
+        // {
+        //     return Ok(format);
+        // } else if tiling == voo::IMAGE_TILING_OPTIMAL &&
+        //         (props.optimalTilingFeatures & features) == features
+        // {
+        //     return Ok(format);
+        // }
+
+        if tiling == voo::ImageTiling::Linear &&
+                props.linear_tiling_features().contains(features) {
+            return Ok(format);
+        } else if tiling == voo::ImageTiling::Optimal &&
+                props.optimal_tiling_features().contains(features) {
+            return Ok(format);
+        }
+    }
+
+    panic!("Failed to find supported format.")
 }
 
-fn create_render_pass(device: Device, swapchain_image_format: vks::VkFormat)
+fn find_depth_format(device: &Device) -> VooResult<voo::Format> {
+    // find_supported_format(device, &[voo::FORMAT_D32_SFLOAT, voo::FORMAT_D32_SFLOAT_S8_UINT,
+    //     voo::FORMAT_D24_UNORM_S8_UINT], voo::IMAGE_TILING_OPTIMAL,
+    //     voo::FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+
+    find_supported_format(device, &[voo::Format::D32Sfloat, voo::Format::D32SfloatS8Uint,
+        voo::Format::D24UnormS8Uint], voo::ImageTiling::Optimal,
+        voo::FormatFeatureFlags::DEPTH_STENCIL_ATTACHMENT)
+}
+
+fn create_render_pass(device: Device, swapchain_image_format: voo::Format)
         -> VooResult<RenderPass> {
     let depth_image_format = find_depth_format(&device)?;
 
-    let color_attachment = vks::VkAttachmentDescription {
-        flags: 0,
-        format: swapchain_image_format,
-        samples: vks::VK_SAMPLE_COUNT_1_BIT,
-        loadOp: vks::VK_ATTACHMENT_LOAD_OP_CLEAR,
-        storeOp: vks::VK_ATTACHMENT_STORE_OP_STORE,
-        stencilLoadOp: vks::VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-        stencilStoreOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        initialLayout: vks::VK_IMAGE_LAYOUT_UNDEFINED,
-        finalLayout: vks::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-    };
+    let color_attachment = voo::AttachmentDescription::builder()
+        // .flags(0)
+        .format(swapchain_image_format)
+        // .samples(voo::SAMPLE_COUNT_1_BIT)
+        .samples(voo::SampleCountFlags::COUNT_1)
+        // .load_op(voo::ATTACHMENT_LOAD_OP_CLEAR)
+        .load_op(voo::AttachmentLoadOp::Clear)
+        // .store_op(voo::ATTACHMENT_STORE_OP_STORE)
+        .store_op(voo::AttachmentStoreOp::Store)
+        // .stencil_load_op(voo::ATTACHMENT_LOAD_OP_DONT_CARE)
+        .stencil_load_op(voo::AttachmentLoadOp::DontCare)
+        // .stencil_store_op(voo::ATTACHMENT_STORE_OP_DONT_CARE)
+        .stencil_store_op(voo::AttachmentStoreOp::DontCare)
+        // .initial_layout(voo::IMAGE_LAYOUT_UNDEFINED)
+        .initial_layout(voo::ImageLayout::Undefined)
+        // .final_layout(voo::IMAGE_LAYOUT_PRESENT_SRC_KHR)
+        .final_layout(voo::ImageLayout::PresentSrcKhr)
+        .build();
 
-    let depth_attachment = vks::VkAttachmentDescription {
-        flags: 0,
-        format: depth_image_format,
-        samples: vks::VK_SAMPLE_COUNT_1_BIT,
-        loadOp: vks::VK_ATTACHMENT_LOAD_OP_CLEAR,
-        storeOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        stencilLoadOp: vks::VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-        stencilStoreOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
-        initialLayout: vks::VK_IMAGE_LAYOUT_UNDEFINED,
-        finalLayout: vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-    };
+    let depth_attachment = voo::AttachmentDescription::builder()
+        // .flags(0)
+        .format(depth_image_format)
+        // .samples(voo::SAMPLE_COUNT_1_BIT)
+        .samples(voo::SampleCountFlags::COUNT_1)
+        // .load_op(voo::ATTACHMENT_LOAD_OP_CLEAR)
+        .load_op(voo::AttachmentLoadOp::Clear)
+        // .store_op(voo::ATTACHMENT_STORE_OP_DONT_CARE)
+        .store_op(voo::AttachmentStoreOp::DontCare)
+        // .stencil_load_op(voo::ATTACHMENT_LOAD_OP_DONT_CARE)
+        .stencil_load_op(voo::AttachmentLoadOp::DontCare)
+        // .stencil_store_op(voo::ATTACHMENT_STORE_OP_DONT_CARE)
+        .stencil_store_op(voo::AttachmentStoreOp::DontCare)
+        // .initial_layout(voo::IMAGE_LAYOUT_UNDEFINED)
+        .initial_layout(voo::ImageLayout::Undefined)
+        // .final_layout(voo::IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+        .final_layout(voo::ImageLayout::DepthStencilAttachmentOptimal)
+        .build();
 
-    let color_attachment_ref = vks::VkAttachmentReference {
-        attachment: 0,
-        layout: vks::VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-    };
+    let color_attachment_ref = voo::AttachmentReference::builder()
+        .attachment(0)
+        // .layout(voo::IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+        .layout(voo::ImageLayout::ColorAttachmentOptimal)
+        .build();
 
-    let depth_attachment_ref = vks::VkAttachmentReference {
-        attachment: 1,
-        layout: vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-    };
+    let depth_attachment_ref = voo::AttachmentReference::builder()
+        .attachment(1)
+        // .layout(voo::IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+        .layout(voo::ImageLayout::DepthStencilAttachmentOptimal)
+        .build();
 
-    let subpass = vks::VkSubpassDescription {
-        flags: 0,
-        pipelineBindPoint: vks::VK_PIPELINE_BIND_POINT_GRAPHICS,
-        inputAttachmentCount: 0,
-        pInputAttachments: ptr::null(),
-        colorAttachmentCount: 1,
-        pColorAttachments: &color_attachment_ref,
-        pResolveAttachments: ptr::null(),
-        pDepthStencilAttachment: &depth_attachment_ref,
-        preserveAttachmentCount: 0,
-        pPreserveAttachments: ptr::null(),
-    };
+    let subpass = voo::SubpassDescription::builder()
+        // .flags(0)
+        // .pipeline_bind_point(voo::PIPELINE_BIND_POINT_GRAPHICS)
+        .pipeline_bind_point(voo::PipelineBindPoint::Graphics)
+        // .input_attachment_count(0)
+        // .pInputAttachments(ptr::null())
+        // .color_attachment_count(1)
+        .color_attachments(&[color_attachment_ref])
+        // .pResolveAttachments(ptr::null())
+        .depth_stencil_attachment(&depth_attachment_ref)
+        // .preserve_attachment_Count(0)
+        // .pPreserveAttachments(ptr::null())
+        .build();
 
-    let dependency = vks::VkSubpassDependency {
-        dependencyFlags: 0,
-        srcSubpass: vks::VK_SUBPASS_EXTERNAL,
-        dstSubpass: 0,
-        srcStageMask: vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-        srcAccessMask: 0,
-        dstStageMask: vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-        dstAccessMask: vks::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | vks::VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-    };
+    let dependency = voo::SubpassDependency::builder()
+        // .dependencyFlags(0)
+        .src_subpass(voo::SUBPASS_EXTERNAL)
+        .dst_subpass(0)
+        // .src_stage_mask(voo::PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT)
+        .src_stage_mask(voo::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT)
+        // .src_access_mask(0)
+        // .dst_stage_mask(voo::PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT)
+        .dst_stage_mask(voo::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT)
+        // .dst_access_mask(voo::ACCESS_COLOR_ATTACHMENT_READ_BIT | voo::ACCESS_COLOR_ATTACHMENT_WRITE_BIT)
+        .dst_access_mask(voo::AccessFlags::COLOR_ATTACHMENT_READ |
+            voo::AccessFlags::COLOR_ATTACHMENT_WRITE)
+        .build();
 
     RenderPass::builder()
         .attachments(&[color_attachment, depth_attachment])
@@ -399,21 +441,25 @@ fn create_render_pass(device: Device, swapchain_image_format: vks::VkFormat)
 }
 
 fn create_descriptor_set_layout(device: Device) -> VooResult<DescriptorSetLayout> {
-    let ubo_layout_binding = vks::VkDescriptorSetLayoutBinding {
-        binding: 0,
-        descriptorType: vks::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-        descriptorCount: 1,
-        stageFlags: vks::VK_SHADER_STAGE_VERTEX_BIT,
-        pImmutableSamplers: ptr::null(),
-    };
+    let ubo_layout_binding = voo::DescriptorSetLayoutBinding::builder()
+        .binding(0)
+        // .descriptor_type(voo::DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+        .descriptor_type(voo::DescriptorType::UniformBuffer)
+        .descriptor_count(1)
+        // .stage_flags(voo::SHADER_STAGE_VERTEX_BIT)
+        .stage_flags(voo::ShaderStageFlags::VERTEX)
+        // .immutable_samplers(ptr::null())
+        .build();
 
-    let sampler_layout_binding = vks::VkDescriptorSetLayoutBinding {
-        binding: 1,
-        descriptorType: vks::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-        descriptorCount: 1,
-        stageFlags: vks::VK_SHADER_STAGE_FRAGMENT_BIT,
-        pImmutableSamplers: ptr::null(),
-    };
+    let sampler_layout_binding = voo::DescriptorSetLayoutBinding::builder()
+        .binding(1)
+        // .descriptor_type(voo::DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
+        .descriptor_type(voo::DescriptorType::CombinedImageSampler)
+        .descriptor_count(1)
+        // .stage_flags(voo::SHADER_STAGE_FRAGMENT_BIT)
+        .stage_flags(voo::ShaderStageFlags::FRAGMENT)
+        // .pImmutableSamplers(ptr::null())
+        .build();
 
     let bindings = [ubo_layout_binding, sampler_layout_binding];
 
@@ -424,14 +470,16 @@ fn create_descriptor_set_layout(device: Device) -> VooResult<DescriptorSetLayout
 
 fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
     let pool_sizes = [
-        vks::VkDescriptorPoolSize {
-            type_: vks::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            descriptorCount: 1,
-        },
-        vks::VkDescriptorPoolSize {
-            type_: vks::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            descriptorCount: 1,
-        },
+        voo::DescriptorPoolSize::builder()
+            // .type_(voo::DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+            .type_of(voo::DescriptorType::UniformBuffer)
+            .descriptor_count(1)
+            .build(),
+        voo::DescriptorPoolSize::builder()
+            // .type_(voo::DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
+            .type_of(voo::DescriptorType::CombinedImageSampler)
+            .descriptor_count(1)
+            .build(),
     ];
 
     DescriptorPool::builder()
@@ -442,46 +490,49 @@ fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
 
 fn create_descriptor_sets(device: &Device, layout: &DescriptorSetLayout,
         pool: &DescriptorPool, uniform_buffer: &Buffer, texture_image_view: &ImageView,
-        texture_sampler: &Sampler) -> VooResult<SmallVec<[vks::VkDescriptorSet; 8]>> {
+        texture_sampler: &Sampler) -> VooResult<SmallVec<[voo::DescriptorSet; 8]>> {
     let descriptor_sets = pool.allocate_descriptor_sets(&[layout][..]);
 
-    let buffer_info = vks::VkDescriptorBufferInfo {
-        buffer: uniform_buffer.handle(),
-        offset: 0,
-        range: mem::size_of::<UniformBufferObject>() as u64,
-    };
+    let buffer_info = voo::DescriptorBufferInfo::builder()
+        .buffer(uniform_buffer)
+        .offset(0)
+        .range(mem::size_of::<UniformBufferObject>() as u64)
+        .build();
 
-    let image_info = vks::VkDescriptorImageInfo {
-        sampler: texture_sampler.handle(),
-        imageView: texture_image_view.handle(),
-        imageLayout: vks::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-    };
+    let image_info = voo::DescriptorImageInfo::builder()
+        .sampler(texture_sampler)
+        .image_view(texture_image_view)
+        // .image_layout(voo::IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+        .image_layout(voo::ImageLayout::ShaderReadOnlyOptimal)
+        .build();
 
     let descriptor_writes = [
-        vks::VkWriteDescriptorSet {
-            sType: vks::VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            pNext: ptr::null(),
-            dstSet: descriptor_sets[0],
-            dstBinding: 0,
-            dstArrayElement: 0,
-            descriptorCount: 1,
-            descriptorType: vks::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-            pImageInfo: ptr::null(),
-            pBufferInfo: &buffer_info,
-            pTexelBufferView: ptr::null(),
-        },
-        vks::VkWriteDescriptorSet {
-            sType: vks::VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            pNext: ptr::null(),
-            dstSet: descriptor_sets[0],
-            dstBinding: 1,
-            dstArrayElement: 0,
-            descriptorCount: 1,
-            descriptorType: vks::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            pImageInfo: &image_info,
-            pBufferInfo: ptr::null(),
-            pTexelBufferView: ptr::null(),
-        },
+        voo::WriteDescriptorSet::builder()
+            // .sType(voo::STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET)
+            // .pNext(ptr::null())
+            .dst_set(&descriptor_sets[0])
+            .dst_binding(0)
+            .dst_array_element(0)
+            .descriptor_count(1)
+            // .descriptor_type(voo::DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+            .descriptor_type(voo::DescriptorType::UniformBuffer)
+            // .image_info(ptr::null())
+            .buffer_info(&buffer_info)
+            // .texel_buffer_view(ptr::null())
+            .build(),
+        voo::WriteDescriptorSet::builder()
+            // .sType(voo::STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET)
+            // .pNext(ptr::null())
+            .dst_set(&descriptor_sets[0])
+            .dst_binding(1)
+            .dst_array_element(0)
+            .descriptor_count(1)
+            // .descriptor_type(voo::DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
+            .descriptor_type(voo::DescriptorType::CombinedImageSampler)
+            .image_info(&image_info)
+            // .buffer_info(ptr::null())
+            // .texel_buffer_view(ptr::null())
+            .build(),
     ];
 
     pool.update_descriptor_sets(Some(&descriptor_writes[..]), None);
@@ -502,52 +553,53 @@ fn create_pipeline_layout(device: Device, descriptor_set_layout: Option<&Descrip
 }
 
 fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
-        render_pass: &RenderPass, swap_chain_extent: vks::VkExtent2D, vert_shader_code: &[u8],
+        render_pass: &RenderPass, swap_chain_extent: voo::Extent2d, vert_shader_code: &[u8],
         frag_shader_code: &[u8]) -> VooResult<GraphicsPipeline> {
     let vert_shader_module = ShaderModule::new(device.clone(), vert_shader_code)?;
     let frag_shader_module = ShaderModule::new(device.clone(), frag_shader_code)?;
 
     let fn_name = CStr::from_bytes_with_nul(b"main\0").unwrap();
 
-    let vert_shader_stage_info = vks::VkPipelineShaderStageCreateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        pNext: ptr::null(),
-        flags: 0,
-        stage: vks::VK_SHADER_STAGE_VERTEX_BIT,
-        module: vert_shader_module.handle(),
-        pName: fn_name.as_ptr(),
-        pSpecializationInfo: ptr::null(),
-    };
+    let vert_shader_stage_info = voo::PipelineShaderStageCreateInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+        // .pNext(ptr::null())
+        // .flags(0)
+        // .stage(voo::SHADER_STAGE_VERTEX_BIT)
+        .stage(voo::ShaderStageFlags::VERTEX)
 
-    let frag_shader_stage_info = vks::VkPipelineShaderStageCreateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-        pNext: ptr::null(),
-        flags: 0,
-        stage: vks::VK_SHADER_STAGE_FRAGMENT_BIT,
-        module: frag_shader_module.handle(),
-        pName: fn_name.as_ptr(),
-        pSpecializationInfo: ptr::null(),
-    };
+        .module(&vert_shader_module)
+        .name(fn_name)
+        // .pSpecializationInfo(ptr::null())
+        .build();
 
-    let shader_stages = [vert_shader_stage_info, frag_shader_stage_info];
+    let frag_shader_stage_info = voo::PipelineShaderStageCreateInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+        // .pNext(ptr::null())
+        // .flags(0)
+        // .stage(voo::SHADER_STAGE_FRAGMENT_BIT)
+        .stage(voo::ShaderStageFlags::FRAGMENT)
+        .module(&frag_shader_module)
+        .name(fn_name)
+        // .pSpecializationInfo(ptr::null())
+        .build();
 
     let binding_description = Vertex::binding_description();
     let attribute_descriptions = Vertex::attribute_descriptions();
 
-    let vertex_input_info = vks::VkPipelineVertexInputStateCreateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-        pNext: ptr::null(),
-        flags: 0,
-        vertexBindingDescriptionCount: 1,
-        pVertexBindingDescriptions: &binding_description,
-        vertexAttributeDescriptionCount: attribute_descriptions.len() as u32,
-        pVertexAttributeDescriptions: attribute_descriptions.as_ptr(),
-    };
+    let vertex_input_info = voo::PipelineVertexInputStateCreateInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO)
+        // .pNext(ptr::null())
+        // .flags(0)
+        // .vertex_binding_description_count(1)
+        .vertex_binding_descriptions(&[binding_description])
+        // .vertex_attribute_description_count(attribute_descriptions.len() as u32)
+        .vertex_attribute_descriptions(&attribute_descriptions[..])
+        .build();
 
-    let input_assembly = vks::VkPipelineInputAssemblyStateCreateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-        pNext: ptr::null(),
-        flags: 0,
+    let input_assembly = voo::PipelineInputAssemblyStateCreateInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO)
+        // .pNext(ptr::null())
+        // .flags(0)
         // * VK_PRIMITIVE_TOPOLOGY_POINT_LIST: points from vertices
         // * VK_PRIMITIVE_TOPOLOGY_LINE_LIST: line from every 2 vertices
         //   without reuse
@@ -558,143 +610,161 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         // * VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP: the second and third
         //   vertex of every triangle are used as first two vertices of
         //   the next triangle
-        topology: vks::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-        primitiveRestartEnable: vks::VK_FALSE,
-    };
+        // .topology(voo::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)
+        .topology(voo::PrimitiveTopology::TriangleList)
+        // .primitiveRestartEnable(false)
+        .primitive_restart_enable(false)
+        .build();
 
-    let viewport = vks::VkViewport {
-        x: 0.0f32,
-        y: 0.0f32,
-        width: swap_chain_extent.width as f32,
-        height: swap_chain_extent.height as f32,
-        minDepth: 0.0f32,
-        maxDepth: 1.0f32,
-    };
+    let viewport = voo::Viewport::builder()
+        .x(0.0f32)
+        .y(0.0f32)
+        .width(swap_chain_extent.width() as f32)
+        .height(swap_chain_extent.height() as f32)
+        .min_depth(0.0f32)
+        .max_depth(1.0f32)
+        .build();
 
-    let scissor = vks::VkRect2D {
-        offset: vks::VkOffset2D {
-            x: 0,
-            y: 0,
-        },
-        extent: swap_chain_extent,
-    };
+    let scissor = voo::Rect2d::builder()
+        .offset(voo::Offset2d::builder()
+            .x(0)
+            .y(0)
+            .build())
+        .extent(swap_chain_extent)
+        .build();
 
-    let viewport_state = vks::VkPipelineViewportStateCreateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-        pNext: ptr::null(),
-        flags: 0,
-        viewportCount: 1,
-        pViewports: &viewport,
-        scissorCount: 1,
-        pScissors: &scissor,
-    };
+    let viewport_state = voo::PipelineViewportStateCreateInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO)
+        // .pNext(ptr::null())
+        // .flags(0)
+        // .viewport_count(1)
+        .viewports(&[viewport])
+        // .sissor_count(1)
+        .scissors(&[scissor])
+        .build();
 
-    let rasterizer = vks::VkPipelineRasterizationStateCreateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-        pNext: ptr::null(),
-        flags: 0,
-        depthClampEnable: vks::VK_FALSE,
-        rasterizerDiscardEnable: vks::VK_FALSE,
-        polygonMode: vks::VK_POLYGON_MODE_FILL,
-        // cullMode: vks::VK_CULL_MODE_BACK_BIT,
-        cullMode: vks::VK_CULL_MODE_NONE,
-        // frontFace: vks::VK_FRONT_FACE_CLOCKWISE,
-        frontFace: vks::VK_FRONT_FACE_COUNTER_CLOCKWISE,
-        depthBiasEnable: vks::VK_FALSE,
-        depthBiasConstantFactor: 0.0f32,
-        depthBiasClamp: 0.0f32,
-        depthBiasSlopeFactor: 0.0f32,
-        lineWidth: 1.0f32,
-    };
+    let rasterizer = voo::PipelineRasterizationStateCreateInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO)
+        // .pNext(ptr::null())
+        // .flags(0)
+        .depth_clamp_enable(false)
+        .rasterizer_discard_enable(false)
+        // .polygon_mode(voo::POLYGON_MODE_FILL)
+        .polygon_mode(voo::PolygonMode::Fill)
+        // .cullMode(voo::CULL_MODE_BACK_BIT)
+        // .cull_mode(voo::CULL_MODE_NONE)
+        .cull_mode(voo::CullModeFlags::NONE)
+        // .frontFace(voo::FRONT_FACE_CLOCKWISE)
+        // .front_face(voo::FRONT_FACE_COUNTER_CLOCKWISE)
+        .front_face(voo::FrontFace::CounterClockwise)
+        .depth_bias_enable(false)
+        .depth_bias_constant_factor(0.0f32)
+        .depth_bias_clamp(0.0f32)
+        .depth_bias_slope_factor(0.0f32)
+        .line_width(1.0f32)
+        .build();
 
-    let multisampling = vks::VkPipelineMultisampleStateCreateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-        pNext: ptr::null(),
-        flags: 0,
-        rasterizationSamples: vks::VK_SAMPLE_COUNT_1_BIT,
-        sampleShadingEnable: vks::VK_FALSE,
-        minSampleShading: 1.0f32,
-        pSampleMask: ptr::null(),
-        alphaToCoverageEnable: vks::VK_FALSE,
-        alphaToOneEnable: vks::VK_FALSE,
-    };
+    let multisampling = voo::PipelineMultisampleStateCreateInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO)
+        // .pNext(ptr::null())
+        // .flags(0)
+        // .rasterization_samples(voo::SAMPLE_COUNT_1_BIT)
+        .rasterization_samples(voo::SampleCountFlags::COUNT_1)
+        .sample_shading_enable(false)
+        .min_sample_shading(1.0f32)
+        // .p_sample_mask(ptr::null())
+        .alpha_to_coverage_enable(false)
+        .alpha_to_one_enable(false)
+        .build();
 
-    let stencil_op_state = vks::VkStencilOpState {
-        failOp: 0,
-        passOp: 0,
-        depthFailOp: 0,
-        compareOp: 0,
-        compareMask: 0,
-        writeMask: 0,
-        reference: 0,
-    };
+    let stencil_op_state = voo::StencilOpState::builder()
+        .fail_op(voo::StencilOp::Keep)
+        .pass_op(voo::StencilOp::Keep)
+        .depth_fail_op(voo::StencilOp::Keep)
+        .compare_op(voo::CompareOp::Never)
+        .compare_mask(0)
+        .write_mask(0)
+        .reference(0)
+        .build();
 
-    let depth_stencil = vks::VkPipelineDepthStencilStateCreateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-        pNext: ptr::null(),
-        flags: 0,
-        depthTestEnable: vks::VK_TRUE,
-        depthWriteEnable: vks::VK_TRUE,
-        depthCompareOp: vks::VK_COMPARE_OP_LESS,
-        depthBoundsTestEnable: vks::VK_FALSE,
-        stencilTestEnable: vks::VK_FALSE,
-        front: stencil_op_state.clone(),
-        back: stencil_op_state,
-        minDepthBounds: 0.0,
-        maxDepthBounds: 1.0,
-    };
+    let depth_stencil = voo::PipelineDepthStencilStateCreateInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO)
+        // .pNext(ptr::null())
+        // .flags(0)
+        .depth_test_enable(true)
+        .depth_write_enable(true)
+        .depth_compare_op(voo::CompareOp::Less)
+        .depth_bounds_test_enable(false)
+        .stencil_test_enable(false)
+        .front(stencil_op_state.clone())
+        .back(stencil_op_state)
+        .min_depth_bounds(0.0)
+        .max_depth_bounds(1.0)
+        .build();
 
-    let color_blend_attachment = vks::VkPipelineColorBlendAttachmentState {
-        blendEnable: vks::VK_FALSE,
-        srcColorBlendFactor: vks::VK_BLEND_FACTOR_ONE,
-        dstColorBlendFactor: vks::VK_BLEND_FACTOR_ZERO,
-        colorBlendOp: vks::VK_BLEND_OP_ADD,
-        srcAlphaBlendFactor: vks::VK_BLEND_FACTOR_ONE,
-        dstAlphaBlendFactor: vks::VK_BLEND_FACTOR_ZERO,
-        alphaBlendOp: vks::VK_BLEND_OP_ADD,
-        colorWriteMask: vks::VK_COLOR_COMPONENT_R_BIT | vks::VK_COLOR_COMPONENT_G_BIT |
-            vks::VK_COLOR_COMPONENT_B_BIT | vks::VK_COLOR_COMPONENT_A_BIT,
-    };
+    let color_blend_attachment = voo::PipelineColorBlendAttachmentState::builder()
+        .blend_enable(false)
+        // .src_color_blend_factor(voo::BLEND_FACTOR_ONE)
+        .src_color_blend_factor(voo::BlendFactor::One)
+
+        // .dst_color_blend_factor(voo::BLEND_FACTOR_ZERO)
+        .dst_color_blend_factor(voo::BlendFactor::Zero)
+        // .color_blend_op(voo::BLEND_OP_ADD)
+        .color_blend_op(voo::BlendOp::Add)
+        // .src_alpha_blend_factor(voo::BLEND_FACTOR_ONE)
+        .src_alpha_blend_factor(voo::BlendFactor::One)
+        // .dst_alpha_blend_factor(voo::BLEND_FACTOR_ZERO)
+        .dst_alpha_blend_factor(voo::BlendFactor::Zero)
+        // .alpha_blend_op(voo::BLEND_OP_ADD)
+        .alpha_blend_op(voo::BlendOp::Add)
+        // .color_write_mask(voo::COLOR_COMPONENT_R_BIT | voo::COLOR_COMPONENT_G_BIT |
+        //     voo::COLOR_COMPONENT_B_BIT | voo::COLOR_COMPONENT_A_BIT)
+        .color_write_mask(voo::ColorComponentFlags::R | voo::ColorComponentFlags::G |
+            voo::ColorComponentFlags::B | voo::ColorComponentFlags::A)
+        .build();
 
     // ///////////////////////////////////////////////
     // /////////// KEEPME (ALPHA BLENDING) ///////////
-    // let color_blend_attachment = vks::VkPipelineColorBlendAttachmentState {
-    //     blendEnable: vks::VK_FALSE,
-    //     srcColorBlendFactor: vks::VK_BLEND_FACTOR_SRC_ALPHA,
-    //     dstColorBlendFactor: vks::VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-    //     colorBlendOp: vks::VK_BLEND_OP_ADD,
-    //     srcAlphaBlendFactor: vks::VK_BLEND_FACTOR_ONE,
-    //     dstAlphaBlendFactor: vks::VK_BLEND_FACTOR_ZERO,
-    //     alphaBlendOp: vks::VK_BLEND_OP_ADD,
-    //     colorWriteMask: vks::VK_COLOR_COMPONENT_R_BIT | vks::VK_COLOR_COMPONENT_G_BIT | vks::VK_COLOR_COMPONENT_B_BIT | vks::VK_COLOR_COMPONENT_A_BIT,
+    // let color_blend_attachment = voo::PipelineColorBlendAttachmentState::builder()
+    //     blendEnable(false)
+    //     srcColorBlendFactor(voo::BLEND_FACTOR_SRC_ALPHA)
+    //     dstColorBlendFactor(voo::BLEND_FACTOR_ONE_MINUS_SRC_ALPHA)
+    //     colorBlendOp(voo::BLEND_OP_ADD)
+    //     srcAlphaBlendFactor(voo::BLEND_FACTOR_ONE)
+    //     dstAlphaBlendFactor(voo::BLEND_FACTOR_ZERO)
+    //     alphaBlendOp(voo::BLEND_OP_ADD)
+    //     colorWriteMask(voo::COLOR_COMPONENT_R_BIT | voo::COLOR_COMPONENT_G_BIT | voo::COLOR_COMPONENT_B_BIT | voo::COLOR_COMPONENT_A_BIT)
     // }; ////////////////////////////////////////////
     // ///////////////////////////////////////////////
 
-    let color_blending = vks::VkPipelineColorBlendStateCreateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-        pNext: ptr::null(),
-        flags: 0,
-        logicOpEnable: vks::VK_FALSE,
-        logicOp: vks::VK_LOGIC_OP_COPY,
-        attachmentCount: 1,
-        pAttachments: &color_blend_attachment,
-        blendConstants: [0.0f32; 4],
-    };
+    let color_blending = voo::PipelineColorBlendStateCreateInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO)
+        // .pNext(ptr::null())
+        // .flags(0)
+        .logic_op_enable(false)
+        // .logic_op(voo::LOGIC_OP_COPY)
+        .logic_op(voo::LogicOp::Copy)
+        // .attachment_count(1)
+        .attachments(&[color_blend_attachment])
+        .blend_constants([0.0f32; 4])
+        .build();
 
     // ///////////////////////////////////////////////
     // /////////// KEEPME (DYNAMIC STATES) ///////////
-    // let dynamic_states = [vks::VK_DYNAMIC_STATE_VIEWPORT, vks::VK_DYNAMIC_STATE_LINE_WIDTH];
-    // let dynamic_state = vks::VkPipelineDynamicStateCreateInfo {
-    //     sType: vks::VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-    //     pNext: ptr::null(),
-    //     flags: 0,
-    //     dynamicStateCount: 2,
-    //     pDynamicStates: dynamic_states.as_ptr(),
+    // let dynamic_states = [voo::DYNAMIC_STATE_VIEWPORT) voo::DYNAMIC_STATE_LINE_WIDTH];
+    // let dynamic_state = voo::PipelineDynamicStateCreateInfo::builder()
+    //     sType(voo::STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO)
+    //     pNext(ptr::null())
+    //     flags(0)
+    //     dynamicStateCount(2)
+    //     pDynamicStates(dynamic_states.as_ptr())
     // }; ////////////////////////////////////////////
     // ///////////////////////////////////////////////
 
+    let shader_stages = &[vert_shader_stage_info, frag_shader_stage_info];
+
     GraphicsPipeline::builder()
-        .stages(&shader_stages)
+        .stages(shader_stages)
         .vertex_input_state(&vertex_input_info)
         .input_assembly_state(&input_assembly)
         .viewport_state(&viewport_state)
@@ -706,7 +776,7 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         .layout(&pipeline_layout)
         .render_pass(&render_pass)
         .subpass(0)
-        .base_pipeline_handle(0)
+        // .base_pipeline(0)
         .base_pipeline_index(-1)
         .build(device)
 }
@@ -723,14 +793,14 @@ fn create_command_pool(device: Device, surface: &Surface, queue_family_flags: Qu
 
 pub fn create_framebuffers(device: &Device, render_pass: &RenderPass,
         swapchain_image_views: &[ImageView], depth_image_view: &ImageView,
-        swapchain_extent: vks::VkExtent2D) -> VooResult<Vec<Framebuffer>> {
+        swapchain_extent: voo::Extent2d) -> VooResult<Vec<Framebuffer>> {
     swapchain_image_views.iter().map(|image_view| {
         let attachments = [image_view, depth_image_view];
         Framebuffer::builder()
             .render_pass(&render_pass)
             .attachments(&attachments[..])
-            .width(swapchain_extent.width)
-            .height(swapchain_extent.height)
+            .width(swapchain_extent.width())
+            .height(swapchain_extent.height())
             .layers(1)
             .build(device.clone())
     }).collect::<Result<Vec<_>, _>>()
@@ -738,134 +808,152 @@ pub fn create_framebuffers(device: &Device, render_pass: &RenderPass,
 
 
 fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
-        -> VooResult<vks::VkCommandBuffer> {
-    let alloc_info = vks::VkCommandBufferAllocateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        pNext: ptr::null(),
-        commandPool: command_pool.handle(),
-        level: vks::VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-        commandBufferCount: 1,
-    };
+        -> VooResult<voo::CommandBuffer> {
+    let alloc_info = voo::CommandBufferAllocateInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO)
+        // .pNext(ptr::null())
+        .command_pool(command_pool)
+        // .level(voo::COMMAND_BUFFER_LEVEL_PRIMARY)
+        .level(voo::CommandBufferLevel::Primary)
+        .command_buffer_count(1)
+        .build();
 
     let mut command_buffer = ptr::null_mut();
     unsafe {
         voo::check(device.proc_addr_loader().core.vkAllocateCommandBuffers(device.handle(),
-            &alloc_info, &mut command_buffer));
+            alloc_info.raw(), &mut command_buffer));
     }
 
-    let begin_info = vks::VkCommandBufferBeginInfo {
-        sType: vks::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        pNext: ptr::null(),
-        flags: vks::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-        pInheritanceInfo: ptr::null(),
-    };
+    let begin_info = voo::CommandBufferBeginInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO)
+        // .pNext(ptr::null())
+        // .flags(voo::COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT)
+        .flags(voo::CommandBufferUsageFlags::ONE_TIME_SUBMIT)
+        // .pInheritanceInfo(ptr::null())
+        .build();
 
-    unsafe { device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer, &begin_info); }
-    Ok(command_buffer)
+    unsafe {
+        device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer, begin_info.raw());
+    }
+    Ok(voo::CommandBuffer::new(command_buffer))
 }
 
 fn end_single_time_commands(device: &Device, command_pool: &CommandPool,
-        command_buffer: vks::VkCommandBuffer) -> VooResult<()> {
-    unsafe { voo::check(device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer)); }
+        command_buffer: voo::CommandBuffer) -> VooResult<()> {
+    unsafe {
+        voo::check(device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.handle()));
+    }
+    let command_buffers = [&command_buffer];
 
-    let submit_info = vks::VkSubmitInfo {
-        sType: vks::VK_STRUCTURE_TYPE_SUBMIT_INFO,
-        pNext: ptr::null(),
-        waitSemaphoreCount: 0,
-        pWaitSemaphores: ptr::null(),
-        pWaitDstStageMask: ptr::null(),
-        commandBufferCount: 1,
-        pCommandBuffers: &command_buffer,
-        signalSemaphoreCount: 0,
-        pSignalSemaphores: ptr::null(),
-    };
+    let submit_info = voo::SubmitInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_SUBMIT_INFO)
+        // .pNext(ptr::null())
+        // .wait_semaphore_count(0)
+        // .p_wait_semaphores(ptr::null())
+        // .p_wait_dst_stage_mask(ptr::null())
+        // .command_buffer_count(1)
+        .command_buffers(&command_buffers)
+        // .signal_semaphore_count(0)
+        // .p_signal_semaphores(ptr::null())
+        .build();
 
     unsafe {
         voo::check(device.proc_addr_loader().core.vkQueueSubmit(device.queue(0), 1,
-            &submit_info, 0));
+            submit_info.raw(), 0));
         voo::check(device.proc_addr_loader().core.vkQueueWaitIdle(device.queue(0)));
         device.proc_addr_loader().core.vkFreeCommandBuffers(device.handle(),
-            command_pool.handle(), 1, &command_buffer);
+            command_pool.handle(), 1, &command_buffer as *const _ as *const vks::VkCommandBuffer);
     }
 
     Ok(())
 }
 
-fn has_stencil_component(format: vks::VkFormat) -> bool {
-    format == vks::VK_FORMAT_D32_SFLOAT_S8_UINT || format == vks::VK_FORMAT_D24_UNORM_S8_UINT
+fn has_stencil_component(format: voo::Format) -> bool {
+    // format == voo::FORMAT_D32_SFLOAT_S8_UINT ||
+    //     format == voo::FORMAT_D24_UNORM_S8_UINT
+    format == voo::Format::D32SfloatS8Uint || format == voo::Format::D24UnormS8Uint
 }
 
 fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &Image,
-        format: vks::VkFormat, old_layout: vks::VkImageLayout, new_layout: vks::VkImageLayout)
+        format: voo::Format, old_layout: voo::ImageLayout, new_layout: voo::ImageLayout)
          -> VooResult<()> {
     let command_buffer = begin_single_time_commands(device, command_pool)?;
 
-    let subresource_range = vks::VkImageSubresourceRange {
-        aspectMask: vks::VK_IMAGE_ASPECT_COLOR_BIT,
-        baseMipLevel: 0,
-        levelCount: 1,
-        baseArrayLayer: 0,
-        layerCount: 1,
-    };
+    let subresource_range = voo::ImageSubresourceRange::builder()
+        // .aspect_mask(voo::IMAGE_ASPECT_COLOR_BIT)
+        .aspect_mask(voo::ImageAspectFlags::COLOR)
+        .base_mip_level(0)
+        .level_count(1)
+        .base_array_layer(0)
+        .layer_count(1)
+        .build();
 
-    let mut barrier = vks::VkImageMemoryBarrier {
-        sType: vks::VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-        pNext: ptr::null(),
-        srcAccessMask: 0,
-        dstAccessMask: 0,
-        oldLayout: old_layout,
-        newLayout: new_layout,
-        srcQueueFamilyIndex: vks::VK_QUEUE_FAMILY_IGNORED,
-        dstQueueFamilyIndex: vks::VK_QUEUE_FAMILY_IGNORED,
-        image: image.handle(),
-        subresourceRange: subresource_range,
-    };
+    let mut barrier = voo::ImageMemoryBarrier::builder()
+        // .sType(voo::STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER)
+        // .pNext(ptr::null())
+        // .src_access_mask(0)
+        // .dst_access_mask(0)
+        .old_layout(old_layout)
+        .new_layout(new_layout)
+        .src_queue_family_index(voo::QUEUE_FAMILY_IGNORED)
+        .dst_queue_family_index(voo::QUEUE_FAMILY_IGNORED)
+        .image(image)
+        .subresource_range(subresource_range)
+        .build();
 
-    if new_layout == vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL {
-        barrier.subresourceRange.aspectMask = vks::VK_IMAGE_ASPECT_DEPTH_BIT;
+    // if new_layout == voo::IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL {
+    if new_layout == voo::ImageLayout::DepthStencilAttachmentOptimal {
+        barrier.subresource_range().set_aspect_mask(voo::ImageAspectFlags::DEPTH);
         if has_stencil_component(format) {
-            barrier.subresourceRange.aspectMask |= vks::VK_IMAGE_ASPECT_STENCIL_BIT;
+            barrier.subresource_range().set_aspect_mask(
+                barrier.subresource_range().aspect_mask() | voo::ImageAspectFlags::STENCIL);
         }
     } else {
-        barrier.subresourceRange.aspectMask = vks::VK_IMAGE_ASPECT_COLOR_BIT;
+        barrier.subresource_range().set_aspect_mask(voo::ImageAspectFlags::COLOR);
     }
 
-    let source_stage: vks::VkPipelineStageFlags;
-    let destination_stage: vks::VkPipelineStageFlags;
+    let source_stage: voo::PipelineStageFlags;
+    let destination_stage: voo::PipelineStageFlags;
 
-    if old_layout == vks::VK_IMAGE_LAYOUT_UNDEFINED &&
-            new_layout == vks::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+    if old_layout == voo::ImageLayout::Undefined &&
+            // new_layout == voo::IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+            new_layout == voo::ImageLayout::TransferDstOptimal
     {
-        barrier.srcAccessMask = 0;
-        barrier.dstAccessMask = vks::VK_ACCESS_TRANSFER_WRITE_BIT;
-        source_stage = vks::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        destination_stage = vks::VK_PIPELINE_STAGE_TRANSFER_BIT;
-    } else if old_layout == vks::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
-            new_layout == vks::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+        barrier.set_src_access_mask(voo::AccessFlags::NONE);
+        // barrier.dst_access_mask() = voo::ACCESS_TRANSFER_WRITE_BIT;
+        // source_stage = voo::PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        // destination_stage = voo::PIPELINE_STAGE_TRANSFER_BIT;
+        barrier.set_dst_access_mask(voo::AccessFlags::TRANSFER_WRITE);
+        source_stage = voo::PipelineStageFlags::TOP_OF_PIPE;
+        destination_stage = voo::PipelineStageFlags::TRANSFER;
+    } else if old_layout == voo::ImageLayout::TransferDstOptimal &&
+            new_layout == voo::ImageLayout::ShaderReadOnlyOptimal
     {
-        barrier.srcAccessMask = vks::VK_ACCESS_TRANSFER_WRITE_BIT;
-        barrier.dstAccessMask = vks::VK_ACCESS_SHADER_READ_BIT;
-        source_stage = vks::VK_PIPELINE_STAGE_TRANSFER_BIT;
-        destination_stage = vks::VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    } else if old_layout == vks::VK_IMAGE_LAYOUT_UNDEFINED &&
-            new_layout == vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL {
-        barrier.srcAccessMask = 0;
-        barrier.dstAccessMask = vks::VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
-            vks::VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-        source_stage = vks::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        destination_stage = vks::VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+        barrier.set_src_access_mask(voo::AccessFlags::TRANSFER_WRITE);
+        barrier.set_dst_access_mask(voo::AccessFlags::SHADER_READ);
+        source_stage = voo::PipelineStageFlags::TRANSFER;
+        destination_stage = voo::PipelineStageFlags::FRAGMENT_SHADER;
+    } else if old_layout == voo::ImageLayout::Undefined &&
+            // new_layout == voo::IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+            new_layout == voo::ImageLayout::DepthStencilAttachmentOptimal
+        {
+        barrier.set_src_access_mask(voo::AccessFlags::NONE);
+        barrier.set_dst_access_mask(voo::AccessFlags::DEPTH_STENCIL_ATTACHMENT_READ |
+            voo::AccessFlags::DEPTH_STENCIL_ATTACHMENT_WRITE);
+        source_stage = voo::PipelineStageFlags::TOP_OF_PIPE;
+        destination_stage = voo::PipelineStageFlags::EARLY_FRAGMENT_TESTS;
     } else {
         panic!("unsupported layout transition");
     }
 
     unsafe {
         device.proc_addr_loader().vkCmdPipelineBarrier(
-            command_buffer,
-            source_stage, destination_stage,
+            command_buffer.handle(),
+            source_stage.bits(), destination_stage.bits(),
             0,
             0, ptr::null(),
             0, ptr::null(),
-            1, &barrier
+            1, &barrier as *const _ as *const vks::VkImageMemoryBarrier
         );
     }
 
@@ -876,30 +964,31 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
         image: &Image, width: u32, height: u32)  -> VooResult<()> {
     let command_buffer = begin_single_time_commands(device, command_pool)?;
 
-    let image_subresource_layers = vks::VkImageSubresourceLayers {
-        aspectMask: vks::VK_IMAGE_ASPECT_COLOR_BIT,
-        mipLevel: 0,
-        baseArrayLayer: 0,
-        layerCount: 1,
-    };
+    let image_subresource_layers = voo::ImageSubresourceLayers::builder()
+        .aspect_mask(voo::ImageAspectFlags::COLOR)
+        .mip_level(0)
+        .base_array_layer(0)
+        .layer_count(1)
+        .build();
 
-    let region = vks::VkBufferImageCopy {
-        bufferOffset: 0,
-        bufferRowLength: 0,
-        bufferImageHeight: 0,
-        imageSubresource: image_subresource_layers,
-        imageOffset: vks::VkOffset3D { x: 0, y: 0, z: 0 },
-        imageExtent: vks::VkExtent3D { width, height, depth: 1 },
-    };
+    let region = voo::BufferImageCopy::builder()
+        .buffer_offset(0)
+        .buffer_row_length(0)
+        .buffer_image_height(0)
+        .image_subresource(image_subresource_layers)
+        .image_offset(voo::Offset3d::builder().x(0).y(0).z(0).build())
+        .image_extent(voo::Extent3d::builder().width(width).height(height).depth(1).build())
+        .build();
 
     unsafe {
         device.proc_addr_loader().vkCmdCopyBufferToImage(
-            command_buffer,
+            command_buffer.handle(),
             buffer.handle(),
             image.handle(),
-            vks::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            // voo::IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            voo::ImageLayout::TransferDstOptimal as u32,
             1,
-            &region
+            &region as *const _ as *const vks::VkBufferImageCopy
         );
     }
 
@@ -907,20 +996,21 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
 }
 
 fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
-        dst_buffer: &Buffer, size: vks::VkDeviceSize)  -> VooResult<()> {
+        dst_buffer: &Buffer, size: voo::DeviceSize)  -> VooResult<()> {
     // TODO: Look into creating a separate command pool with the
     // `VK_COMMAND_POOL_CREATE_TRANSIENT_BIT` flag for short lived command
     // buffers like this.
     let command_buffer = begin_single_time_commands(device, command_pool)?;
 
-    let copy_region = vks::VkBufferCopy {
-        srcOffset: 0,
-        dstOffset: 0,
-        size: size,
-    };
+    let copy_region = voo::BufferCopy::builder()
+        .src_offset(0)
+        .dst_offset(0)
+        .size(size)
+        .build();
 
-    unsafe { device.proc_addr_loader().core.vkCmdCopyBuffer(command_buffer, src_buffer.handle(),
-        dst_buffer.handle(), 1, &copy_region); }
+    unsafe { device.proc_addr_loader().core.vkCmdCopyBuffer(command_buffer.handle(),
+        src_buffer.handle(), dst_buffer.handle(), 1, &copy_region as *const _
+        as *const vks::VkBufferCopy); }
 
     end_single_time_commands(device, command_pool, command_buffer)
 }
@@ -984,15 +1074,18 @@ fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &
     //   the mapped memory
     let staging_buffer = Buffer::builder()
         .size(buffer_bytes)
-        .usage(vks::VK_BUFFER_USAGE_TRANSFER_SRC_BIT)
-        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        // .usage(voo::BUFFER_USAGE_TRANSFER_SRC_BIT)
+        .usage(voo::BufferUsageFlags::TRANSFER_SRC)
+        // .sharing_mode(voo::SHARING_MODE_EXCLUSIVE)
+        .sharing_mode(voo::SharingMode::Exclusive)
         .build(device.clone())?;
 
 
     let memory_requirements = staging_buffer.memory_requirements().clone();
-    let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
-        vks::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | vks::VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-    let staging_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
+    let memory_type_index = device.memory_type_index(memory_requirements.memory_type_bits(),
+        // voo::MEMORY_PROPERTY_HOST_VISIBLE_BIT | voo::MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        voo::MemoryPropertyFlags::HOST_VISIBLE | voo::MemoryPropertyFlags::HOST_COHERENT);
+    let staging_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
     staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
 
@@ -1002,14 +1095,17 @@ fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &
 
     let vertex_buffer = Buffer::builder()
         .size(buffer_bytes)
-        .usage(vks::VK_BUFFER_USAGE_TRANSFER_DST_BIT | vks::VK_BUFFER_USAGE_VERTEX_BUFFER_BIT)
-        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        // .usage(voo::BUFFER_USAGE_TRANSFER_DST_BIT | voo::BUFFER_USAGE_VERTEX_BUFFER_BIT)
+        .usage(voo::BufferUsageFlags::TRANSFER_DST | voo::BufferUsageFlags::VERTEX_BUFFER)
+        // .sharing_mode(voo::SHARING_MODE_EXCLUSIVE)
+        .sharing_mode(voo::SharingMode::Exclusive)
         .build(device.clone())?;
 
     let memory_requirements = vertex_buffer.memory_requirements().clone();
-    let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
-        vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    let vertex_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
+    let memory_type_index = device.memory_type_index(memory_requirements.memory_type_bits(),
+        // voo::MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        voo::MemoryPropertyFlags::DEVICE_LOCAL);
+    let vertex_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
     vertex_buffer.bind_memory(&vertex_buffer_memory, 0)?;
 
@@ -1024,14 +1120,17 @@ fn create_index_buffer<T: Copy>(device: &Device, command_pool: &CommandPool, ind
 
     let staging_buffer = Buffer::builder()
         .size(buffer_bytes)
-        .usage(vks::VK_BUFFER_USAGE_TRANSFER_SRC_BIT)
-        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        // .usage(voo::BUFFER_USAGE_TRANSFER_SRC_BIT)
+        .usage(voo::BufferUsageFlags::TRANSFER_SRC)
+        // .sharing_mode(voo::SHARING_MODE_EXCLUSIVE)
+        .sharing_mode(voo::SharingMode::Exclusive)
         .build(device.clone())?;
 
     let memory_requirements = staging_buffer.memory_requirements().clone();
-    let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
-        vks::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-    let staging_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
+    let memory_type_index = device.memory_type_index(memory_requirements.memory_type_bits(),
+        // voo::MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+        voo::MemoryPropertyFlags::HOST_VISIBLE);
+    let staging_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
     staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
 
@@ -1041,14 +1140,16 @@ fn create_index_buffer<T: Copy>(device: &Device, command_pool: &CommandPool, ind
 
     let index_buffer = Buffer::builder()
         .size(buffer_bytes)
-        .usage(vks::VK_BUFFER_USAGE_TRANSFER_DST_BIT | vks::VK_BUFFER_USAGE_INDEX_BUFFER_BIT)
-        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        // .usage(voo::BUFFER_USAGE_TRANSFER_DST_BIT | voo::BUFFER_USAGE_INDEX_BUFFER_BIT)
+        .usage(voo::BufferUsageFlags::TRANSFER_DST | voo::BufferUsageFlags::INDEX_BUFFER)
+        .sharing_mode(voo::SharingMode::Exclusive)
         .build(device.clone())?;
 
     let memory_requirements = index_buffer.memory_requirements().clone();
-    let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
-        vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    let index_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
+    let memory_type_index = device.memory_type_index(memory_requirements.memory_type_bits(),
+        // voo::MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        voo::MemoryPropertyFlags::DEVICE_LOCAL);
+    let index_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
     index_buffer.bind_memory(&index_buffer_memory, 0)?;
 
@@ -1057,91 +1158,71 @@ fn create_index_buffer<T: Copy>(device: &Device, command_pool: &CommandPool, ind
     Ok((index_buffer, index_buffer_memory))
 }
 
-fn create_uniform_buffer(device: &Device, command_pool: &CommandPool, _extent: vks::VkExtent2D)
+fn create_uniform_buffer(device: &Device, command_pool: &CommandPool, _extent: voo::Extent2d)
         -> VooResult<(Buffer, DeviceMemory)> {
     let buffer_bytes = mem::size_of::<UniformBufferObject>() as u64;
     let uniform_buffer = Buffer::builder()
         .size(buffer_bytes)
-        .usage(vks::VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
-        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        .usage(voo::BufferUsageFlags::UNIFORM_BUFFER)
+        .sharing_mode(voo::SharingMode::Exclusive)
         .build(device.clone())?;
 
     let memory_requirements = uniform_buffer.memory_requirements().clone();
-    let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
-        vks::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | vks::VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-    let uniform_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
+    let memory_type_index = device.memory_type_index(memory_requirements.memory_type_bits(),
+        voo::MemoryPropertyFlags::HOST_VISIBLE | voo::MemoryPropertyFlags::HOST_COHERENT);
+    let uniform_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
     uniform_buffer.bind_memory(&uniform_buffer_memory, 0)?;
 
     Ok((uniform_buffer, uniform_buffer_memory))
 }
 
-fn find_supported_format(device: &Device, candidates: &[vks::VkFormat], tiling: vks::VkImageTiling,
-        features: vks::VkFormatFeatureFlags) -> VooResult<vks::VkFormat> {
-    for &format in candidates {
-        let mut props: vks::VkFormatProperties;
-        unsafe {
-            props = mem::uninitialized();
-            device.instance().proc_addr_loader().vkGetPhysicalDeviceFormatProperties(
-                device.physical_device().handle(), format, &mut props);
-        }
-
-        if tiling == vks::VK_IMAGE_TILING_LINEAR &&
-                (props.linearTilingFeatures & features) == features
-        {
-            return Ok(format);
-        } else if tiling == vks::VK_IMAGE_TILING_OPTIMAL &&
-                (props.optimalTilingFeatures & features) == features
-        {
-            return Ok(format);
-        }
-    }
-
-    panic!("Failed to find supported format.")
-}
-
 fn create_depth_resources(device: &Device, command_pool: &CommandPool,
-        swapchain_extent: vks::VkExtent2D) -> VooResult<(Image, DeviceMemory, ImageView)> {
+        swapchain_extent: voo::Extent2d) -> VooResult<(Image, DeviceMemory, ImageView)> {
     let depth_format = find_depth_format(device)?;
-    let extent = vks::VkExtent3D { width: swapchain_extent.width,
-        height: swapchain_extent.height, depth: 1 };
+    let extent = voo::Extent3d::builder()
+        .width(swapchain_extent.width())
+        .height(swapchain_extent.height())
+        .depth(1)
+        .build();
 
     let depth_image = Image::builder()
-        .image_type(vks::VK_IMAGE_TYPE_2D)
+        .image_type(voo::ImageType::Type2d)
         .format(depth_format)
         .extent(extent)
         .mip_levels(1)
         .array_layers(1)
-        .samples(vks::VK_SAMPLE_COUNT_1_BIT)
-        .tiling(vks::VK_IMAGE_TILING_OPTIMAL)
-        .usage(vks::VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)
-        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
-        .initial_layout(vks::VK_IMAGE_LAYOUT_UNDEFINED)
+        .samples(voo::SampleCountFlags::COUNT_1)
+        .tiling(voo::ImageTiling::Optimal)
+        .usage(voo::ImageUsageFlags::DEPTH_STENCIL_ATTACHMENT)
+        .sharing_mode(voo::SharingMode::Exclusive)
+        .initial_layout(voo::ImageLayout::Undefined)
         .build(device.clone())?;
 
     let memory_requirements = depth_image.memory_requirements().clone();
-    let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
-        vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    let depth_image_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
+    let memory_type_index = device.memory_type_index(memory_requirements.memory_type_bits(),
+        voo::MemoryPropertyFlags::DEVICE_LOCAL);
+    let depth_image_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
     depth_image.bind_memory(&depth_image_memory, 0)?;
 
     let depth_image_view = ImageView::builder()
-        .image(depth_image.handle())
-        .view_type(vks::VK_IMAGE_VIEW_TYPE_2D)
+        .image(&depth_image)
+        .view_type(voo::ImageViewType::Type2d)
         .format(depth_format)
-        .components(vks::VkComponentMapping::default())
-        .subresource_range(vks::VkImageSubresourceRange {
-            aspectMask: vks::VK_IMAGE_ASPECT_DEPTH_BIT,
-            baseMipLevel: 0,
-            levelCount: 1,
-            baseArrayLayer: 0,
-            layerCount: 1,
-        })
+        .components(voo::ComponentMapping::default())
+        .subresource_range(voo::ImageSubresourceRange::builder()
+            .aspect_mask(voo::ImageAspectFlags::DEPTH)
+            .base_mip_level(0)
+            .level_count(1)
+            .base_array_layer(0)
+            .layer_count(1)
+            .build())
         .build(device.clone(), None)?;
 
     transition_image_layout(device, command_pool, &depth_image, depth_format,
-        vks::VK_IMAGE_LAYOUT_UNDEFINED, vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)?;
+        // voo::IMAGE_LAYOUT_UNDEFINED, voo::IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)?;
+        voo::ImageLayout::Undefined, voo::ImageLayout::DepthStencilAttachmentOptimal)?;
 
     Ok((depth_image, depth_image_memory, depth_image_view))
 }
@@ -1154,14 +1235,14 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool)
 
     let staging_buffer = Buffer::builder()
         .size(image_bytes)
-        .usage(vks::VK_BUFFER_USAGE_TRANSFER_SRC_BIT)
-        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
+        .usage(voo::BufferUsageFlags::TRANSFER_SRC)
+        .sharing_mode(voo::SharingMode::Exclusive)
         .build(device.clone())?;
 
     let memory_requirements = staging_buffer.memory_requirements().clone();
-    let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
-        vks::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | vks::VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-    let staging_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
+    let memory_type_index = device.memory_type_index(memory_requirements.memory_type_bits(),
+        voo::MemoryPropertyFlags::HOST_VISIBLE | voo::MemoryPropertyFlags::HOST_COHERENT);
+    let staging_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
     staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
 
@@ -1169,110 +1250,113 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool)
     data.copy_from_slice(&pixels);
     staging_buffer_memory.unmap(data);
 
-    let extent = vks::VkExtent3D { width: tex_width, height: tex_height, depth: 1 };
+    let extent = voo::Extent3d::builder().width(tex_width).height(tex_height).depth(1).build();
 
     let texture_image = Image::builder()
-        .image_type(vks::VK_IMAGE_TYPE_2D)
-        .format(vks::VK_FORMAT_R8G8B8A8_UNORM)
-        .extent(extent)
+        .image_type(voo::ImageType::Type2d)
+        // .format(voo::FORMAT_R8G8B8A8_UNORM)
+        .format(voo::Format::R8G8B8A8Unorm)
+        .extent(extent.clone())
         .mip_levels(1)
         .array_layers(1)
-        .samples(vks::VK_SAMPLE_COUNT_1_BIT)
-        .tiling(vks::VK_IMAGE_TILING_OPTIMAL)
-        .usage(vks::VK_IMAGE_USAGE_TRANSFER_DST_BIT | vks::VK_IMAGE_USAGE_SAMPLED_BIT)
-        .sharing_mode(vks::VK_SHARING_MODE_EXCLUSIVE)
-        .initial_layout(vks::VK_IMAGE_LAYOUT_UNDEFINED)
+        .samples(voo::SampleCountFlags::COUNT_1)
+        .tiling(voo::ImageTiling::Optimal)
+        .usage(voo::ImageUsageFlags::TRANSFER_DST | voo::ImageUsageFlags::SAMPLED)
+        .sharing_mode(voo::SharingMode::Exclusive)
+        .initial_layout(voo::ImageLayout::Undefined)
         .build(device.clone())?;
 
     let memory_requirements = texture_image.memory_requirements().clone();
-    let memory_type_index = device.memory_type_index(memory_requirements.memoryTypeBits,
-        vks::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    let texture_image_memory = DeviceMemory::new(device.clone(), memory_requirements.size,
+    let memory_type_index = device.memory_type_index(memory_requirements.memory_type_bits(),
+        voo::MemoryPropertyFlags::DEVICE_LOCAL);
+    let texture_image_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
     texture_image.bind_memory(&texture_image_memory, 0)?;
 
-    transition_image_layout(device, command_pool, &texture_image, vks::VK_FORMAT_R8G8B8A8_UNORM,
-        vks::VK_IMAGE_LAYOUT_UNDEFINED, vks::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)?;
+    transition_image_layout(device, command_pool, &texture_image, voo::Format::R8G8B8A8Unorm,
+        voo::ImageLayout::Undefined, voo::ImageLayout::TransferDstOptimal)?;
 
     copy_buffer_to_image(device, command_pool, &staging_buffer, &texture_image,
-        extent.width, extent.height)?;
+        extent.width(), extent.height())?;
 
-    transition_image_layout(device, command_pool, &texture_image, vks::VK_FORMAT_R8G8B8A8_UNORM,
-        vks::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, vks::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)?;
+    transition_image_layout(device, command_pool, &texture_image, voo::Format::R8G8B8A8Unorm,
+        voo::ImageLayout::TransferDstOptimal, voo::ImageLayout::ShaderReadOnlyOptimal)?;
 
     Ok((texture_image, texture_image_memory))
 }
 
 fn create_texture_image_view(device: Device, image: &Image) -> VooResult<ImageView> {
     ImageView::builder()
-        .image(image.handle())
-        .view_type(vks::VK_IMAGE_VIEW_TYPE_2D)
-        .format(vks::VK_FORMAT_R8G8B8A8_UNORM)
-        .components(vks::VkComponentMapping::default())
-        .subresource_range(vks::VkImageSubresourceRange {
-            aspectMask: vks::VK_IMAGE_ASPECT_COLOR_BIT,
-            baseMipLevel: 0,
-            levelCount: 1,
-            baseArrayLayer: 0,
-            layerCount: 1,
-        })
+        .image(image)
+        .view_type(voo::ImageViewType::Type2d)
+        .format(voo::Format::R8G8B8A8Unorm)
+        .components(voo::ComponentMapping::default())
+        .subresource_range(voo::ImageSubresourceRange::builder()
+            .aspect_mask(voo::ImageAspectFlags::COLOR)
+            .base_mip_level(0)
+            .level_count(1)
+            .base_array_layer(0)
+            .layer_count(1)
+            .build())
         .build(device, None)
 }
 
 fn create_texture_sampler(device: Device) -> VooResult<Sampler> {
     Sampler::builder()
-        .mag_filter(vks::VK_FILTER_LINEAR)
-        .min_filter(vks::VK_FILTER_LINEAR)
-        .mipmap_mode(vks::VK_SAMPLER_MIPMAP_MODE_LINEAR)
-        .address_mode_u(vks::VK_SAMPLER_ADDRESS_MODE_REPEAT)
-        .address_mode_v(vks::VK_SAMPLER_ADDRESS_MODE_REPEAT)
-        .address_mode_w(vks::VK_SAMPLER_ADDRESS_MODE_REPEAT)
+        .mag_filter(voo::Filter::Linear)
+        .min_filter(voo::Filter::Linear)
+        .mipmap_mode(voo::SamplerMipmapMode::Linear)
+        .address_mode_u(voo::SamplerAddressMode::Repeat)
+        .address_mode_v(voo::SamplerAddressMode::Repeat)
+        .address_mode_w(voo::SamplerAddressMode::Repeat)
         .mip_lod_bias(0.)
         .anisotropy_enable(true)
         .max_anisotropy(16.)
         .compare_enable(false)
-        .compare_op(vks::VK_COMPARE_OP_ALWAYS)
+        .compare_op(voo::CompareOp::Always)
         .min_lod(0.)
         .max_lod(0.)
-        .border_color(vks::VK_BORDER_COLOR_INT_OPAQUE_BLACK)
+        .border_color(voo::BorderColor::IntOpaqueBlack)
         .unnormalized_coordinates(false)
         .build(device)
 }
 
 pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
         render_pass: &RenderPass, graphics_pipeline: &GraphicsPipeline,
-        swapchain_framebuffers: &[Framebuffer], swapchain_extent: &vks::VkExtent2D,
+        swapchain_framebuffers: &[Framebuffer], swapchain_extent: &voo::Extent2d,
         vertex_buffer: &Buffer, index_buffer: &Buffer, vertex_count: u32,
         index_count: u32, pipeline_layout: &PipelineLayout,
-        descriptor_set: vks::VkDescriptorSet)
-        -> VooResult<Vec<vks::VkCommandBuffer>>
+        descriptor_set: voo::DescriptorSet)
+        -> VooResult<Vec<voo::CommandBuffer>>
 {
-    let mut command_buffers = Vec::with_capacity(swapchain_framebuffers.len());
+    let mut command_buffers: Vec<voo::CommandBuffer> =
+        Vec::with_capacity(swapchain_framebuffers.len());
     unsafe { command_buffers.set_len(swapchain_framebuffers.len()); }
 
-    let alloc_info = vks::VkCommandBufferAllocateInfo {
-        sType: vks::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        pNext: ptr::null(),
-        commandPool: command_pool.handle(),
+    let alloc_info = voo::CommandBufferAllocateInfo::builder()
+        // .sType(voo::STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO)
+        // .pNext(ptr::null())
+        .command_pool(command_pool)
         // * COMMAND_BUFFER_LEVEL_PRIMARY: Can be submitted to a queue for
-        //   execution, but cannot be called from other command buffers.
-        // * COMMAND_BUFFER_LEVEL_SECONDARY: Cannot be submitted directly, but
+        //   execution) but cannot be called from other command buffers.
+        // * COMMAND_BUFFER_LEVEL_SECONDARY: Cannot be submitted directly) but
         //   can be called from primary command buffers.
-        level: vks::VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-        commandBufferCount: command_buffers.len() as u32,
-    };
+        .level(voo::CommandBufferLevel::Primary)
+        .command_buffer_count(command_buffers.len() as u32)
+        .build();
 
     unsafe {
         voo::check(device.proc_addr_loader().vkAllocateCommandBuffers(device.handle(),
-            &alloc_info, command_buffers.as_mut_ptr()));
+            alloc_info.raw(), command_buffers.as_mut_ptr() as *mut _
+            as *mut vks::VkCommandBuffer));
     }
 
-    for (&command_buffer, swapchain_framebuffer) in command_buffers.iter()
+    for (command_buffer, swapchain_framebuffer) in command_buffers.iter()
             .zip(swapchain_framebuffers.iter())
     {
-        let begin_info = vks::VkCommandBufferBeginInfo {
-            sType: vks::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-            pNext: ptr::null(),
+        let begin_info = voo::CommandBufferBeginInfo::builder()
+            // .sType(voo::STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO)
+            // .pNext(ptr::null())
             // * COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer
             //   will be rerecorded right after executing it once.
             // * COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: This is a
@@ -1281,55 +1365,55 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             // * COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: The command buffer
             //   can be resubmitted while it is also already pending
             //   execution.
-            flags: vks::VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
-            pInheritanceInfo: ptr::null(),
-        };
+            .flags(voo::CommandBufferUsageFlags::SIMULTANEOUS_USE)
+            // .pInheritanceInfo(ptr::null())
+            .build();
 
         unsafe {
-            voo::check(device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer,
-                &begin_info));
+            voo::check(device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer.handle(),
+                begin_info.raw()));
         }
 
-        // let clear_color = vks::VkClearValue {
-        //     color: vks::VkClearColorValue { float32: [0.0f32, 0.0f32, 0.0f32, 1.0f32] }
+        // let clear_color = voo::ClearValue {
+        //     color: voo::ClearColorValue { float32: [0.0f32, 0.0f32, 0.0f32, 1.0f32] }
         // };
 
-        let clear_values = [
-            vks::VkClearValue { color: vks::VkClearColorValue {
+        let clear_values = &[
+            voo::ClearValue { color: voo::ClearColorValue {
                 float32: [0.0f32, 0.0f32, 0.0f32, 1.0f32] } },
-            vks::VkClearValue { depthStencil: vks::VkClearDepthStencilValue {
+            voo::ClearValue { depthStencil: vks::VkClearDepthStencilValue {
                 depth: 1.0, stencil: 0, } },
         ];
 
-        let render_pass_info = vks::VkRenderPassBeginInfo {
-            sType: vks::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            pNext: ptr::null(),
-            renderPass: render_pass.handle(),
-            framebuffer:swapchain_framebuffer.handle(),
-            renderArea: vks::VkRect2D {
-                offset: vks::VkOffset2D { x: 0, y: 0, },
-                extent: swapchain_extent.clone(),
-            },
-            clearValueCount: clear_values.len() as u32,
-            pClearValues: clear_values.as_ptr(),
-        };
+        let render_pass_info = voo::RenderPassBeginInfo::builder()
+            // .sType(voo::STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO)
+            // .pNext(ptr::null())
+            .render_pass(render_pass)
+            .framebuffer(swapchain_framebuffer)
+            .render_area(voo::Rect2d::builder()
+                .offset(voo::Offset2d::builder().x(0).y(0).build())
+                .extent(swapchain_extent.clone())
+                .build())
+            // .clear_value_count(clear_values.len() as u32)
+            .clear_values(clear_values)
+            .build();
 
         unsafe {
-            device.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer,
-                &render_pass_info, vks::VK_SUBPASS_CONTENTS_INLINE);
-            device.proc_addr_loader().core.vkCmdBindPipeline(command_buffer,
-                vks::VK_PIPELINE_BIND_POINT_GRAPHICS, graphics_pipeline.handle());
+            device.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer.handle(),
+                render_pass_info.raw(), voo::SubpassContents::Inline.into());
+            device.proc_addr_loader().core.vkCmdBindPipeline(command_buffer.handle(),
+                voo::PipelineBindPoint::Graphics as u32, graphics_pipeline.handle());
 
             let vertex_buffers = [vertex_buffer.handle()];
             let offsets = [0];
             device.proc_addr_loader().core.vkCmdBindVertexBuffers(
-                command_buffer, 0, 1, vertex_buffers.as_ptr(), offsets.as_ptr());
-            device.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer,
-                index_buffer.handle(), 0, vks::VK_INDEX_TYPE_UINT32);
+                command_buffer.handle(), 0, 1, vertex_buffers.as_ptr(), offsets.as_ptr());
+            device.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer.handle(),
+                index_buffer.handle(), 0, voo::IndexType::Uint32 as u32);
 
-            device.proc_addr_loader().core.vkCmdBindDescriptorSets(command_buffer,
-                vks::VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout.handle(), 0, 1,
-                &descriptor_set, 0, ptr::null());
+            device.proc_addr_loader().core.vkCmdBindDescriptorSets(command_buffer.handle(),
+                voo::PipelineBindPoint::Graphics as u32, pipeline_layout.handle(), 0, 1,
+                &descriptor_set.handle(), 0, ptr::null());
 
             // // * vertexCount: Even though we don't have a vertex buffer, we
             // //   technically still have 3 vertices to draw.
@@ -1340,11 +1424,11 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             // // * firstInstance: Used as an offset for instanced rendering,
             // //   defines the lowest value of gl_InstanceIndex.
             // device.proc_addr_loader().core.vkCmdDraw(command_buffer, vertex_count, 1, 0, 0);
-            device.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer, index_count,
+            device.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer.handle(), index_count,
                 1, 0, 0, 0);
 
-            device.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer);
-            device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer);
+            device.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer.handle());
+            device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.handle());
         }
     }
     Ok(command_buffers)
@@ -1387,13 +1471,13 @@ struct App {
     uniform_buffer: Buffer,
     uniform_buffer_memory: DeviceMemory,
     descriptor_pool: DescriptorPool,
-    descriptor_sets: SmallVec<[vks::VkDescriptorSet; 8]>,
+    descriptor_sets: SmallVec<[voo::DescriptorSet; 8]>,
     image_available_semaphore: Semaphore,
     render_finished_semaphore: Semaphore,
     start_time: time::Instant,
     swapchain: Option<Swapchain>,
     swapchain_components: Option<SwapchainComponents>,
-    command_buffers: Option<Vec<vks::VkCommandBuffer>>,
+    command_buffers: Option<Vec<voo::CommandBuffer>>,
 }
 
 impl App {
@@ -1402,7 +1486,7 @@ impl App {
         let instance = init_instance()?;
         let (window, events_loop) = init_window();
         let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
-        // let queue_family_flags = vks::VK_QUEUE_GRAPHICS_BIT;
+        // let queue_family_flags = voo::QUEUE_GRAPHICS_BIT;
         let queue_family_flags = QueueFlags::GRAPHICS;
         let physical_device = choose_physical_device(&instance, &surface,
             queue_family_flags)?;
@@ -1444,7 +1528,8 @@ impl App {
         let command_buffers = create_command_buffers(&device, &command_pool, &render_pass,
             &graphics_pipeline, &framebuffers, swapchain.extent(),
             &vertex_buffer, &index_buffer,
-            vertices.len() as u32, vertices.len() as u32, &pipeline_layout, descriptor_sets[0])?;
+            vertices.len() as u32, vertices.len() as u32, &pipeline_layout,
+            descriptor_sets[0].clone())?;
         let image_available_semaphore = Semaphore::new(device.clone())?;
         let render_finished_semaphore = Semaphore::new(device.clone())?;
         let start_time = time::Instant::now();
@@ -1501,17 +1586,18 @@ impl App {
             self.device.proc_addr_loader().core.vkFreeCommandBuffers(self.device.handle(),
                 self.command_pool.handle(),
                 self.command_buffers.as_ref().unwrap().len() as u32,
-                self.command_buffers.as_mut().unwrap().as_mut_ptr());
+                self.command_buffers.as_mut().unwrap().as_mut_ptr() as *mut _
+                as *mut vks::VkCommandBuffer);
         }
         self.command_buffers = None;
     }
 
-    fn recreate_swapchain(&mut self, current_extent: vks::VkExtent2D) -> VooResult<()> {
+    fn recreate_swapchain(&mut self, current_extent: voo::Extent2d) -> VooResult<()> {
         unsafe { voo::check(self.device.proc_addr_loader().vkDeviceWaitIdle(
             self.device.handle())); }
 
         let swapchain = create_swapchain(self.surface.clone(), self.device.clone(),
-            self.queue_family_flags, Some(current_extent), self.swapchain.take())?;
+            self.queue_family_flags, Some(current_extent), self.swapchain.as_ref().take())?;
 
         self.cleanup_swapchain();
 
@@ -1530,7 +1616,7 @@ impl App {
             &render_pass, &graphics_pipeline,
             &framebuffers, swapchain.extent(),
             &self.vertex_buffer, &self.index_buffer, self.vertices.len() as u32,
-            self.indices.len() as u32, &self.pipeline_layout, self.descriptor_sets[0])?;
+            self.indices.len() as u32, &self.pipeline_layout, self.descriptor_sets[0].clone())?;
 
         self.swapchain = Some(swapchain);
         self.swapchain_components = Some(SwapchainComponents {
@@ -1554,7 +1640,7 @@ impl App {
 
         let extent = self.swapchain.as_ref().unwrap().extent().clone();
         let mut proj = cgmath::perspective(cgmath::Rad(45.0f32.to_radians()),
-            extent.width as f32 / extent.height as f32, 0.1, 10.0);
+            extent.width() as f32 / extent.height() as f32, 0.1, 10.0);
         let view = cgmath::Matrix4::look_at(cgmath::Point3::new(2.0, 2.0, 2.0),
             cgmath::Point3::new(0.0, 0.0, 0.0), cgmath::Vector3::new(0.0, 0.0, 1.0));
         let scale = cgmath::Matrix4::from_scale(1.5);
@@ -1584,49 +1670,52 @@ impl App {
                 self.device.handle(), self.swapchain.as_ref().unwrap().handle(),
                 u64::max_value(), self.image_available_semaphore.handle(), 0, &mut image_index)
         };
-        if acq_res == vks::VK_ERROR_OUT_OF_DATE_KHR {
+        if acq_res == voo::ResultEnum::ErrorOutOfDateKhr as i32 {
             let dims = self.window.get_inner_size_pixels().unwrap();
-            self.recreate_swapchain(vks::VkExtent2D { height: dims.0, width: dims.1 } )?;
+            self.recreate_swapchain(voo::Extent2d::builder()
+                .height(dims.0).width(dims.1).build())?;
             return Ok(());
-        } else if acq_res != vks::VK_SUCCESS && acq_res != vks::VK_SUBOPTIMAL_KHR {
+        } else if acq_res != voo::ResultEnum::Success as i32 && acq_res !=
+                voo::ResultEnum::SuboptimalKhr as i32 {
             panic!("Unable to present swap chain image");
         }
-        let wait_semaphores = [self.image_available_semaphore.handle()];
-        let wait_stages = [vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT];
-        let signal_semaphores = [self.render_finished_semaphore.handle()];
+        let wait_semaphores = [&self.image_available_semaphore];
+        // let wait_stages = [voo::PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT];
+        let wait_stages = voo::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT;
+        let signal_semaphores = [&self.render_finished_semaphore];
+        let command_buffers = [self.command_buffers.as_ref().unwrap().get(image_index as usize).unwrap()];
 
-        let submit_info = vks::VkSubmitInfo {
-            sType: vks::VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            pNext: ptr::null(),
-            waitSemaphoreCount: wait_semaphores.len() as u32,
-            pWaitSemaphores: wait_semaphores.as_ptr(),
-            pWaitDstStageMask: wait_stages.as_ptr(),
-            commandBufferCount: 1,
-            pCommandBuffers: self.command_buffers.as_ref().unwrap()
-                .get(image_index as usize).unwrap(),
-            signalSemaphoreCount: signal_semaphores.len() as u32,
-            pSignalSemaphores: signal_semaphores.as_ptr(),
-        };
+        let submit_info = voo::SubmitInfo::builder()
+            // .s_type: voo::StructureType::SubmitInfo,
+            // .p_next: ptr::null(),
+            // .wait_semaphore_count(wait_semaphores.len() as u32)
+            .wait_semaphores(&wait_semaphores[..])
+            .wait_dst_stage_mask(&wait_stages)
+            // .command_buffer_count(1)
+            .command_buffers(&command_buffers[..])
+            // .signal_semaphore_count(signal_semaphores.len() as u32)
+            .signal_semaphores(&signal_semaphores[..])
+            .build();
 
         unsafe { voo::check(self.device.proc_addr_loader().core.vkQueueSubmit(
-            self.device.queue(0), 1, &submit_info, 0)); }
+            self.device.queue(0), 1, submit_info.raw(), 0)); }
 
-        let swapchains = [self.swapchain.as_ref().unwrap().handle()];
+        let swapchains = [self.swapchain.as_ref().unwrap()];
 
-        let present_info = vks::VkPresentInfoKHR {
-            sType: vks::VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-            pNext: ptr::null(),
-            waitSemaphoreCount: signal_semaphores.len() as u32,
-            pWaitSemaphores: signal_semaphores.as_ptr(),
-            swapchainCount: swapchains.len() as u32,
-            pSwapchains: swapchains.as_ptr(),
-            pImageIndices: &image_index,
-            pResults: ptr::null_mut(),
-        };
+        let present_info = voo::PresentInfoKhr::builder()
+            // sType(voo::StructureType::PRESENT_INFO_KHR,
+            // pNext(ptr::null(),
+            // .wait_semaphore_count(signal_semaphores.len() as u32)
+            .wait_semaphores(&signal_semaphores[..])
+            // .swapchain_count(swapchains.len() as u32)
+            .swapchains(&swapchains[..])
+            .image_indices(&[image_index])
+            // .p_results(ptr::null_mut())
+            .build();
 
         unsafe {
             voo::check(self.device.proc_addr_loader().khr_swapchain.vkQueuePresentKHR(
-                self.device.queue(0), &present_info));
+                self.device.queue(0), present_info.raw()));
             voo::check(self.device.proc_addr_loader().core.vkQueueWaitIdle(
                 self.device.queue(0)));
         }
@@ -1643,7 +1732,7 @@ impl App {
             self.events_loop.poll_events(|event| {
                 match event {
                     Event::WindowEvent { event: WindowEvent::Resized(w, h), .. } => {
-                        current_extent = vks::VkExtent2D { width: w, height: h };
+                        current_extent = voo::Extent2d::builder().width(w).height(h).build();
                         recreate_swap = true;
                     },
                     Event::WindowEvent { event: WindowEvent::Closed, .. } => {

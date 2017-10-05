@@ -31,35 +31,35 @@ impl PhysicalDevice {
         &self.instance
     }
 
-    pub fn extensions(&self) -> SmallVec<[vks::VkExtensionProperties; 64]> {
+    pub fn extensions(&self) -> SmallVec<[::ExtensionProperties; 64]> {
         let mut ext_count = 0u32;
-        let mut exts = SmallVec::new();
+        let mut exts = SmallVec::<[::ExtensionProperties; 64]>::new();
         unsafe {
             ::check(self.instance.proc_addr_loader().core.vkEnumerateDeviceExtensionProperties(self.handle, ptr::null(),
                 &mut ext_count, ptr::null_mut()));
             assert!(ext_count as usize <= exts.inline_size());
             exts.set_len(ext_count as usize);
             ::check(self.instance.proc_addr_loader().core.vkEnumerateDeviceExtensionProperties(self.handle, ptr::null(),
-                &mut ext_count, exts.as_mut_ptr()));
+                &mut ext_count, exts.as_mut_ptr() as *mut vks::VkExtensionProperties));
         }
         exts
     }
 
-    pub fn properties(&self) -> vks::VkPhysicalDeviceProperties {
+    pub fn properties(&self) -> ::PhysicalDeviceProperties {
         unsafe {
             let mut device_properties: vks::VkPhysicalDeviceProperties = mem::uninitialized();
             self.instance.proc_addr_loader().vkGetPhysicalDeviceProperties(self.handle,
                 &mut device_properties);
-            device_properties
+            device_properties.into()
         }
     }
 
-    pub fn features(&self) -> vks::VkPhysicalDeviceFeatures {
+    pub fn features(&self) -> ::PhysicalDeviceFeatures {
         unsafe {
             let mut device_features: vks::VkPhysicalDeviceFeatures = mem::uninitialized();
             self.instance.proc_addr_loader().core.vkGetPhysicalDeviceFeatures(self.handle,
                 &mut device_features);
-            device_features
+            device_features.into()
         }
     }
 
@@ -106,16 +106,17 @@ impl PhysicalDevice {
         present_modes
     }
 
-    pub fn queue_families(&self) -> SmallVec<[vks::VkQueueFamilyProperties; 16]> {
+    pub fn queue_families(&self) -> SmallVec<[::QueueFamilyProperties; 16]> {
         let mut queue_family_count = 0u32;
-        let mut queue_families = SmallVec::new();
+        let mut queue_families = SmallVec::<[::QueueFamilyProperties; 16]>::new();
         unsafe {
             self.instance.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(
                 self.handle, &mut queue_family_count, ptr::null_mut());
             assert!(queue_family_count as usize <= queue_families.inline_size());
             queue_families.set_len(queue_family_count as usize);
             self.instance.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(
-                self.handle, &mut queue_family_count, queue_families.as_mut_ptr());
+                self.handle, &mut queue_family_count,
+                queue_families.as_mut_ptr() as *mut vks::VkQueueFamilyProperties);
         }
         if PRINT {  println!("Physical device queue family count: {:?}", queue_families.len()); }
         queue_families
@@ -136,17 +137,14 @@ impl PhysicalDevice {
         unsafe {
             // Print available:
             for ext in &avail_exts {
-                    let name = (&ext.extensionName) as *const c_char;
                     if PRINT { println!("Available device extension: '{}' (version: {})",
-                        CStr::from_ptr(name).to_str().unwrap(), ext.specVersion); }
+                        ext.extension_name().to_str().unwrap(), ext.spec_version()); }
             };
 
             for reqd_ext_name in extension_names {
                 let mut ext_avail = false;
                 for avail_ext in &avail_exts {
-                    if CStr::from_ptr(reqd_ext_name.as_ptr() as *const c_char) ==
-                        CStr::from_ptr(avail_ext.extensionName.as_ptr())
-                    {
+                    if reqd_ext_name == &avail_ext.extension_name() {
                         if PRINT { println!("Required device extension available: '{}'",
                             CStr::from_ptr(reqd_ext_name.as_ptr() as *const c_char).to_str().unwrap()); }
                         ext_avail = true;
@@ -160,14 +158,14 @@ impl PhysicalDevice {
     }
 
     /// Returns the memory properties for this device.
-    pub fn memory_properties(&self) -> vks::VkPhysicalDeviceMemoryProperties {
+    pub fn memory_properties(&self) -> ::PhysicalDeviceMemoryProperties {
         let mut mem_props: vks::VkPhysicalDeviceMemoryProperties;
         unsafe {
             mem_props = mem::uninitialized();
             self.instance().proc_addr_loader().core.vkGetPhysicalDeviceMemoryProperties(
                 self.handle, &mut mem_props);
         }
-        mem_props
+        mem_props.into()
     }
 }
 

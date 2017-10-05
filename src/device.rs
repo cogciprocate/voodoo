@@ -18,7 +18,7 @@ struct Inner {
     physical_device: PhysicalDevice,
     // features: vks::VkPhysicalDeviceFeatures,
     // queues: SmallVec<[u32; 32]>,
-    queue_family_indexes: SmallVec<[u32; 16]>,
+    queue_family_indices: SmallVec<[u32; 16]>,
     // vk: vks::VkDevicePointers,
     instance: Instance,
     loader: vks::DeviceProcAddrLoader,
@@ -38,11 +38,11 @@ impl Device {
     #[inline]
     pub fn queue(&self, queue_idx: u32) -> vks::VkQueue {
         let mut queue_handle = ptr::null_mut();
-        assert!(self.inner.queue_family_indexes.len() == 1,
+        assert!(self.inner.queue_family_indices.len() == 1,
             "Update this shitty queue family code.");
         unsafe {
             self.proc_addr_loader().core.vkGetDeviceQueue(self.inner.handle,
-                self.inner.queue_family_indexes[0], queue_idx,
+                self.inner.queue_family_indices[0], queue_idx,
                 &mut queue_handle);
         }
         queue_handle
@@ -73,24 +73,24 @@ impl Device {
     /// type filter and properties.
     //
     // [HELPER]
-    pub fn memory_type_index(&self, type_filter: u32, properties: vks::VkMemoryPropertyFlags)
+    pub fn memory_type_index(&self, type_filter: u32, properties: ::MemoryPropertyFlags)
             -> u32 {
         let mem_props = self.physical_device().memory_properties();
 
-        for i in 0..mem_props.memoryTypeCount {
+        for i in 0..mem_props.memory_type_count() {
             if (type_filter & (1 << i)) != 0 &&
-                (mem_props.memoryTypes[i as usize].propertyFlags & properties) == properties
+                (mem_props.memory_types()[i as usize].property_flags() & properties) == properties
             {
                 return i;
             }
         }
-        panic!("failed to find suitable memory type index with: type_filter: '{}', properties: '{}'",
+        panic!("failed to find suitable memory type index with: type_filter: '{}', properties: '{:?}'",
             type_filter, properties);
     }
 
     /// Updates descriptor sets.
-    pub fn update_descriptor_sets(&self, descriptor_writes: Option<&[vks::VkWriteDescriptorSet]>,
-            descriptor_copies: Option<&[vks::VkCopyDescriptorSet]>) {
+    pub fn update_descriptor_sets(&self, descriptor_writes: Option<&[::WriteDescriptorSet]>,
+            descriptor_copies: Option<&[::CopyDescriptorSet]>) {
         let (descriptor_writes_len, descriptor_writes_ptr) = match descriptor_writes {
             Some(ref dws) => (dws.len() as u32, dws.as_ptr()),
             None => (0, ptr::null()),
@@ -102,8 +102,9 @@ impl Device {
         };
 
         unsafe {
-            self.proc_addr_loader().vkUpdateDescriptorSets(self.handle(), descriptor_writes_len,
-                descriptor_writes_ptr, descriptor_copies_len, descriptor_copies_ptr);
+            self.proc_addr_loader().vkUpdateDescriptorSets(self.handle(),
+                descriptor_writes_len, descriptor_writes_ptr as *const vks::VkWriteDescriptorSet,
+                descriptor_copies_len, descriptor_copies_ptr as *const vks::VkCopyDescriptorSet);
         }
     }
 }
@@ -136,7 +137,7 @@ unsafe impl Sync for Device {}
 //
 #[derive(Debug, Clone)]
 pub struct DeviceBuilder<'db> {
-    create_info: vks::VkDeviceCreateInfo,
+    create_info: ::DeviceCreateInfo<'db>,
     enabled_layer_names: Option<CharStrs<'db>>,
     enabled_extension_names: Option<CharStrs<'db>>,
     _p: PhantomData<&'db ()>,
@@ -146,7 +147,7 @@ impl<'db> DeviceBuilder<'db> {
     /// Returns a new instance builder.
     pub fn new() -> DeviceBuilder<'db> {
         DeviceBuilder {
-            create_info: vks::VkDeviceCreateInfo::default(),
+            create_info: ::DeviceCreateInfo::default(),
             enabled_layer_names: None,
             enabled_extension_names: None,
             _p: PhantomData,
@@ -160,12 +161,13 @@ impl<'db> DeviceBuilder<'db> {
             queue_create_infos: &'ci [DeviceQueueCreateInfo])
             -> &'s mut DeviceBuilder<'db>
             where 'ci: 'db {
-        self.create_info.queueCreateInfoCount = queue_create_infos.len() as u32;
+        // self.create_info.queueCreateInfoCount = queue_create_infos.len() as u32;
         debug_assert_eq!(mem::align_of::<DeviceQueueCreateInfo>(),
             mem::align_of::<vks::VkDeviceQueueCreateInfo>());
         debug_assert_eq!(mem::size_of::<DeviceQueueCreateInfo>(),
             mem::size_of::<vks::VkDeviceQueueCreateInfo>());
-        self.create_info.pQueueCreateInfos = queue_create_infos.as_ptr() as *const _;
+        // self.create_info.queue_create_infos = queue_create_infos.as_ptr() as *const _;
+        self.create_info.set_queue_create_infos(queue_create_infos);
         self
     }
 
@@ -176,11 +178,12 @@ impl<'db> DeviceBuilder<'db> {
     pub fn enabled_layer_names<'s, 'cs, Cs>(&'s mut self, enabled_layer_names: Cs)
             -> &'s mut DeviceBuilder<'db>
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
-        self.enabled_layer_names = Some(enabled_layer_names.into());
-        if let Some(ref elns) = self.enabled_layer_names {
-            self.create_info.enabledLayerCount = elns.len() as u32;
-            self.create_info.ppEnabledLayerNames = elns.as_ptr() as *const _;
-        }
+        // self.enabled_layer_names = Some(enabled_layer_names.into());
+        // if let Some(ref elns) = self.enabled_layer_names {
+        //     self.create_info.enabledLayerCount = elns.len() as u32;
+        //     self.create_info.enabled_layer_names = elns.as_ptr() as *const _;
+        // }
+        self.create_info.set_enabled_layer_names(enabled_layer_names);
         self
     }
 
@@ -189,11 +192,12 @@ impl<'db> DeviceBuilder<'db> {
     pub fn enabled_extension_names<'s, 'cs, Cs>(&'s mut self, enabled_extension_names: Cs)
             -> &'s mut DeviceBuilder<'db>
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
-        self.enabled_extension_names = Some(enabled_extension_names.into());
-        if let Some(ref eens) = self.enabled_extension_names {
-            self.create_info.enabledExtensionCount = eens.len() as u32;
-            self.create_info.ppEnabledExtensionNames = eens.as_ptr() as *const _;
-        }
+        // self.enabled_extension_names = Some(enabled_extension_names.into());
+        // if let Some(ref eens) = self.enabled_extension_names {
+        //     // self.create_info.enabledExtensionCount = eens.len() as u32;
+        //     self.create_info.enabled_extension_names = eens.as_ptr() as *const _;
+        // }
+        self.create_info.set_enabled_extension_names(enabled_extension_names);
         self
     }
 
@@ -202,7 +206,7 @@ impl<'db> DeviceBuilder<'db> {
     pub fn enabled_features<'s, 'f>(&'s mut self, enabled_features: &'f PhysicalDeviceFeatures)
             -> &'s mut DeviceBuilder<'db>
             where 'f: 'db {
-        self.create_info.pEnabledFeatures = enabled_features.raw();
+        self.create_info.set_enabled_features(enabled_features);
         self
     }
 
@@ -212,7 +216,7 @@ impl<'db> DeviceBuilder<'db> {
         let mut handle = ptr::null_mut();
         unsafe {
             ::check(physical_device.instance().proc_addr_loader().core.vkCreateDevice(physical_device.handle(),
-                &self.create_info, ptr::null(), &mut handle));
+                self.create_info.raw(), ptr::null(), &mut handle));
         }
 
         let mut loader = vks::DeviceProcAddrLoader::from_get_device_proc_addr(
@@ -245,21 +249,25 @@ impl<'db> DeviceBuilder<'db> {
         }
 
         let instance = physical_device.instance().clone();
-        let mut queue_family_indexes = SmallVec::<[u32; 16]>::new();
-        for i in 0..(self.create_info.queueCreateInfoCount as isize) {
-            unsafe {
-                let queue_create_info_ptr = self.create_info.pQueueCreateInfos.offset(i);
-                queue_family_indexes.push((*queue_create_info_ptr).queueFamilyIndex);
-            }
+        let mut queue_family_indices = SmallVec::<[u32; 16]>::new();
+        // for i in 0..(self.create_info.queueCreateInfoCount as isize) {
+        //     unsafe {
+        //         let queue_create_info_ptr = self.create_info.pQueueCreateInfos.offset(i);
+        //         queue_family_indices.push((*queue_create_info_ptr).queueFamilyIndex);
+        //     }
+        // }
+
+        for queue_create_info in self.create_info.queue_create_infos() {
+            queue_family_indices.push(queue_create_info.queue_family_index())
         }
-        assert!(queue_family_indexes.len() == 1, "Update this shitty queue family code.");
+        assert!(queue_family_indices.len() == 1, "Update this shitty queue family code.");
 
         Ok(Device {
             inner: Arc::new(Inner {
                 handle,
                 physical_device,
                 // features,
-                queue_family_indexes: queue_family_indexes,
+                queue_family_indices: queue_family_indices,
                 instance,
                 loader,
             }),

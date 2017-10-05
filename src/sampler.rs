@@ -104,7 +104,7 @@ impl Drop for Inner {
 //
 #[derive(Debug, Clone)]
 pub struct SamplerBuilder<'b> {
-    create_info: vks::VkSamplerCreateInfo,
+    create_info: ::SamplerCreateInfo<'b>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -112,61 +112,61 @@ impl<'b> SamplerBuilder<'b> {
     /// Returns a new render pass builder.
     pub fn new() -> SamplerBuilder<'b> {
         SamplerBuilder {
-            create_info: vks::VkSamplerCreateInfo::default(),
+            create_info: ::SamplerCreateInfo::default(),
             _p: PhantomData,
         }
     }
 
     /// Reserved for future use.
-    pub fn flags<'s>(&'s mut self, flags: vks::VkSamplerCreateFlags)
+    pub fn flags<'s>(&'s mut self, flags: ::SamplerCreateFlags)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.flags = flags;
+        self.create_info.set_flags(flags);
         self
     }
 
     /// Specifies the magnification filter to
     /// apply to lookups.
-    pub fn mag_filter<'s>(&'s mut self, mag_filter: vks::VkFilter)
+    pub fn mag_filter<'s>(&'s mut self, mag_filter: ::Filter)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.magFilter = mag_filter;
+        self.create_info.set_mag_filter(mag_filter);
         self
     }
 
     /// Specifies the minification filter to apply to lookups.
-    pub fn min_filter<'s>(&'s mut self, min_filter: vks::VkFilter)
+    pub fn min_filter<'s>(&'s mut self, min_filter: ::Filter)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.minFilter = min_filter;
+        self.create_info.set_min_filter(min_filter);
         self
     }
 
     /// Specifies the mipmap filter to apply to lookups.
-    pub fn mipmap_mode<'s>(&'s mut self, mipmap_mode: vks::VkSamplerMipmapMode)
+    pub fn mipmap_mode<'s>(&'s mut self, mipmap_mode: ::SamplerMipmapMode)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.mipmapMode = mipmap_mode;
+        self.create_info.set_mipmap_mode(mipmap_mode);
         self
     }
 
     /// Specifies the addressing mode for outside [0..1] range for U
     /// coordinate.
-    pub fn address_mode_u<'s>(&'s mut self, address_mode_u: vks::VkSamplerAddressMode)
+    pub fn address_mode_u<'s>(&'s mut self, address_mode_u: ::SamplerAddressMode)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.addressModeU = address_mode_u;
+        self.create_info.set_address_mode_u(address_mode_u);
         self
     }
 
     /// Specifies the addressing mode for outside [0..1] range for V
     /// coordinate.
-    pub fn address_mode_v<'s>(&'s mut self, address_mode_v: vks::VkSamplerAddressMode)
+    pub fn address_mode_v<'s>(&'s mut self, address_mode_v: ::SamplerAddressMode)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.addressModeV = address_mode_v;
+        self.create_info.set_address_mode_v(address_mode_v);
         self
     }
 
     /// Specifies the addressing mode for outside [0..1] range for W
     /// coordinate.
-    pub fn address_mode_w<'s>(&'s mut self, address_mode_w: vks::VkSamplerAddressMode)
+    pub fn address_mode_w<'s>(&'s mut self, address_mode_w: ::SamplerAddressMode)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.addressModeW = address_mode_w;
+        self.create_info.set_address_mode_w(address_mode_w);
         self
     }
 
@@ -175,7 +175,7 @@ impl<'b> SamplerBuilder<'b> {
     /// Level-of-Detail Operation section [TODO: INSERT LINK].
     pub fn mip_lod_bias<'s>(&'s mut self, mip_lod_bias: f32)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.mipLodBias = mip_lod_bias;
+        self.create_info.set_mip_lod_bias(mip_lod_bias);
         self
     }
 
@@ -183,15 +183,14 @@ impl<'b> SamplerBuilder<'b> {
     /// in the Texel Anisotropic Filtering section.
     pub fn anisotropy_enable<'s>(&'s mut self, anisotropy_enable: bool)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.anisotropyEnable =
-            if anisotropy_enable { vks::VK_TRUE } else { vks::VK_FALSE };
+        self.create_info.set_anisotropy_enable(anisotropy_enable);
         self
     }
 
     /// Specifies the anisotropy value clamp.
     pub fn max_anisotropy<'s>(&'s mut self, max_anisotropy: f32)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.maxAnisotropy = max_anisotropy;
+        self.create_info.set_max_anisotropy(max_anisotropy);
         self
     }
 
@@ -202,16 +201,15 @@ impl<'b> SamplerBuilder<'b> {
     /// does not match.
     pub fn compare_enable<'s>(&'s mut self, compare_enable: bool)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.compareEnable =
-            if compare_enable { vks::VK_TRUE } else { vks::VK_FALSE };
+        self.create_info.set_compare_enable(compare_enable);
         self
     }
 
     /// Specifies the comparison function to apply to fetched data before
     /// filtering as described in the Depth Compare Operation section.
-    pub fn compare_op<'s>(&'s mut self, compare_op: vks::VkCompareOp)
+    pub fn compare_op<'s>(&'s mut self, compare_op: ::CompareOp)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.compareOp = compare_op;
+        self.create_info.set_compare_op(compare_op);
         self
     }
 
@@ -220,7 +218,7 @@ impl<'b> SamplerBuilder<'b> {
     /// `max_lod` must be greater than or equal to `min_lod`.
     pub fn min_lod<'s>(&'s mut self, min_lod: f32)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.minLod = min_lod;
+        self.create_info.set_min_lod(min_lod);
         self
     }
 
@@ -229,14 +227,14 @@ impl<'b> SamplerBuilder<'b> {
     /// must be greater than or equal to `min_lod`.
     pub fn max_lod<'s>(&'s mut self, max_lod: f32)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.maxLod = max_lod;
+        self.create_info.set_max_lod(max_lod);
         self
     }
 
     /// Specifies the predefined border color to use.
-    pub fn border_color<'s>(&'s mut self, border_color: vks::VkBorderColor)
+    pub fn border_color<'s>(&'s mut self, border_color: ::BorderColor)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.borderColor = border_color;
+        self.create_info.set_border_color(border_color);
         self
     }
 
@@ -271,8 +269,7 @@ impl<'b> SamplerBuilder<'b> {
     ///   * The functions must not use offsets.
     pub fn unnormalized_coordinates<'s>(&'s mut self, unnormalized_coordinates: bool)
             -> &'s mut SamplerBuilder<'b> {
-        self.create_info.unnormalizedCoordinates =
-            if unnormalized_coordinates { vks::VK_TRUE } else { vks::VK_FALSE };
+        self.create_info.set_unnormalized_coordinates(unnormalized_coordinates);
         self
     }
 
@@ -281,7 +278,7 @@ impl<'b> SamplerBuilder<'b> {
         let mut handle = 0;
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateSampler(device.handle(),
-                &self.create_info, ptr::null(), &mut handle));
+                self.create_info.raw(), ptr::null(), &mut handle));
         }
 
         Ok(Sampler {

@@ -6,7 +6,8 @@ use std::marker::PhantomData;
 use smallvec::SmallVec;
 use libc::{c_char, c_void};
 use vks;
-use ::{VooResult, Loader, ApplicationInfo, PhysicalDevice, CharStrs, PRINT};
+use ::{VooResult, Loader, ApplicationInfo, PhysicalDevice, CharStrs, PRINT, FormatProperties,
+    Format};
 
 
 unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,
@@ -62,14 +63,25 @@ impl Instance {
     }
 
     #[inline]
+    pub fn loader(&self) -> &Loader {
+        &self.inner.loader
+    }
+
+    #[inline]
     pub fn physical_devices(&self) -> SmallVec<[PhysicalDevice; 16]> {
         enumerate_physical_devices(self.inner.handle, self.inner.loader.loader())
             .iter().map(|&pdr| PhysicalDevice::new(self.clone(), pdr)).collect()
     }
 
-    #[inline]
-    pub fn loader(&self) -> &Loader {
-        &self.inner.loader
+    pub fn physical_device_format_properties(&self, physical_device: &PhysicalDevice,
+            format: Format) -> FormatProperties {
+        unsafe {
+            let mut props: FormatProperties = mem::uninitialized();
+            self.proc_addr_loader().vkGetPhysicalDeviceFormatProperties(
+                physical_device.handle(), format.into(),
+                &mut props as *mut FormatProperties as *mut _);
+            props
+        }
     }
 }
 

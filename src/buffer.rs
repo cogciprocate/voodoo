@@ -10,7 +10,7 @@ use ::{util, VooResult, Device, DeviceMemory, PRINT};
 struct Inner {
     handle: vks::VkBuffer,
     // device_memory: DeviceMemory,
-    memory_requirements: vks::VkMemoryRequirements,
+    memory_requirements: ::MemoryRequirements,
     device: Device,
 }
 
@@ -29,7 +29,7 @@ impl Buffer {
         self.inner.handle
     }
 
-    pub fn memory_requirements(&self) -> &vks::VkMemoryRequirements {
+    pub fn memory_requirements(&self) -> &::MemoryRequirements {
         &self.inner.memory_requirements
     }
 
@@ -37,7 +37,7 @@ impl Buffer {
     /// region of memory which is to be bound. The number of bytes returned in
     /// the VkMemoryRequirements::size member in memory, starting from
     /// memoryOffset bytes, will be bound to the specified buffer.
-    pub fn bind_memory(&self, device_memory: &DeviceMemory, offset: vks::VkDeviceSize)
+    pub fn bind_memory(&self, device_memory: &DeviceMemory, offset: ::DeviceSize)
             -> VooResult<()> {
         unsafe {
             ::check(self.inner.device.proc_addr_loader().vkBindBufferMemory(
@@ -76,7 +76,7 @@ impl Drop for Inner {
 //
 #[derive(Debug, Clone)]
 pub struct BufferBuilder<'b> {
-    create_info: vks::VkBufferCreateInfo,
+    create_info: ::BufferCreateInfo<'b>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -84,37 +84,37 @@ impl<'b> BufferBuilder<'b> {
     /// Returns a new render pass builder.
     pub fn new() -> BufferBuilder<'b> {
         BufferBuilder {
-            create_info: vks::VkBufferCreateInfo::default(),
+            create_info: ::BufferCreateInfo::default(),
             _p: PhantomData,
         }
     }
 
     /// Specifies additional parameters of the buffer.
-    pub fn flags<'s>(&'s mut self, flags: vks::VkBufferCreateFlags)
+    pub fn flags<'s>(&'s mut self, flags: ::BufferCreateFlags)
             -> &'s mut BufferBuilder<'b> {
-        self.create_info.flags = flags;
+        self.create_info.set_flags(flags);
         self
     }
 
     /// Specifies the size in bytes of the buffer to be created.
-    pub fn size<'s>(&'s mut self, size: vks::VkDeviceSize)
+    pub fn size<'s>(&'s mut self, size: ::DeviceSize)
             -> &'s mut BufferBuilder<'b> {
-        self.create_info.size = size;
+        self.create_info.set_size(size);
         self
     }
 
     /// Specifies allowed usages of the buffer.
-    pub fn usage<'s>(&'s mut self, usage: vks::VkBufferUsageFlagBits)
+    pub fn usage<'s>(&'s mut self, usage: ::BufferUsageFlags)
             -> &'s mut BufferBuilder<'b> {
-        self.create_info.usage = usage;
+        self.create_info.set_usage(usage);
         self
     }
 
     /// Specifies the sharing mode of the buffer when it will be accessed by
     /// multiple queue families.
-    pub fn sharing_mode<'s>(&'s mut self, sharing_mode: vks::VkSharingMode)
+    pub fn sharing_mode<'s>(&'s mut self, sharing_mode: ::SharingMode)
             -> &'s mut BufferBuilder<'b> {
-        self.create_info.sharingMode = sharing_mode;
+        self.create_info.set_sharing_mode(sharing_mode);
         self
     }
 
@@ -123,8 +123,8 @@ impl<'b> BufferBuilder<'b> {
     pub fn queue_family_indices<'s, 'p>(&'s mut self, queue_family_indices: &'p [u32])
             -> &'s mut BufferBuilder<'b>
             where 'p: 'b {
-        self.create_info.queueFamilyIndexCount = queue_family_indices.len() as u32;
-        self.create_info.pQueueFamilyIndices = queue_family_indices.as_ptr();
+        // self.create_info.queueFamilyIndexCount(queue_family_indices.len() as u32;
+        self.create_info.set_queue_family_indices(queue_family_indices);
         self
     }
 
@@ -133,7 +133,7 @@ impl<'b> BufferBuilder<'b> {
         let mut handle = 0;
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateBuffer(device.handle(),
-                &self.create_info, ptr::null(), &mut handle));
+                self.create_info.raw(), ptr::null(), &mut handle));
         }
 
         // Memory Requirements:
@@ -148,7 +148,7 @@ impl<'b> BufferBuilder<'b> {
             inner: Arc::new(Inner {
                 handle,
                 device,
-                memory_requirements,
+                memory_requirements: memory_requirements.into(),
             })
         })
     }

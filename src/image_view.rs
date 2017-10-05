@@ -19,7 +19,7 @@ pub struct ImageView {
 
 impl ImageView {
     /// Returns a new `ImageViewBuilder`.
-    pub fn builder() -> ImageViewBuilder {
+    pub fn builder<'b>() -> ImageViewBuilder<'b> {
         ImageViewBuilder::new()
     }
 
@@ -43,61 +43,49 @@ impl Drop for Inner {
 }
 
 /// A builder for an `ImageView`.
-//
-// typedef struct VkImageViewCreateInfo {
-//     VkStructureType            sType;
-//     const void*                pNext;
-//     VkImageViewCreateFlags     flags;
-//     VkImage                    image;
-//     VkImageViewType            viewType;
-//     VkFormat                   format;
-//     VkComponentMapping         components;
-//     VkImageSubresourceRange    subresourceRange;
-// } VkImageViewCreateInfo;
-//
 #[derive(Debug, Clone)]
-pub struct ImageViewBuilder {
-    create_info: vks::VkImageViewCreateInfo,
+pub struct ImageViewBuilder<'b> {
+    create_info: ::ImageViewCreateInfo<'b>,
 }
 
-impl ImageViewBuilder {
+impl<'b> ImageViewBuilder<'b> {
     /// Returns a new `ImageViewBuilder`.
-    pub fn new() -> ImageViewBuilder {
-        ImageViewBuilder { create_info: vks::VkImageViewCreateInfo::default() }
+    pub fn new() -> ImageViewBuilder<'b> {
+        ImageViewBuilder { create_info: ::ImageViewCreateInfo::default() }
     }
 
     /// Specifies the image on which the view will be created.
-    pub fn image<'s>(&'s mut self, image: vks::VkImage) -> &'s mut ImageViewBuilder {
-        self.create_info.image = image;
+    pub fn image<'s>(&'s mut self, image: &::Image) -> &'s mut ImageViewBuilder<'b> {
+        self.create_info.set_image(image);
         self
     }
 
     /// Specifies the type of the image view.
-    pub fn view_type<'s>(&'s mut self, view_type: vks::VkImageViewType) -> &'s mut ImageViewBuilder {
-        self.create_info.viewType = view_type;
+    pub fn view_type<'s>(&'s mut self, view_type: ::ImageViewType) -> &'s mut ImageViewBuilder<'b> {
+        self.create_info.set_view_type(view_type);
         self
     }
 
     /// Specifies the format and type used to interpret data elements in the
     /// image.
-    pub fn format<'s>(&'s mut self, format: vks::VkFormat) -> &'s mut ImageViewBuilder {
-        self.create_info.format = format;
+    pub fn format<'s>(&'s mut self, format: ::Format) -> &'s mut ImageViewBuilder<'b> {
+        self.create_info.set_format(format);
         self
     }
 
     /// Specifies a remapping of color components (or of depth or stencil
     /// components after they have been converted into color components).
-    pub fn components<'s>(&'s mut self, components: vks::VkComponentMapping)
-            -> &'s mut ImageViewBuilder {
-        self.create_info.components = components;
+    pub fn components<'s>(&'s mut self, components: ::ComponentMapping)
+            -> &'s mut ImageViewBuilder<'b> {
+        self.create_info.set_components(components);
         self
     }
 
     /// Specifies the range selecting the set of mipmap levels and array
     /// layers to be accessible to the view.
-    pub fn subresource_range<'s>(&'s mut self, subresource_range: vks::VkImageSubresourceRange)
-            -> &'s mut ImageViewBuilder {
-        self.create_info.subresourceRange = subresource_range;
+    pub fn subresource_range<'s>(&'s mut self, subresource_range: ::ImageSubresourceRange)
+            -> &'s mut ImageViewBuilder<'b> {
+        self.create_info.set_subresource_range(subresource_range);
         self
     }
 
@@ -106,7 +94,7 @@ impl ImageViewBuilder {
 
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateImageView(device.handle(),
-                &self.create_info, ptr::null(), &mut handle));
+                self.create_info.raw(), ptr::null(), &mut handle));
         }
 
         Ok(ImageView {

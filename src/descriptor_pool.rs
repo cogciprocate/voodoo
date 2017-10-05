@@ -34,30 +34,32 @@ impl DescriptorPool {
 
     /// Updates descriptor sets.
     pub fn allocate_descriptor_sets(&self, descriptor_sets: &[&DescriptorSetLayout])
-            -> SmallVec<[vks::VkDescriptorSet; 8]> {
-        let descriptor_set_handles: SmallVec<[_; 8]> =
-            descriptor_sets.iter().map(|dsl| dsl.handle()).collect();
+            -> SmallVec<[::DescriptorSet; 8]> {
+        // let descriptor_set_handles: SmallVec<[_; 8]> =
+        //     descriptor_sets.iter().map(|dsl| dsl).collect();
+        let len = descriptor_sets.len();
 
-        let alloc_info = vks::VkDescriptorSetAllocateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-            pNext: ptr::null(),
-            descriptorPool: self.inner.handle,
-            descriptorSetCount: descriptor_set_handles.len() as u32,
-            pSetLayouts: descriptor_set_handles.as_ptr(),
-        };
+        let alloc_info = ::DescriptorSetAllocateInfo::builder()
+            // sType: vks::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+            // pNext: ptr::null(),
+            .descriptor_pool(self)
+            // .descriptor_set_count(descriptor_set_handles.len() as u32,
+            .set_layouts(descriptor_sets)
+            .build();
 
-        let mut descriptor_sets = SmallVec::new();
-        descriptor_sets.reserve_exact(alloc_info.descriptorSetCount as usize);
+        let mut descriptor_sets = SmallVec::<[::DescriptorSet; 8]>::new();
+        descriptor_sets.reserve_exact(len);
         unsafe {
-            descriptor_sets.set_len(alloc_info.descriptorSetCount as usize);
+            descriptor_sets.set_len(len);
             ::check(self.inner.device.proc_addr_loader().vkAllocateDescriptorSets(
-                self.inner.device.handle(), &alloc_info, descriptor_sets.as_mut_ptr()));
+                self.inner.device.handle(), alloc_info.raw(),
+                descriptor_sets.as_mut_ptr() as *mut vks::VkDescriptorSet));
         }
         descriptor_sets
     }
 
-    pub fn update_descriptor_sets(&self, descriptor_writes: Option<&[vks::VkWriteDescriptorSet]>,
-            descriptor_copies: Option<&[vks::VkCopyDescriptorSet]>) {
+    pub fn update_descriptor_sets(&self, descriptor_writes: Option<&[::WriteDescriptorSet]>,
+            descriptor_copies: Option<&[::CopyDescriptorSet]>) {
         self.inner.device.update_descriptor_sets(descriptor_writes, descriptor_copies)
     }
 
@@ -87,7 +89,7 @@ impl Drop for Inner {
 //
 #[derive(Debug, Clone)]
 pub struct DescriptorPoolBuilder<'b> {
-    create_info: vks::VkDescriptorPoolCreateInfo,
+    create_info: ::DescriptorPoolCreateInfo<'b>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -95,16 +97,16 @@ impl<'b> DescriptorPoolBuilder<'b> {
     /// Returns a new render pass builder.
     pub fn new() -> DescriptorPoolBuilder<'b> {
         DescriptorPoolBuilder {
-            create_info: vks::VkDescriptorPoolCreateInfo::default(),
+            create_info: ::DescriptorPoolCreateInfo::default(),
             _p: PhantomData,
         }
     }
 
     /// flags is a bitmask of VkDescriptorPoolCreateFlagBits specifying
     /// certain supported operations on the pool.
-    pub fn flags<'s>(&'s mut self, flags: vks::VkDescriptorPoolCreateFlags)
+    pub fn flags<'s>(&'s mut self, flags: ::DescriptorPoolCreateFlags)
             -> &'s mut DescriptorPoolBuilder<'b> {
-        self.create_info.flags = flags;
+        self.create_info.set_flags(flags);
         self
     }
 
@@ -112,7 +114,7 @@ impl<'b> DescriptorPoolBuilder<'b> {
     /// from the pool.
     pub fn max_sets<'s>(&'s mut self, max_sets: u32)
             -> &'s mut DescriptorPoolBuilder<'b> {
-        self.create_info.maxSets = max_sets;
+        self.create_info.set_max_sets(max_sets);
         self
     }
 
@@ -120,11 +122,11 @@ impl<'b> DescriptorPoolBuilder<'b> {
     /// structures, each containing a descriptor type and number of
     /// descriptors of that type to be allocated in the pool.
     pub fn pool_sizes<'s, 'p>(&'s mut self,
-            pool_sizes: &'p [vks::VkDescriptorPoolSize])
+            pool_sizes: &'p [::DescriptorPoolSize])
             -> &'s mut DescriptorPoolBuilder<'b>
             where 'p: 'b {
-        self.create_info.poolSizeCount = pool_sizes.len() as u32;
-        self.create_info.pPoolSizes = pool_sizes.as_ptr();
+        // self.create_info.poolSizeCount = pool_sizes.len() as u32;
+        self.create_info.set_pool_sizes(pool_sizes);
         self
     }
 
@@ -133,7 +135,7 @@ impl<'b> DescriptorPoolBuilder<'b> {
         let mut handle = 0;
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateDescriptorPool(device.handle(),
-                &self.create_info, ptr::null(), &mut handle));
+                self.create_info.raw(), ptr::null(), &mut handle));
         }
 
         Ok(DescriptorPool {

@@ -2,7 +2,7 @@
 name = "voodoo"
 version = "0.0.1"
 authors = ["Nick Sanders <cogciprocate@gmail.com>"]
-description = "A high-level Vulkan compute-specialized API"
+description = "An intuitive, idiomatic, unopinionated, zero-overhead Vulkan API"
 # documentation = "https://doc.cogciprocate.com/voodoo"
 homepage = "https://github.com/cogciprocate/voodoo"
 repository = "https://github.com/cogciprocate/voodoo"

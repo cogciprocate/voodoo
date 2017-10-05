@@ -5,13 +5,13 @@ use ::{VooResult, Instance, PhysicalDevice, Device, Surface, QueueFlags};
 
 pub struct QueueFamilyIndices {
     physical_device: PhysicalDevice,
-    flags: vks::VkQueueFlags,
+    flags: ::QueueFlags,
     pub flag_idxs: SmallVec<[i32; 64]>,
     pub presentation_support_idxs: SmallVec<[i32; 64]>,
 }
 
 impl QueueFamilyIndices {
-    pub fn new(physical_device: PhysicalDevice, flags: vks::VkQueueFlags) -> QueueFamilyIndices {
+    pub fn new(physical_device: PhysicalDevice, flags: ::QueueFlags) -> QueueFamilyIndices {
         QueueFamilyIndices {
             flag_idxs: SmallVec::new(),
             presentation_support_idxs: SmallVec::new(),
@@ -43,17 +43,17 @@ impl QueueFamilyIndices {
 
 pub fn queue_families(instance: &Instance, surface: &Surface, physical_device: &PhysicalDevice,
         queue_flags: QueueFlags) -> QueueFamilyIndices {
-    let mut indices = QueueFamilyIndices::new(physical_device.clone(), queue_flags.bits());
+    let mut indices = QueueFamilyIndices::new(physical_device.clone(), queue_flags);
     let queue_families = physical_device.queue_families();
 
     let mut i = 0i32;
     for queue_family in &queue_families {
-        if queue_family.queueCount > 0 && queue_family.queueFlags & queue_flags.bits() != 0 {
+        if queue_family.queue_count() > 0 && queue_family.queue_flags().contains(queue_flags) {
             indices.flag_idxs.push(i);
         }
 
         let presentation_support = physical_device.surface_support_khr(i as u32, surface);
-        if queue_family.queueCount > 0 && presentation_support {
+        if queue_family.queue_count() > 0 && presentation_support {
             indices.presentation_support_idxs.push(i);
         }
 

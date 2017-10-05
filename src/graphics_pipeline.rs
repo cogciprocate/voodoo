@@ -29,7 +29,7 @@ impl GraphicsPipeline {
     /// Creates several graphics pipelines at once.
     pub fn create<'b, Gpb>(device: &Device, builders: &[Gpb])
             -> VooResult<SmallVec<[GraphicsPipeline; 8]>>
-            where Gpb: AsRef<GraphicsPipelineBuilder<'b>> {
+            where Gpb: AsRef<::GraphicsPipelineCreateInfo<'b>> {
         let mut create_infos = SmallVec::<[vks::VkGraphicsPipelineCreateInfo; 8]>::new();
         let mut pipeline_handles = SmallVec::<[vks::VkPipeline; 8]>::new();
         let mut pipelines = SmallVec::<[GraphicsPipeline; 8]>::new();
@@ -38,7 +38,7 @@ impl GraphicsPipeline {
         pipelines.reserve_exact(builders.len());
 
         for builder in builders {
-            create_infos.push(builder.as_ref().create_info.clone());
+            create_infos.push(builder.as_ref().raw().clone());
         }
 
         unsafe {
@@ -107,7 +107,7 @@ impl Drop for Inner {
 //
 #[derive(Debug, Clone)]
 pub struct GraphicsPipelineBuilder<'b> {
-    create_info: vks::VkGraphicsPipelineCreateInfo,
+    create_info: ::GraphicsPipelineCreateInfo<'b>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -115,15 +115,15 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// Returns a new render pass builder.
     pub fn new() -> GraphicsPipelineBuilder<'b> {
         GraphicsPipelineBuilder {
-            create_info: vks::VkGraphicsPipelineCreateInfo::default(),
+            create_info: ::GraphicsPipelineCreateInfo::default(),
             _p: PhantomData,
         }
     }
 
     /// Specifies how the pipeline will be generated.
-    pub fn flags<'s>(&'s mut self, flags: vks::VkPipelineCreateFlags)
+    pub fn flags<'s>(&'s mut self, flags: ::PipelineCreateFlags)
             -> &'s mut GraphicsPipelineBuilder<'b> {
-        self.create_info.flags = flags;
+        self.create_info.set_flags(flags);
         self
     }
 
@@ -131,30 +131,30 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// list of  structures describing the set of the shader stages to be
     /// included in the graphics pipeline.
     pub fn stages<'s, 'p>(&'s mut self,
-            stages: &'p [vks::VkPipelineShaderStageCreateInfo])
+            stages: &'p [::PipelineShaderStageCreateInfo])
             -> &'s mut GraphicsPipelineBuilder<'b>
             where 'p: 'b {
-        self.create_info.stageCount = stages.len() as u32;
-        self.create_info.pStages = stages.as_ptr();
+        // self.create_info.stageCount(stages.len() as u32);
+        self.create_info.set_stages(stages);
         self
     }
 
     /// Specifies the vertex input state details.
     pub fn vertex_input_state<'s, 'p>(&'s mut self,
-            vertex_input_state: &'p vks::VkPipelineVertexInputStateCreateInfo)
+            vertex_input_state: &'p ::PipelineVertexInputStateCreateInfo)
             -> &'s mut GraphicsPipelineBuilder<'b>
             where 'p: 'b {
-        self.create_info.pVertexInputState = vertex_input_state;
+        self.create_info.set_vertex_input_state(vertex_input_state);
         self
     }
 
     /// Specifies the input assembly behavior, as described in Drawing
     /// Commands.
     pub fn input_assembly_state<'s, 'p>(&'s mut self, input_assembly_state:
-            &'p vks::VkPipelineInputAssemblyStateCreateInfo)
+            &'p ::PipelineInputAssemblyStateCreateInfo)
             -> &'s mut GraphicsPipelineBuilder<'b>
             where 'p: 'b {
-        self.create_info.pInputAssemblyState = input_assembly_state;
+        self.create_info.set_input_assembly_state(input_assembly_state);
         self
     }
 
@@ -162,39 +162,39 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// not include a tessellation control shader stage and tessellation
     /// evaluation shader stage.
     pub fn tessellation_state<'s, 'p>(&'s mut self,
-            tessellation_state: &'p vks::VkPipelineTessellationStateCreateInfo)
+            tessellation_state: &'p ::PipelineTessellationStateCreateInfo)
             -> &'s mut GraphicsPipelineBuilder<'b>
             where 'p: 'b {
-        self.create_info.pTessellationState = tessellation_state;
+        self.create_info.set_tessellation_state(tessellation_state);
         self
     }
 
     /// Specifies the viewport state and is ignored if the pipeline has
     /// rasterization disabled.
     pub fn viewport_state<'s, 'p>(&'s mut self,
-            viewport_state: &'p vks::VkPipelineViewportStateCreateInfo)
+            viewport_state: &'p ::PipelineViewportStateCreateInfo)
             -> &'s mut GraphicsPipelineBuilder<'b>
             where 'p: 'b {
-        self.create_info.pViewportState = viewport_state;
+        self.create_info.set_viewport_state(viewport_state);
         self
     }
 
     /// Specifies the rasterization state.
     pub fn rasterization_state<'s, 'p>(&'s mut self,
-            rasterization_state: &'p vks::VkPipelineRasterizationStateCreateInfo)
+            rasterization_state: &'p ::PipelineRasterizationStateCreateInfo)
             -> &'s mut GraphicsPipelineBuilder<'b>
             where 'p: 'b {
-        self.create_info.pRasterizationState = rasterization_state;
+        self.create_info.set_rasterization_state(rasterization_state);
         self
     }
 
     /// Specifies the multisample state and is ignored if the pipeline has
     /// rasterization disabled.
     pub fn multisample_state<'s, 'p>(&'s mut self,
-            multisample_state: &'p vks::VkPipelineMultisampleStateCreateInfo)
+            multisample_state: &'p ::PipelineMultisampleStateCreateInfo)
             -> &'s mut GraphicsPipelineBuilder<'b>
             where 'p: 'b {
-        self.create_info.pMultisampleState = multisample_state;
+        self.create_info.set_multisample_state(multisample_state);
         self
     }
 
@@ -202,10 +202,10 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// rasterization disabled or if the subpass of the render pass the
     /// pipeline is created against does not use a depth/stencil attachment.
     pub fn depth_stencil_state<'s, 'p>(&'s mut self,
-            depth_stencil_state: &'p vks::VkPipelineDepthStencilStateCreateInfo)
+            depth_stencil_state: &'p ::PipelineDepthStencilStateCreateInfo)
             -> &'s mut GraphicsPipelineBuilder<'b>
             where 'p: 'b {
-        self.create_info.pDepthStencilState = depth_stencil_state;
+        self.create_info.set_depth_stencil_state(depth_stencil_state);
         self
     }
 
@@ -213,10 +213,10 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// rasterization disabled or if the subpass of the render pass the
     /// pipeline is created against does not use any color attachments.
     pub fn color_blend_state<'s, 'p>(&'s mut self,
-            color_blend_state: &'p vks::VkPipelineColorBlendStateCreateInfo)
+            color_blend_state: &'p ::PipelineColorBlendStateCreateInfo)
             -> &'s mut GraphicsPipelineBuilder<'b>
             where 'p: 'b {
-        self.create_info.pColorBlendState = color_blend_state;
+        self.create_info.set_color_blend_state(color_blend_state);
         self
     }
 
@@ -224,10 +224,10 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// and can be changed independently of the pipeline state. If not
     /// specified, no state in the pipeline is considered dynamic.
     pub fn dynamic_state<'s, 'p>(&'s mut self,
-            dynamic_state: &'p vks::VkPipelineDynamicStateCreateInfo)
+            dynamic_state: &'p ::PipelineDynamicStateCreateInfo)
             -> &'s mut GraphicsPipelineBuilder<'b>
             where 'p: 'b {
-        self.create_info.pDynamicState = dynamic_state;
+        self.create_info.set_dynamic_state(dynamic_state);
         self
     }
 
@@ -235,7 +235,7 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// descriptor sets used with the pipeline.
     pub fn layout<'s>(&'s mut self, layout: &PipelineLayout)
             -> &'s mut GraphicsPipelineBuilder<'b> {
-        self.create_info.layout = layout.handle();
+        self.create_info.set_layout(layout);
         self
     }
 
@@ -244,7 +244,7 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// compatible with the one provided.
     pub fn render_pass<'s>(&'s mut self, render_pass: &RenderPass)
             -> &'s mut GraphicsPipelineBuilder<'b> {
-        self.create_info.renderPass = render_pass.handle();
+        self.create_info.set_render_pass(render_pass);
         self
     }
 
@@ -252,14 +252,14 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// pipeline will be used.
     pub fn subpass<'s>(&'s mut self, subpass: u32)
             -> &'s mut GraphicsPipelineBuilder<'b> {
-        self.create_info.subpass = subpass;
+        self.create_info.set_subpass(subpass);
         self
     }
 
     /// Specifies the pipeline to derive from.
-    pub fn base_pipeline_handle<'s>(&'s mut self, base_pipeline_handle: vks::VkPipeline)
+    pub fn base_pipeline<'s>(&'s mut self, base_pipeline: &::Pipeline)
             -> &'s mut GraphicsPipelineBuilder<'b> {
-        self.create_info.basePipelineHandle = base_pipeline_handle;
+        self.create_info.set_base_pipeline_handle(base_pipeline);
         self
     }
 
@@ -267,7 +267,7 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// pipeline to derive from.
     pub fn base_pipeline_index<'s>(&'s mut self, base_pipeline_index: i32)
             -> &'s mut GraphicsPipelineBuilder<'b> {
-        self.create_info.basePipelineIndex = base_pipeline_index;
+        self.create_info.set_base_pipeline_index(base_pipeline_index);
         self
     }
 
@@ -277,7 +277,7 @@ impl<'b> GraphicsPipelineBuilder<'b> {
         let mut handle = 0;
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle(),
-                0, 1, &self.create_info, ptr::null(), &mut handle));
+                0, 1, self.create_info.raw(), ptr::null(), &mut handle));
         }
 
         Ok(GraphicsPipeline {
@@ -292,5 +292,11 @@ impl<'b> GraphicsPipelineBuilder<'b> {
 impl<'b> AsRef<GraphicsPipelineBuilder<'b>> for GraphicsPipelineBuilder<'b> {
     fn as_ref(&self) -> &GraphicsPipelineBuilder<'b> {
         self
+    }
+}
+
+impl<'b> AsRef<::GraphicsPipelineCreateInfo<'b>> for GraphicsPipelineBuilder<'b> {
+    fn as_ref(&self) -> &::GraphicsPipelineCreateInfo<'b> {
+        &self.create_info
     }
 }

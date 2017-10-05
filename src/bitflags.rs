@@ -598,6 +598,7 @@ bitflags! {
     #[repr(C)]
     #[derive(Default)]
     pub struct AccessFlags: u32 {
+        const NONE = 0x00000001;
         const FLAG_BITS_MAX_ENUM = 0x7fffffff;
         const INDIRECT_COMMAND_READ = 0x00000001;
         const INDEX_READ = 0x00000002;

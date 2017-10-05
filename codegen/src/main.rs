@@ -31,7 +31,7 @@ fn filter_member_name(orig: &mut String) {
 
 /// Converts a pascal string to snake case and returns whether or not a "p" or
 /// "pp" was pruned (indicating a pointer member).
-fn pascal_to_snake_case(orig: &str, prune_p: bool) -> (String, bool, bool) {
+fn to_voodoo_name(orig: &str, prune_p: bool) -> (String, bool, bool) {
     let mut output = String::with_capacity(48);
     let mut prev_was_new_word = true;
 
@@ -93,6 +93,11 @@ fn pascal_to_snake_case(orig: &str, prune_p: bool) -> (String, bool, bool) {
         }
     }
 
+    if output == "type_" {
+        output.clear();
+        output.push_str("type_of");
+    }
+
     if PRINT { println!("{}   ->   {}", orig, &output); }
     assert!(!(p_was_pruned && pp_was_pruned));
     (output, p_was_pruned, pp_was_pruned)
@@ -142,11 +147,10 @@ fn convert_type_name(orig_type: &str) -> String {
                 if out_str.contains("IOSSurface") { out_str = out_str.replace("IOSSurface", "IosSurface"); }
                 if out_str.contains("OSSurface") { out_str = out_str.replace("OSSurface", "OsSurface"); }
                 if out_str.contains("FlagBits") { out_str = out_str.replace("FlagBits", "Flags"); }
+                // if out_str.contains("Flags") { out_str = out_str.replace("Flags", ""); }
                 out_str
             } else if other.len() > 4 && other.split_at(4).0 == "PFN_" {
                 String::from(other)
-            // } else if other.contains("FlagBits") {
-            //     other.replace("FlagBits", "Flags")
             } else if !other.contains("ANativeWindow") &&
                     !other.contains("MirConnection") &&
                     !other.contains("MirSurface") &&
@@ -249,6 +253,7 @@ struct Member {
     is_const_const: bool,
     is_struct: bool,
     is_handle_type: bool,
+    is_flags_type: bool,
     ptr_count_member_orig_name: Option<String>,
     is_ptr_count: bool,
     optional: bool,
@@ -274,6 +279,7 @@ impl Member {
             is_const_const: false,
             is_struct: false,
             is_handle_type: false,
+            is_flags_type: false,
             ptr_count_member_orig_name: None,
             is_ptr_count: false,
             optional: false,
@@ -309,7 +315,7 @@ impl Member {
         assert!(self.orig_name.is_empty());
         assert!(self.voodoo_name.is_empty());
         filter_member_name(&mut orig_name);
-        let (voodoo_name, p_was_pruned, pp_was_pruned) = pascal_to_snake_case(&orig_name, true);
+        let (voodoo_name, p_was_pruned, pp_was_pruned) = to_voodoo_name(&orig_name, true);
         assert!((p_was_pruned && self.is_ptr) || !p_was_pruned);
         assert!((pp_was_pruned && self.is_ptr_ptr) || !pp_was_pruned);
         // if orig_name.contains("Count") {
@@ -325,6 +331,9 @@ impl Member {
     fn set_type(&mut self, orig_type: String) {
         assert!(self.orig_type.is_empty() && self.voodoo_type.is_empty());
         self.is_handle_type = struct_is_handle_type(&orig_type);
+        if orig_type.contains("FlagBits") || orig_type.contains("Flags") {
+            self.is_flags_type = true;
+        }
         self.voodoo_type = convert_type_name(&orig_type);
         self.orig_type = orig_type;
     }
@@ -944,7 +953,7 @@ impl MemberSig {
             sig.arg_type.push_str("T");
             sig.where_clause = format!("where T: Into<Version>");
             sig.return_type.push_str("Version");
-        } else if m.voodoo_type.contains("Flags") {
+        } else if m.is_flags_type {
             if m.voodoo_type == "PipelineStageFlags" {
                 // Irregularity.
                 if m.is_ptr {
@@ -1058,7 +1067,7 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
 
     let unsafe_str = if sig.unsafe_to_set { " unsafe" } else { "" };
     let set_pre = if is_for_builder { "" } else { "set_" };
-    let self_arg_pre = if is_for_builder { "mut".to_string() } else { format!("&{} mut", impl_type_param) };
+    let self_arg_pre = if is_for_builder { "mut" } else { "&mut" };
 
     // Function signature:
     write!(o, "{t}pub{} fn {}{}<{}>({} self, {}: {})",

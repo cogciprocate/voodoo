@@ -41,11 +41,11 @@ impl Offset2d {
         self.raw.y.into()
     }
 
-    pub fn set_x<'m>(& mut self, x: i32) {
+    pub fn set_x<'m>(&mut self, x: i32) {
         self.raw.x = x.into();
     }
 
-    pub fn set_y<'m>(& mut self, y: i32) {
+    pub fn set_y<'m>(&mut self, y: i32) {
         self.raw.y = y.into();
     }
 
@@ -134,15 +134,15 @@ impl Offset3d {
         self.raw.z.into()
     }
 
-    pub fn set_x<'m>(& mut self, x: i32) {
+    pub fn set_x<'m>(&mut self, x: i32) {
         self.raw.x = x.into();
     }
 
-    pub fn set_y<'m>(& mut self, y: i32) {
+    pub fn set_y<'m>(&mut self, y: i32) {
         self.raw.y = y.into();
     }
 
-    pub fn set_z<'m>(& mut self, z: i32) {
+    pub fn set_z<'m>(&mut self, z: i32) {
         self.raw.z = z.into();
     }
 
@@ -236,11 +236,11 @@ impl Extent2d {
         self.raw.height.into()
     }
 
-    pub fn set_width<'m>(& mut self, width: u32) {
+    pub fn set_width<'m>(&mut self, width: u32) {
         self.raw.width = width.into();
     }
 
-    pub fn set_height<'m>(& mut self, height: u32) {
+    pub fn set_height<'m>(&mut self, height: u32) {
         self.raw.height = height.into();
     }
 
@@ -329,15 +329,15 @@ impl Extent3d {
         self.raw.depth.into()
     }
 
-    pub fn set_width<'m>(& mut self, width: u32) {
+    pub fn set_width<'m>(&mut self, width: u32) {
         self.raw.width = width.into();
     }
 
-    pub fn set_height<'m>(& mut self, height: u32) {
+    pub fn set_height<'m>(&mut self, height: u32) {
         self.raw.height = height.into();
     }
 
-    pub fn set_depth<'m>(& mut self, depth: u32) {
+    pub fn set_depth<'m>(&mut self, depth: u32) {
         self.raw.depth = depth.into();
     }
 
@@ -447,27 +447,27 @@ impl Viewport {
         self.raw.maxDepth.into()
     }
 
-    pub fn set_x<'m>(& mut self, x: f32) {
+    pub fn set_x<'m>(&mut self, x: f32) {
         self.raw.x = x.into();
     }
 
-    pub fn set_y<'m>(& mut self, y: f32) {
+    pub fn set_y<'m>(&mut self, y: f32) {
         self.raw.y = y.into();
     }
 
-    pub fn set_width<'m>(& mut self, width: f32) {
+    pub fn set_width<'m>(&mut self, width: f32) {
         self.raw.width = width.into();
     }
 
-    pub fn set_height<'m>(& mut self, height: f32) {
+    pub fn set_height<'m>(&mut self, height: f32) {
         self.raw.height = height.into();
     }
 
-    pub fn set_min_depth<'m>(& mut self, min_depth: f32) {
+    pub fn set_min_depth<'m>(&mut self, min_depth: f32) {
         self.raw.minDepth = min_depth.into();
     }
 
-    pub fn set_max_depth<'m>(& mut self, max_depth: f32) {
+    pub fn set_max_depth<'m>(&mut self, max_depth: f32) {
         self.raw.maxDepth = max_depth.into();
     }
 
@@ -588,11 +588,11 @@ impl Rect2d {
         self.raw.extent.into()
     }
 
-    pub fn set_offset<'m>(& mut self, offset: Offset2d) {
+    pub fn set_offset<'m>(&mut self, offset: Offset2d) {
         self.raw.offset = offset.raw;
     }
 
-    pub fn set_extent<'m>(& mut self, extent: Extent2d) {
+    pub fn set_extent<'m>(&mut self, extent: Extent2d) {
         self.raw.extent = extent.raw;
     }
 
@@ -681,15 +681,15 @@ impl ClearRect {
         self.raw.layerCount.into()
     }
 
-    pub fn set_rect<'m>(& mut self, rect: Rect2d) {
+    pub fn set_rect<'m>(&mut self, rect: Rect2d) {
         self.raw.rect = rect.raw;
     }
 
-    pub fn set_base_array_layer<'m>(& mut self, base_array_layer: u32) {
+    pub fn set_base_array_layer<'m>(&mut self, base_array_layer: u32) {
         self.raw.baseArrayLayer = base_array_layer.into();
     }
 
-    pub fn set_layer_count<'m>(& mut self, layer_count: u32) {
+    pub fn set_layer_count<'m>(&mut self, layer_count: u32) {
         self.raw.layerCount = layer_count.into();
     }
 
@@ -791,19 +791,19 @@ impl ComponentMapping {
         self.raw.a.into()
     }
 
-    pub fn set_r<'m>(& mut self, r: ComponentSwizzle) {
+    pub fn set_r<'m>(&mut self, r: ComponentSwizzle) {
         self.raw.r = r.into();
     }
 
-    pub fn set_g<'m>(& mut self, g: ComponentSwizzle) {
+    pub fn set_g<'m>(&mut self, g: ComponentSwizzle) {
         self.raw.g = g.into();
     }
 
-    pub fn set_b<'m>(& mut self, b: ComponentSwizzle) {
+    pub fn set_b<'m>(&mut self, b: ComponentSwizzle) {
         self.raw.b = b.into();
     }
 
-    pub fn set_a<'m>(& mut self, a: ComponentSwizzle) {
+    pub fn set_a<'m>(&mut self, a: ComponentSwizzle) {
         self.raw.a = a.into();
     }
 
@@ -934,41 +934,41 @@ impl PhysicalDeviceProperties {
         self.raw.sparseProperties.into()
     }
 
-    pub fn set_api_version<'m, T>(& mut self, api_version: T)
+    pub fn set_api_version<'m, T>(&mut self, api_version: T)
             where T: Into<Version> {
         self.raw.apiVersion = api_version.into().into();
     }
 
-    pub fn set_driver_version<'m, T>(& mut self, driver_version: T)
+    pub fn set_driver_version<'m, T>(&mut self, driver_version: T)
             where T: Into<Version> {
         self.raw.driverVersion = driver_version.into().into();
     }
 
-    pub fn set_vendor_id<'m>(& mut self, vendor_id: u32) {
+    pub fn set_vendor_id<'m>(&mut self, vendor_id: u32) {
         self.raw.vendorID = vendor_id.into();
     }
 
-    pub fn set_device_id<'m>(& mut self, device_id: u32) {
+    pub fn set_device_id<'m>(&mut self, device_id: u32) {
         self.raw.deviceID = device_id.into();
     }
 
-    pub fn set_device_type<'m>(& mut self, device_type: PhysicalDeviceType) {
+    pub fn set_device_type<'m>(&mut self, device_type: PhysicalDeviceType) {
         self.raw.deviceType = device_type.into();
     }
 
-    pub fn set_device_name<'m>(& mut self, device_name: [i8; vks::VK_MAX_PHYSICAL_DEVICE_NAME_SIZE]) {
+    pub fn set_device_name<'m>(&mut self, device_name: [i8; vks::VK_MAX_PHYSICAL_DEVICE_NAME_SIZE]) {
         self.raw.deviceName = device_name;
     }
 
-    pub fn set_pipeline_cache_uu_id<'m>(& mut self, pipeline_cache_uu_id: [u8; vks::VK_UUID_SIZE]) {
+    pub fn set_pipeline_cache_uu_id<'m>(&mut self, pipeline_cache_uu_id: [u8; vks::VK_UUID_SIZE]) {
         self.raw.pipelineCacheUUID = pipeline_cache_uu_id;
     }
 
-    pub fn set_limits<'m>(& mut self, limits: PhysicalDeviceLimits) {
+    pub fn set_limits<'m>(&mut self, limits: PhysicalDeviceLimits) {
         self.raw.limits = limits.raw;
     }
 
-    pub fn set_sparse_properties<'m>(& mut self, sparse_properties: PhysicalDeviceSparseProperties) {
+    pub fn set_sparse_properties<'m>(&mut self, sparse_properties: PhysicalDeviceSparseProperties) {
         self.raw.sparseProperties = sparse_properties.raw;
     }
 
@@ -1118,11 +1118,11 @@ impl ExtensionProperties {
         self.raw.specVersion.into()
     }
 
-    pub fn set_extension_name<'m>(& mut self, extension_name: [i8; vks::VK_MAX_EXTENSION_NAME_SIZE]) {
+    pub fn set_extension_name<'m>(&mut self, extension_name: [i8; vks::VK_MAX_EXTENSION_NAME_SIZE]) {
         self.raw.extensionName = extension_name;
     }
 
-    pub fn set_spec_version<'m, T>(& mut self, spec_version: T)
+    pub fn set_spec_version<'m, T>(&mut self, spec_version: T)
             where T: Into<Version> {
         self.raw.specVersion = spec_version.into().into();
     }
@@ -1217,21 +1217,21 @@ impl LayerProperties {
         unsafe { CStr::from_ptr(&self.raw.description as *const _) }
     }
 
-    pub fn set_layer_name<'m>(& mut self, layer_name: [i8; vks::VK_MAX_EXTENSION_NAME_SIZE]) {
+    pub fn set_layer_name<'m>(&mut self, layer_name: [i8; vks::VK_MAX_EXTENSION_NAME_SIZE]) {
         self.raw.layerName = layer_name;
     }
 
-    pub fn set_spec_version<'m, T>(& mut self, spec_version: T)
+    pub fn set_spec_version<'m, T>(&mut self, spec_version: T)
             where T: Into<Version> {
         self.raw.specVersion = spec_version.into().into();
     }
 
-    pub fn set_implementation_version<'m, T>(& mut self, implementation_version: T)
+    pub fn set_implementation_version<'m, T>(&mut self, implementation_version: T)
             where T: Into<Version> {
         self.raw.implementationVersion = implementation_version.into().into();
     }
 
-    pub fn set_description<'m>(& mut self, description: [i8; vks::VK_MAX_DESCRIPTION_SIZE]) {
+    pub fn set_description<'m>(&mut self, description: [i8; vks::VK_MAX_DESCRIPTION_SIZE]) {
         self.raw.description = description;
     }
 
@@ -1320,8 +1320,8 @@ impl LayerPropertiesBuilder {
 #[derive(Debug, Clone, Default)]
 pub struct ApplicationInfo<'s> {
     raw: vks::VkApplicationInfo,
-    engine_name: Option<CharStr<'s>>,
     application_name: Option<CharStr<'s>>,
+    engine_name: Option<CharStr<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -1354,11 +1354,11 @@ impl<'s> ApplicationInfo<'s> {
         self.raw.apiVersion.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_application_name<'m, 'a, T>(&'s mut self, application_name: T)
+    pub fn set_application_name<'m, 'a, T>(&mut self, application_name: T)
             where 'a: 's, T: Into<CharStr<'a>> {
         self.application_name = Some(application_name.into());
         {
@@ -1367,12 +1367,12 @@ impl<'s> ApplicationInfo<'s> {
         }
     }
 
-    pub fn set_application_version<'m, T>(&'s mut self, application_version: T)
+    pub fn set_application_version<'m, T>(&mut self, application_version: T)
             where T: Into<Version> {
         self.raw.applicationVersion = application_version.into().into();
     }
 
-    pub fn set_engine_name<'m, 'a, T>(&'s mut self, engine_name: T)
+    pub fn set_engine_name<'m, 'a, T>(&mut self, engine_name: T)
             where 'a: 's, T: Into<CharStr<'a>> {
         self.engine_name = Some(engine_name.into());
         {
@@ -1381,12 +1381,12 @@ impl<'s> ApplicationInfo<'s> {
         }
     }
 
-    pub fn set_engine_version<'m, T>(&'s mut self, engine_version: T)
+    pub fn set_engine_version<'m, T>(&mut self, engine_version: T)
             where T: Into<Version> {
         self.raw.engineVersion = engine_version.into().into();
     }
 
-    pub fn set_api_version<'m, T>(&'s mut self, api_version: T)
+    pub fn set_api_version<'m, T>(&mut self, api_version: T)
             where T: Into<Version> {
         self.raw.apiVersion = api_version.into().into();
     }
@@ -1404,7 +1404,7 @@ impl<'s> From<ApplicationInfo<'s>> for vks::VkApplicationInfo {
 
 impl<'s> From<vks::VkApplicationInfo> for ApplicationInfo<'s> {
     fn from(f: vks::VkApplicationInfo) -> ApplicationInfo<'s> {
-        ApplicationInfo { raw: f, engine_name: None, application_name: None, _p: PhantomData }
+        ApplicationInfo { raw: f, application_name: None, engine_name: None, _p: PhantomData }
     }
 }
 
@@ -1415,8 +1415,8 @@ impl<'s> From<vks::VkApplicationInfo> for ApplicationInfo<'s> {
 #[derive(Debug, Clone, Default)]
 pub struct ApplicationInfoBuilder<'b> {
     raw: vks::VkApplicationInfo,
-    engine_name: Option<CharStr<'b>>,
     application_name: Option<CharStr<'b>>,
+    engine_name: Option<CharStr<'b>>,
     _p: PhantomData<&'b ()>, 
 }
 
@@ -1424,8 +1424,8 @@ impl<'b> ApplicationInfoBuilder<'b> {
     pub fn new() -> ApplicationInfoBuilder<'b> {
         ApplicationInfoBuilder {
             raw: vks::VkApplicationInfo::default(),
-            engine_name: None,
             application_name: None,
+            engine_name: None,
             _p: PhantomData,
         }
     }
@@ -1500,8 +1500,8 @@ impl<'b> ApplicationInfoBuilder<'b> {
     pub fn build(self) -> ApplicationInfo<'b> {
         ApplicationInfo {
             raw: self.raw,
-            engine_name: self.engine_name,
             application_name: self.application_name,
+            engine_name: self.engine_name,
             _p: PhantomData,
         }
     }
@@ -1547,27 +1547,27 @@ impl<'s> AllocationCallbacks<'s> {
         self.raw.pfnInternalFree.into()
     }
 
-    pub unsafe fn set_user_data<'m>(&'s mut self, user_data: *mut c_void) {
+    pub unsafe fn set_user_data<'m>(&mut self, user_data: *mut c_void) {
         self.raw.pUserData = user_data;
     }
 
-    pub fn set_pfn_allocation<'m>(&'s mut self, pfn_allocation: PFN_vkAllocationFunction) {
+    pub fn set_pfn_allocation<'m>(&mut self, pfn_allocation: PFN_vkAllocationFunction) {
         self.raw.pfnAllocation = pfn_allocation.into();
     }
 
-    pub fn set_pfn_reallocation<'m>(&'s mut self, pfn_reallocation: PFN_vkReallocationFunction) {
+    pub fn set_pfn_reallocation<'m>(&mut self, pfn_reallocation: PFN_vkReallocationFunction) {
         self.raw.pfnReallocation = pfn_reallocation.into();
     }
 
-    pub fn set_pfn_free<'m>(&'s mut self, pfn_free: PFN_vkFreeFunction) {
+    pub fn set_pfn_free<'m>(&mut self, pfn_free: PFN_vkFreeFunction) {
         self.raw.pfnFree = pfn_free.into();
     }
 
-    pub fn set_pfn_internal_allocation<'m>(&'s mut self, pfn_internal_allocation: PFN_vkInternalAllocationNotification) {
+    pub fn set_pfn_internal_allocation<'m>(&mut self, pfn_internal_allocation: PFN_vkInternalAllocationNotification) {
         self.raw.pfnInternalAllocation = pfn_internal_allocation.into();
     }
 
-    pub fn set_pfn_internal_free<'m>(&'s mut self, pfn_internal_free: PFN_vkInternalFreeNotification) {
+    pub fn set_pfn_internal_free<'m>(&mut self, pfn_internal_free: PFN_vkInternalFreeNotification) {
         self.raw.pfnInternalFree = pfn_internal_free.into();
     }
 
@@ -1701,19 +1701,19 @@ impl<'s> DeviceQueueCreateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pQueuePriorities as *const _, self.raw.queueCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: DeviceQueueCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: DeviceQueueCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_queue_family_index<'m>(&'s mut self, queue_family_index: u32) {
+    pub fn set_queue_family_index<'m>(&mut self, queue_family_index: u32) {
         self.raw.queueFamilyIndex = queue_family_index.into();
     }
 
-    pub fn set_queue_priorities<'m, 'a>(&'s mut self, queue_priorities: &'a [f32]) {
+    pub fn set_queue_priorities<'m, 'a>(&mut self, queue_priorities: &'a [f32]) {
         assert!(self.raw.queueCount == 0 || self.raw.queueCount == queue_priorities.len() as _, 
             "count inconsistency found when specifying `DeviceQueueCreateInfo::queue_priorities`.");
         self.raw.queueCount = queue_priorities.len() as _;
@@ -1845,22 +1845,22 @@ impl<'s> DeviceCreateInfo<'s> {
         unsafe { &*(self.raw.pEnabledFeatures as *const vks::VkPhysicalDeviceFeatures as *const _) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: DeviceCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: DeviceCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_queue_create_infos<'m, 'a>(&'s mut self, queue_create_infos: &'a [DeviceQueueCreateInfo]) {
+    pub fn set_queue_create_infos<'m, 'a>(&mut self, queue_create_infos: &'a [DeviceQueueCreateInfo]) {
         assert!(self.raw.queueCreateInfoCount == 0 || self.raw.queueCreateInfoCount == queue_create_infos.len() as _, 
             "count inconsistency found when specifying `DeviceCreateInfo::queue_create_infos`.");
         self.raw.queueCreateInfoCount = queue_create_infos.len() as _;
         self.raw.pQueueCreateInfos = queue_create_infos.as_ptr() as *const vks::VkDeviceQueueCreateInfo as *const _;
     }
 
-    pub fn set_enabled_layer_names<'m, 'a, T>(&'s mut self, enabled_layer_names: T)
+    pub fn set_enabled_layer_names<'m, 'a, T>(&mut self, enabled_layer_names: T)
             where 'a: 's, T: Into<CharStrs<'a>> {
         self.enabled_layer_names = Some(enabled_layer_names.into());
         {
@@ -1872,7 +1872,7 @@ impl<'s> DeviceCreateInfo<'s> {
         }
     }
 
-    pub fn set_enabled_extension_names<'m, 'a, T>(&'s mut self, enabled_extension_names: T)
+    pub fn set_enabled_extension_names<'m, 'a, T>(&mut self, enabled_extension_names: T)
             where 'a: 's, T: Into<CharStrs<'a>> {
         self.enabled_extension_names = Some(enabled_extension_names.into());
         {
@@ -1884,7 +1884,7 @@ impl<'s> DeviceCreateInfo<'s> {
         }
     }
 
-    pub fn set_enabled_features<'m, 'a>(&'s mut self, enabled_features: &'a PhysicalDeviceFeatures)
+    pub fn set_enabled_features<'m, 'a>(&mut self, enabled_features: &'a PhysicalDeviceFeatures)
             where 'a: 's {
         self.raw.pEnabledFeatures = enabled_features.raw();
     }
@@ -2020,8 +2020,8 @@ impl<'b> DeviceCreateInfoBuilder<'b> {
 #[derive(Debug, Clone, Default)]
 pub struct InstanceCreateInfo<'s> {
     raw: vks::VkInstanceCreateInfo,
-    enabled_layer_names: Option<CharStrs<'s>>,
     enabled_extension_names: Option<CharStrs<'s>>,
+    enabled_layer_names: Option<CharStrs<'s>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -2051,20 +2051,20 @@ impl<'s> InstanceCreateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.ppEnabledExtensionNames as *const _, self.raw.enabledExtensionCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: InstanceCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: InstanceCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_application_info<'m, 'a>(&'s mut self, application_info: &'a ApplicationInfo)
+    pub fn set_application_info<'m, 'a>(&mut self, application_info: &'a ApplicationInfo)
             where 'a: 's {
         self.raw.pApplicationInfo = application_info.raw();
     }
 
-    pub fn set_enabled_layer_names<'m, 'a, T>(&'s mut self, enabled_layer_names: T)
+    pub fn set_enabled_layer_names<'m, 'a, T>(&mut self, enabled_layer_names: T)
             where 'a: 's, T: Into<CharStrs<'a>> {
         self.enabled_layer_names = Some(enabled_layer_names.into());
         {
@@ -2076,7 +2076,7 @@ impl<'s> InstanceCreateInfo<'s> {
         }
     }
 
-    pub fn set_enabled_extension_names<'m, 'a, T>(&'s mut self, enabled_extension_names: T)
+    pub fn set_enabled_extension_names<'m, 'a, T>(&mut self, enabled_extension_names: T)
             where 'a: 's, T: Into<CharStrs<'a>> {
         self.enabled_extension_names = Some(enabled_extension_names.into());
         {
@@ -2101,7 +2101,7 @@ impl<'s> From<InstanceCreateInfo<'s>> for vks::VkInstanceCreateInfo {
 
 impl<'s> From<vks::VkInstanceCreateInfo> for InstanceCreateInfo<'s> {
     fn from(f: vks::VkInstanceCreateInfo) -> InstanceCreateInfo<'s> {
-        InstanceCreateInfo { raw: f, enabled_layer_names: None, enabled_extension_names: None, _p: PhantomData }
+        InstanceCreateInfo { raw: f, enabled_extension_names: None, enabled_layer_names: None, _p: PhantomData }
     }
 }
 
@@ -2112,8 +2112,8 @@ impl<'s> From<vks::VkInstanceCreateInfo> for InstanceCreateInfo<'s> {
 #[derive(Debug, Clone, Default)]
 pub struct InstanceCreateInfoBuilder<'b> {
     raw: vks::VkInstanceCreateInfo,
-    enabled_layer_names: Option<CharStrs<'b>>,
     enabled_extension_names: Option<CharStrs<'b>>,
+    enabled_layer_names: Option<CharStrs<'b>>,
     _p: PhantomData<&'b ()>, 
 }
 
@@ -2121,8 +2121,8 @@ impl<'b> InstanceCreateInfoBuilder<'b> {
     pub fn new() -> InstanceCreateInfoBuilder<'b> {
         InstanceCreateInfoBuilder {
             raw: vks::VkInstanceCreateInfo::default(),
-            enabled_layer_names: None,
             enabled_extension_names: None,
+            enabled_layer_names: None,
             _p: PhantomData,
         }
     }
@@ -2193,8 +2193,8 @@ impl<'b> InstanceCreateInfoBuilder<'b> {
     pub fn build(self) -> InstanceCreateInfo<'b> {
         InstanceCreateInfo {
             raw: self.raw,
-            enabled_layer_names: self.enabled_layer_names,
             enabled_extension_names: self.enabled_extension_names,
+            enabled_layer_names: self.enabled_layer_names,
             _p: PhantomData,
         }
     }
@@ -2232,19 +2232,19 @@ impl QueueFamilyProperties {
         self.raw.minImageTransferGranularity.into()
     }
 
-    pub fn set_queue_flags<'m>(& mut self, queue_flags: QueueFlags) {
+    pub fn set_queue_flags<'m>(&mut self, queue_flags: QueueFlags) {
         self.raw.queueFlags = queue_flags.bits();
     }
 
-    pub fn set_queue_count<'m>(& mut self, queue_count: u32) {
+    pub fn set_queue_count<'m>(&mut self, queue_count: u32) {
         self.raw.queueCount = queue_count.into();
     }
 
-    pub fn set_timestamp_valid_bits<'m>(& mut self, timestamp_valid_bits: u32) {
+    pub fn set_timestamp_valid_bits<'m>(&mut self, timestamp_valid_bits: u32) {
         self.raw.timestampValidBits = timestamp_valid_bits.into();
     }
 
-    pub fn set_min_image_transfer_granularity<'m>(& mut self, min_image_transfer_granularity: Extent3d) {
+    pub fn set_min_image_transfer_granularity<'m>(&mut self, min_image_transfer_granularity: Extent3d) {
         self.raw.minImageTransferGranularity = min_image_transfer_granularity.raw;
     }
 
@@ -2356,19 +2356,19 @@ impl PhysicalDeviceMemoryProperties {
         unsafe { slice::from_raw_parts(&self.raw.memoryHeaps as *const vks::VkMemoryHeap as *const _, vks::VK_MAX_MEMORY_HEAPS as usize) }
     }
 
-    pub fn set_memory_type_count<'m>(& mut self, memory_type_count: u32) {
+    pub fn set_memory_type_count<'m>(&mut self, memory_type_count: u32) {
         self.raw.memoryTypeCount = memory_type_count.into();
     }
 
-    pub fn set_memory_types<'m>(& mut self, memory_types: [MemoryType; vks::VK_MAX_MEMORY_TYPES]) {
+    pub fn set_memory_types<'m>(&mut self, memory_types: [MemoryType; vks::VK_MAX_MEMORY_TYPES]) {
         self.raw.memoryTypes = unsafe { *(&memory_types as *const [MemoryType; vks::VK_MAX_MEMORY_TYPES] as *const _) };
     }
 
-    pub fn set_memory_heap_count<'m>(& mut self, memory_heap_count: u32) {
+    pub fn set_memory_heap_count<'m>(&mut self, memory_heap_count: u32) {
         self.raw.memoryHeapCount = memory_heap_count.into();
     }
 
-    pub fn set_memory_heaps<'m>(& mut self, memory_heaps: [MemoryHeap; vks::VK_MAX_MEMORY_HEAPS]) {
+    pub fn set_memory_heaps<'m>(&mut self, memory_heaps: [MemoryHeap; vks::VK_MAX_MEMORY_HEAPS]) {
         self.raw.memoryHeaps = unsafe { *(&memory_heaps as *const [MemoryHeap; vks::VK_MAX_MEMORY_HEAPS] as *const _) };
     }
 
@@ -2476,15 +2476,15 @@ impl<'s> MemoryAllocateInfo<'s> {
         self.raw.memoryTypeIndex.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_allocation_size<'m>(&'s mut self, allocation_size: u64) {
+    pub fn set_allocation_size<'m>(&mut self, allocation_size: u64) {
         self.raw.allocationSize = allocation_size.into();
     }
 
-    pub fn set_memory_type_index<'m>(&'s mut self, memory_type_index: u32) {
+    pub fn set_memory_type_index<'m>(&mut self, memory_type_index: u32) {
         self.raw.memoryTypeIndex = memory_type_index.into();
     }
 
@@ -2585,15 +2585,15 @@ impl MemoryRequirements {
         self.raw.memoryTypeBits.into()
     }
 
-    pub fn set_size<'m>(& mut self, size: u64) {
+    pub fn set_size<'m>(&mut self, size: u64) {
         self.raw.size = size.into();
     }
 
-    pub fn set_alignment<'m>(& mut self, alignment: u64) {
+    pub fn set_alignment<'m>(&mut self, alignment: u64) {
         self.raw.alignment = alignment.into();
     }
 
-    pub fn set_memory_type_bits<'m>(& mut self, memory_type_bits: u32) {
+    pub fn set_memory_type_bits<'m>(&mut self, memory_type_bits: u32) {
         self.raw.memoryTypeBits = memory_type_bits.into();
     }
 
@@ -2693,15 +2693,15 @@ impl SparseImageFormatProperties {
             .expect("SparseImageFormatProperties::flags: error converting flags")
     }
 
-    pub fn set_aspect_mask<'m>(& mut self, aspect_mask: ImageAspectFlags) {
+    pub fn set_aspect_mask<'m>(&mut self, aspect_mask: ImageAspectFlags) {
         self.raw.aspectMask = aspect_mask.bits();
     }
 
-    pub fn set_image_granularity<'m>(& mut self, image_granularity: Extent3d) {
+    pub fn set_image_granularity<'m>(&mut self, image_granularity: Extent3d) {
         self.raw.imageGranularity = image_granularity.raw;
     }
 
-    pub fn set_flags<'m>(& mut self, flags: SparseImageFormatFlags) {
+    pub fn set_flags<'m>(&mut self, flags: SparseImageFormatFlags) {
         self.raw.flags = flags.bits();
     }
 
@@ -2809,23 +2809,23 @@ impl SparseImageMemoryRequirements {
         self.raw.imageMipTailStride.into()
     }
 
-    pub fn set_format_properties<'m>(& mut self, format_properties: SparseImageFormatProperties) {
+    pub fn set_format_properties<'m>(&mut self, format_properties: SparseImageFormatProperties) {
         self.raw.formatProperties = format_properties.raw;
     }
 
-    pub fn set_image_mip_tail_first_lod<'m>(& mut self, image_mip_tail_first_lod: u32) {
+    pub fn set_image_mip_tail_first_lod<'m>(&mut self, image_mip_tail_first_lod: u32) {
         self.raw.imageMipTailFirstLod = image_mip_tail_first_lod.into();
     }
 
-    pub fn set_image_mip_tail_size<'m>(& mut self, image_mip_tail_size: u64) {
+    pub fn set_image_mip_tail_size<'m>(&mut self, image_mip_tail_size: u64) {
         self.raw.imageMipTailSize = image_mip_tail_size.into();
     }
 
-    pub fn set_image_mip_tail_offset<'m>(& mut self, image_mip_tail_offset: u64) {
+    pub fn set_image_mip_tail_offset<'m>(&mut self, image_mip_tail_offset: u64) {
         self.raw.imageMipTailOffset = image_mip_tail_offset.into();
     }
 
-    pub fn set_image_mip_tail_stride<'m>(& mut self, image_mip_tail_stride: u64) {
+    pub fn set_image_mip_tail_stride<'m>(&mut self, image_mip_tail_stride: u64) {
         self.raw.imageMipTailStride = image_mip_tail_stride.into();
     }
 
@@ -2938,11 +2938,11 @@ impl MemoryType {
         self.raw.heapIndex.into()
     }
 
-    pub fn set_property_flags<'m>(& mut self, property_flags: MemoryPropertyFlags) {
+    pub fn set_property_flags<'m>(&mut self, property_flags: MemoryPropertyFlags) {
         self.raw.propertyFlags = property_flags.bits();
     }
 
-    pub fn set_heap_index<'m>(& mut self, heap_index: u32) {
+    pub fn set_heap_index<'m>(&mut self, heap_index: u32) {
         self.raw.heapIndex = heap_index.into();
     }
 
@@ -3029,11 +3029,11 @@ impl MemoryHeap {
             .expect("MemoryHeap::flags: error converting flags")
     }
 
-    pub fn set_size<'m>(& mut self, size: u64) {
+    pub fn set_size<'m>(&mut self, size: u64) {
         self.raw.size = size.into();
     }
 
-    pub fn set_flags<'m>(& mut self, flags: MemoryHeapFlags) {
+    pub fn set_flags<'m>(&mut self, flags: MemoryHeapFlags) {
         self.raw.flags = flags.bits();
     }
 
@@ -3128,19 +3128,19 @@ impl<'s> MappedMemoryRange<'s> {
         self.raw.size.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_memory<'m, 'a>(&'s mut self, memory: &'a DeviceMemory) {
+    pub fn set_memory<'m, 'a>(&mut self, memory: &'a DeviceMemory) {
         self.raw.memory = memory.handle();
     }
 
-    pub fn set_offset<'m>(&'s mut self, offset: u64) {
+    pub fn set_offset<'m>(&mut self, offset: u64) {
         self.raw.offset = offset.into();
     }
 
-    pub fn set_size<'m>(&'s mut self, size: u64) {
+    pub fn set_size<'m>(&mut self, size: u64) {
         self.raw.size = size.into();
     }
 
@@ -3253,15 +3253,15 @@ impl FormatProperties {
             .expect("FormatProperties::buffer_features: error converting flags")
     }
 
-    pub fn set_linear_tiling_features<'m>(& mut self, linear_tiling_features: FormatFeatureFlags) {
+    pub fn set_linear_tiling_features<'m>(&mut self, linear_tiling_features: FormatFeatureFlags) {
         self.raw.linearTilingFeatures = linear_tiling_features.bits();
     }
 
-    pub fn set_optimal_tiling_features<'m>(& mut self, optimal_tiling_features: FormatFeatureFlags) {
+    pub fn set_optimal_tiling_features<'m>(&mut self, optimal_tiling_features: FormatFeatureFlags) {
         self.raw.optimalTilingFeatures = optimal_tiling_features.bits();
     }
 
-    pub fn set_buffer_features<'m>(& mut self, buffer_features: FormatFeatureFlags) {
+    pub fn set_buffer_features<'m>(&mut self, buffer_features: FormatFeatureFlags) {
         self.raw.bufferFeatures = buffer_features.bits();
     }
 
@@ -3371,23 +3371,23 @@ impl ImageFormatProperties {
         self.raw.maxResourceSize.into()
     }
 
-    pub fn set_max_extent<'m>(& mut self, max_extent: Extent3d) {
+    pub fn set_max_extent<'m>(&mut self, max_extent: Extent3d) {
         self.raw.maxExtent = max_extent.raw;
     }
 
-    pub fn set_max_mip_levels<'m>(& mut self, max_mip_levels: u32) {
+    pub fn set_max_mip_levels<'m>(&mut self, max_mip_levels: u32) {
         self.raw.maxMipLevels = max_mip_levels.into();
     }
 
-    pub fn set_max_array_layers<'m>(& mut self, max_array_layers: u32) {
+    pub fn set_max_array_layers<'m>(&mut self, max_array_layers: u32) {
         self.raw.maxArrayLayers = max_array_layers.into();
     }
 
-    pub fn set_sample_counts<'m>(& mut self, sample_counts: SampleCountFlags) {
+    pub fn set_sample_counts<'m>(&mut self, sample_counts: SampleCountFlags) {
         self.raw.sampleCounts = sample_counts.bits();
     }
 
-    pub fn set_max_resource_size<'m>(& mut self, max_resource_size: u64) {
+    pub fn set_max_resource_size<'m>(&mut self, max_resource_size: u64) {
         self.raw.maxResourceSize = max_resource_size.into();
     }
 
@@ -3504,15 +3504,15 @@ impl DescriptorBufferInfo {
         self.raw.range.into()
     }
 
-    pub fn set_buffer<'m, 'a>(& mut self, buffer: &'a Buffer) {
+    pub fn set_buffer<'m, 'a>(&mut self, buffer: &'a Buffer) {
         self.raw.buffer = buffer.handle();
     }
 
-    pub fn set_offset<'m>(& mut self, offset: u64) {
+    pub fn set_offset<'m>(&mut self, offset: u64) {
         self.raw.offset = offset.into();
     }
 
-    pub fn set_range<'m>(& mut self, range: u64) {
+    pub fn set_range<'m>(&mut self, range: u64) {
         self.raw.range = range.into();
     }
 
@@ -3610,15 +3610,15 @@ impl DescriptorImageInfo {
         self.raw.imageLayout.into()
     }
 
-    pub fn set_sampler<'m, 'a>(& mut self, sampler: &'a Sampler) {
+    pub fn set_sampler<'m, 'a>(&mut self, sampler: &'a Sampler) {
         self.raw.sampler = sampler.handle();
     }
 
-    pub fn set_image_view<'m, 'a>(& mut self, image_view: &'a ImageView) {
+    pub fn set_image_view<'m, 'a>(&mut self, image_view: &'a ImageView) {
         self.raw.imageView = image_view.handle();
     }
 
-    pub fn set_image_layout<'m>(& mut self, image_layout: ImageLayout) {
+    pub fn set_image_layout<'m>(&mut self, image_layout: ImageLayout) {
         self.raw.imageLayout = image_layout.into();
     }
 
@@ -3741,41 +3741,41 @@ impl<'s> WriteDescriptorSet<'s> {
         unsafe { &*(self.raw.pTexelBufferView as *const _) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_dst_set<'m, 'a>(&'s mut self, dst_set: &'a DescriptorSet) {
+    pub fn set_dst_set<'m, 'a>(&mut self, dst_set: &'a DescriptorSet) {
         self.raw.dstSet = dst_set.handle();
     }
 
-    pub fn set_dst_binding<'m>(&'s mut self, dst_binding: u32) {
+    pub fn set_dst_binding<'m>(&mut self, dst_binding: u32) {
         self.raw.dstBinding = dst_binding.into();
     }
 
-    pub fn set_dst_array_element<'m>(&'s mut self, dst_array_element: u32) {
+    pub fn set_dst_array_element<'m>(&mut self, dst_array_element: u32) {
         self.raw.dstArrayElement = dst_array_element.into();
     }
 
-    pub fn set_descriptor_count<'m>(&'s mut self, descriptor_count: u32) {
+    pub fn set_descriptor_count<'m>(&mut self, descriptor_count: u32) {
         self.raw.descriptorCount = descriptor_count.into();
     }
 
-    pub fn set_descriptor_type<'m>(&'s mut self, descriptor_type: DescriptorType) {
+    pub fn set_descriptor_type<'m>(&mut self, descriptor_type: DescriptorType) {
         self.raw.descriptorType = descriptor_type.into();
     }
 
-    pub fn set_image_info<'m, 'a>(&'s mut self, image_info: &'a DescriptorImageInfo)
+    pub fn set_image_info<'m, 'a>(&mut self, image_info: &'a DescriptorImageInfo)
             where 'a: 's {
         self.raw.pImageInfo = image_info.raw();
     }
 
-    pub fn set_buffer_info<'m, 'a>(&'s mut self, buffer_info: &'a DescriptorBufferInfo)
+    pub fn set_buffer_info<'m, 'a>(&mut self, buffer_info: &'a DescriptorBufferInfo)
             where 'a: 's {
         self.raw.pBufferInfo = buffer_info.raw();
     }
 
-    pub fn set_texel_buffer_view<'m, 'a>(&'s mut self, texel_buffer_view: &'a BufferView) {
+    pub fn set_texel_buffer_view<'m, 'a>(&mut self, texel_buffer_view: &'a BufferView) {
         self.raw.pTexelBufferView = &texel_buffer_view.handle();
     }
 
@@ -3953,35 +3953,35 @@ impl<'s> CopyDescriptorSet<'s> {
         self.raw.descriptorCount.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_src_set<'m, 'a>(&'s mut self, src_set: &'a DescriptorSet) {
+    pub fn set_src_set<'m, 'a>(&mut self, src_set: &'a DescriptorSet) {
         self.raw.srcSet = src_set.handle();
     }
 
-    pub fn set_src_binding<'m>(&'s mut self, src_binding: u32) {
+    pub fn set_src_binding<'m>(&mut self, src_binding: u32) {
         self.raw.srcBinding = src_binding.into();
     }
 
-    pub fn set_src_array_element<'m>(&'s mut self, src_array_element: u32) {
+    pub fn set_src_array_element<'m>(&mut self, src_array_element: u32) {
         self.raw.srcArrayElement = src_array_element.into();
     }
 
-    pub fn set_dst_set<'m, 'a>(&'s mut self, dst_set: &'a DescriptorSet) {
+    pub fn set_dst_set<'m, 'a>(&mut self, dst_set: &'a DescriptorSet) {
         self.raw.dstSet = dst_set.handle();
     }
 
-    pub fn set_dst_binding<'m>(&'s mut self, dst_binding: u32) {
+    pub fn set_dst_binding<'m>(&mut self, dst_binding: u32) {
         self.raw.dstBinding = dst_binding.into();
     }
 
-    pub fn set_dst_array_element<'m>(&'s mut self, dst_array_element: u32) {
+    pub fn set_dst_array_element<'m>(&mut self, dst_array_element: u32) {
         self.raw.dstArrayElement = dst_array_element.into();
     }
 
-    pub fn set_descriptor_count<'m>(&'s mut self, descriptor_count: u32) {
+    pub fn set_descriptor_count<'m>(&mut self, descriptor_count: u32) {
         self.raw.descriptorCount = descriptor_count.into();
     }
 
@@ -4142,27 +4142,27 @@ impl<'s> BufferCreateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pQueueFamilyIndices as *const _, self.raw.queueFamilyIndexCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: BufferCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: BufferCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_size<'m>(&'s mut self, size: u64) {
+    pub fn set_size<'m>(&mut self, size: u64) {
         self.raw.size = size.into();
     }
 
-    pub fn set_usage<'m>(&'s mut self, usage: BufferUsageFlags) {
+    pub fn set_usage<'m>(&mut self, usage: BufferUsageFlags) {
         self.raw.usage = usage.bits();
     }
 
-    pub fn set_sharing_mode<'m>(&'s mut self, sharing_mode: SharingMode) {
+    pub fn set_sharing_mode<'m>(&mut self, sharing_mode: SharingMode) {
         self.raw.sharingMode = sharing_mode.into();
     }
 
-    pub fn set_queue_family_indices<'m, 'a>(&'s mut self, queue_family_indices: &'a [u32]) {
+    pub fn set_queue_family_indices<'m, 'a>(&mut self, queue_family_indices: &'a [u32]) {
         assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `BufferCreateInfo::queue_family_indices`.");
         self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
@@ -4312,27 +4312,27 @@ impl<'s> BufferViewCreateInfo<'s> {
         self.raw.range.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: BufferViewCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: BufferViewCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_buffer<'m, 'a>(&'s mut self, buffer: &'a Buffer) {
+    pub fn set_buffer<'m, 'a>(&mut self, buffer: &'a Buffer) {
         self.raw.buffer = buffer.handle();
     }
 
-    pub fn set_format<'m>(&'s mut self, format: Format) {
+    pub fn set_format<'m>(&mut self, format: Format) {
         self.raw.format = format.into();
     }
 
-    pub fn set_offset<'m>(&'s mut self, offset: u64) {
+    pub fn set_offset<'m>(&mut self, offset: u64) {
         self.raw.offset = offset.into();
     }
 
-    pub fn set_range<'m>(&'s mut self, range: u64) {
+    pub fn set_range<'m>(&mut self, range: u64) {
         self.raw.range = range.into();
     }
 
@@ -4462,15 +4462,15 @@ impl ImageSubresource {
         self.raw.arrayLayer.into()
     }
 
-    pub fn set_aspect_mask<'m>(& mut self, aspect_mask: ImageAspectFlags) {
+    pub fn set_aspect_mask<'m>(&mut self, aspect_mask: ImageAspectFlags) {
         self.raw.aspectMask = aspect_mask.bits();
     }
 
-    pub fn set_mip_level<'m>(& mut self, mip_level: u32) {
+    pub fn set_mip_level<'m>(&mut self, mip_level: u32) {
         self.raw.mipLevel = mip_level.into();
     }
 
-    pub fn set_array_layer<'m>(& mut self, array_layer: u32) {
+    pub fn set_array_layer<'m>(&mut self, array_layer: u32) {
         self.raw.arrayLayer = array_layer.into();
     }
 
@@ -4574,19 +4574,19 @@ impl ImageSubresourceLayers {
         self.raw.layerCount.into()
     }
 
-    pub fn set_aspect_mask<'m>(& mut self, aspect_mask: ImageAspectFlags) {
+    pub fn set_aspect_mask<'m>(&mut self, aspect_mask: ImageAspectFlags) {
         self.raw.aspectMask = aspect_mask.bits();
     }
 
-    pub fn set_mip_level<'m>(& mut self, mip_level: u32) {
+    pub fn set_mip_level<'m>(&mut self, mip_level: u32) {
         self.raw.mipLevel = mip_level.into();
     }
 
-    pub fn set_base_array_layer<'m>(& mut self, base_array_layer: u32) {
+    pub fn set_base_array_layer<'m>(&mut self, base_array_layer: u32) {
         self.raw.baseArrayLayer = base_array_layer.into();
     }
 
-    pub fn set_layer_count<'m>(& mut self, layer_count: u32) {
+    pub fn set_layer_count<'m>(&mut self, layer_count: u32) {
         self.raw.layerCount = layer_count.into();
     }
 
@@ -4703,23 +4703,23 @@ impl ImageSubresourceRange {
         self.raw.layerCount.into()
     }
 
-    pub fn set_aspect_mask<'m>(& mut self, aspect_mask: ImageAspectFlags) {
+    pub fn set_aspect_mask<'m>(&mut self, aspect_mask: ImageAspectFlags) {
         self.raw.aspectMask = aspect_mask.bits();
     }
 
-    pub fn set_base_mip_level<'m>(& mut self, base_mip_level: u32) {
+    pub fn set_base_mip_level<'m>(&mut self, base_mip_level: u32) {
         self.raw.baseMipLevel = base_mip_level.into();
     }
 
-    pub fn set_level_count<'m>(& mut self, level_count: u32) {
+    pub fn set_level_count<'m>(&mut self, level_count: u32) {
         self.raw.levelCount = level_count.into();
     }
 
-    pub fn set_base_array_layer<'m>(& mut self, base_array_layer: u32) {
+    pub fn set_base_array_layer<'m>(&mut self, base_array_layer: u32) {
         self.raw.baseArrayLayer = base_array_layer.into();
     }
 
-    pub fn set_layer_count<'m>(& mut self, layer_count: u32) {
+    pub fn set_layer_count<'m>(&mut self, layer_count: u32) {
         self.raw.layerCount = layer_count.into();
     }
 
@@ -4839,15 +4839,15 @@ impl<'s> MemoryBarrier<'s> {
             .expect("MemoryBarrier::dst_access_mask: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_src_access_mask<'m>(&'s mut self, src_access_mask: AccessFlags) {
+    pub fn set_src_access_mask<'m>(&mut self, src_access_mask: AccessFlags) {
         self.raw.srcAccessMask = src_access_mask.bits();
     }
 
-    pub fn set_dst_access_mask<'m>(&'s mut self, dst_access_mask: AccessFlags) {
+    pub fn set_dst_access_mask<'m>(&mut self, dst_access_mask: AccessFlags) {
         self.raw.dstAccessMask = dst_access_mask.bits();
     }
 
@@ -4973,35 +4973,35 @@ impl<'s> BufferMemoryBarrier<'s> {
         self.raw.size.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_src_access_mask<'m>(&'s mut self, src_access_mask: AccessFlags) {
+    pub fn set_src_access_mask<'m>(&mut self, src_access_mask: AccessFlags) {
         self.raw.srcAccessMask = src_access_mask.bits();
     }
 
-    pub fn set_dst_access_mask<'m>(&'s mut self, dst_access_mask: AccessFlags) {
+    pub fn set_dst_access_mask<'m>(&mut self, dst_access_mask: AccessFlags) {
         self.raw.dstAccessMask = dst_access_mask.bits();
     }
 
-    pub fn set_src_queue_family_index<'m>(&'s mut self, src_queue_family_index: u32) {
+    pub fn set_src_queue_family_index<'m>(&mut self, src_queue_family_index: u32) {
         self.raw.srcQueueFamilyIndex = src_queue_family_index.into();
     }
 
-    pub fn set_dst_queue_family_index<'m>(&'s mut self, dst_queue_family_index: u32) {
+    pub fn set_dst_queue_family_index<'m>(&mut self, dst_queue_family_index: u32) {
         self.raw.dstQueueFamilyIndex = dst_queue_family_index.into();
     }
 
-    pub fn set_buffer<'m, 'a>(&'s mut self, buffer: &'a Buffer) {
+    pub fn set_buffer<'m, 'a>(&mut self, buffer: &'a Buffer) {
         self.raw.buffer = buffer.handle();
     }
 
-    pub fn set_offset<'m>(&'s mut self, offset: u64) {
+    pub fn set_offset<'m>(&mut self, offset: u64) {
         self.raw.offset = offset.into();
     }
 
-    pub fn set_size<'m>(&'s mut self, size: u64) {
+    pub fn set_size<'m>(&mut self, size: u64) {
         self.raw.size = size.into();
     }
 
@@ -5176,39 +5176,39 @@ impl<'s> ImageMemoryBarrier<'s> {
         self.raw.subresourceRange.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_src_access_mask<'m>(&'s mut self, src_access_mask: AccessFlags) {
+    pub fn set_src_access_mask<'m>(&mut self, src_access_mask: AccessFlags) {
         self.raw.srcAccessMask = src_access_mask.bits();
     }
 
-    pub fn set_dst_access_mask<'m>(&'s mut self, dst_access_mask: AccessFlags) {
+    pub fn set_dst_access_mask<'m>(&mut self, dst_access_mask: AccessFlags) {
         self.raw.dstAccessMask = dst_access_mask.bits();
     }
 
-    pub fn set_old_layout<'m>(&'s mut self, old_layout: ImageLayout) {
+    pub fn set_old_layout<'m>(&mut self, old_layout: ImageLayout) {
         self.raw.oldLayout = old_layout.into();
     }
 
-    pub fn set_new_layout<'m>(&'s mut self, new_layout: ImageLayout) {
+    pub fn set_new_layout<'m>(&mut self, new_layout: ImageLayout) {
         self.raw.newLayout = new_layout.into();
     }
 
-    pub fn set_src_queue_family_index<'m>(&'s mut self, src_queue_family_index: u32) {
+    pub fn set_src_queue_family_index<'m>(&mut self, src_queue_family_index: u32) {
         self.raw.srcQueueFamilyIndex = src_queue_family_index.into();
     }
 
-    pub fn set_dst_queue_family_index<'m>(&'s mut self, dst_queue_family_index: u32) {
+    pub fn set_dst_queue_family_index<'m>(&mut self, dst_queue_family_index: u32) {
         self.raw.dstQueueFamilyIndex = dst_queue_family_index.into();
     }
 
-    pub fn set_image<'m, 'a>(&'s mut self, image: &'a Image) {
+    pub fn set_image<'m, 'a>(&mut self, image: &'a Image) {
         self.raw.image = image.handle();
     }
 
-    pub fn set_subresource_range<'m>(&'s mut self, subresource_range: ImageSubresourceRange) {
+    pub fn set_subresource_range<'m>(&mut self, subresource_range: ImageSubresourceRange) {
         self.raw.subresourceRange = subresource_range.raw;
     }
 
@@ -5409,58 +5409,58 @@ impl<'s> ImageCreateInfo<'s> {
         self.raw.initialLayout.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: ImageCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: ImageCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_image_type<'m>(&'s mut self, image_type: ImageType) {
+    pub fn set_image_type<'m>(&mut self, image_type: ImageType) {
         self.raw.imageType = image_type.into();
     }
 
-    pub fn set_format<'m>(&'s mut self, format: Format) {
+    pub fn set_format<'m>(&mut self, format: Format) {
         self.raw.format = format.into();
     }
 
-    pub fn set_extent<'m>(&'s mut self, extent: Extent3d) {
+    pub fn set_extent<'m>(&mut self, extent: Extent3d) {
         self.raw.extent = extent.raw;
     }
 
-    pub fn set_mip_levels<'m>(&'s mut self, mip_levels: u32) {
+    pub fn set_mip_levels<'m>(&mut self, mip_levels: u32) {
         self.raw.mipLevels = mip_levels.into();
     }
 
-    pub fn set_array_layers<'m>(&'s mut self, array_layers: u32) {
+    pub fn set_array_layers<'m>(&mut self, array_layers: u32) {
         self.raw.arrayLayers = array_layers.into();
     }
 
-    pub fn set_samples<'m>(&'s mut self, samples: SampleCountFlags) {
+    pub fn set_samples<'m>(&mut self, samples: SampleCountFlags) {
         self.raw.samples = samples.bits();
     }
 
-    pub fn set_tiling<'m>(&'s mut self, tiling: ImageTiling) {
+    pub fn set_tiling<'m>(&mut self, tiling: ImageTiling) {
         self.raw.tiling = tiling.into();
     }
 
-    pub fn set_usage<'m>(&'s mut self, usage: ImageUsageFlags) {
+    pub fn set_usage<'m>(&mut self, usage: ImageUsageFlags) {
         self.raw.usage = usage.bits();
     }
 
-    pub fn set_sharing_mode<'m>(&'s mut self, sharing_mode: SharingMode) {
+    pub fn set_sharing_mode<'m>(&mut self, sharing_mode: SharingMode) {
         self.raw.sharingMode = sharing_mode.into();
     }
 
-    pub fn set_queue_family_indices<'m, 'a>(&'s mut self, queue_family_indices: &'a [u32]) {
+    pub fn set_queue_family_indices<'m, 'a>(&mut self, queue_family_indices: &'a [u32]) {
         assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `ImageCreateInfo::queue_family_indices`.");
         self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
         self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_initial_layout<'m>(&'s mut self, initial_layout: ImageLayout) {
+    pub fn set_initial_layout<'m>(&mut self, initial_layout: ImageLayout) {
         self.raw.initialLayout = initial_layout.into();
     }
 
@@ -5665,23 +5665,23 @@ impl SubresourceLayout {
         self.raw.depthPitch.into()
     }
 
-    pub fn set_offset<'m>(& mut self, offset: u64) {
+    pub fn set_offset<'m>(&mut self, offset: u64) {
         self.raw.offset = offset.into();
     }
 
-    pub fn set_size<'m>(& mut self, size: u64) {
+    pub fn set_size<'m>(&mut self, size: u64) {
         self.raw.size = size.into();
     }
 
-    pub fn set_row_pitch<'m>(& mut self, row_pitch: u64) {
+    pub fn set_row_pitch<'m>(&mut self, row_pitch: u64) {
         self.raw.rowPitch = row_pitch.into();
     }
 
-    pub fn set_array_pitch<'m>(& mut self, array_pitch: u64) {
+    pub fn set_array_pitch<'m>(&mut self, array_pitch: u64) {
         self.raw.arrayPitch = array_pitch.into();
     }
 
-    pub fn set_depth_pitch<'m>(& mut self, depth_pitch: u64) {
+    pub fn set_depth_pitch<'m>(&mut self, depth_pitch: u64) {
         self.raw.depthPitch = depth_pitch.into();
     }
 
@@ -5815,31 +5815,31 @@ impl<'s> ImageViewCreateInfo<'s> {
         self.raw.subresourceRange.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: ImageViewCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: ImageViewCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_image<'m, 'a>(&'s mut self, image: &'a Image) {
+    pub fn set_image<'m, 'a>(&mut self, image: &'a Image) {
         self.raw.image = image.handle();
     }
 
-    pub fn set_view_type<'m>(&'s mut self, view_type: ImageViewType) {
+    pub fn set_view_type<'m>(&mut self, view_type: ImageViewType) {
         self.raw.viewType = view_type.into();
     }
 
-    pub fn set_format<'m>(&'s mut self, format: Format) {
+    pub fn set_format<'m>(&mut self, format: Format) {
         self.raw.format = format.into();
     }
 
-    pub fn set_components<'m>(&'s mut self, components: ComponentMapping) {
+    pub fn set_components<'m>(&mut self, components: ComponentMapping) {
         self.raw.components = components.raw;
     }
 
-    pub fn set_subresource_range<'m>(&'s mut self, subresource_range: ImageSubresourceRange) {
+    pub fn set_subresource_range<'m>(&mut self, subresource_range: ImageSubresourceRange) {
         self.raw.subresourceRange = subresource_range.raw;
     }
 
@@ -5977,15 +5977,15 @@ impl BufferCopy {
         self.raw.size.into()
     }
 
-    pub fn set_src_offset<'m>(& mut self, src_offset: u64) {
+    pub fn set_src_offset<'m>(&mut self, src_offset: u64) {
         self.raw.srcOffset = src_offset.into();
     }
 
-    pub fn set_dst_offset<'m>(& mut self, dst_offset: u64) {
+    pub fn set_dst_offset<'m>(&mut self, dst_offset: u64) {
         self.raw.dstOffset = dst_offset.into();
     }
 
-    pub fn set_size<'m>(& mut self, size: u64) {
+    pub fn set_size<'m>(&mut self, size: u64) {
         self.raw.size = size.into();
     }
 
@@ -6092,23 +6092,23 @@ impl SparseMemoryBind {
             .expect("SparseMemoryBind::flags: error converting flags")
     }
 
-    pub fn set_resource_offset<'m>(& mut self, resource_offset: u64) {
+    pub fn set_resource_offset<'m>(&mut self, resource_offset: u64) {
         self.raw.resourceOffset = resource_offset.into();
     }
 
-    pub fn set_size<'m>(& mut self, size: u64) {
+    pub fn set_size<'m>(&mut self, size: u64) {
         self.raw.size = size.into();
     }
 
-    pub fn set_memory<'m, 'a>(& mut self, memory: &'a DeviceMemory) {
+    pub fn set_memory<'m, 'a>(&mut self, memory: &'a DeviceMemory) {
         self.raw.memory = memory.handle();
     }
 
-    pub fn set_memory_offset<'m>(& mut self, memory_offset: u64) {
+    pub fn set_memory_offset<'m>(&mut self, memory_offset: u64) {
         self.raw.memoryOffset = memory_offset.into();
     }
 
-    pub fn set_flags<'m>(& mut self, flags: SparseMemoryBindFlags) {
+    pub fn set_flags<'m>(&mut self, flags: SparseMemoryBindFlags) {
         self.raw.flags = flags.bits();
     }
 
@@ -6238,27 +6238,27 @@ impl SparseImageMemoryBind {
             .expect("SparseImageMemoryBind::flags: error converting flags")
     }
 
-    pub fn set_subresource<'m>(& mut self, subresource: ImageSubresource) {
+    pub fn set_subresource<'m>(&mut self, subresource: ImageSubresource) {
         self.raw.subresource = subresource.raw;
     }
 
-    pub fn set_offset<'m>(& mut self, offset: Offset3d) {
+    pub fn set_offset<'m>(&mut self, offset: Offset3d) {
         self.raw.offset = offset.raw;
     }
 
-    pub fn set_extent<'m>(& mut self, extent: Extent3d) {
+    pub fn set_extent<'m>(&mut self, extent: Extent3d) {
         self.raw.extent = extent.raw;
     }
 
-    pub fn set_memory<'m, 'a>(& mut self, memory: &'a DeviceMemory) {
+    pub fn set_memory<'m, 'a>(&mut self, memory: &'a DeviceMemory) {
         self.raw.memory = memory.handle();
     }
 
-    pub fn set_memory_offset<'m>(& mut self, memory_offset: u64) {
+    pub fn set_memory_offset<'m>(&mut self, memory_offset: u64) {
         self.raw.memoryOffset = memory_offset.into();
     }
 
-    pub fn set_flags<'m>(& mut self, flags: SparseMemoryBindFlags) {
+    pub fn set_flags<'m>(&mut self, flags: SparseMemoryBindFlags) {
         self.raw.flags = flags.bits();
     }
 
@@ -6381,11 +6381,11 @@ impl<'s> SparseBufferMemoryBindInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pBinds as *const _, self.raw.bindCount as usize) }
     }
 
-    pub fn set_buffer<'m, 'a>(&'s mut self, buffer: &'a Buffer) {
+    pub fn set_buffer<'m, 'a>(&mut self, buffer: &'a Buffer) {
         self.raw.buffer = buffer.handle();
     }
 
-    pub fn set_binds<'m, 'a>(&'s mut self, binds: &'a [SparseMemoryBind]) {
+    pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseMemoryBind]) {
         assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseBufferMemoryBindInfo::binds`.");
         self.raw.bindCount = binds.len() as _;
@@ -6480,11 +6480,11 @@ impl<'s> SparseImageOpaqueMemoryBindInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pBinds as *const _, self.raw.bindCount as usize) }
     }
 
-    pub fn set_image<'m, 'a>(&'s mut self, image: &'a Image) {
+    pub fn set_image<'m, 'a>(&mut self, image: &'a Image) {
         self.raw.image = image.handle();
     }
 
-    pub fn set_binds<'m, 'a>(&'s mut self, binds: &'a [SparseMemoryBind]) {
+    pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseMemoryBind]) {
         assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseImageOpaqueMemoryBindInfo::binds`.");
         self.raw.bindCount = binds.len() as _;
@@ -6579,11 +6579,11 @@ impl<'s> SparseImageMemoryBindInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pBinds as *const _, self.raw.bindCount as usize) }
     }
 
-    pub fn set_image<'m, 'a>(&'s mut self, image: &'a Image) {
+    pub fn set_image<'m, 'a>(&mut self, image: &'a Image) {
         self.raw.image = image.handle();
     }
 
-    pub fn set_binds<'m, 'a>(&'s mut self, binds: &'a [SparseImageMemoryBind]) {
+    pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseImageMemoryBind]) {
         assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseImageMemoryBindInfo::binds`.");
         self.raw.bindCount = binds.len() as _;
@@ -6695,11 +6695,11 @@ impl<'s> BindSparseInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pSignalSemaphores as *const _, self.raw.signalSemaphoreCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_wait_semaphores<'m, 'a>(&'s mut self, wait_semaphores: &'a [&'a Semaphore])
+    pub fn set_wait_semaphores<'m, 'a>(&mut self, wait_semaphores: &'a [&'a Semaphore])
             where 'a: 's {
         self.wait_semaphores = Some(wait_semaphores.iter().map(|h| h.handle()).collect());
         {
@@ -6711,28 +6711,28 @@ impl<'s> BindSparseInfo<'s> {
         }
     }
 
-    pub fn set_buffer_binds<'m, 'a>(&'s mut self, buffer_binds: &'a [SparseBufferMemoryBindInfo]) {
+    pub fn set_buffer_binds<'m, 'a>(&mut self, buffer_binds: &'a [SparseBufferMemoryBindInfo]) {
         assert!(self.raw.bufferBindCount == 0 || self.raw.bufferBindCount == buffer_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::buffer_binds`.");
         self.raw.bufferBindCount = buffer_binds.len() as _;
         self.raw.pBufferBinds = buffer_binds.as_ptr() as *const vks::VkSparseBufferMemoryBindInfo as *const _;
     }
 
-    pub fn set_image_opaque_binds<'m, 'a>(&'s mut self, image_opaque_binds: &'a [SparseImageOpaqueMemoryBindInfo]) {
+    pub fn set_image_opaque_binds<'m, 'a>(&mut self, image_opaque_binds: &'a [SparseImageOpaqueMemoryBindInfo]) {
         assert!(self.raw.imageOpaqueBindCount == 0 || self.raw.imageOpaqueBindCount == image_opaque_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::image_opaque_binds`.");
         self.raw.imageOpaqueBindCount = image_opaque_binds.len() as _;
         self.raw.pImageOpaqueBinds = image_opaque_binds.as_ptr() as *const vks::VkSparseImageOpaqueMemoryBindInfo as *const _;
     }
 
-    pub fn set_image_binds<'m, 'a>(&'s mut self, image_binds: &'a [SparseImageMemoryBindInfo]) {
+    pub fn set_image_binds<'m, 'a>(&mut self, image_binds: &'a [SparseImageMemoryBindInfo]) {
         assert!(self.raw.imageBindCount == 0 || self.raw.imageBindCount == image_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::image_binds`.");
         self.raw.imageBindCount = image_binds.len() as _;
         self.raw.pImageBinds = image_binds.as_ptr() as *const vks::VkSparseImageMemoryBindInfo as *const _;
     }
 
-    pub fn set_signal_semaphores<'m, 'a>(&'s mut self, signal_semaphores: &'a [&'a Semaphore])
+    pub fn set_signal_semaphores<'m, 'a>(&mut self, signal_semaphores: &'a [&'a Semaphore])
             where 'a: 's {
         self.signal_semaphores = Some(signal_semaphores.iter().map(|h| h.handle()).collect());
         {
@@ -6907,23 +6907,23 @@ impl ImageCopy {
         self.raw.extent.into()
     }
 
-    pub fn set_src_subresource<'m>(& mut self, src_subresource: ImageSubresourceLayers) {
+    pub fn set_src_subresource<'m>(&mut self, src_subresource: ImageSubresourceLayers) {
         self.raw.srcSubresource = src_subresource.raw;
     }
 
-    pub fn set_src_offset<'m>(& mut self, src_offset: Offset3d) {
+    pub fn set_src_offset<'m>(&mut self, src_offset: Offset3d) {
         self.raw.srcOffset = src_offset.raw;
     }
 
-    pub fn set_dst_subresource<'m>(& mut self, dst_subresource: ImageSubresourceLayers) {
+    pub fn set_dst_subresource<'m>(&mut self, dst_subresource: ImageSubresourceLayers) {
         self.raw.dstSubresource = dst_subresource.raw;
     }
 
-    pub fn set_dst_offset<'m>(& mut self, dst_offset: Offset3d) {
+    pub fn set_dst_offset<'m>(&mut self, dst_offset: Offset3d) {
         self.raw.dstOffset = dst_offset.raw;
     }
 
-    pub fn set_extent<'m>(& mut self, extent: Extent3d) {
+    pub fn set_extent<'m>(&mut self, extent: Extent3d) {
         self.raw.extent = extent.raw;
     }
 
@@ -7043,19 +7043,19 @@ impl ImageBlit {
         unsafe { slice::from_raw_parts(&self.raw.dstOffsets as *const vks::VkOffset3D as *const _, 2 as usize) }
     }
 
-    pub fn set_src_subresource<'m>(& mut self, src_subresource: ImageSubresourceLayers) {
+    pub fn set_src_subresource<'m>(&mut self, src_subresource: ImageSubresourceLayers) {
         self.raw.srcSubresource = src_subresource.raw;
     }
 
-    pub fn set_src_offsets<'m>(& mut self, src_offsets: [Offset3d; 2]) {
+    pub fn set_src_offsets<'m>(&mut self, src_offsets: [Offset3d; 2]) {
         self.raw.srcOffsets = [src_offsets[0].raw, src_offsets[1].raw, ];
     }
 
-    pub fn set_dst_subresource<'m>(& mut self, dst_subresource: ImageSubresourceLayers) {
+    pub fn set_dst_subresource<'m>(&mut self, dst_subresource: ImageSubresourceLayers) {
         self.raw.dstSubresource = dst_subresource.raw;
     }
 
-    pub fn set_dst_offsets<'m>(& mut self, dst_offsets: [Offset3d; 2]) {
+    pub fn set_dst_offsets<'m>(&mut self, dst_offsets: [Offset3d; 2]) {
         self.raw.dstOffsets = [dst_offsets[0].raw, dst_offsets[1].raw, ];
     }
 
@@ -7174,27 +7174,27 @@ impl BufferImageCopy {
         self.raw.imageExtent.into()
     }
 
-    pub fn set_buffer_offset<'m>(& mut self, buffer_offset: u64) {
+    pub fn set_buffer_offset<'m>(&mut self, buffer_offset: u64) {
         self.raw.bufferOffset = buffer_offset.into();
     }
 
-    pub fn set_buffer_row_length<'m>(& mut self, buffer_row_length: u32) {
+    pub fn set_buffer_row_length<'m>(&mut self, buffer_row_length: u32) {
         self.raw.bufferRowLength = buffer_row_length.into();
     }
 
-    pub fn set_buffer_image_height<'m>(& mut self, buffer_image_height: u32) {
+    pub fn set_buffer_image_height<'m>(&mut self, buffer_image_height: u32) {
         self.raw.bufferImageHeight = buffer_image_height.into();
     }
 
-    pub fn set_image_subresource<'m>(& mut self, image_subresource: ImageSubresourceLayers) {
+    pub fn set_image_subresource<'m>(&mut self, image_subresource: ImageSubresourceLayers) {
         self.raw.imageSubresource = image_subresource.raw;
     }
 
-    pub fn set_image_offset<'m>(& mut self, image_offset: Offset3d) {
+    pub fn set_image_offset<'m>(&mut self, image_offset: Offset3d) {
         self.raw.imageOffset = image_offset.raw;
     }
 
-    pub fn set_image_extent<'m>(& mut self, image_extent: Extent3d) {
+    pub fn set_image_extent<'m>(&mut self, image_extent: Extent3d) {
         self.raw.imageExtent = image_extent.raw;
     }
 
@@ -7327,23 +7327,23 @@ impl ImageResolve {
         self.raw.extent.into()
     }
 
-    pub fn set_src_subresource<'m>(& mut self, src_subresource: ImageSubresourceLayers) {
+    pub fn set_src_subresource<'m>(&mut self, src_subresource: ImageSubresourceLayers) {
         self.raw.srcSubresource = src_subresource.raw;
     }
 
-    pub fn set_src_offset<'m>(& mut self, src_offset: Offset3d) {
+    pub fn set_src_offset<'m>(&mut self, src_offset: Offset3d) {
         self.raw.srcOffset = src_offset.raw;
     }
 
-    pub fn set_dst_subresource<'m>(& mut self, dst_subresource: ImageSubresourceLayers) {
+    pub fn set_dst_subresource<'m>(&mut self, dst_subresource: ImageSubresourceLayers) {
         self.raw.dstSubresource = dst_subresource.raw;
     }
 
-    pub fn set_dst_offset<'m>(& mut self, dst_offset: Offset3d) {
+    pub fn set_dst_offset<'m>(&mut self, dst_offset: Offset3d) {
         self.raw.dstOffset = dst_offset.raw;
     }
 
-    pub fn set_extent<'m>(& mut self, extent: Extent3d) {
+    pub fn set_extent<'m>(&mut self, extent: Extent3d) {
         self.raw.extent = extent.raw;
     }
 
@@ -7461,15 +7461,15 @@ impl<'s> ShaderModuleCreateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pCode as *const _, self.raw.codeSize as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: ShaderModuleCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: ShaderModuleCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_code<'m, 'a>(&'s mut self, code: &'a [u32]) {
+    pub fn set_code<'m, 'a>(&mut self, code: &'a [u32]) {
         assert!(self.raw.codeSize == 0 || self.raw.codeSize == code.len() as _, 
             "count inconsistency found when specifying `ShaderModuleCreateInfo::code`.");
         self.raw.codeSize = code.len() as _;
@@ -7587,23 +7587,23 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
         unsafe { &*(self.raw.pImmutableSamplers as *const _) }
     }
 
-    pub fn set_binding<'m>(&'s mut self, binding: u32) {
+    pub fn set_binding<'m>(&mut self, binding: u32) {
         self.raw.binding = binding.into();
     }
 
-    pub fn set_descriptor_type<'m>(&'s mut self, descriptor_type: DescriptorType) {
+    pub fn set_descriptor_type<'m>(&mut self, descriptor_type: DescriptorType) {
         self.raw.descriptorType = descriptor_type.into();
     }
 
-    pub fn set_descriptor_count<'m>(&'s mut self, descriptor_count: u32) {
+    pub fn set_descriptor_count<'m>(&mut self, descriptor_count: u32) {
         self.raw.descriptorCount = descriptor_count.into();
     }
 
-    pub fn set_stage_flags<'m>(&'s mut self, stage_flags: ShaderStageFlags) {
+    pub fn set_stage_flags<'m>(&mut self, stage_flags: ShaderStageFlags) {
         self.raw.stageFlags = stage_flags.bits();
     }
 
-    pub fn set_immutable_samplers<'m, 'a>(&'s mut self, immutable_samplers: &'a [&'a Sampler])
+    pub fn set_immutable_samplers<'m, 'a>(&mut self, immutable_samplers: &'a [&'a Sampler])
             where 'a: 's {
         self.immutable_samplers = Some(immutable_samplers.iter().map(|h| h.handle()).collect());
         {
@@ -7738,15 +7738,15 @@ impl<'s> DescriptorSetLayoutCreateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pBindings as *const _, self.raw.bindingCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: DescriptorSetLayoutCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: DescriptorSetLayoutCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_bindings<'m, 'a>(&'s mut self, bindings: &'a [DescriptorSetLayoutBinding]) {
+    pub fn set_bindings<'m, 'a>(&mut self, bindings: &'a [DescriptorSetLayoutBinding]) {
         self.bindings = Some(bindings.iter().map(|h| h.raw).collect());
         {
             let bindings = self.bindings.as_ref().unwrap();
@@ -7861,11 +7861,11 @@ impl DescriptorPoolSize {
         self.raw.descriptorCount.into()
     }
 
-    pub fn set_type_of<'m>(& mut self, type_of: DescriptorType) {
+    pub fn set_type_of<'m>(&mut self, type_of: DescriptorType) {
         self.raw.type_ = type_of.into();
     }
 
-    pub fn set_descriptor_count<'m>(& mut self, descriptor_count: u32) {
+    pub fn set_descriptor_count<'m>(&mut self, descriptor_count: u32) {
         self.raw.descriptorCount = descriptor_count.into();
     }
 
@@ -7960,19 +7960,19 @@ impl<'s> DescriptorPoolCreateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pPoolSizes as *const _, self.raw.poolSizeCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: DescriptorPoolCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: DescriptorPoolCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_max_sets<'m>(&'s mut self, max_sets: u32) {
+    pub fn set_max_sets<'m>(&mut self, max_sets: u32) {
         self.raw.maxSets = max_sets.into();
     }
 
-    pub fn set_pool_sizes<'m, 'a>(&'s mut self, pool_sizes: &'a [DescriptorPoolSize]) {
+    pub fn set_pool_sizes<'m, 'a>(&mut self, pool_sizes: &'a [DescriptorPoolSize]) {
         assert!(self.raw.poolSizeCount == 0 || self.raw.poolSizeCount == pool_sizes.len() as _, 
             "count inconsistency found when specifying `DescriptorPoolCreateInfo::pool_sizes`.");
         self.raw.poolSizeCount = pool_sizes.len() as _;
@@ -8090,15 +8090,15 @@ impl<'s> DescriptorSetAllocateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pSetLayouts as *const _, self.raw.descriptorSetCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_descriptor_pool<'m, 'a>(&'s mut self, descriptor_pool: &'a DescriptorPool) {
+    pub fn set_descriptor_pool<'m, 'a>(&mut self, descriptor_pool: &'a DescriptorPool) {
         self.raw.descriptorPool = descriptor_pool.handle();
     }
 
-    pub fn set_set_layouts<'m, 'a>(&'s mut self, set_layouts: &'a [&'a DescriptorSetLayout])
+    pub fn set_set_layouts<'m, 'a>(&mut self, set_layouts: &'a [&'a DescriptorSetLayout])
             where 'a: 's {
         self.set_layouts = Some(set_layouts.iter().map(|h| h.handle()).collect());
         {
@@ -8218,15 +8218,15 @@ impl SpecializationMapEntry {
         self.raw.size.into()
     }
 
-    pub fn set_constant_id<'m>(& mut self, constant_id: u32) {
+    pub fn set_constant_id<'m>(&mut self, constant_id: u32) {
         self.raw.constantID = constant_id.into();
     }
 
-    pub fn set_offset<'m>(& mut self, offset: u32) {
+    pub fn set_offset<'m>(&mut self, offset: u32) {
         self.raw.offset = offset.into();
     }
 
-    pub fn set_size<'m>(& mut self, size: usize) {
+    pub fn set_size<'m>(&mut self, size: usize) {
         self.raw.size = size.into();
     }
 
@@ -8325,18 +8325,18 @@ impl<'s> SpecializationInfo<'s> {
         self.raw.pData
     }
 
-    pub fn set_map_entries<'m, 'a>(&'s mut self, map_entries: &'a [SpecializationMapEntry]) {
+    pub fn set_map_entries<'m, 'a>(&mut self, map_entries: &'a [SpecializationMapEntry]) {
         assert!(self.raw.mapEntryCount == 0 || self.raw.mapEntryCount == map_entries.len() as _, 
             "count inconsistency found when specifying `SpecializationInfo::map_entries`.");
         self.raw.mapEntryCount = map_entries.len() as _;
         self.raw.pMapEntries = map_entries.as_ptr() as *const vks::VkSpecializationMapEntry as *const _;
     }
 
-    pub fn set_data_size<'m>(&'s mut self, data_size: usize) {
+    pub fn set_data_size<'m>(&mut self, data_size: usize) {
         self.raw.dataSize = data_size.into();
     }
 
-    pub unsafe fn set_data<'m>(&'s mut self, data: *const c_void) {
+    pub unsafe fn set_data<'m>(&mut self, data: *const c_void) {
         self.raw.pData = data;
     }
 
@@ -8455,23 +8455,23 @@ impl<'s> PipelineShaderStageCreateInfo<'s> {
         unsafe { &*(self.raw.pSpecializationInfo as *const vks::VkSpecializationInfo as *const _) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineShaderStageCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineShaderStageCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_stage<'m>(&'s mut self, stage: ShaderStageFlags) {
+    pub fn set_stage<'m>(&mut self, stage: ShaderStageFlags) {
         self.raw.stage = stage.bits();
     }
 
-    pub fn set_module<'m, 'a>(&'s mut self, module: &'a ShaderModule) {
+    pub fn set_module<'m, 'a>(&mut self, module: &'a ShaderModule) {
         self.raw.module = module.handle();
     }
 
-    pub fn set_name<'m, 'a, T>(&'s mut self, name: T)
+    pub fn set_name<'m, 'a, T>(&mut self, name: T)
             where 'a: 's, T: Into<CharStr<'a>> {
         self.name = Some(name.into());
         {
@@ -8480,7 +8480,7 @@ impl<'s> PipelineShaderStageCreateInfo<'s> {
         }
     }
 
-    pub fn set_specialization_info<'m, 'a>(&'s mut self, specialization_info: &'a SpecializationInfo)
+    pub fn set_specialization_info<'m, 'a>(&mut self, specialization_info: &'a SpecializationInfo)
             where 'a: 's {
         self.raw.pSpecializationInfo = specialization_info.raw();
     }
@@ -8634,27 +8634,27 @@ impl<'s> ComputePipelineCreateInfo<'s> {
         self.raw.basePipelineIndex.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_stage<'m>(&'s mut self, stage: PipelineShaderStageCreateInfo) {
+    pub fn set_stage<'m>(&mut self, stage: PipelineShaderStageCreateInfo) {
         self.raw.stage = stage.raw;
     }
 
-    pub fn set_layout<'m, 'a>(&'s mut self, layout: &'a PipelineLayout) {
+    pub fn set_layout<'m, 'a>(&mut self, layout: &'a PipelineLayout) {
         self.raw.layout = layout.handle();
     }
 
-    pub fn set_base_pipeline_handle<'m, 'a>(&'s mut self, base_pipeline_handle: &'a Pipeline) {
+    pub fn set_base_pipeline_handle<'m, 'a>(&mut self, base_pipeline_handle: &'a Pipeline) {
         self.raw.basePipelineHandle = base_pipeline_handle.handle();
     }
 
-    pub fn set_base_pipeline_index<'m>(&'s mut self, base_pipeline_index: i32) {
+    pub fn set_base_pipeline_index<'m>(&mut self, base_pipeline_index: i32) {
         self.raw.basePipelineIndex = base_pipeline_index.into();
     }
 
@@ -8783,15 +8783,15 @@ impl VertexInputBindingDescription {
         self.raw.inputRate.into()
     }
 
-    pub fn set_binding<'m>(& mut self, binding: u32) {
+    pub fn set_binding<'m>(&mut self, binding: u32) {
         self.raw.binding = binding.into();
     }
 
-    pub fn set_stride<'m>(& mut self, stride: u32) {
+    pub fn set_stride<'m>(&mut self, stride: u32) {
         self.raw.stride = stride.into();
     }
 
-    pub fn set_input_rate<'m>(& mut self, input_rate: VertexInputRate) {
+    pub fn set_input_rate<'m>(&mut self, input_rate: VertexInputRate) {
         self.raw.inputRate = input_rate.into();
     }
 
@@ -8893,19 +8893,19 @@ impl VertexInputAttributeDescription {
         self.raw.offset.into()
     }
 
-    pub fn set_location<'m>(& mut self, location: u32) {
+    pub fn set_location<'m>(&mut self, location: u32) {
         self.raw.location = location.into();
     }
 
-    pub fn set_binding<'m>(& mut self, binding: u32) {
+    pub fn set_binding<'m>(&mut self, binding: u32) {
         self.raw.binding = binding.into();
     }
 
-    pub fn set_format<'m>(& mut self, format: Format) {
+    pub fn set_format<'m>(&mut self, format: Format) {
         self.raw.format = format.into();
     }
 
-    pub fn set_offset<'m>(& mut self, offset: u32) {
+    pub fn set_offset<'m>(&mut self, offset: u32) {
         self.raw.offset = offset.into();
     }
 
@@ -9018,22 +9018,22 @@ impl<'s> PipelineVertexInputStateCreateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pVertexAttributeDescriptions as *const _, self.raw.vertexAttributeDescriptionCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineVertexInputStateCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineVertexInputStateCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_vertex_binding_descriptions<'m, 'a>(&'s mut self, vertex_binding_descriptions: &'a [VertexInputBindingDescription]) {
+    pub fn set_vertex_binding_descriptions<'m, 'a>(&mut self, vertex_binding_descriptions: &'a [VertexInputBindingDescription]) {
         assert!(self.raw.vertexBindingDescriptionCount == 0 || self.raw.vertexBindingDescriptionCount == vertex_binding_descriptions.len() as _, 
             "count inconsistency found when specifying `PipelineVertexInputStateCreateInfo::vertex_binding_descriptions`.");
         self.raw.vertexBindingDescriptionCount = vertex_binding_descriptions.len() as _;
         self.raw.pVertexBindingDescriptions = vertex_binding_descriptions.as_ptr() as *const vks::VkVertexInputBindingDescription as *const _;
     }
 
-    pub fn set_vertex_attribute_descriptions<'m, 'a>(&'s mut self, vertex_attribute_descriptions: &'a [VertexInputAttributeDescription]) {
+    pub fn set_vertex_attribute_descriptions<'m, 'a>(&mut self, vertex_attribute_descriptions: &'a [VertexInputAttributeDescription]) {
         assert!(self.raw.vertexAttributeDescriptionCount == 0 || self.raw.vertexAttributeDescriptionCount == vertex_attribute_descriptions.len() as _, 
             "count inconsistency found when specifying `PipelineVertexInputStateCreateInfo::vertex_attribute_descriptions`.");
         self.raw.vertexAttributeDescriptionCount = vertex_attribute_descriptions.len() as _;
@@ -9159,19 +9159,19 @@ impl<'s> PipelineInputAssemblyStateCreateInfo<'s> {
         self.raw.primitiveRestartEnable != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineInputAssemblyStateCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineInputAssemblyStateCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_topology<'m>(&'s mut self, topology: PrimitiveTopology) {
+    pub fn set_topology<'m>(&mut self, topology: PrimitiveTopology) {
         self.raw.topology = topology.into();
     }
 
-    pub fn set_primitive_restart_enable<'m>(&'s mut self, primitive_restart_enable: bool) {
+    pub fn set_primitive_restart_enable<'m>(&mut self, primitive_restart_enable: bool) {
         self.raw.primitiveRestartEnable = primitive_restart_enable as u32;
     }
 
@@ -9284,15 +9284,15 @@ impl<'s> PipelineTessellationStateCreateInfo<'s> {
         self.raw.patchControlPoints.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineTessellationStateCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineTessellationStateCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_patch_control_points<'m>(&'s mut self, patch_control_points: u32) {
+    pub fn set_patch_control_points<'m>(&mut self, patch_control_points: u32) {
         self.raw.patchControlPoints = patch_control_points.into();
     }
 
@@ -9400,22 +9400,22 @@ impl<'s> PipelineViewportStateCreateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pScissors as *const _, self.raw.scissorCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineViewportStateCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineViewportStateCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_viewports<'m, 'a>(&'s mut self, viewports: &'a [Viewport]) {
+    pub fn set_viewports<'m, 'a>(&mut self, viewports: &'a [Viewport]) {
         assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewports.len() as _, 
             "count inconsistency found when specifying `PipelineViewportStateCreateInfo::viewports`.");
         self.raw.viewportCount = viewports.len() as _;
         self.raw.pViewports = viewports.as_ptr() as *const vks::VkViewport as *const _;
     }
 
-    pub fn set_scissors<'m, 'a>(&'s mut self, scissors: &'a [Rect2d]) {
+    pub fn set_scissors<'m, 'a>(&mut self, scissors: &'a [Rect2d]) {
         assert!(self.raw.scissorCount == 0 || self.raw.scissorCount == scissors.len() as _, 
             "count inconsistency found when specifying `PipelineViewportStateCreateInfo::scissors`.");
         self.raw.scissorCount = scissors.len() as _;
@@ -9574,51 +9574,51 @@ impl<'s> PipelineRasterizationStateCreateInfo<'s> {
         self.raw.lineWidth.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineRasterizationStateCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineRasterizationStateCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_depth_clamp_enable<'m>(&'s mut self, depth_clamp_enable: bool) {
+    pub fn set_depth_clamp_enable<'m>(&mut self, depth_clamp_enable: bool) {
         self.raw.depthClampEnable = depth_clamp_enable as u32;
     }
 
-    pub fn set_rasterizer_discard_enable<'m>(&'s mut self, rasterizer_discard_enable: bool) {
+    pub fn set_rasterizer_discard_enable<'m>(&mut self, rasterizer_discard_enable: bool) {
         self.raw.rasterizerDiscardEnable = rasterizer_discard_enable as u32;
     }
 
-    pub fn set_polygon_mode<'m>(&'s mut self, polygon_mode: PolygonMode) {
+    pub fn set_polygon_mode<'m>(&mut self, polygon_mode: PolygonMode) {
         self.raw.polygonMode = polygon_mode.into();
     }
 
-    pub fn set_cull_mode<'m>(&'s mut self, cull_mode: CullModeFlags) {
+    pub fn set_cull_mode<'m>(&mut self, cull_mode: CullModeFlags) {
         self.raw.cullMode = cull_mode.bits();
     }
 
-    pub fn set_front_face<'m>(&'s mut self, front_face: FrontFace) {
+    pub fn set_front_face<'m>(&mut self, front_face: FrontFace) {
         self.raw.frontFace = front_face.into();
     }
 
-    pub fn set_depth_bias_enable<'m>(&'s mut self, depth_bias_enable: bool) {
+    pub fn set_depth_bias_enable<'m>(&mut self, depth_bias_enable: bool) {
         self.raw.depthBiasEnable = depth_bias_enable as u32;
     }
 
-    pub fn set_depth_bias_constant_factor<'m>(&'s mut self, depth_bias_constant_factor: f32) {
+    pub fn set_depth_bias_constant_factor<'m>(&mut self, depth_bias_constant_factor: f32) {
         self.raw.depthBiasConstantFactor = depth_bias_constant_factor.into();
     }
 
-    pub fn set_depth_bias_clamp<'m>(&'s mut self, depth_bias_clamp: f32) {
+    pub fn set_depth_bias_clamp<'m>(&mut self, depth_bias_clamp: f32) {
         self.raw.depthBiasClamp = depth_bias_clamp.into();
     }
 
-    pub fn set_depth_bias_slope_factor<'m>(&'s mut self, depth_bias_slope_factor: f32) {
+    pub fn set_depth_bias_slope_factor<'m>(&mut self, depth_bias_slope_factor: f32) {
         self.raw.depthBiasSlopeFactor = depth_bias_slope_factor.into();
     }
 
-    pub fn set_line_width<'m>(&'s mut self, line_width: f32) {
+    pub fn set_line_width<'m>(&mut self, line_width: f32) {
         self.raw.lineWidth = line_width.into();
     }
 
@@ -9825,35 +9825,35 @@ impl<'s> PipelineMultisampleStateCreateInfo<'s> {
         self.raw.alphaToOneEnable != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineMultisampleStateCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineMultisampleStateCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_rasterization_samples<'m>(&'s mut self, rasterization_samples: SampleCountFlags) {
+    pub fn set_rasterization_samples<'m>(&mut self, rasterization_samples: SampleCountFlags) {
         self.raw.rasterizationSamples = rasterization_samples.bits();
     }
 
-    pub fn set_sample_shading_enable<'m>(&'s mut self, sample_shading_enable: bool) {
+    pub fn set_sample_shading_enable<'m>(&mut self, sample_shading_enable: bool) {
         self.raw.sampleShadingEnable = sample_shading_enable as u32;
     }
 
-    pub fn set_min_sample_shading<'m>(&'s mut self, min_sample_shading: f32) {
+    pub fn set_min_sample_shading<'m>(&mut self, min_sample_shading: f32) {
         self.raw.minSampleShading = min_sample_shading.into();
     }
 
-    pub fn set_sample_mask<'m, 'a>(&'s mut self, sample_mask: &'a u32) {
+    pub fn set_sample_mask<'m, 'a>(&mut self, sample_mask: &'a u32) {
         self.raw.pSampleMask = sample_mask;
     }
 
-    pub fn set_alpha_to_coverage_enable<'m>(&'s mut self, alpha_to_coverage_enable: bool) {
+    pub fn set_alpha_to_coverage_enable<'m>(&mut self, alpha_to_coverage_enable: bool) {
         self.raw.alphaToCoverageEnable = alpha_to_coverage_enable as u32;
     }
 
-    pub fn set_alpha_to_one_enable<'m>(&'s mut self, alpha_to_one_enable: bool) {
+    pub fn set_alpha_to_one_enable<'m>(&mut self, alpha_to_one_enable: bool) {
         self.raw.alphaToOneEnable = alpha_to_one_enable as u32;
     }
 
@@ -10022,35 +10022,35 @@ impl PipelineColorBlendAttachmentState {
             .expect("PipelineColorBlendAttachmentState::color_write_mask: error converting flags")
     }
 
-    pub fn set_blend_enable<'m>(& mut self, blend_enable: bool) {
+    pub fn set_blend_enable<'m>(&mut self, blend_enable: bool) {
         self.raw.blendEnable = blend_enable as u32;
     }
 
-    pub fn set_src_color_blend_factor<'m>(& mut self, src_color_blend_factor: BlendFactor) {
+    pub fn set_src_color_blend_factor<'m>(&mut self, src_color_blend_factor: BlendFactor) {
         self.raw.srcColorBlendFactor = src_color_blend_factor.into();
     }
 
-    pub fn set_dst_color_blend_factor<'m>(& mut self, dst_color_blend_factor: BlendFactor) {
+    pub fn set_dst_color_blend_factor<'m>(&mut self, dst_color_blend_factor: BlendFactor) {
         self.raw.dstColorBlendFactor = dst_color_blend_factor.into();
     }
 
-    pub fn set_color_blend_op<'m>(& mut self, color_blend_op: BlendOp) {
+    pub fn set_color_blend_op<'m>(&mut self, color_blend_op: BlendOp) {
         self.raw.colorBlendOp = color_blend_op.into();
     }
 
-    pub fn set_src_alpha_blend_factor<'m>(& mut self, src_alpha_blend_factor: BlendFactor) {
+    pub fn set_src_alpha_blend_factor<'m>(&mut self, src_alpha_blend_factor: BlendFactor) {
         self.raw.srcAlphaBlendFactor = src_alpha_blend_factor.into();
     }
 
-    pub fn set_dst_alpha_blend_factor<'m>(& mut self, dst_alpha_blend_factor: BlendFactor) {
+    pub fn set_dst_alpha_blend_factor<'m>(&mut self, dst_alpha_blend_factor: BlendFactor) {
         self.raw.dstAlphaBlendFactor = dst_alpha_blend_factor.into();
     }
 
-    pub fn set_alpha_blend_op<'m>(& mut self, alpha_blend_op: BlendOp) {
+    pub fn set_alpha_blend_op<'m>(&mut self, alpha_blend_op: BlendOp) {
         self.raw.alphaBlendOp = alpha_blend_op.into();
     }
 
-    pub fn set_color_write_mask<'m>(& mut self, color_write_mask: ColorComponentFlags) {
+    pub fn set_color_write_mask<'m>(&mut self, color_write_mask: ColorComponentFlags) {
         self.raw.colorWriteMask = color_write_mask.bits();
     }
 
@@ -10208,30 +10208,30 @@ impl<'s> PipelineColorBlendStateCreateInfo<'s> {
         unsafe { slice::from_raw_parts(&self.raw.blendConstants as *const _, 4 as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineColorBlendStateCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineColorBlendStateCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_logic_op_enable<'m>(&'s mut self, logic_op_enable: bool) {
+    pub fn set_logic_op_enable<'m>(&mut self, logic_op_enable: bool) {
         self.raw.logicOpEnable = logic_op_enable as u32;
     }
 
-    pub fn set_logic_op<'m>(&'s mut self, logic_op: LogicOp) {
+    pub fn set_logic_op<'m>(&mut self, logic_op: LogicOp) {
         self.raw.logicOp = logic_op.into();
     }
 
-    pub fn set_attachments<'m, 'a>(&'s mut self, attachments: &'a [PipelineColorBlendAttachmentState]) {
+    pub fn set_attachments<'m, 'a>(&mut self, attachments: &'a [PipelineColorBlendAttachmentState]) {
         assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as _, 
             "count inconsistency found when specifying `PipelineColorBlendStateCreateInfo::attachments`.");
         self.raw.attachmentCount = attachments.len() as _;
         self.raw.pAttachments = attachments.as_ptr() as *const vks::VkPipelineColorBlendAttachmentState as *const _;
     }
 
-    pub fn set_blend_constants<'m>(&'s mut self, blend_constants: [f32; 4]) {
+    pub fn set_blend_constants<'m>(&mut self, blend_constants: [f32; 4]) {
         self.raw.blendConstants = blend_constants;
     }
 
@@ -10365,15 +10365,15 @@ impl<'s> PipelineDynamicStateCreateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pDynamicStates as *const _, self.raw.dynamicStateCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineDynamicStateCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineDynamicStateCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_dynamic_states<'m, 'a>(&'s mut self, dynamic_states: &'a [DynamicState]) {
+    pub fn set_dynamic_states<'m, 'a>(&mut self, dynamic_states: &'a [DynamicState]) {
         assert!(self.raw.dynamicStateCount == 0 || self.raw.dynamicStateCount == dynamic_states.len() as _, 
             "count inconsistency found when specifying `PipelineDynamicStateCreateInfo::dynamic_states`.");
         self.raw.dynamicStateCount = dynamic_states.len() as _;
@@ -10497,31 +10497,31 @@ impl StencilOpState {
         self.raw.reference.into()
     }
 
-    pub fn set_fail_op<'m>(& mut self, fail_op: StencilOp) {
+    pub fn set_fail_op<'m>(&mut self, fail_op: StencilOp) {
         self.raw.failOp = fail_op.into();
     }
 
-    pub fn set_pass_op<'m>(& mut self, pass_op: StencilOp) {
+    pub fn set_pass_op<'m>(&mut self, pass_op: StencilOp) {
         self.raw.passOp = pass_op.into();
     }
 
-    pub fn set_depth_fail_op<'m>(& mut self, depth_fail_op: StencilOp) {
+    pub fn set_depth_fail_op<'m>(&mut self, depth_fail_op: StencilOp) {
         self.raw.depthFailOp = depth_fail_op.into();
     }
 
-    pub fn set_compare_op<'m>(& mut self, compare_op: CompareOp) {
+    pub fn set_compare_op<'m>(&mut self, compare_op: CompareOp) {
         self.raw.compareOp = compare_op.into();
     }
 
-    pub fn set_compare_mask<'m>(& mut self, compare_mask: u32) {
+    pub fn set_compare_mask<'m>(&mut self, compare_mask: u32) {
         self.raw.compareMask = compare_mask.into();
     }
 
-    pub fn set_write_mask<'m>(& mut self, write_mask: u32) {
+    pub fn set_write_mask<'m>(&mut self, write_mask: u32) {
         self.raw.writeMask = write_mask.into();
     }
 
-    pub fn set_reference<'m>(& mut self, reference: u32) {
+    pub fn set_reference<'m>(&mut self, reference: u32) {
         self.raw.reference = reference.into();
     }
 
@@ -10689,47 +10689,47 @@ impl<'s> PipelineDepthStencilStateCreateInfo<'s> {
         self.raw.maxDepthBounds.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineDepthStencilStateCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineDepthStencilStateCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_depth_test_enable<'m>(&'s mut self, depth_test_enable: bool) {
+    pub fn set_depth_test_enable<'m>(&mut self, depth_test_enable: bool) {
         self.raw.depthTestEnable = depth_test_enable as u32;
     }
 
-    pub fn set_depth_write_enable<'m>(&'s mut self, depth_write_enable: bool) {
+    pub fn set_depth_write_enable<'m>(&mut self, depth_write_enable: bool) {
         self.raw.depthWriteEnable = depth_write_enable as u32;
     }
 
-    pub fn set_depth_compare_op<'m>(&'s mut self, depth_compare_op: CompareOp) {
+    pub fn set_depth_compare_op<'m>(&mut self, depth_compare_op: CompareOp) {
         self.raw.depthCompareOp = depth_compare_op.into();
     }
 
-    pub fn set_depth_bounds_test_enable<'m>(&'s mut self, depth_bounds_test_enable: bool) {
+    pub fn set_depth_bounds_test_enable<'m>(&mut self, depth_bounds_test_enable: bool) {
         self.raw.depthBoundsTestEnable = depth_bounds_test_enable as u32;
     }
 
-    pub fn set_stencil_test_enable<'m>(&'s mut self, stencil_test_enable: bool) {
+    pub fn set_stencil_test_enable<'m>(&mut self, stencil_test_enable: bool) {
         self.raw.stencilTestEnable = stencil_test_enable as u32;
     }
 
-    pub fn set_front<'m>(&'s mut self, front: StencilOpState) {
+    pub fn set_front<'m>(&mut self, front: StencilOpState) {
         self.raw.front = front.raw;
     }
 
-    pub fn set_back<'m>(&'s mut self, back: StencilOpState) {
+    pub fn set_back<'m>(&mut self, back: StencilOpState) {
         self.raw.back = back.raw;
     }
 
-    pub fn set_min_depth_bounds<'m>(&'s mut self, min_depth_bounds: f32) {
+    pub fn set_min_depth_bounds<'m>(&mut self, min_depth_bounds: f32) {
         self.raw.minDepthBounds = min_depth_bounds.into();
     }
 
-    pub fn set_max_depth_bounds<'m>(&'s mut self, max_depth_bounds: f32) {
+    pub fn set_max_depth_bounds<'m>(&mut self, max_depth_bounds: f32) {
         self.raw.maxDepthBounds = max_depth_bounds.into();
     }
 
@@ -10961,15 +10961,15 @@ impl<'s> GraphicsPipelineCreateInfo<'s> {
         self.raw.basePipelineIndex.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_stages<'m, 'a>(&'s mut self, stages: &'a [PipelineShaderStageCreateInfo]) {
+    pub fn set_stages<'m, 'a>(&mut self, stages: &'a [PipelineShaderStageCreateInfo]) {
         self.stages = Some(stages.iter().map(|h| h.raw).collect());
         {
             let stages = self.stages.as_ref().unwrap();
@@ -10980,68 +10980,68 @@ impl<'s> GraphicsPipelineCreateInfo<'s> {
         }
     }
 
-    pub fn set_vertex_input_state<'m, 'a>(&'s mut self, vertex_input_state: &'a PipelineVertexInputStateCreateInfo)
+    pub fn set_vertex_input_state<'m, 'a>(&mut self, vertex_input_state: &'a PipelineVertexInputStateCreateInfo)
             where 'a: 's {
         self.raw.pVertexInputState = vertex_input_state.raw();
     }
 
-    pub fn set_input_assembly_state<'m, 'a>(&'s mut self, input_assembly_state: &'a PipelineInputAssemblyStateCreateInfo)
+    pub fn set_input_assembly_state<'m, 'a>(&mut self, input_assembly_state: &'a PipelineInputAssemblyStateCreateInfo)
             where 'a: 's {
         self.raw.pInputAssemblyState = input_assembly_state.raw();
     }
 
-    pub fn set_tessellation_state<'m, 'a>(&'s mut self, tessellation_state: &'a PipelineTessellationStateCreateInfo)
+    pub fn set_tessellation_state<'m, 'a>(&mut self, tessellation_state: &'a PipelineTessellationStateCreateInfo)
             where 'a: 's {
         self.raw.pTessellationState = tessellation_state.raw();
     }
 
-    pub fn set_viewport_state<'m, 'a>(&'s mut self, viewport_state: &'a PipelineViewportStateCreateInfo)
+    pub fn set_viewport_state<'m, 'a>(&mut self, viewport_state: &'a PipelineViewportStateCreateInfo)
             where 'a: 's {
         self.raw.pViewportState = viewport_state.raw();
     }
 
-    pub fn set_rasterization_state<'m, 'a>(&'s mut self, rasterization_state: &'a PipelineRasterizationStateCreateInfo)
+    pub fn set_rasterization_state<'m, 'a>(&mut self, rasterization_state: &'a PipelineRasterizationStateCreateInfo)
             where 'a: 's {
         self.raw.pRasterizationState = rasterization_state.raw();
     }
 
-    pub fn set_multisample_state<'m, 'a>(&'s mut self, multisample_state: &'a PipelineMultisampleStateCreateInfo)
+    pub fn set_multisample_state<'m, 'a>(&mut self, multisample_state: &'a PipelineMultisampleStateCreateInfo)
             where 'a: 's {
         self.raw.pMultisampleState = multisample_state.raw();
     }
 
-    pub fn set_depth_stencil_state<'m, 'a>(&'s mut self, depth_stencil_state: &'a PipelineDepthStencilStateCreateInfo)
+    pub fn set_depth_stencil_state<'m, 'a>(&mut self, depth_stencil_state: &'a PipelineDepthStencilStateCreateInfo)
             where 'a: 's {
         self.raw.pDepthStencilState = depth_stencil_state.raw();
     }
 
-    pub fn set_color_blend_state<'m, 'a>(&'s mut self, color_blend_state: &'a PipelineColorBlendStateCreateInfo)
+    pub fn set_color_blend_state<'m, 'a>(&mut self, color_blend_state: &'a PipelineColorBlendStateCreateInfo)
             where 'a: 's {
         self.raw.pColorBlendState = color_blend_state.raw();
     }
 
-    pub fn set_dynamic_state<'m, 'a>(&'s mut self, dynamic_state: &'a PipelineDynamicStateCreateInfo)
+    pub fn set_dynamic_state<'m, 'a>(&mut self, dynamic_state: &'a PipelineDynamicStateCreateInfo)
             where 'a: 's {
         self.raw.pDynamicState = dynamic_state.raw();
     }
 
-    pub fn set_layout<'m, 'a>(&'s mut self, layout: &'a PipelineLayout) {
+    pub fn set_layout<'m, 'a>(&mut self, layout: &'a PipelineLayout) {
         self.raw.layout = layout.handle();
     }
 
-    pub fn set_render_pass<'m, 'a>(&'s mut self, render_pass: &'a RenderPass) {
+    pub fn set_render_pass<'m, 'a>(&mut self, render_pass: &'a RenderPass) {
         self.raw.renderPass = render_pass.handle();
     }
 
-    pub fn set_subpass<'m>(&'s mut self, subpass: u32) {
+    pub fn set_subpass<'m>(&mut self, subpass: u32) {
         self.raw.subpass = subpass.into();
     }
 
-    pub fn set_base_pipeline_handle<'m, 'a>(&'s mut self, base_pipeline_handle: &'a Pipeline) {
+    pub fn set_base_pipeline_handle<'m, 'a>(&mut self, base_pipeline_handle: &'a Pipeline) {
         self.raw.basePipelineHandle = base_pipeline_handle.handle();
     }
 
-    pub fn set_base_pipeline_index<'m>(&'s mut self, base_pipeline_index: i32) {
+    pub fn set_base_pipeline_index<'m>(&mut self, base_pipeline_index: i32) {
         self.raw.basePipelineIndex = base_pipeline_index.into();
     }
 
@@ -11294,19 +11294,19 @@ impl<'s> PipelineCacheCreateInfo<'s> {
         self.raw.pInitialData
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineCacheCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineCacheCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_initial_data_size<'m>(&'s mut self, initial_data_size: usize) {
+    pub fn set_initial_data_size<'m>(&mut self, initial_data_size: usize) {
         self.raw.initialDataSize = initial_data_size.into();
     }
 
-    pub unsafe fn set_initial_data<'m>(&'s mut self, initial_data: *const c_void) {
+    pub unsafe fn set_initial_data<'m>(&mut self, initial_data: *const c_void) {
         self.raw.pInitialData = initial_data;
     }
 
@@ -11418,15 +11418,15 @@ impl PushConstantRange {
         self.raw.size.into()
     }
 
-    pub fn set_stage_flags<'m>(& mut self, stage_flags: ShaderStageFlags) {
+    pub fn set_stage_flags<'m>(&mut self, stage_flags: ShaderStageFlags) {
         self.raw.stageFlags = stage_flags.bits();
     }
 
-    pub fn set_offset<'m>(& mut self, offset: u32) {
+    pub fn set_offset<'m>(&mut self, offset: u32) {
         self.raw.offset = offset.into();
     }
 
-    pub fn set_size<'m>(& mut self, size: u32) {
+    pub fn set_size<'m>(&mut self, size: u32) {
         self.raw.size = size.into();
     }
 
@@ -11531,15 +11531,15 @@ impl<'s> PipelineLayoutCreateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pPushConstantRanges as *const _, self.raw.pushConstantRangeCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineLayoutCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineLayoutCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_set_layouts<'m, 'a>(&'s mut self, set_layouts: &'a [&'a DescriptorSetLayout])
+    pub fn set_set_layouts<'m, 'a>(&mut self, set_layouts: &'a [&'a DescriptorSetLayout])
             where 'a: 's {
         self.set_layouts = Some(set_layouts.iter().map(|h| h.handle()).collect());
         {
@@ -11551,7 +11551,7 @@ impl<'s> PipelineLayoutCreateInfo<'s> {
         }
     }
 
-    pub fn set_push_constant_ranges<'m, 'a>(&'s mut self, push_constant_ranges: &'a [PushConstantRange]) {
+    pub fn set_push_constant_ranges<'m, 'a>(&mut self, push_constant_ranges: &'a [PushConstantRange]) {
         assert!(self.raw.pushConstantRangeCount == 0 || self.raw.pushConstantRangeCount == push_constant_ranges.len() as _, 
             "count inconsistency found when specifying `PipelineLayoutCreateInfo::push_constant_ranges`.");
         self.raw.pushConstantRangeCount = push_constant_ranges.len() as _;
@@ -11737,71 +11737,71 @@ impl<'s> SamplerCreateInfo<'s> {
         self.raw.unnormalizedCoordinates != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: SamplerCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: SamplerCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_mag_filter<'m>(&'s mut self, mag_filter: Filter) {
+    pub fn set_mag_filter<'m>(&mut self, mag_filter: Filter) {
         self.raw.magFilter = mag_filter.into();
     }
 
-    pub fn set_min_filter<'m>(&'s mut self, min_filter: Filter) {
+    pub fn set_min_filter<'m>(&mut self, min_filter: Filter) {
         self.raw.minFilter = min_filter.into();
     }
 
-    pub fn set_mipmap_mode<'m>(&'s mut self, mipmap_mode: SamplerMipmapMode) {
+    pub fn set_mipmap_mode<'m>(&mut self, mipmap_mode: SamplerMipmapMode) {
         self.raw.mipmapMode = mipmap_mode.into();
     }
 
-    pub fn set_address_mode_u<'m>(&'s mut self, address_mode_u: SamplerAddressMode) {
+    pub fn set_address_mode_u<'m>(&mut self, address_mode_u: SamplerAddressMode) {
         self.raw.addressModeU = address_mode_u.into();
     }
 
-    pub fn set_address_mode_v<'m>(&'s mut self, address_mode_v: SamplerAddressMode) {
+    pub fn set_address_mode_v<'m>(&mut self, address_mode_v: SamplerAddressMode) {
         self.raw.addressModeV = address_mode_v.into();
     }
 
-    pub fn set_address_mode_w<'m>(&'s mut self, address_mode_w: SamplerAddressMode) {
+    pub fn set_address_mode_w<'m>(&mut self, address_mode_w: SamplerAddressMode) {
         self.raw.addressModeW = address_mode_w.into();
     }
 
-    pub fn set_mip_lod_bias<'m>(&'s mut self, mip_lod_bias: f32) {
+    pub fn set_mip_lod_bias<'m>(&mut self, mip_lod_bias: f32) {
         self.raw.mipLodBias = mip_lod_bias.into();
     }
 
-    pub fn set_anisotropy_enable<'m>(&'s mut self, anisotropy_enable: bool) {
+    pub fn set_anisotropy_enable<'m>(&mut self, anisotropy_enable: bool) {
         self.raw.anisotropyEnable = anisotropy_enable as u32;
     }
 
-    pub fn set_max_anisotropy<'m>(&'s mut self, max_anisotropy: f32) {
+    pub fn set_max_anisotropy<'m>(&mut self, max_anisotropy: f32) {
         self.raw.maxAnisotropy = max_anisotropy.into();
     }
 
-    pub fn set_compare_enable<'m>(&'s mut self, compare_enable: bool) {
+    pub fn set_compare_enable<'m>(&mut self, compare_enable: bool) {
         self.raw.compareEnable = compare_enable as u32;
     }
 
-    pub fn set_compare_op<'m>(&'s mut self, compare_op: CompareOp) {
+    pub fn set_compare_op<'m>(&mut self, compare_op: CompareOp) {
         self.raw.compareOp = compare_op.into();
     }
 
-    pub fn set_min_lod<'m>(&'s mut self, min_lod: f32) {
+    pub fn set_min_lod<'m>(&mut self, min_lod: f32) {
         self.raw.minLod = min_lod.into();
     }
 
-    pub fn set_max_lod<'m>(&'s mut self, max_lod: f32) {
+    pub fn set_max_lod<'m>(&mut self, max_lod: f32) {
         self.raw.maxLod = max_lod.into();
     }
 
-    pub fn set_border_color<'m>(&'s mut self, border_color: BorderColor) {
+    pub fn set_border_color<'m>(&mut self, border_color: BorderColor) {
         self.raw.borderColor = border_color.into();
     }
 
-    pub fn set_unnormalized_coordinates<'m>(&'s mut self, unnormalized_coordinates: bool) {
+    pub fn set_unnormalized_coordinates<'m>(&mut self, unnormalized_coordinates: bool) {
         self.raw.unnormalizedCoordinates = unnormalized_coordinates as u32;
     }
 
@@ -12031,15 +12031,15 @@ impl<'s> CommandPoolCreateInfo<'s> {
         self.raw.queueFamilyIndex.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: CommandPoolCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: CommandPoolCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_queue_family_index<'m>(&'s mut self, queue_family_index: u32) {
+    pub fn set_queue_family_index<'m>(&mut self, queue_family_index: u32) {
         self.raw.queueFamilyIndex = queue_family_index.into();
     }
 
@@ -12146,19 +12146,19 @@ impl<'s> CommandBufferAllocateInfo<'s> {
         self.raw.commandBufferCount.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_command_pool<'m, 'a>(&'s mut self, command_pool: &'a CommandPool) {
+    pub fn set_command_pool<'m, 'a>(&mut self, command_pool: &'a CommandPool) {
         self.raw.commandPool = command_pool.handle();
     }
 
-    pub fn set_level<'m>(&'s mut self, level: CommandBufferLevel) {
+    pub fn set_level<'m>(&mut self, level: CommandBufferLevel) {
         self.raw.level = level.into();
     }
 
-    pub fn set_command_buffer_count<'m>(&'s mut self, command_buffer_count: u32) {
+    pub fn set_command_buffer_count<'m>(&mut self, command_buffer_count: u32) {
         self.raw.commandBufferCount = command_buffer_count.into();
     }
 
@@ -12287,31 +12287,31 @@ impl<'s> CommandBufferInheritanceInfo<'s> {
             .expect("CommandBufferInheritanceInfo::pipeline_statistics: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_render_pass<'m, 'a>(&'s mut self, render_pass: &'a RenderPass) {
+    pub fn set_render_pass<'m, 'a>(&mut self, render_pass: &'a RenderPass) {
         self.raw.renderPass = render_pass.handle();
     }
 
-    pub fn set_subpass<'m>(&'s mut self, subpass: u32) {
+    pub fn set_subpass<'m>(&mut self, subpass: u32) {
         self.raw.subpass = subpass.into();
     }
 
-    pub fn set_framebuffer<'m, 'a>(&'s mut self, framebuffer: &'a Framebuffer) {
+    pub fn set_framebuffer<'m, 'a>(&mut self, framebuffer: &'a Framebuffer) {
         self.raw.framebuffer = framebuffer.handle();
     }
 
-    pub fn set_occlusion_query_enable<'m>(&'s mut self, occlusion_query_enable: bool) {
+    pub fn set_occlusion_query_enable<'m>(&mut self, occlusion_query_enable: bool) {
         self.raw.occlusionQueryEnable = occlusion_query_enable as u32;
     }
 
-    pub fn set_query_flags<'m>(&'s mut self, query_flags: QueryControlFlags) {
+    pub fn set_query_flags<'m>(&mut self, query_flags: QueryControlFlags) {
         self.raw.queryFlags = query_flags.bits();
     }
 
-    pub fn set_pipeline_statistics<'m>(&'s mut self, pipeline_statistics: QueryPipelineStatisticFlags) {
+    pub fn set_pipeline_statistics<'m>(&mut self, pipeline_statistics: QueryPipelineStatisticFlags) {
         self.raw.pipelineStatistics = pipeline_statistics.bits();
     }
 
@@ -12452,15 +12452,15 @@ impl<'s> CommandBufferBeginInfo<'s> {
         unsafe { &*(self.raw.pInheritanceInfo as *const vks::VkCommandBufferInheritanceInfo as *const _) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: CommandBufferUsageFlags) {
+    pub fn set_flags<'m>(&mut self, flags: CommandBufferUsageFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_inheritance_info<'m, 'a>(&'s mut self, inheritance_info: &'a CommandBufferInheritanceInfo)
+    pub fn set_inheritance_info<'m, 'a>(&mut self, inheritance_info: &'a CommandBufferInheritanceInfo)
             where 'a: 's {
         self.raw.pInheritanceInfo = inheritance_info.raw();
     }
@@ -12573,23 +12573,23 @@ impl<'s> RenderPassBeginInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pClearValues as *const _, self.raw.clearValueCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_render_pass<'m, 'a>(&'s mut self, render_pass: &'a RenderPass) {
+    pub fn set_render_pass<'m, 'a>(&mut self, render_pass: &'a RenderPass) {
         self.raw.renderPass = render_pass.handle();
     }
 
-    pub fn set_framebuffer<'m, 'a>(&'s mut self, framebuffer: &'a Framebuffer) {
+    pub fn set_framebuffer<'m, 'a>(&mut self, framebuffer: &'a Framebuffer) {
         self.raw.framebuffer = framebuffer.handle();
     }
 
-    pub fn set_render_area<'m>(&'s mut self, render_area: Rect2d) {
+    pub fn set_render_area<'m>(&mut self, render_area: Rect2d) {
         self.raw.renderArea = render_area.raw;
     }
 
-    pub fn set_clear_values<'m, 'a>(&'s mut self, clear_values: &'a [ClearValue]) {
+    pub fn set_clear_values<'m, 'a>(&mut self, clear_values: &'a [ClearValue]) {
         assert!(self.raw.clearValueCount == 0 || self.raw.clearValueCount == clear_values.len() as _, 
             "count inconsistency found when specifying `RenderPassBeginInfo::clear_values`.");
         self.raw.clearValueCount = clear_values.len() as _;
@@ -12710,11 +12710,11 @@ impl ClearDepthStencilValue {
         self.raw.stencil.into()
     }
 
-    pub fn set_depth<'m>(& mut self, depth: f32) {
+    pub fn set_depth<'m>(&mut self, depth: f32) {
         self.raw.depth = depth.into();
     }
 
-    pub fn set_stencil<'m>(& mut self, stencil: u32) {
+    pub fn set_stencil<'m>(&mut self, stencil: u32) {
         self.raw.stencil = stencil.into();
     }
 
@@ -12804,15 +12804,15 @@ impl ClearAttachment {
         self.raw.clearValue.into()
     }
 
-    pub fn set_aspect_mask<'m>(& mut self, aspect_mask: ImageAspectFlags) {
+    pub fn set_aspect_mask<'m>(&mut self, aspect_mask: ImageAspectFlags) {
         self.raw.aspectMask = aspect_mask.bits();
     }
 
-    pub fn set_color_attachment<'m>(& mut self, color_attachment: u32) {
+    pub fn set_color_attachment<'m>(&mut self, color_attachment: u32) {
         self.raw.colorAttachment = color_attachment.into();
     }
 
-    pub fn set_clear_value<'m>(& mut self, clear_value: ClearValue) {
+    pub fn set_clear_value<'m>(&mut self, clear_value: ClearValue) {
         self.raw.clearValue = clear_value.into();
     }
 
@@ -12937,39 +12937,39 @@ impl AttachmentDescription {
         self.raw.finalLayout.into()
     }
 
-    pub fn set_flags<'m>(& mut self, flags: AttachmentDescriptionFlags) {
+    pub fn set_flags<'m>(&mut self, flags: AttachmentDescriptionFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_format<'m>(& mut self, format: Format) {
+    pub fn set_format<'m>(&mut self, format: Format) {
         self.raw.format = format.into();
     }
 
-    pub fn set_samples<'m>(& mut self, samples: SampleCountFlags) {
+    pub fn set_samples<'m>(&mut self, samples: SampleCountFlags) {
         self.raw.samples = samples.bits();
     }
 
-    pub fn set_load_op<'m>(& mut self, load_op: AttachmentLoadOp) {
+    pub fn set_load_op<'m>(&mut self, load_op: AttachmentLoadOp) {
         self.raw.loadOp = load_op.into();
     }
 
-    pub fn set_store_op<'m>(& mut self, store_op: AttachmentStoreOp) {
+    pub fn set_store_op<'m>(&mut self, store_op: AttachmentStoreOp) {
         self.raw.storeOp = store_op.into();
     }
 
-    pub fn set_stencil_load_op<'m>(& mut self, stencil_load_op: AttachmentLoadOp) {
+    pub fn set_stencil_load_op<'m>(&mut self, stencil_load_op: AttachmentLoadOp) {
         self.raw.stencilLoadOp = stencil_load_op.into();
     }
 
-    pub fn set_stencil_store_op<'m>(& mut self, stencil_store_op: AttachmentStoreOp) {
+    pub fn set_stencil_store_op<'m>(&mut self, stencil_store_op: AttachmentStoreOp) {
         self.raw.stencilStoreOp = stencil_store_op.into();
     }
 
-    pub fn set_initial_layout<'m>(& mut self, initial_layout: ImageLayout) {
+    pub fn set_initial_layout<'m>(&mut self, initial_layout: ImageLayout) {
         self.raw.initialLayout = initial_layout.into();
     }
 
-    pub fn set_final_layout<'m>(& mut self, final_layout: ImageLayout) {
+    pub fn set_final_layout<'m>(&mut self, final_layout: ImageLayout) {
         self.raw.finalLayout = final_layout.into();
     }
 
@@ -13119,11 +13119,11 @@ impl AttachmentReference {
         self.raw.layout.into()
     }
 
-    pub fn set_attachment<'m>(& mut self, attachment: u32) {
+    pub fn set_attachment<'m>(&mut self, attachment: u32) {
         self.raw.attachment = attachment.into();
     }
 
-    pub fn set_layout<'m>(& mut self, layout: ImageLayout) {
+    pub fn set_layout<'m>(&mut self, layout: ImageLayout) {
         self.raw.layout = layout.into();
     }
 
@@ -13230,41 +13230,41 @@ impl<'s> SubpassDescription<'s> {
         unsafe { slice::from_raw_parts(self.raw.pPreserveAttachments as *const _, self.raw.preserveAttachmentCount as usize) }
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: SubpassDescriptionFlags) {
+    pub fn set_flags<'m>(&mut self, flags: SubpassDescriptionFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_pipeline_bind_point<'m>(&'s mut self, pipeline_bind_point: PipelineBindPoint) {
+    pub fn set_pipeline_bind_point<'m>(&mut self, pipeline_bind_point: PipelineBindPoint) {
         self.raw.pipelineBindPoint = pipeline_bind_point.into();
     }
 
-    pub fn set_input_attachments<'m, 'a>(&'s mut self, input_attachments: &'a [AttachmentReference]) {
+    pub fn set_input_attachments<'m, 'a>(&mut self, input_attachments: &'a [AttachmentReference]) {
         assert!(self.raw.inputAttachmentCount == 0 || self.raw.inputAttachmentCount == input_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::input_attachments`.");
         self.raw.inputAttachmentCount = input_attachments.len() as _;
         self.raw.pInputAttachments = input_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
     }
 
-    pub fn set_color_attachments<'m, 'a>(&'s mut self, color_attachments: &'a [AttachmentReference]) {
+    pub fn set_color_attachments<'m, 'a>(&mut self, color_attachments: &'a [AttachmentReference]) {
         assert!(self.raw.colorAttachmentCount == 0 || self.raw.colorAttachmentCount == color_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::color_attachments`.");
         self.raw.colorAttachmentCount = color_attachments.len() as _;
         self.raw.pColorAttachments = color_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
     }
 
-    pub fn set_resolve_attachments<'m, 'a>(&'s mut self, resolve_attachments: &'a [AttachmentReference]) {
+    pub fn set_resolve_attachments<'m, 'a>(&mut self, resolve_attachments: &'a [AttachmentReference]) {
         assert!(self.raw.colorAttachmentCount == 0 || self.raw.colorAttachmentCount == resolve_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::resolve_attachments`.");
         self.raw.colorAttachmentCount = resolve_attachments.len() as _;
         self.raw.pResolveAttachments = resolve_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
     }
 
-    pub fn set_depth_stencil_attachment<'m, 'a>(&'s mut self, depth_stencil_attachment: &'a AttachmentReference)
+    pub fn set_depth_stencil_attachment<'m, 'a>(&mut self, depth_stencil_attachment: &'a AttachmentReference)
             where 'a: 's {
         self.raw.pDepthStencilAttachment = depth_stencil_attachment.raw();
     }
 
-    pub fn set_preserve_attachments<'m, 'a>(&'s mut self, preserve_attachments: &'a [u32]) {
+    pub fn set_preserve_attachments<'m, 'a>(&mut self, preserve_attachments: &'a [u32]) {
         assert!(self.raw.preserveAttachmentCount == 0 || self.raw.preserveAttachmentCount == preserve_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::preserve_attachments`.");
         self.raw.preserveAttachmentCount = preserve_attachments.len() as _;
@@ -13439,31 +13439,31 @@ impl SubpassDependency {
             .expect("SubpassDependency::dependency_flags: error converting flags")
     }
 
-    pub fn set_src_subpass<'m>(& mut self, src_subpass: u32) {
+    pub fn set_src_subpass<'m>(&mut self, src_subpass: u32) {
         self.raw.srcSubpass = src_subpass.into();
     }
 
-    pub fn set_dst_subpass<'m>(& mut self, dst_subpass: u32) {
+    pub fn set_dst_subpass<'m>(&mut self, dst_subpass: u32) {
         self.raw.dstSubpass = dst_subpass.into();
     }
 
-    pub fn set_src_stage_mask<'m>(& mut self, src_stage_mask: PipelineStageFlags) {
+    pub fn set_src_stage_mask<'m>(&mut self, src_stage_mask: PipelineStageFlags) {
         self.raw.srcStageMask = src_stage_mask.bits();
     }
 
-    pub fn set_dst_stage_mask<'m>(& mut self, dst_stage_mask: PipelineStageFlags) {
+    pub fn set_dst_stage_mask<'m>(&mut self, dst_stage_mask: PipelineStageFlags) {
         self.raw.dstStageMask = dst_stage_mask.bits();
     }
 
-    pub fn set_src_access_mask<'m>(& mut self, src_access_mask: AccessFlags) {
+    pub fn set_src_access_mask<'m>(&mut self, src_access_mask: AccessFlags) {
         self.raw.srcAccessMask = src_access_mask.bits();
     }
 
-    pub fn set_dst_access_mask<'m>(& mut self, dst_access_mask: AccessFlags) {
+    pub fn set_dst_access_mask<'m>(&mut self, dst_access_mask: AccessFlags) {
         self.raw.dstAccessMask = dst_access_mask.bits();
     }
 
-    pub fn set_dependency_flags<'m>(& mut self, dependency_flags: DependencyFlags) {
+    pub fn set_dependency_flags<'m>(&mut self, dependency_flags: DependencyFlags) {
         self.raw.dependencyFlags = dependency_flags.bits();
     }
 
@@ -13612,29 +13612,29 @@ impl<'s> RenderPassCreateInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pDependencies as *const _, self.raw.dependencyCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: RenderPassCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: RenderPassCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_attachments<'m, 'a>(&'s mut self, attachments: &'a [AttachmentDescription]) {
+    pub fn set_attachments<'m, 'a>(&mut self, attachments: &'a [AttachmentDescription]) {
         assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::attachments`.");
         self.raw.attachmentCount = attachments.len() as _;
         self.raw.pAttachments = attachments.as_ptr() as *const vks::VkAttachmentDescription as *const _;
     }
 
-    pub fn set_subpasses<'m, 'a>(&'s mut self, subpasses: &'a [SubpassDescription]) {
+    pub fn set_subpasses<'m, 'a>(&mut self, subpasses: &'a [SubpassDescription]) {
         assert!(self.raw.subpassCount == 0 || self.raw.subpassCount == subpasses.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::subpasses`.");
         self.raw.subpassCount = subpasses.len() as _;
         self.raw.pSubpasses = subpasses.as_ptr() as *const vks::VkSubpassDescription as *const _;
     }
 
-    pub fn set_dependencies<'m, 'a>(&'s mut self, dependencies: &'a [SubpassDependency]) {
+    pub fn set_dependencies<'m, 'a>(&mut self, dependencies: &'a [SubpassDependency]) {
         assert!(self.raw.dependencyCount == 0 || self.raw.dependencyCount == dependencies.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::dependencies`.");
         self.raw.dependencyCount = dependencies.len() as _;
@@ -13764,11 +13764,11 @@ impl<'s> EventCreateInfo<'s> {
             .expect("EventCreateInfo::flags: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: EventCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: EventCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
@@ -13859,11 +13859,11 @@ impl<'s> FenceCreateInfo<'s> {
             .expect("FenceCreateInfo::flags: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: FenceCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: FenceCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
@@ -14164,223 +14164,223 @@ impl PhysicalDeviceFeatures {
         self.raw.inheritedQueries != 0
     }
 
-    pub fn set_robust_buffer_access<'m>(& mut self, robust_buffer_access: bool) {
+    pub fn set_robust_buffer_access<'m>(&mut self, robust_buffer_access: bool) {
         self.raw.robustBufferAccess = robust_buffer_access as u32;
     }
 
-    pub fn set_full_draw_index_uint_32<'m>(& mut self, full_draw_index_uint_32: bool) {
+    pub fn set_full_draw_index_uint_32<'m>(&mut self, full_draw_index_uint_32: bool) {
         self.raw.fullDrawIndexUint32 = full_draw_index_uint_32 as u32;
     }
 
-    pub fn set_image_cube_array<'m>(& mut self, image_cube_array: bool) {
+    pub fn set_image_cube_array<'m>(&mut self, image_cube_array: bool) {
         self.raw.imageCubeArray = image_cube_array as u32;
     }
 
-    pub fn set_independent_blend<'m>(& mut self, independent_blend: bool) {
+    pub fn set_independent_blend<'m>(&mut self, independent_blend: bool) {
         self.raw.independentBlend = independent_blend as u32;
     }
 
-    pub fn set_geometry_shader<'m>(& mut self, geometry_shader: bool) {
+    pub fn set_geometry_shader<'m>(&mut self, geometry_shader: bool) {
         self.raw.geometryShader = geometry_shader as u32;
     }
 
-    pub fn set_tessellation_shader<'m>(& mut self, tessellation_shader: bool) {
+    pub fn set_tessellation_shader<'m>(&mut self, tessellation_shader: bool) {
         self.raw.tessellationShader = tessellation_shader as u32;
     }
 
-    pub fn set_sample_rate_shading<'m>(& mut self, sample_rate_shading: bool) {
+    pub fn set_sample_rate_shading<'m>(&mut self, sample_rate_shading: bool) {
         self.raw.sampleRateShading = sample_rate_shading as u32;
     }
 
-    pub fn set_dual_src_blend<'m>(& mut self, dual_src_blend: bool) {
+    pub fn set_dual_src_blend<'m>(&mut self, dual_src_blend: bool) {
         self.raw.dualSrcBlend = dual_src_blend as u32;
     }
 
-    pub fn set_logic_op<'m>(& mut self, logic_op: bool) {
+    pub fn set_logic_op<'m>(&mut self, logic_op: bool) {
         self.raw.logicOp = logic_op as u32;
     }
 
-    pub fn set_multi_draw_indirect<'m>(& mut self, multi_draw_indirect: bool) {
+    pub fn set_multi_draw_indirect<'m>(&mut self, multi_draw_indirect: bool) {
         self.raw.multiDrawIndirect = multi_draw_indirect as u32;
     }
 
-    pub fn set_draw_indirect_first_instance<'m>(& mut self, draw_indirect_first_instance: bool) {
+    pub fn set_draw_indirect_first_instance<'m>(&mut self, draw_indirect_first_instance: bool) {
         self.raw.drawIndirectFirstInstance = draw_indirect_first_instance as u32;
     }
 
-    pub fn set_depth_clamp<'m>(& mut self, depth_clamp: bool) {
+    pub fn set_depth_clamp<'m>(&mut self, depth_clamp: bool) {
         self.raw.depthClamp = depth_clamp as u32;
     }
 
-    pub fn set_depth_bias_clamp<'m>(& mut self, depth_bias_clamp: bool) {
+    pub fn set_depth_bias_clamp<'m>(&mut self, depth_bias_clamp: bool) {
         self.raw.depthBiasClamp = depth_bias_clamp as u32;
     }
 
-    pub fn set_fill_mode_non_solid<'m>(& mut self, fill_mode_non_solid: bool) {
+    pub fn set_fill_mode_non_solid<'m>(&mut self, fill_mode_non_solid: bool) {
         self.raw.fillModeNonSolid = fill_mode_non_solid as u32;
     }
 
-    pub fn set_depth_bounds<'m>(& mut self, depth_bounds: bool) {
+    pub fn set_depth_bounds<'m>(&mut self, depth_bounds: bool) {
         self.raw.depthBounds = depth_bounds as u32;
     }
 
-    pub fn set_wide_lines<'m>(& mut self, wide_lines: bool) {
+    pub fn set_wide_lines<'m>(&mut self, wide_lines: bool) {
         self.raw.wideLines = wide_lines as u32;
     }
 
-    pub fn set_large_points<'m>(& mut self, large_points: bool) {
+    pub fn set_large_points<'m>(&mut self, large_points: bool) {
         self.raw.largePoints = large_points as u32;
     }
 
-    pub fn set_alpha_to_one<'m>(& mut self, alpha_to_one: bool) {
+    pub fn set_alpha_to_one<'m>(&mut self, alpha_to_one: bool) {
         self.raw.alphaToOne = alpha_to_one as u32;
     }
 
-    pub fn set_multi_viewport<'m>(& mut self, multi_viewport: bool) {
+    pub fn set_multi_viewport<'m>(&mut self, multi_viewport: bool) {
         self.raw.multiViewport = multi_viewport as u32;
     }
 
-    pub fn set_sampler_anisotropy<'m>(& mut self, sampler_anisotropy: bool) {
+    pub fn set_sampler_anisotropy<'m>(&mut self, sampler_anisotropy: bool) {
         self.raw.samplerAnisotropy = sampler_anisotropy as u32;
     }
 
-    pub fn set_texture_compression_et_c2<'m>(& mut self, texture_compression_et_c2: bool) {
+    pub fn set_texture_compression_et_c2<'m>(&mut self, texture_compression_et_c2: bool) {
         self.raw.textureCompressionETC2 = texture_compression_et_c2 as u32;
     }
 
-    pub fn set_texture_compression_as_tc_ld_r<'m>(& mut self, texture_compression_as_tc_ld_r: bool) {
+    pub fn set_texture_compression_as_tc_ld_r<'m>(&mut self, texture_compression_as_tc_ld_r: bool) {
         self.raw.textureCompressionASTC_LDR = texture_compression_as_tc_ld_r as u32;
     }
 
-    pub fn set_texture_compression_bc<'m>(& mut self, texture_compression_bc: bool) {
+    pub fn set_texture_compression_bc<'m>(&mut self, texture_compression_bc: bool) {
         self.raw.textureCompressionBC = texture_compression_bc as u32;
     }
 
-    pub fn set_occlusion_query_precise<'m>(& mut self, occlusion_query_precise: bool) {
+    pub fn set_occlusion_query_precise<'m>(&mut self, occlusion_query_precise: bool) {
         self.raw.occlusionQueryPrecise = occlusion_query_precise as u32;
     }
 
-    pub fn set_pipeline_statistics_query<'m>(& mut self, pipeline_statistics_query: bool) {
+    pub fn set_pipeline_statistics_query<'m>(&mut self, pipeline_statistics_query: bool) {
         self.raw.pipelineStatisticsQuery = pipeline_statistics_query as u32;
     }
 
-    pub fn set_vertex_pipeline_stores_and_atomics<'m>(& mut self, vertex_pipeline_stores_and_atomics: bool) {
+    pub fn set_vertex_pipeline_stores_and_atomics<'m>(&mut self, vertex_pipeline_stores_and_atomics: bool) {
         self.raw.vertexPipelineStoresAndAtomics = vertex_pipeline_stores_and_atomics as u32;
     }
 
-    pub fn set_fragment_stores_and_atomics<'m>(& mut self, fragment_stores_and_atomics: bool) {
+    pub fn set_fragment_stores_and_atomics<'m>(&mut self, fragment_stores_and_atomics: bool) {
         self.raw.fragmentStoresAndAtomics = fragment_stores_and_atomics as u32;
     }
 
-    pub fn set_shader_tessellation_and_geometry_point_size<'m>(& mut self, shader_tessellation_and_geometry_point_size: bool) {
+    pub fn set_shader_tessellation_and_geometry_point_size<'m>(&mut self, shader_tessellation_and_geometry_point_size: bool) {
         self.raw.shaderTessellationAndGeometryPointSize = shader_tessellation_and_geometry_point_size as u32;
     }
 
-    pub fn set_shader_image_gather_extended<'m>(& mut self, shader_image_gather_extended: bool) {
+    pub fn set_shader_image_gather_extended<'m>(&mut self, shader_image_gather_extended: bool) {
         self.raw.shaderImageGatherExtended = shader_image_gather_extended as u32;
     }
 
-    pub fn set_shader_storage_image_extended_formats<'m>(& mut self, shader_storage_image_extended_formats: bool) {
+    pub fn set_shader_storage_image_extended_formats<'m>(&mut self, shader_storage_image_extended_formats: bool) {
         self.raw.shaderStorageImageExtendedFormats = shader_storage_image_extended_formats as u32;
     }
 
-    pub fn set_shader_storage_image_multisample<'m>(& mut self, shader_storage_image_multisample: bool) {
+    pub fn set_shader_storage_image_multisample<'m>(&mut self, shader_storage_image_multisample: bool) {
         self.raw.shaderStorageImageMultisample = shader_storage_image_multisample as u32;
     }
 
-    pub fn set_shader_storage_image_read_without_format<'m>(& mut self, shader_storage_image_read_without_format: bool) {
+    pub fn set_shader_storage_image_read_without_format<'m>(&mut self, shader_storage_image_read_without_format: bool) {
         self.raw.shaderStorageImageReadWithoutFormat = shader_storage_image_read_without_format as u32;
     }
 
-    pub fn set_shader_storage_image_write_without_format<'m>(& mut self, shader_storage_image_write_without_format: bool) {
+    pub fn set_shader_storage_image_write_without_format<'m>(&mut self, shader_storage_image_write_without_format: bool) {
         self.raw.shaderStorageImageWriteWithoutFormat = shader_storage_image_write_without_format as u32;
     }
 
-    pub fn set_shader_uniform_buffer_array_dynamic_indexing<'m>(& mut self, shader_uniform_buffer_array_dynamic_indexing: bool) {
+    pub fn set_shader_uniform_buffer_array_dynamic_indexing<'m>(&mut self, shader_uniform_buffer_array_dynamic_indexing: bool) {
         self.raw.shaderUniformBufferArrayDynamicIndexing = shader_uniform_buffer_array_dynamic_indexing as u32;
     }
 
-    pub fn set_shader_sampled_image_array_dynamic_indexing<'m>(& mut self, shader_sampled_image_array_dynamic_indexing: bool) {
+    pub fn set_shader_sampled_image_array_dynamic_indexing<'m>(&mut self, shader_sampled_image_array_dynamic_indexing: bool) {
         self.raw.shaderSampledImageArrayDynamicIndexing = shader_sampled_image_array_dynamic_indexing as u32;
     }
 
-    pub fn set_shader_storage_buffer_array_dynamic_indexing<'m>(& mut self, shader_storage_buffer_array_dynamic_indexing: bool) {
+    pub fn set_shader_storage_buffer_array_dynamic_indexing<'m>(&mut self, shader_storage_buffer_array_dynamic_indexing: bool) {
         self.raw.shaderStorageBufferArrayDynamicIndexing = shader_storage_buffer_array_dynamic_indexing as u32;
     }
 
-    pub fn set_shader_storage_image_array_dynamic_indexing<'m>(& mut self, shader_storage_image_array_dynamic_indexing: bool) {
+    pub fn set_shader_storage_image_array_dynamic_indexing<'m>(&mut self, shader_storage_image_array_dynamic_indexing: bool) {
         self.raw.shaderStorageImageArrayDynamicIndexing = shader_storage_image_array_dynamic_indexing as u32;
     }
 
-    pub fn set_shader_clip_distance<'m>(& mut self, shader_clip_distance: bool) {
+    pub fn set_shader_clip_distance<'m>(&mut self, shader_clip_distance: bool) {
         self.raw.shaderClipDistance = shader_clip_distance as u32;
     }
 
-    pub fn set_shader_cull_distance<'m>(& mut self, shader_cull_distance: bool) {
+    pub fn set_shader_cull_distance<'m>(&mut self, shader_cull_distance: bool) {
         self.raw.shaderCullDistance = shader_cull_distance as u32;
     }
 
-    pub fn set_shader_float_64<'m>(& mut self, shader_float_64: bool) {
+    pub fn set_shader_float_64<'m>(&mut self, shader_float_64: bool) {
         self.raw.shaderFloat64 = shader_float_64 as u32;
     }
 
-    pub fn set_shader_int_64<'m>(& mut self, shader_int_64: bool) {
+    pub fn set_shader_int_64<'m>(&mut self, shader_int_64: bool) {
         self.raw.shaderInt64 = shader_int_64 as u32;
     }
 
-    pub fn set_shader_int_16<'m>(& mut self, shader_int_16: bool) {
+    pub fn set_shader_int_16<'m>(&mut self, shader_int_16: bool) {
         self.raw.shaderInt16 = shader_int_16 as u32;
     }
 
-    pub fn set_shader_resource_residency<'m>(& mut self, shader_resource_residency: bool) {
+    pub fn set_shader_resource_residency<'m>(&mut self, shader_resource_residency: bool) {
         self.raw.shaderResourceResidency = shader_resource_residency as u32;
     }
 
-    pub fn set_shader_resource_min_lod<'m>(& mut self, shader_resource_min_lod: bool) {
+    pub fn set_shader_resource_min_lod<'m>(&mut self, shader_resource_min_lod: bool) {
         self.raw.shaderResourceMinLod = shader_resource_min_lod as u32;
     }
 
-    pub fn set_sparse_binding<'m>(& mut self, sparse_binding: bool) {
+    pub fn set_sparse_binding<'m>(&mut self, sparse_binding: bool) {
         self.raw.sparseBinding = sparse_binding as u32;
     }
 
-    pub fn set_sparse_residency_buffer<'m>(& mut self, sparse_residency_buffer: bool) {
+    pub fn set_sparse_residency_buffer<'m>(&mut self, sparse_residency_buffer: bool) {
         self.raw.sparseResidencyBuffer = sparse_residency_buffer as u32;
     }
 
-    pub fn set_sparse_residency_image_2d<'m>(& mut self, sparse_residency_image_2d: bool) {
+    pub fn set_sparse_residency_image_2d<'m>(&mut self, sparse_residency_image_2d: bool) {
         self.raw.sparseResidencyImage2D = sparse_residency_image_2d as u32;
     }
 
-    pub fn set_sparse_residency_image_3d<'m>(& mut self, sparse_residency_image_3d: bool) {
+    pub fn set_sparse_residency_image_3d<'m>(&mut self, sparse_residency_image_3d: bool) {
         self.raw.sparseResidencyImage3D = sparse_residency_image_3d as u32;
     }
 
-    pub fn set_sparse_residency_2samples<'m>(& mut self, sparse_residency_2samples: bool) {
+    pub fn set_sparse_residency_2samples<'m>(&mut self, sparse_residency_2samples: bool) {
         self.raw.sparseResidency2Samples = sparse_residency_2samples as u32;
     }
 
-    pub fn set_sparse_residency_4samples<'m>(& mut self, sparse_residency_4samples: bool) {
+    pub fn set_sparse_residency_4samples<'m>(&mut self, sparse_residency_4samples: bool) {
         self.raw.sparseResidency4Samples = sparse_residency_4samples as u32;
     }
 
-    pub fn set_sparse_residency_8samples<'m>(& mut self, sparse_residency_8samples: bool) {
+    pub fn set_sparse_residency_8samples<'m>(&mut self, sparse_residency_8samples: bool) {
         self.raw.sparseResidency8Samples = sparse_residency_8samples as u32;
     }
 
-    pub fn set_sparse_residency_16_samples<'m>(& mut self, sparse_residency_16_samples: bool) {
+    pub fn set_sparse_residency_16_samples<'m>(&mut self, sparse_residency_16_samples: bool) {
         self.raw.sparseResidency16Samples = sparse_residency_16_samples as u32;
     }
 
-    pub fn set_sparse_residency_aliased<'m>(& mut self, sparse_residency_aliased: bool) {
+    pub fn set_sparse_residency_aliased<'m>(&mut self, sparse_residency_aliased: bool) {
         self.raw.sparseResidencyAliased = sparse_residency_aliased as u32;
     }
 
-    pub fn set_variable_multisample_rate<'m>(& mut self, variable_multisample_rate: bool) {
+    pub fn set_variable_multisample_rate<'m>(&mut self, variable_multisample_rate: bool) {
         self.raw.variableMultisampleRate = variable_multisample_rate as u32;
     }
 
-    pub fn set_inherited_queries<'m>(& mut self, inherited_queries: bool) {
+    pub fn set_inherited_queries<'m>(&mut self, inherited_queries: bool) {
         self.raw.inheritedQueries = inherited_queries as u32;
     }
 
@@ -14954,23 +14954,23 @@ impl PhysicalDeviceSparseProperties {
         self.raw.residencyNonResidentStrict != 0
     }
 
-    pub fn set_residency_standard_2d_block_shape<'m>(& mut self, residency_standard_2d_block_shape: bool) {
+    pub fn set_residency_standard_2d_block_shape<'m>(&mut self, residency_standard_2d_block_shape: bool) {
         self.raw.residencyStandard2DBlockShape = residency_standard_2d_block_shape as u32;
     }
 
-    pub fn set_residency_standard_2d_multisample_block_shape<'m>(& mut self, residency_standard_2d_multisample_block_shape: bool) {
+    pub fn set_residency_standard_2d_multisample_block_shape<'m>(&mut self, residency_standard_2d_multisample_block_shape: bool) {
         self.raw.residencyStandard2DMultisampleBlockShape = residency_standard_2d_multisample_block_shape as u32;
     }
 
-    pub fn set_residency_standard_3d_block_shape<'m>(& mut self, residency_standard_3d_block_shape: bool) {
+    pub fn set_residency_standard_3d_block_shape<'m>(&mut self, residency_standard_3d_block_shape: bool) {
         self.raw.residencyStandard3DBlockShape = residency_standard_3d_block_shape as u32;
     }
 
-    pub fn set_residency_aligned_mip_size<'m>(& mut self, residency_aligned_mip_size: bool) {
+    pub fn set_residency_aligned_mip_size<'m>(&mut self, residency_aligned_mip_size: bool) {
         self.raw.residencyAlignedMipSize = residency_aligned_mip_size as u32;
     }
 
-    pub fn set_residency_non_resident_strict<'m>(& mut self, residency_non_resident_strict: bool) {
+    pub fn set_residency_non_resident_strict<'m>(&mut self, residency_non_resident_strict: bool) {
         self.raw.residencyNonResidentStrict = residency_non_resident_strict as u32;
     }
 
@@ -15507,427 +15507,427 @@ impl PhysicalDeviceLimits {
         self.raw.nonCoherentAtomSize.into()
     }
 
-    pub fn set_max_image_dimension_1d<'m>(& mut self, max_image_dimension_1d: u32) {
+    pub fn set_max_image_dimension_1d<'m>(&mut self, max_image_dimension_1d: u32) {
         self.raw.maxImageDimension1D = max_image_dimension_1d.into();
     }
 
-    pub fn set_max_image_dimension_2d<'m>(& mut self, max_image_dimension_2d: u32) {
+    pub fn set_max_image_dimension_2d<'m>(&mut self, max_image_dimension_2d: u32) {
         self.raw.maxImageDimension2D = max_image_dimension_2d.into();
     }
 
-    pub fn set_max_image_dimension_3d<'m>(& mut self, max_image_dimension_3d: u32) {
+    pub fn set_max_image_dimension_3d<'m>(&mut self, max_image_dimension_3d: u32) {
         self.raw.maxImageDimension3D = max_image_dimension_3d.into();
     }
 
-    pub fn set_max_image_dimension_cube<'m>(& mut self, max_image_dimension_cube: u32) {
+    pub fn set_max_image_dimension_cube<'m>(&mut self, max_image_dimension_cube: u32) {
         self.raw.maxImageDimensionCube = max_image_dimension_cube.into();
     }
 
-    pub fn set_max_image_array_layers<'m>(& mut self, max_image_array_layers: u32) {
+    pub fn set_max_image_array_layers<'m>(&mut self, max_image_array_layers: u32) {
         self.raw.maxImageArrayLayers = max_image_array_layers.into();
     }
 
-    pub fn set_max_texel_buffer_elements<'m>(& mut self, max_texel_buffer_elements: u32) {
+    pub fn set_max_texel_buffer_elements<'m>(&mut self, max_texel_buffer_elements: u32) {
         self.raw.maxTexelBufferElements = max_texel_buffer_elements.into();
     }
 
-    pub fn set_max_uniform_buffer_range<'m>(& mut self, max_uniform_buffer_range: u32) {
+    pub fn set_max_uniform_buffer_range<'m>(&mut self, max_uniform_buffer_range: u32) {
         self.raw.maxUniformBufferRange = max_uniform_buffer_range.into();
     }
 
-    pub fn set_max_storage_buffer_range<'m>(& mut self, max_storage_buffer_range: u32) {
+    pub fn set_max_storage_buffer_range<'m>(&mut self, max_storage_buffer_range: u32) {
         self.raw.maxStorageBufferRange = max_storage_buffer_range.into();
     }
 
-    pub fn set_max_push_constants_size<'m>(& mut self, max_push_constants_size: u32) {
+    pub fn set_max_push_constants_size<'m>(&mut self, max_push_constants_size: u32) {
         self.raw.maxPushConstantsSize = max_push_constants_size.into();
     }
 
-    pub fn set_max_memory_allocation_count<'m>(& mut self, max_memory_allocation_count: u32) {
+    pub fn set_max_memory_allocation_count<'m>(&mut self, max_memory_allocation_count: u32) {
         self.raw.maxMemoryAllocationCount = max_memory_allocation_count.into();
     }
 
-    pub fn set_max_sampler_allocation_count<'m>(& mut self, max_sampler_allocation_count: u32) {
+    pub fn set_max_sampler_allocation_count<'m>(&mut self, max_sampler_allocation_count: u32) {
         self.raw.maxSamplerAllocationCount = max_sampler_allocation_count.into();
     }
 
-    pub fn set_buffer_image_granularity<'m>(& mut self, buffer_image_granularity: u64) {
+    pub fn set_buffer_image_granularity<'m>(&mut self, buffer_image_granularity: u64) {
         self.raw.bufferImageGranularity = buffer_image_granularity.into();
     }
 
-    pub fn set_sparse_address_space_size<'m>(& mut self, sparse_address_space_size: u64) {
+    pub fn set_sparse_address_space_size<'m>(&mut self, sparse_address_space_size: u64) {
         self.raw.sparseAddressSpaceSize = sparse_address_space_size.into();
     }
 
-    pub fn set_max_bound_descriptor_sets<'m>(& mut self, max_bound_descriptor_sets: u32) {
+    pub fn set_max_bound_descriptor_sets<'m>(&mut self, max_bound_descriptor_sets: u32) {
         self.raw.maxBoundDescriptorSets = max_bound_descriptor_sets.into();
     }
 
-    pub fn set_max_per_stage_descriptor_samplers<'m>(& mut self, max_per_stage_descriptor_samplers: u32) {
+    pub fn set_max_per_stage_descriptor_samplers<'m>(&mut self, max_per_stage_descriptor_samplers: u32) {
         self.raw.maxPerStageDescriptorSamplers = max_per_stage_descriptor_samplers.into();
     }
 
-    pub fn set_max_per_stage_descriptor_uniform_buffers<'m>(& mut self, max_per_stage_descriptor_uniform_buffers: u32) {
+    pub fn set_max_per_stage_descriptor_uniform_buffers<'m>(&mut self, max_per_stage_descriptor_uniform_buffers: u32) {
         self.raw.maxPerStageDescriptorUniformBuffers = max_per_stage_descriptor_uniform_buffers.into();
     }
 
-    pub fn set_max_per_stage_descriptor_storage_buffers<'m>(& mut self, max_per_stage_descriptor_storage_buffers: u32) {
+    pub fn set_max_per_stage_descriptor_storage_buffers<'m>(&mut self, max_per_stage_descriptor_storage_buffers: u32) {
         self.raw.maxPerStageDescriptorStorageBuffers = max_per_stage_descriptor_storage_buffers.into();
     }
 
-    pub fn set_max_per_stage_descriptor_sampled_images<'m>(& mut self, max_per_stage_descriptor_sampled_images: u32) {
+    pub fn set_max_per_stage_descriptor_sampled_images<'m>(&mut self, max_per_stage_descriptor_sampled_images: u32) {
         self.raw.maxPerStageDescriptorSampledImages = max_per_stage_descriptor_sampled_images.into();
     }
 
-    pub fn set_max_per_stage_descriptor_storage_images<'m>(& mut self, max_per_stage_descriptor_storage_images: u32) {
+    pub fn set_max_per_stage_descriptor_storage_images<'m>(&mut self, max_per_stage_descriptor_storage_images: u32) {
         self.raw.maxPerStageDescriptorStorageImages = max_per_stage_descriptor_storage_images.into();
     }
 
-    pub fn set_max_per_stage_descriptor_input_attachments<'m>(& mut self, max_per_stage_descriptor_input_attachments: u32) {
+    pub fn set_max_per_stage_descriptor_input_attachments<'m>(&mut self, max_per_stage_descriptor_input_attachments: u32) {
         self.raw.maxPerStageDescriptorInputAttachments = max_per_stage_descriptor_input_attachments.into();
     }
 
-    pub fn set_max_per_stage_resources<'m>(& mut self, max_per_stage_resources: u32) {
+    pub fn set_max_per_stage_resources<'m>(&mut self, max_per_stage_resources: u32) {
         self.raw.maxPerStageResources = max_per_stage_resources.into();
     }
 
-    pub fn set_max_descriptor_set_samplers<'m>(& mut self, max_descriptor_set_samplers: u32) {
+    pub fn set_max_descriptor_set_samplers<'m>(&mut self, max_descriptor_set_samplers: u32) {
         self.raw.maxDescriptorSetSamplers = max_descriptor_set_samplers.into();
     }
 
-    pub fn set_max_descriptor_set_uniform_buffers<'m>(& mut self, max_descriptor_set_uniform_buffers: u32) {
+    pub fn set_max_descriptor_set_uniform_buffers<'m>(&mut self, max_descriptor_set_uniform_buffers: u32) {
         self.raw.maxDescriptorSetUniformBuffers = max_descriptor_set_uniform_buffers.into();
     }
 
-    pub fn set_max_descriptor_set_uniform_buffers_dynamic<'m>(& mut self, max_descriptor_set_uniform_buffers_dynamic: u32) {
+    pub fn set_max_descriptor_set_uniform_buffers_dynamic<'m>(&mut self, max_descriptor_set_uniform_buffers_dynamic: u32) {
         self.raw.maxDescriptorSetUniformBuffersDynamic = max_descriptor_set_uniform_buffers_dynamic.into();
     }
 
-    pub fn set_max_descriptor_set_storage_buffers<'m>(& mut self, max_descriptor_set_storage_buffers: u32) {
+    pub fn set_max_descriptor_set_storage_buffers<'m>(&mut self, max_descriptor_set_storage_buffers: u32) {
         self.raw.maxDescriptorSetStorageBuffers = max_descriptor_set_storage_buffers.into();
     }
 
-    pub fn set_max_descriptor_set_storage_buffers_dynamic<'m>(& mut self, max_descriptor_set_storage_buffers_dynamic: u32) {
+    pub fn set_max_descriptor_set_storage_buffers_dynamic<'m>(&mut self, max_descriptor_set_storage_buffers_dynamic: u32) {
         self.raw.maxDescriptorSetStorageBuffersDynamic = max_descriptor_set_storage_buffers_dynamic.into();
     }
 
-    pub fn set_max_descriptor_set_sampled_images<'m>(& mut self, max_descriptor_set_sampled_images: u32) {
+    pub fn set_max_descriptor_set_sampled_images<'m>(&mut self, max_descriptor_set_sampled_images: u32) {
         self.raw.maxDescriptorSetSampledImages = max_descriptor_set_sampled_images.into();
     }
 
-    pub fn set_max_descriptor_set_storage_images<'m>(& mut self, max_descriptor_set_storage_images: u32) {
+    pub fn set_max_descriptor_set_storage_images<'m>(&mut self, max_descriptor_set_storage_images: u32) {
         self.raw.maxDescriptorSetStorageImages = max_descriptor_set_storage_images.into();
     }
 
-    pub fn set_max_descriptor_set_input_attachments<'m>(& mut self, max_descriptor_set_input_attachments: u32) {
+    pub fn set_max_descriptor_set_input_attachments<'m>(&mut self, max_descriptor_set_input_attachments: u32) {
         self.raw.maxDescriptorSetInputAttachments = max_descriptor_set_input_attachments.into();
     }
 
-    pub fn set_max_vertex_input_attributes<'m>(& mut self, max_vertex_input_attributes: u32) {
+    pub fn set_max_vertex_input_attributes<'m>(&mut self, max_vertex_input_attributes: u32) {
         self.raw.maxVertexInputAttributes = max_vertex_input_attributes.into();
     }
 
-    pub fn set_max_vertex_input_bindings<'m>(& mut self, max_vertex_input_bindings: u32) {
+    pub fn set_max_vertex_input_bindings<'m>(&mut self, max_vertex_input_bindings: u32) {
         self.raw.maxVertexInputBindings = max_vertex_input_bindings.into();
     }
 
-    pub fn set_max_vertex_input_attribute_offset<'m>(& mut self, max_vertex_input_attribute_offset: u32) {
+    pub fn set_max_vertex_input_attribute_offset<'m>(&mut self, max_vertex_input_attribute_offset: u32) {
         self.raw.maxVertexInputAttributeOffset = max_vertex_input_attribute_offset.into();
     }
 
-    pub fn set_max_vertex_input_binding_stride<'m>(& mut self, max_vertex_input_binding_stride: u32) {
+    pub fn set_max_vertex_input_binding_stride<'m>(&mut self, max_vertex_input_binding_stride: u32) {
         self.raw.maxVertexInputBindingStride = max_vertex_input_binding_stride.into();
     }
 
-    pub fn set_max_vertex_output_components<'m>(& mut self, max_vertex_output_components: u32) {
+    pub fn set_max_vertex_output_components<'m>(&mut self, max_vertex_output_components: u32) {
         self.raw.maxVertexOutputComponents = max_vertex_output_components.into();
     }
 
-    pub fn set_max_tessellation_generation_level<'m>(& mut self, max_tessellation_generation_level: u32) {
+    pub fn set_max_tessellation_generation_level<'m>(&mut self, max_tessellation_generation_level: u32) {
         self.raw.maxTessellationGenerationLevel = max_tessellation_generation_level.into();
     }
 
-    pub fn set_max_tessellation_patch_size<'m>(& mut self, max_tessellation_patch_size: u32) {
+    pub fn set_max_tessellation_patch_size<'m>(&mut self, max_tessellation_patch_size: u32) {
         self.raw.maxTessellationPatchSize = max_tessellation_patch_size.into();
     }
 
-    pub fn set_max_tessellation_control_per_vertex_input_components<'m>(& mut self, max_tessellation_control_per_vertex_input_components: u32) {
+    pub fn set_max_tessellation_control_per_vertex_input_components<'m>(&mut self, max_tessellation_control_per_vertex_input_components: u32) {
         self.raw.maxTessellationControlPerVertexInputComponents = max_tessellation_control_per_vertex_input_components.into();
     }
 
-    pub fn set_max_tessellation_control_per_vertex_output_components<'m>(& mut self, max_tessellation_control_per_vertex_output_components: u32) {
+    pub fn set_max_tessellation_control_per_vertex_output_components<'m>(&mut self, max_tessellation_control_per_vertex_output_components: u32) {
         self.raw.maxTessellationControlPerVertexOutputComponents = max_tessellation_control_per_vertex_output_components.into();
     }
 
-    pub fn set_max_tessellation_control_per_patch_output_components<'m>(& mut self, max_tessellation_control_per_patch_output_components: u32) {
+    pub fn set_max_tessellation_control_per_patch_output_components<'m>(&mut self, max_tessellation_control_per_patch_output_components: u32) {
         self.raw.maxTessellationControlPerPatchOutputComponents = max_tessellation_control_per_patch_output_components.into();
     }
 
-    pub fn set_max_tessellation_control_total_output_components<'m>(& mut self, max_tessellation_control_total_output_components: u32) {
+    pub fn set_max_tessellation_control_total_output_components<'m>(&mut self, max_tessellation_control_total_output_components: u32) {
         self.raw.maxTessellationControlTotalOutputComponents = max_tessellation_control_total_output_components.into();
     }
 
-    pub fn set_max_tessellation_evaluation_input_components<'m>(& mut self, max_tessellation_evaluation_input_components: u32) {
+    pub fn set_max_tessellation_evaluation_input_components<'m>(&mut self, max_tessellation_evaluation_input_components: u32) {
         self.raw.maxTessellationEvaluationInputComponents = max_tessellation_evaluation_input_components.into();
     }
 
-    pub fn set_max_tessellation_evaluation_output_components<'m>(& mut self, max_tessellation_evaluation_output_components: u32) {
+    pub fn set_max_tessellation_evaluation_output_components<'m>(&mut self, max_tessellation_evaluation_output_components: u32) {
         self.raw.maxTessellationEvaluationOutputComponents = max_tessellation_evaluation_output_components.into();
     }
 
-    pub fn set_max_geometry_shader_invocations<'m>(& mut self, max_geometry_shader_invocations: u32) {
+    pub fn set_max_geometry_shader_invocations<'m>(&mut self, max_geometry_shader_invocations: u32) {
         self.raw.maxGeometryShaderInvocations = max_geometry_shader_invocations.into();
     }
 
-    pub fn set_max_geometry_input_components<'m>(& mut self, max_geometry_input_components: u32) {
+    pub fn set_max_geometry_input_components<'m>(&mut self, max_geometry_input_components: u32) {
         self.raw.maxGeometryInputComponents = max_geometry_input_components.into();
     }
 
-    pub fn set_max_geometry_output_components<'m>(& mut self, max_geometry_output_components: u32) {
+    pub fn set_max_geometry_output_components<'m>(&mut self, max_geometry_output_components: u32) {
         self.raw.maxGeometryOutputComponents = max_geometry_output_components.into();
     }
 
-    pub fn set_max_geometry_output_vertices<'m>(& mut self, max_geometry_output_vertices: u32) {
+    pub fn set_max_geometry_output_vertices<'m>(&mut self, max_geometry_output_vertices: u32) {
         self.raw.maxGeometryOutputVertices = max_geometry_output_vertices.into();
     }
 
-    pub fn set_max_geometry_total_output_components<'m>(& mut self, max_geometry_total_output_components: u32) {
+    pub fn set_max_geometry_total_output_components<'m>(&mut self, max_geometry_total_output_components: u32) {
         self.raw.maxGeometryTotalOutputComponents = max_geometry_total_output_components.into();
     }
 
-    pub fn set_max_fragment_input_components<'m>(& mut self, max_fragment_input_components: u32) {
+    pub fn set_max_fragment_input_components<'m>(&mut self, max_fragment_input_components: u32) {
         self.raw.maxFragmentInputComponents = max_fragment_input_components.into();
     }
 
-    pub fn set_max_fragment_output_attachments<'m>(& mut self, max_fragment_output_attachments: u32) {
+    pub fn set_max_fragment_output_attachments<'m>(&mut self, max_fragment_output_attachments: u32) {
         self.raw.maxFragmentOutputAttachments = max_fragment_output_attachments.into();
     }
 
-    pub fn set_max_fragment_dual_src_attachments<'m>(& mut self, max_fragment_dual_src_attachments: u32) {
+    pub fn set_max_fragment_dual_src_attachments<'m>(&mut self, max_fragment_dual_src_attachments: u32) {
         self.raw.maxFragmentDualSrcAttachments = max_fragment_dual_src_attachments.into();
     }
 
-    pub fn set_max_fragment_combined_output_resources<'m>(& mut self, max_fragment_combined_output_resources: u32) {
+    pub fn set_max_fragment_combined_output_resources<'m>(&mut self, max_fragment_combined_output_resources: u32) {
         self.raw.maxFragmentCombinedOutputResources = max_fragment_combined_output_resources.into();
     }
 
-    pub fn set_max_compute_shared_memory_size<'m>(& mut self, max_compute_shared_memory_size: u32) {
+    pub fn set_max_compute_shared_memory_size<'m>(&mut self, max_compute_shared_memory_size: u32) {
         self.raw.maxComputeSharedMemorySize = max_compute_shared_memory_size.into();
     }
 
-    pub fn set_max_compute_work_group_count<'m>(& mut self, max_compute_work_group_count: [u32; 3]) {
+    pub fn set_max_compute_work_group_count<'m>(&mut self, max_compute_work_group_count: [u32; 3]) {
         self.raw.maxComputeWorkGroupCount = max_compute_work_group_count;
     }
 
-    pub fn set_max_compute_work_group_invocations<'m>(& mut self, max_compute_work_group_invocations: u32) {
+    pub fn set_max_compute_work_group_invocations<'m>(&mut self, max_compute_work_group_invocations: u32) {
         self.raw.maxComputeWorkGroupInvocations = max_compute_work_group_invocations.into();
     }
 
-    pub fn set_max_compute_work_group_size<'m>(& mut self, max_compute_work_group_size: [u32; 3]) {
+    pub fn set_max_compute_work_group_size<'m>(&mut self, max_compute_work_group_size: [u32; 3]) {
         self.raw.maxComputeWorkGroupSize = max_compute_work_group_size;
     }
 
-    pub fn set_sub_pixel_precision_bits<'m>(& mut self, sub_pixel_precision_bits: u32) {
+    pub fn set_sub_pixel_precision_bits<'m>(&mut self, sub_pixel_precision_bits: u32) {
         self.raw.subPixelPrecisionBits = sub_pixel_precision_bits.into();
     }
 
-    pub fn set_sub_texel_precision_bits<'m>(& mut self, sub_texel_precision_bits: u32) {
+    pub fn set_sub_texel_precision_bits<'m>(&mut self, sub_texel_precision_bits: u32) {
         self.raw.subTexelPrecisionBits = sub_texel_precision_bits.into();
     }
 
-    pub fn set_mipmap_precision_bits<'m>(& mut self, mipmap_precision_bits: u32) {
+    pub fn set_mipmap_precision_bits<'m>(&mut self, mipmap_precision_bits: u32) {
         self.raw.mipmapPrecisionBits = mipmap_precision_bits.into();
     }
 
-    pub fn set_max_draw_indexed_index_value<'m>(& mut self, max_draw_indexed_index_value: u32) {
+    pub fn set_max_draw_indexed_index_value<'m>(&mut self, max_draw_indexed_index_value: u32) {
         self.raw.maxDrawIndexedIndexValue = max_draw_indexed_index_value.into();
     }
 
-    pub fn set_max_draw_indirect_count<'m>(& mut self, max_draw_indirect_count: u32) {
+    pub fn set_max_draw_indirect_count<'m>(&mut self, max_draw_indirect_count: u32) {
         self.raw.maxDrawIndirectCount = max_draw_indirect_count.into();
     }
 
-    pub fn set_max_sampler_lod_bias<'m>(& mut self, max_sampler_lod_bias: f32) {
+    pub fn set_max_sampler_lod_bias<'m>(&mut self, max_sampler_lod_bias: f32) {
         self.raw.maxSamplerLodBias = max_sampler_lod_bias.into();
     }
 
-    pub fn set_max_sampler_anisotropy<'m>(& mut self, max_sampler_anisotropy: f32) {
+    pub fn set_max_sampler_anisotropy<'m>(&mut self, max_sampler_anisotropy: f32) {
         self.raw.maxSamplerAnisotropy = max_sampler_anisotropy.into();
     }
 
-    pub fn set_max_viewports<'m>(& mut self, max_viewports: u32) {
+    pub fn set_max_viewports<'m>(&mut self, max_viewports: u32) {
         self.raw.maxViewports = max_viewports.into();
     }
 
-    pub fn set_max_viewport_dimensions<'m>(& mut self, max_viewport_dimensions: [u32; 2]) {
+    pub fn set_max_viewport_dimensions<'m>(&mut self, max_viewport_dimensions: [u32; 2]) {
         self.raw.maxViewportDimensions = max_viewport_dimensions;
     }
 
-    pub fn set_viewport_bounds_range<'m>(& mut self, viewport_bounds_range: [f32; 2]) {
+    pub fn set_viewport_bounds_range<'m>(&mut self, viewport_bounds_range: [f32; 2]) {
         self.raw.viewportBoundsRange = viewport_bounds_range;
     }
 
-    pub fn set_viewport_sub_pixel_bits<'m>(& mut self, viewport_sub_pixel_bits: u32) {
+    pub fn set_viewport_sub_pixel_bits<'m>(&mut self, viewport_sub_pixel_bits: u32) {
         self.raw.viewportSubPixelBits = viewport_sub_pixel_bits.into();
     }
 
-    pub fn set_min_memory_map_alignment<'m>(& mut self, min_memory_map_alignment: usize) {
+    pub fn set_min_memory_map_alignment<'m>(&mut self, min_memory_map_alignment: usize) {
         self.raw.minMemoryMapAlignment = min_memory_map_alignment.into();
     }
 
-    pub fn set_min_texel_buffer_offset_alignment<'m>(& mut self, min_texel_buffer_offset_alignment: u64) {
+    pub fn set_min_texel_buffer_offset_alignment<'m>(&mut self, min_texel_buffer_offset_alignment: u64) {
         self.raw.minTexelBufferOffsetAlignment = min_texel_buffer_offset_alignment.into();
     }
 
-    pub fn set_min_uniform_buffer_offset_alignment<'m>(& mut self, min_uniform_buffer_offset_alignment: u64) {
+    pub fn set_min_uniform_buffer_offset_alignment<'m>(&mut self, min_uniform_buffer_offset_alignment: u64) {
         self.raw.minUniformBufferOffsetAlignment = min_uniform_buffer_offset_alignment.into();
     }
 
-    pub fn set_min_storage_buffer_offset_alignment<'m>(& mut self, min_storage_buffer_offset_alignment: u64) {
+    pub fn set_min_storage_buffer_offset_alignment<'m>(&mut self, min_storage_buffer_offset_alignment: u64) {
         self.raw.minStorageBufferOffsetAlignment = min_storage_buffer_offset_alignment.into();
     }
 
-    pub fn set_min_texel_offset<'m>(& mut self, min_texel_offset: i32) {
+    pub fn set_min_texel_offset<'m>(&mut self, min_texel_offset: i32) {
         self.raw.minTexelOffset = min_texel_offset.into();
     }
 
-    pub fn set_max_texel_offset<'m>(& mut self, max_texel_offset: u32) {
+    pub fn set_max_texel_offset<'m>(&mut self, max_texel_offset: u32) {
         self.raw.maxTexelOffset = max_texel_offset.into();
     }
 
-    pub fn set_min_texel_gather_offset<'m>(& mut self, min_texel_gather_offset: i32) {
+    pub fn set_min_texel_gather_offset<'m>(&mut self, min_texel_gather_offset: i32) {
         self.raw.minTexelGatherOffset = min_texel_gather_offset.into();
     }
 
-    pub fn set_max_texel_gather_offset<'m>(& mut self, max_texel_gather_offset: u32) {
+    pub fn set_max_texel_gather_offset<'m>(&mut self, max_texel_gather_offset: u32) {
         self.raw.maxTexelGatherOffset = max_texel_gather_offset.into();
     }
 
-    pub fn set_min_interpolation_offset<'m>(& mut self, min_interpolation_offset: f32) {
+    pub fn set_min_interpolation_offset<'m>(&mut self, min_interpolation_offset: f32) {
         self.raw.minInterpolationOffset = min_interpolation_offset.into();
     }
 
-    pub fn set_max_interpolation_offset<'m>(& mut self, max_interpolation_offset: f32) {
+    pub fn set_max_interpolation_offset<'m>(&mut self, max_interpolation_offset: f32) {
         self.raw.maxInterpolationOffset = max_interpolation_offset.into();
     }
 
-    pub fn set_sub_pixel_interpolation_offset_bits<'m>(& mut self, sub_pixel_interpolation_offset_bits: u32) {
+    pub fn set_sub_pixel_interpolation_offset_bits<'m>(&mut self, sub_pixel_interpolation_offset_bits: u32) {
         self.raw.subPixelInterpolationOffsetBits = sub_pixel_interpolation_offset_bits.into();
     }
 
-    pub fn set_max_framebuffer_width<'m>(& mut self, max_framebuffer_width: u32) {
+    pub fn set_max_framebuffer_width<'m>(&mut self, max_framebuffer_width: u32) {
         self.raw.maxFramebufferWidth = max_framebuffer_width.into();
     }
 
-    pub fn set_max_framebuffer_height<'m>(& mut self, max_framebuffer_height: u32) {
+    pub fn set_max_framebuffer_height<'m>(&mut self, max_framebuffer_height: u32) {
         self.raw.maxFramebufferHeight = max_framebuffer_height.into();
     }
 
-    pub fn set_max_framebuffer_layers<'m>(& mut self, max_framebuffer_layers: u32) {
+    pub fn set_max_framebuffer_layers<'m>(&mut self, max_framebuffer_layers: u32) {
         self.raw.maxFramebufferLayers = max_framebuffer_layers.into();
     }
 
-    pub fn set_framebuffer_color_sample_counts<'m>(& mut self, framebuffer_color_sample_counts: SampleCountFlags) {
+    pub fn set_framebuffer_color_sample_counts<'m>(&mut self, framebuffer_color_sample_counts: SampleCountFlags) {
         self.raw.framebufferColorSampleCounts = framebuffer_color_sample_counts.bits();
     }
 
-    pub fn set_framebuffer_depth_sample_counts<'m>(& mut self, framebuffer_depth_sample_counts: SampleCountFlags) {
+    pub fn set_framebuffer_depth_sample_counts<'m>(&mut self, framebuffer_depth_sample_counts: SampleCountFlags) {
         self.raw.framebufferDepthSampleCounts = framebuffer_depth_sample_counts.bits();
     }
 
-    pub fn set_framebuffer_stencil_sample_counts<'m>(& mut self, framebuffer_stencil_sample_counts: SampleCountFlags) {
+    pub fn set_framebuffer_stencil_sample_counts<'m>(&mut self, framebuffer_stencil_sample_counts: SampleCountFlags) {
         self.raw.framebufferStencilSampleCounts = framebuffer_stencil_sample_counts.bits();
     }
 
-    pub fn set_framebuffer_no_attachments_sample_counts<'m>(& mut self, framebuffer_no_attachments_sample_counts: SampleCountFlags) {
+    pub fn set_framebuffer_no_attachments_sample_counts<'m>(&mut self, framebuffer_no_attachments_sample_counts: SampleCountFlags) {
         self.raw.framebufferNoAttachmentsSampleCounts = framebuffer_no_attachments_sample_counts.bits();
     }
 
-    pub fn set_max_color_attachments<'m>(& mut self, max_color_attachments: u32) {
+    pub fn set_max_color_attachments<'m>(&mut self, max_color_attachments: u32) {
         self.raw.maxColorAttachments = max_color_attachments.into();
     }
 
-    pub fn set_sampled_image_color_sample_counts<'m>(& mut self, sampled_image_color_sample_counts: SampleCountFlags) {
+    pub fn set_sampled_image_color_sample_counts<'m>(&mut self, sampled_image_color_sample_counts: SampleCountFlags) {
         self.raw.sampledImageColorSampleCounts = sampled_image_color_sample_counts.bits();
     }
 
-    pub fn set_sampled_image_integer_sample_counts<'m>(& mut self, sampled_image_integer_sample_counts: SampleCountFlags) {
+    pub fn set_sampled_image_integer_sample_counts<'m>(&mut self, sampled_image_integer_sample_counts: SampleCountFlags) {
         self.raw.sampledImageIntegerSampleCounts = sampled_image_integer_sample_counts.bits();
     }
 
-    pub fn set_sampled_image_depth_sample_counts<'m>(& mut self, sampled_image_depth_sample_counts: SampleCountFlags) {
+    pub fn set_sampled_image_depth_sample_counts<'m>(&mut self, sampled_image_depth_sample_counts: SampleCountFlags) {
         self.raw.sampledImageDepthSampleCounts = sampled_image_depth_sample_counts.bits();
     }
 
-    pub fn set_sampled_image_stencil_sample_counts<'m>(& mut self, sampled_image_stencil_sample_counts: SampleCountFlags) {
+    pub fn set_sampled_image_stencil_sample_counts<'m>(&mut self, sampled_image_stencil_sample_counts: SampleCountFlags) {
         self.raw.sampledImageStencilSampleCounts = sampled_image_stencil_sample_counts.bits();
     }
 
-    pub fn set_storage_image_sample_counts<'m>(& mut self, storage_image_sample_counts: SampleCountFlags) {
+    pub fn set_storage_image_sample_counts<'m>(&mut self, storage_image_sample_counts: SampleCountFlags) {
         self.raw.storageImageSampleCounts = storage_image_sample_counts.bits();
     }
 
-    pub fn set_max_sample_mask_words<'m>(& mut self, max_sample_mask_words: u32) {
+    pub fn set_max_sample_mask_words<'m>(&mut self, max_sample_mask_words: u32) {
         self.raw.maxSampleMaskWords = max_sample_mask_words.into();
     }
 
-    pub fn set_timestamp_compute_and_graphics<'m>(& mut self, timestamp_compute_and_graphics: bool) {
+    pub fn set_timestamp_compute_and_graphics<'m>(&mut self, timestamp_compute_and_graphics: bool) {
         self.raw.timestampComputeAndGraphics = timestamp_compute_and_graphics as u32;
     }
 
-    pub fn set_timestamp_period<'m>(& mut self, timestamp_period: f32) {
+    pub fn set_timestamp_period<'m>(&mut self, timestamp_period: f32) {
         self.raw.timestampPeriod = timestamp_period.into();
     }
 
-    pub fn set_max_clip_distances<'m>(& mut self, max_clip_distances: u32) {
+    pub fn set_max_clip_distances<'m>(&mut self, max_clip_distances: u32) {
         self.raw.maxClipDistances = max_clip_distances.into();
     }
 
-    pub fn set_max_cull_distances<'m>(& mut self, max_cull_distances: u32) {
+    pub fn set_max_cull_distances<'m>(&mut self, max_cull_distances: u32) {
         self.raw.maxCullDistances = max_cull_distances.into();
     }
 
-    pub fn set_max_combined_clip_and_cull_distances<'m>(& mut self, max_combined_clip_and_cull_distances: u32) {
+    pub fn set_max_combined_clip_and_cull_distances<'m>(&mut self, max_combined_clip_and_cull_distances: u32) {
         self.raw.maxCombinedClipAndCullDistances = max_combined_clip_and_cull_distances.into();
     }
 
-    pub fn set_discrete_queue_priorities<'m>(& mut self, discrete_queue_priorities: u32) {
+    pub fn set_discrete_queue_priorities<'m>(&mut self, discrete_queue_priorities: u32) {
         self.raw.discreteQueuePriorities = discrete_queue_priorities.into();
     }
 
-    pub fn set_point_size_range<'m>(& mut self, point_size_range: [f32; 2]) {
+    pub fn set_point_size_range<'m>(&mut self, point_size_range: [f32; 2]) {
         self.raw.pointSizeRange = point_size_range;
     }
 
-    pub fn set_line_width_range<'m>(& mut self, line_width_range: [f32; 2]) {
+    pub fn set_line_width_range<'m>(&mut self, line_width_range: [f32; 2]) {
         self.raw.lineWidthRange = line_width_range;
     }
 
-    pub fn set_point_size_granularity<'m>(& mut self, point_size_granularity: f32) {
+    pub fn set_point_size_granularity<'m>(&mut self, point_size_granularity: f32) {
         self.raw.pointSizeGranularity = point_size_granularity.into();
     }
 
-    pub fn set_line_width_granularity<'m>(& mut self, line_width_granularity: f32) {
+    pub fn set_line_width_granularity<'m>(&mut self, line_width_granularity: f32) {
         self.raw.lineWidthGranularity = line_width_granularity.into();
     }
 
-    pub fn set_strict_lines<'m>(& mut self, strict_lines: bool) {
+    pub fn set_strict_lines<'m>(&mut self, strict_lines: bool) {
         self.raw.strictLines = strict_lines as u32;
     }
 
-    pub fn set_standard_sample_locations<'m>(& mut self, standard_sample_locations: bool) {
+    pub fn set_standard_sample_locations<'m>(&mut self, standard_sample_locations: bool) {
         self.raw.standardSampleLocations = standard_sample_locations as u32;
     }
 
-    pub fn set_optimal_buffer_copy_offset_alignment<'m>(& mut self, optimal_buffer_copy_offset_alignment: u64) {
+    pub fn set_optimal_buffer_copy_offset_alignment<'m>(&mut self, optimal_buffer_copy_offset_alignment: u64) {
         self.raw.optimalBufferCopyOffsetAlignment = optimal_buffer_copy_offset_alignment.into();
     }
 
-    pub fn set_optimal_buffer_copy_row_pitch_alignment<'m>(& mut self, optimal_buffer_copy_row_pitch_alignment: u64) {
+    pub fn set_optimal_buffer_copy_row_pitch_alignment<'m>(&mut self, optimal_buffer_copy_row_pitch_alignment: u64) {
         self.raw.optimalBufferCopyRowPitchAlignment = optimal_buffer_copy_row_pitch_alignment.into();
     }
 
-    pub fn set_non_coherent_atom_size<'m>(& mut self, non_coherent_atom_size: u64) {
+    pub fn set_non_coherent_atom_size<'m>(&mut self, non_coherent_atom_size: u64) {
         self.raw.nonCoherentAtomSize = non_coherent_atom_size.into();
     }
 
@@ -16959,11 +16959,11 @@ impl<'s> SemaphoreCreateInfo<'s> {
             .expect("SemaphoreCreateInfo::flags: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: SemaphoreCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: SemaphoreCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
@@ -17067,23 +17067,23 @@ impl<'s> QueryPoolCreateInfo<'s> {
             .expect("QueryPoolCreateInfo::pipeline_statistics: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: QueryPoolCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: QueryPoolCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_query_type<'m>(&'s mut self, query_type: QueryType) {
+    pub fn set_query_type<'m>(&mut self, query_type: QueryType) {
         self.raw.queryType = query_type.into();
     }
 
-    pub fn set_query_count<'m>(&'s mut self, query_count: u32) {
+    pub fn set_query_count<'m>(&mut self, query_count: u32) {
         self.raw.queryCount = query_count.into();
     }
 
-    pub fn set_pipeline_statistics<'m>(&'s mut self, pipeline_statistics: QueryPipelineStatisticFlags) {
+    pub fn set_pipeline_statistics<'m>(&mut self, pipeline_statistics: QueryPipelineStatisticFlags) {
         self.raw.pipelineStatistics = pipeline_statistics.bits();
     }
 
@@ -17222,19 +17222,19 @@ impl<'s> FramebufferCreateInfo<'s> {
         self.raw.layers.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: FramebufferCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: FramebufferCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_render_pass<'m, 'a>(&'s mut self, render_pass: &'a RenderPass) {
+    pub fn set_render_pass<'m, 'a>(&mut self, render_pass: &'a RenderPass) {
         self.raw.renderPass = render_pass.handle();
     }
 
-    pub fn set_attachments<'m, 'a>(&'s mut self, attachments: &'a [&'a ImageView])
+    pub fn set_attachments<'m, 'a>(&mut self, attachments: &'a [&'a ImageView])
             where 'a: 's {
         self.attachments = Some(attachments.iter().map(|h| h.handle()).collect());
         {
@@ -17246,15 +17246,15 @@ impl<'s> FramebufferCreateInfo<'s> {
         }
     }
 
-    pub fn set_width<'m>(&'s mut self, width: u32) {
+    pub fn set_width<'m>(&mut self, width: u32) {
         self.raw.width = width.into();
     }
 
-    pub fn set_height<'m>(&'s mut self, height: u32) {
+    pub fn set_height<'m>(&mut self, height: u32) {
         self.raw.height = height.into();
     }
 
-    pub fn set_layers<'m>(&'s mut self, layers: u32) {
+    pub fn set_layers<'m>(&mut self, layers: u32) {
         self.raw.layers = layers.into();
     }
 
@@ -17407,19 +17407,19 @@ impl DrawIndirectCommand {
         self.raw.firstInstance.into()
     }
 
-    pub fn set_vertex_count<'m>(& mut self, vertex_count: u32) {
+    pub fn set_vertex_count<'m>(&mut self, vertex_count: u32) {
         self.raw.vertexCount = vertex_count.into();
     }
 
-    pub fn set_instance_count<'m>(& mut self, instance_count: u32) {
+    pub fn set_instance_count<'m>(&mut self, instance_count: u32) {
         self.raw.instanceCount = instance_count.into();
     }
 
-    pub fn set_first_vertex<'m>(& mut self, first_vertex: u32) {
+    pub fn set_first_vertex<'m>(&mut self, first_vertex: u32) {
         self.raw.firstVertex = first_vertex.into();
     }
 
-    pub fn set_first_instance<'m>(& mut self, first_instance: u32) {
+    pub fn set_first_instance<'m>(&mut self, first_instance: u32) {
         self.raw.firstInstance = first_instance.into();
     }
 
@@ -17534,23 +17534,23 @@ impl DrawIndexedIndirectCommand {
         self.raw.firstInstance.into()
     }
 
-    pub fn set_index_count<'m>(& mut self, index_count: u32) {
+    pub fn set_index_count<'m>(&mut self, index_count: u32) {
         self.raw.indexCount = index_count.into();
     }
 
-    pub fn set_instance_count<'m>(& mut self, instance_count: u32) {
+    pub fn set_instance_count<'m>(&mut self, instance_count: u32) {
         self.raw.instanceCount = instance_count.into();
     }
 
-    pub fn set_first_index<'m>(& mut self, first_index: u32) {
+    pub fn set_first_index<'m>(&mut self, first_index: u32) {
         self.raw.firstIndex = first_index.into();
     }
 
-    pub fn set_vertex_offset<'m>(& mut self, vertex_offset: i32) {
+    pub fn set_vertex_offset<'m>(&mut self, vertex_offset: i32) {
         self.raw.vertexOffset = vertex_offset.into();
     }
 
-    pub fn set_first_instance<'m>(& mut self, first_instance: u32) {
+    pub fn set_first_instance<'m>(&mut self, first_instance: u32) {
         self.raw.firstInstance = first_instance.into();
     }
 
@@ -17666,15 +17666,15 @@ impl DispatchIndirectCommand {
         self.raw.z.into()
     }
 
-    pub fn set_x<'m>(& mut self, x: u32) {
+    pub fn set_x<'m>(&mut self, x: u32) {
         self.raw.x = x.into();
     }
 
-    pub fn set_y<'m>(& mut self, y: u32) {
+    pub fn set_y<'m>(&mut self, y: u32) {
         self.raw.y = y.into();
     }
 
-    pub fn set_z<'m>(& mut self, z: u32) {
+    pub fn set_z<'m>(&mut self, z: u32) {
         self.raw.z = z.into();
     }
 
@@ -17783,11 +17783,11 @@ impl<'s> SubmitInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pSignalSemaphores as *const _, self.raw.signalSemaphoreCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_wait_semaphores<'m, 'a>(&'s mut self, wait_semaphores: &'a [&'a Semaphore])
+    pub fn set_wait_semaphores<'m, 'a>(&mut self, wait_semaphores: &'a [&'a Semaphore])
             where 'a: 's {
         self.wait_semaphores = Some(wait_semaphores.iter().map(|h| h.handle()).collect());
         {
@@ -17799,11 +17799,11 @@ impl<'s> SubmitInfo<'s> {
         }
     }
 
-    pub fn set_wait_dst_stage_mask<'m, 'a>(&'s mut self, wait_dst_stage_mask: &'a PipelineStageFlags) {
+    pub fn set_wait_dst_stage_mask<'m, 'a>(&mut self, wait_dst_stage_mask: &'a PipelineStageFlags) {
         self.raw.pWaitDstStageMask = wait_dst_stage_mask as *const PipelineStageFlags as *const _;
     }
 
-    pub fn set_command_buffers<'m, 'a>(&'s mut self, command_buffers: &'a [&'a CommandBuffer])
+    pub fn set_command_buffers<'m, 'a>(&mut self, command_buffers: &'a [&'a CommandBuffer])
             where 'a: 's {
         self.command_buffers = Some(command_buffers.iter().map(|h| h.handle()).collect());
         {
@@ -17815,7 +17815,7 @@ impl<'s> SubmitInfo<'s> {
         }
     }
 
-    pub fn set_signal_semaphores<'m, 'a>(&'s mut self, signal_semaphores: &'a [&'a Semaphore])
+    pub fn set_signal_semaphores<'m, 'a>(&mut self, signal_semaphores: &'a [&'a Semaphore])
             where 'a: 's {
         self.signal_semaphores = Some(signal_semaphores.iter().map(|h| h.handle()).collect());
         {
@@ -17993,11 +17993,11 @@ impl<'s> DisplayPropertiesKhr<'s> {
         self.raw.persistentContent != 0
     }
 
-    pub fn set_display<'m, 'a>(&'s mut self, display: &'a DisplayKhr) {
+    pub fn set_display<'m, 'a>(&mut self, display: &'a DisplayKhr) {
         self.raw.display = display.handle();
     }
 
-    pub fn set_display_name<'m, 'a, T>(&'s mut self, display_name: T)
+    pub fn set_display_name<'m, 'a, T>(&mut self, display_name: T)
             where 'a: 's, T: Into<CharStr<'a>> {
         self.display_name = Some(display_name.into());
         {
@@ -18006,23 +18006,23 @@ impl<'s> DisplayPropertiesKhr<'s> {
         }
     }
 
-    pub fn set_physical_dimensions<'m>(&'s mut self, physical_dimensions: Extent2d) {
+    pub fn set_physical_dimensions<'m>(&mut self, physical_dimensions: Extent2d) {
         self.raw.physicalDimensions = physical_dimensions.raw;
     }
 
-    pub fn set_physical_resolution<'m>(&'s mut self, physical_resolution: Extent2d) {
+    pub fn set_physical_resolution<'m>(&mut self, physical_resolution: Extent2d) {
         self.raw.physicalResolution = physical_resolution.raw;
     }
 
-    pub fn set_supported_transforms<'m>(&'s mut self, supported_transforms: SurfaceTransformFlagsKhr) {
+    pub fn set_supported_transforms<'m>(&mut self, supported_transforms: SurfaceTransformFlagsKhr) {
         self.raw.supportedTransforms = supported_transforms.bits();
     }
 
-    pub fn set_plane_reorder_possible<'m>(&'s mut self, plane_reorder_possible: bool) {
+    pub fn set_plane_reorder_possible<'m>(&mut self, plane_reorder_possible: bool) {
         self.raw.planeReorderPossible = plane_reorder_possible as u32;
     }
 
-    pub fn set_persistent_content<'m>(&'s mut self, persistent_content: bool) {
+    pub fn set_persistent_content<'m>(&mut self, persistent_content: bool) {
         self.raw.persistentContent = persistent_content as u32;
     }
 
@@ -18164,11 +18164,11 @@ impl DisplayPlanePropertiesKhr {
         self.raw.currentStackIndex.into()
     }
 
-    pub fn set_current_display<'m, 'a>(& mut self, current_display: &'a DisplayKhr) {
+    pub fn set_current_display<'m, 'a>(&mut self, current_display: &'a DisplayKhr) {
         self.raw.currentDisplay = current_display.handle();
     }
 
-    pub fn set_current_stack_index<'m>(& mut self, current_stack_index: u32) {
+    pub fn set_current_stack_index<'m>(&mut self, current_stack_index: u32) {
         self.raw.currentStackIndex = current_stack_index.into();
     }
 
@@ -18253,11 +18253,11 @@ impl DisplayModeParametersKhr {
         self.raw.refreshRate.into()
     }
 
-    pub fn set_visible_region<'m>(& mut self, visible_region: Extent2d) {
+    pub fn set_visible_region<'m>(&mut self, visible_region: Extent2d) {
         self.raw.visibleRegion = visible_region.raw;
     }
 
-    pub fn set_refresh_rate<'m>(& mut self, refresh_rate: u32) {
+    pub fn set_refresh_rate<'m>(&mut self, refresh_rate: u32) {
         self.raw.refreshRate = refresh_rate.into();
     }
 
@@ -18342,11 +18342,11 @@ impl DisplayModePropertiesKhr {
         self.raw.parameters.into()
     }
 
-    pub fn set_display_mode<'m, 'a>(& mut self, display_mode: &'a DisplayModeKhr) {
+    pub fn set_display_mode<'m, 'a>(&mut self, display_mode: &'a DisplayModeKhr) {
         self.raw.displayMode = display_mode.handle();
     }
 
-    pub fn set_parameters<'m>(& mut self, parameters: DisplayModeParametersKhr) {
+    pub fn set_parameters<'m>(&mut self, parameters: DisplayModeParametersKhr) {
         self.raw.parameters = parameters.raw;
     }
 
@@ -18437,15 +18437,15 @@ impl<'s> DisplayModeCreateInfoKhr<'s> {
         self.raw.parameters.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: DisplayModeCreateFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: DisplayModeCreateFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_parameters<'m>(&'s mut self, parameters: DisplayModeParametersKhr) {
+    pub fn set_parameters<'m>(&mut self, parameters: DisplayModeParametersKhr) {
         self.raw.parameters = parameters.raw;
     }
 
@@ -18572,39 +18572,39 @@ impl DisplayPlaneCapabilitiesKhr {
         self.raw.maxDstExtent.into()
     }
 
-    pub fn set_supported_alpha<'m>(& mut self, supported_alpha: DisplayPlaneAlphaFlagsKhr) {
+    pub fn set_supported_alpha<'m>(&mut self, supported_alpha: DisplayPlaneAlphaFlagsKhr) {
         self.raw.supportedAlpha = supported_alpha.bits();
     }
 
-    pub fn set_min_src_position<'m>(& mut self, min_src_position: Offset2d) {
+    pub fn set_min_src_position<'m>(&mut self, min_src_position: Offset2d) {
         self.raw.minSrcPosition = min_src_position.raw;
     }
 
-    pub fn set_max_src_position<'m>(& mut self, max_src_position: Offset2d) {
+    pub fn set_max_src_position<'m>(&mut self, max_src_position: Offset2d) {
         self.raw.maxSrcPosition = max_src_position.raw;
     }
 
-    pub fn set_min_src_extent<'m>(& mut self, min_src_extent: Extent2d) {
+    pub fn set_min_src_extent<'m>(&mut self, min_src_extent: Extent2d) {
         self.raw.minSrcExtent = min_src_extent.raw;
     }
 
-    pub fn set_max_src_extent<'m>(& mut self, max_src_extent: Extent2d) {
+    pub fn set_max_src_extent<'m>(&mut self, max_src_extent: Extent2d) {
         self.raw.maxSrcExtent = max_src_extent.raw;
     }
 
-    pub fn set_min_dst_position<'m>(& mut self, min_dst_position: Offset2d) {
+    pub fn set_min_dst_position<'m>(&mut self, min_dst_position: Offset2d) {
         self.raw.minDstPosition = min_dst_position.raw;
     }
 
-    pub fn set_max_dst_position<'m>(& mut self, max_dst_position: Offset2d) {
+    pub fn set_max_dst_position<'m>(&mut self, max_dst_position: Offset2d) {
         self.raw.maxDstPosition = max_dst_position.raw;
     }
 
-    pub fn set_min_dst_extent<'m>(& mut self, min_dst_extent: Extent2d) {
+    pub fn set_min_dst_extent<'m>(&mut self, min_dst_extent: Extent2d) {
         self.raw.minDstExtent = min_dst_extent.raw;
     }
 
-    pub fn set_max_dst_extent<'m>(& mut self, max_dst_extent: Extent2d) {
+    pub fn set_max_dst_extent<'m>(&mut self, max_dst_extent: Extent2d) {
         self.raw.maxDstExtent = max_dst_extent.raw;
     }
 
@@ -18785,39 +18785,39 @@ impl<'s> DisplaySurfaceCreateInfoKhr<'s> {
         self.raw.imageExtent.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: DisplaySurfaceCreateFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: DisplaySurfaceCreateFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_display_mode<'m, 'a>(&'s mut self, display_mode: &'a DisplayModeKhr) {
+    pub fn set_display_mode<'m, 'a>(&mut self, display_mode: &'a DisplayModeKhr) {
         self.raw.displayMode = display_mode.handle();
     }
 
-    pub fn set_plane_index<'m>(&'s mut self, plane_index: u32) {
+    pub fn set_plane_index<'m>(&mut self, plane_index: u32) {
         self.raw.planeIndex = plane_index.into();
     }
 
-    pub fn set_plane_stack_index<'m>(&'s mut self, plane_stack_index: u32) {
+    pub fn set_plane_stack_index<'m>(&mut self, plane_stack_index: u32) {
         self.raw.planeStackIndex = plane_stack_index.into();
     }
 
-    pub fn set_transform<'m>(&'s mut self, transform: SurfaceTransformFlagsKhr) {
+    pub fn set_transform<'m>(&mut self, transform: SurfaceTransformFlagsKhr) {
         self.raw.transform = transform.bits();
     }
 
-    pub fn set_global_alpha<'m>(&'s mut self, global_alpha: f32) {
+    pub fn set_global_alpha<'m>(&mut self, global_alpha: f32) {
         self.raw.globalAlpha = global_alpha.into();
     }
 
-    pub fn set_alpha_mode<'m>(&'s mut self, alpha_mode: DisplayPlaneAlphaFlagsKhr) {
+    pub fn set_alpha_mode<'m>(&mut self, alpha_mode: DisplayPlaneAlphaFlagsKhr) {
         self.raw.alphaMode = alpha_mode.bits();
     }
 
-    pub fn set_image_extent<'m>(&'s mut self, image_extent: Extent2d) {
+    pub fn set_image_extent<'m>(&mut self, image_extent: Extent2d) {
         self.raw.imageExtent = image_extent.raw;
     }
 
@@ -18980,19 +18980,19 @@ impl<'s> DisplayPresentInfoKhr<'s> {
         self.raw.persistent != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_src_rect<'m>(&'s mut self, src_rect: Rect2d) {
+    pub fn set_src_rect<'m>(&mut self, src_rect: Rect2d) {
         self.raw.srcRect = src_rect.raw;
     }
 
-    pub fn set_dst_rect<'m>(&'s mut self, dst_rect: Rect2d) {
+    pub fn set_dst_rect<'m>(&mut self, dst_rect: Rect2d) {
         self.raw.dstRect = dst_rect.raw;
     }
 
-    pub fn set_persistent<'m>(&'s mut self, persistent: bool) {
+    pub fn set_persistent<'m>(&mut self, persistent: bool) {
         self.raw.persistent = persistent as u32;
     }
 
@@ -19134,43 +19134,43 @@ impl SurfaceCapabilitiesKhr {
             .expect("SurfaceCapabilitiesKhr::supported_usage_flags: error converting flags")
     }
 
-    pub fn set_min_image_count<'m>(& mut self, min_image_count: u32) {
+    pub fn set_min_image_count<'m>(&mut self, min_image_count: u32) {
         self.raw.minImageCount = min_image_count.into();
     }
 
-    pub fn set_max_image_count<'m>(& mut self, max_image_count: u32) {
+    pub fn set_max_image_count<'m>(&mut self, max_image_count: u32) {
         self.raw.maxImageCount = max_image_count.into();
     }
 
-    pub fn set_current_extent<'m>(& mut self, current_extent: Extent2d) {
+    pub fn set_current_extent<'m>(&mut self, current_extent: Extent2d) {
         self.raw.currentExtent = current_extent.raw;
     }
 
-    pub fn set_min_image_extent<'m>(& mut self, min_image_extent: Extent2d) {
+    pub fn set_min_image_extent<'m>(&mut self, min_image_extent: Extent2d) {
         self.raw.minImageExtent = min_image_extent.raw;
     }
 
-    pub fn set_max_image_extent<'m>(& mut self, max_image_extent: Extent2d) {
+    pub fn set_max_image_extent<'m>(&mut self, max_image_extent: Extent2d) {
         self.raw.maxImageExtent = max_image_extent.raw;
     }
 
-    pub fn set_max_image_array_layers<'m>(& mut self, max_image_array_layers: u32) {
+    pub fn set_max_image_array_layers<'m>(&mut self, max_image_array_layers: u32) {
         self.raw.maxImageArrayLayers = max_image_array_layers.into();
     }
 
-    pub fn set_supported_transforms<'m>(& mut self, supported_transforms: SurfaceTransformFlagsKhr) {
+    pub fn set_supported_transforms<'m>(&mut self, supported_transforms: SurfaceTransformFlagsKhr) {
         self.raw.supportedTransforms = supported_transforms.bits();
     }
 
-    pub fn set_current_transform<'m>(& mut self, current_transform: SurfaceTransformFlagsKhr) {
+    pub fn set_current_transform<'m>(&mut self, current_transform: SurfaceTransformFlagsKhr) {
         self.raw.currentTransform = current_transform.bits();
     }
 
-    pub fn set_supported_composite_alpha<'m>(& mut self, supported_composite_alpha: CompositeAlphaFlagsKhr) {
+    pub fn set_supported_composite_alpha<'m>(&mut self, supported_composite_alpha: CompositeAlphaFlagsKhr) {
         self.raw.supportedCompositeAlpha = supported_composite_alpha.bits();
     }
 
-    pub fn set_supported_usage_flags<'m>(& mut self, supported_usage_flags: ImageUsageFlags) {
+    pub fn set_supported_usage_flags<'m>(&mut self, supported_usage_flags: ImageUsageFlags) {
         self.raw.supportedUsageFlags = supported_usage_flags.bits();
     }
 
@@ -19337,15 +19337,15 @@ impl<'s> AndroidSurfaceCreateInfoKhr<'s> {
         self.raw.window
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: AndroidSurfaceCreateFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: AndroidSurfaceCreateFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub unsafe fn set_window<'m>(&'s mut self, window: *mut ANativeWindow) {
+    pub unsafe fn set_window<'m>(&mut self, window: *mut ANativeWindow) {
         self.raw.window = window;
     }
 
@@ -19453,19 +19453,19 @@ impl<'s> MirSurfaceCreateInfoKhr<'s> {
         self.raw.mirSurface
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: MirSurfaceCreateFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: MirSurfaceCreateFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub unsafe fn set_connection<'m>(&'s mut self, connection: *mut MirConnection) {
+    pub unsafe fn set_connection<'m>(&mut self, connection: *mut MirConnection) {
         self.raw.connection = connection;
     }
 
-    pub unsafe fn set_mir_surface<'m>(&'s mut self, mir_surface: *mut MirSurface) {
+    pub unsafe fn set_mir_surface<'m>(&mut self, mir_surface: *mut MirSurface) {
         self.raw.mirSurface = mir_surface;
     }
 
@@ -19578,15 +19578,15 @@ impl<'s> ViSurfaceCreateInfoNn<'s> {
         self.raw.window
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: ViSurfaceCreateFlagsNn) {
+    pub fn set_flags<'m>(&mut self, flags: ViSurfaceCreateFlagsNn) {
         self.raw.flags = flags.bits();
     }
 
-    pub unsafe fn set_window<'m>(&'s mut self, window: *mut c_void) {
+    pub unsafe fn set_window<'m>(&mut self, window: *mut c_void) {
         self.raw.window = window;
     }
 
@@ -19694,19 +19694,19 @@ impl<'s> WaylandSurfaceCreateInfoKhr<'s> {
         self.raw.surface
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: WaylandSurfaceCreateFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: WaylandSurfaceCreateFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub unsafe fn set_display<'m>(&'s mut self, display: *mut wl_display) {
+    pub unsafe fn set_display<'m>(&mut self, display: *mut wl_display) {
         self.raw.display = display;
     }
 
-    pub unsafe fn set_surface<'m>(&'s mut self, surface: *mut wl_surface) {
+    pub unsafe fn set_surface<'m>(&mut self, surface: *mut wl_surface) {
         self.raw.surface = surface;
     }
 
@@ -19823,19 +19823,19 @@ impl<'s> Win32SurfaceCreateInfoKhr<'s> {
         self.raw.hwnd.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: Win32SurfaceCreateFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: Win32SurfaceCreateFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_hinstance<'m>(&'s mut self, hinstance: HINSTANCE) {
+    pub fn set_hinstance<'m>(&mut self, hinstance: HINSTANCE) {
         self.raw.hinstance = hinstance.into();
     }
 
-    pub fn set_hwnd<'m>(&'s mut self, hwnd: HWND) {
+    pub fn set_hwnd<'m>(&mut self, hwnd: HWND) {
         self.raw.hwnd = hwnd.into();
     }
 
@@ -19952,19 +19952,19 @@ impl<'s> XlibSurfaceCreateInfoKhr<'s> {
         self.raw.window.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: XlibSurfaceCreateFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: XlibSurfaceCreateFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub unsafe fn set_dpy<'m>(&'s mut self, dpy: *mut Display) {
+    pub unsafe fn set_dpy<'m>(&mut self, dpy: *mut Display) {
         self.raw.dpy = dpy;
     }
 
-    pub unsafe fn set_window<'m>(&'s mut self, window: u32) {
+    pub unsafe fn set_window<'m>(&mut self, window: u32) {
         self.raw.window = window.into();
     }
 
@@ -20081,19 +20081,19 @@ impl<'s> XcbSurfaceCreateInfoKhr<'s> {
         self.raw.window.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: XcbSurfaceCreateFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: XcbSurfaceCreateFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub unsafe fn set_connection<'m>(&'s mut self, connection: *mut xcb_connection_t) {
+    pub unsafe fn set_connection<'m>(&mut self, connection: *mut xcb_connection_t) {
         self.raw.connection = connection;
     }
 
-    pub unsafe fn set_window<'m>(&'s mut self, window: xcb_window_t) {
+    pub unsafe fn set_window<'m>(&mut self, window: xcb_window_t) {
         self.raw.window = window.into();
     }
 
@@ -20200,11 +20200,11 @@ impl SurfaceFormatKhr {
         self.raw.colorSpace.into()
     }
 
-    pub fn set_format<'m>(& mut self, format: Format) {
+    pub fn set_format<'m>(&mut self, format: Format) {
         self.raw.format = format.into();
     }
 
-    pub fn set_color_space<'m>(& mut self, color_space: ColorSpaceKhr) {
+    pub fn set_color_space<'m>(&mut self, color_space: ColorSpaceKhr) {
         self.raw.colorSpace = color_space.into();
     }
 
@@ -20350,70 +20350,70 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
         self.raw.oldSwapchain
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: SwapchainCreateFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: SwapchainCreateFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_surface<'m, 'a>(&'s mut self, surface: &'a Surface) {
+    pub fn set_surface<'m, 'a>(&mut self, surface: &'a Surface) {
         self.raw.surface = surface.handle();
     }
 
-    pub fn set_min_image_count<'m>(&'s mut self, min_image_count: u32) {
+    pub fn set_min_image_count<'m>(&mut self, min_image_count: u32) {
         self.raw.minImageCount = min_image_count.into();
     }
 
-    pub fn set_image_format<'m>(&'s mut self, image_format: Format) {
+    pub fn set_image_format<'m>(&mut self, image_format: Format) {
         self.raw.imageFormat = image_format.into();
     }
 
-    pub fn set_image_color_space<'m>(&'s mut self, image_color_space: ColorSpaceKhr) {
+    pub fn set_image_color_space<'m>(&mut self, image_color_space: ColorSpaceKhr) {
         self.raw.imageColorSpace = image_color_space.into();
     }
 
-    pub fn set_image_extent<'m>(&'s mut self, image_extent: Extent2d) {
+    pub fn set_image_extent<'m>(&mut self, image_extent: Extent2d) {
         self.raw.imageExtent = image_extent.raw;
     }
 
-    pub fn set_image_array_layers<'m>(&'s mut self, image_array_layers: u32) {
+    pub fn set_image_array_layers<'m>(&mut self, image_array_layers: u32) {
         self.raw.imageArrayLayers = image_array_layers.into();
     }
 
-    pub fn set_image_usage<'m>(&'s mut self, image_usage: ImageUsageFlags) {
+    pub fn set_image_usage<'m>(&mut self, image_usage: ImageUsageFlags) {
         self.raw.imageUsage = image_usage.bits();
     }
 
-    pub fn set_image_sharing_mode<'m>(&'s mut self, image_sharing_mode: SharingMode) {
+    pub fn set_image_sharing_mode<'m>(&mut self, image_sharing_mode: SharingMode) {
         self.raw.imageSharingMode = image_sharing_mode.into();
     }
 
-    pub fn set_queue_family_indices<'m, 'a>(&'s mut self, queue_family_indices: &'a [u32]) {
+    pub fn set_queue_family_indices<'m, 'a>(&mut self, queue_family_indices: &'a [u32]) {
         assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `SwapchainCreateInfoKhr::queue_family_indices`.");
         self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
         self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_pre_transform<'m>(&'s mut self, pre_transform: SurfaceTransformFlagsKhr) {
+    pub fn set_pre_transform<'m>(&mut self, pre_transform: SurfaceTransformFlagsKhr) {
         self.raw.preTransform = pre_transform.bits();
     }
 
-    pub fn set_composite_alpha<'m>(&'s mut self, composite_alpha: CompositeAlphaFlagsKhr) {
+    pub fn set_composite_alpha<'m>(&mut self, composite_alpha: CompositeAlphaFlagsKhr) {
         self.raw.compositeAlpha = composite_alpha.bits();
     }
 
-    pub fn set_present_mode<'m>(&'s mut self, present_mode: PresentModeKhr) {
+    pub fn set_present_mode<'m>(&mut self, present_mode: PresentModeKhr) {
         self.raw.presentMode = present_mode.into();
     }
 
-    pub fn set_clipped<'m>(&'s mut self, clipped: bool) {
+    pub fn set_clipped<'m>(&mut self, clipped: bool) {
         self.raw.clipped = clipped as u32;
     }
 
-    pub fn set_old_swapchain<'m, 'a>(&'s mut self, old_swapchain: &'a Swapchain) {
+    pub fn set_old_swapchain<'m, 'a>(&mut self, old_swapchain: &'a Swapchain) {
         self.raw.oldSwapchain = old_swapchain.handle();
     }
 
@@ -20618,8 +20618,8 @@ impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
 #[derive(Debug, Clone, Default)]
 pub struct PresentInfoKhr<'s> {
     raw: vks::VkPresentInfoKHR,
-    swapchains: Option<SmallVec<[vks::VkSwapchainKHR; 8]>>,
     wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
+    swapchains: Option<SmallVec<[vks::VkSwapchainKHR; 8]>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -20648,11 +20648,11 @@ impl<'s> PresentInfoKhr<'s> {
         unsafe { slice::from_raw_parts(self.raw.pResults as *const _, self.raw.swapchainCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_wait_semaphores<'m, 'a>(&'s mut self, wait_semaphores: &'a [&'a Semaphore])
+    pub fn set_wait_semaphores<'m, 'a>(&mut self, wait_semaphores: &'a [&'a Semaphore])
             where 'a: 's {
         self.wait_semaphores = Some(wait_semaphores.iter().map(|h| h.handle()).collect());
         {
@@ -20664,7 +20664,7 @@ impl<'s> PresentInfoKhr<'s> {
         }
     }
 
-    pub fn set_swapchains<'m, 'a>(&'s mut self, swapchains: &'a [&'a Swapchain])
+    pub fn set_swapchains<'m, 'a>(&mut self, swapchains: &'a [&'a Swapchain])
             where 'a: 's {
         self.swapchains = Some(swapchains.iter().map(|h| h.handle()).collect());
         {
@@ -20676,14 +20676,14 @@ impl<'s> PresentInfoKhr<'s> {
         }
     }
 
-    pub fn set_image_indices<'m, 'a>(&'s mut self, image_indices: &'a [u32]) {
+    pub fn set_image_indices<'m, 'a>(&mut self, image_indices: &'a [u32]) {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == image_indices.len() as _, 
             "count inconsistency found when specifying `PresentInfoKhr::image_indices`.");
         self.raw.swapchainCount = image_indices.len() as _;
         self.raw.pImageIndices = image_indices.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_results<'m, 'a>(&'s mut self, results: &'a mut [ResultEnum]) {
+    pub fn set_results<'m, 'a>(&mut self, results: &'a mut [ResultEnum]) {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == results.len() as _, 
             "count inconsistency found when specifying `PresentInfoKhr::results`.");
         self.raw.swapchainCount = results.len() as _;
@@ -20703,7 +20703,7 @@ impl<'s> From<PresentInfoKhr<'s>> for vks::VkPresentInfoKHR {
 
 impl<'s> From<vks::VkPresentInfoKHR> for PresentInfoKhr<'s> {
     fn from(f: vks::VkPresentInfoKHR) -> PresentInfoKhr<'s> {
-        PresentInfoKhr { raw: f, swapchains: None, wait_semaphores: None, _p: PhantomData }
+        PresentInfoKhr { raw: f, wait_semaphores: None, swapchains: None, _p: PhantomData }
     }
 }
 
@@ -20714,8 +20714,8 @@ impl<'s> From<vks::VkPresentInfoKHR> for PresentInfoKhr<'s> {
 #[derive(Debug, Clone, Default)]
 pub struct PresentInfoKhrBuilder<'b> {
     raw: vks::VkPresentInfoKHR,
-    swapchains: Option<SmallVec<[vks::VkSwapchainKHR; 8]>>,
     wait_semaphores: Option<SmallVec<[vks::VkSemaphore; 8]>>,
+    swapchains: Option<SmallVec<[vks::VkSwapchainKHR; 8]>>,
     _p: PhantomData<&'b ()>, 
 }
 
@@ -20723,8 +20723,8 @@ impl<'b> PresentInfoKhrBuilder<'b> {
     pub fn new() -> PresentInfoKhrBuilder<'b> {
         PresentInfoKhrBuilder {
             raw: vks::VkPresentInfoKHR::default(),
-            swapchains: None,
             wait_semaphores: None,
+            swapchains: None,
             _p: PhantomData,
         }
     }
@@ -20799,8 +20799,8 @@ impl<'b> PresentInfoKhrBuilder<'b> {
     pub fn build(self) -> PresentInfoKhr<'b> {
         PresentInfoKhr {
             raw: self.raw,
-            swapchains: self.swapchains,
             wait_semaphores: self.wait_semaphores,
+            swapchains: self.swapchains,
             _p: PhantomData,
         }
     }
@@ -20839,19 +20839,19 @@ impl<'s> DebugReportCallbackCreateInfoExt<'s> {
         self.raw.pUserData
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: DebugReportFlagsExt) {
+    pub fn set_flags<'m>(&mut self, flags: DebugReportFlagsExt) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_pfn_callback<'m>(&'s mut self, pfn_callback: PFN_vkDebugReportCallbackEXT) {
+    pub fn set_pfn_callback<'m>(&mut self, pfn_callback: PFN_vkDebugReportCallbackEXT) {
         self.raw.pfnCallback = pfn_callback.into();
     }
 
-    pub unsafe fn set_user_data<'m>(&'s mut self, user_data: *mut c_void) {
+    pub unsafe fn set_user_data<'m>(&mut self, user_data: *mut c_void) {
         self.raw.pUserData = user_data;
     }
 
@@ -20959,11 +20959,11 @@ impl<'s> ValidationFlagsExt<'s> {
         unsafe { slice::from_raw_parts(self.raw.pDisabledValidationChecks as *const _, self.raw.disabledValidationCheckCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_disabled_validation_checks<'m, 'a>(&'s mut self, disabled_validation_checks: &'a mut [ValidationCheckExt]) {
+    pub fn set_disabled_validation_checks<'m, 'a>(&mut self, disabled_validation_checks: &'a mut [ValidationCheckExt]) {
         assert!(self.raw.disabledValidationCheckCount == 0 || self.raw.disabledValidationCheckCount == disabled_validation_checks.len() as _, 
             "count inconsistency found when specifying `ValidationFlagsExt::disabled_validation_checks`.");
         self.raw.disabledValidationCheckCount = disabled_validation_checks.len() as _;
@@ -21058,11 +21058,11 @@ impl<'s> PipelineRasterizationStateRasterizationOrderAmd<'s> {
         self.raw.rasterizationOrder.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_rasterization_order<'m>(&'s mut self, rasterization_order: RasterizationOrderAmd) {
+    pub fn set_rasterization_order<'m>(&mut self, rasterization_order: RasterizationOrderAmd) {
         self.raw.rasterizationOrder = rasterization_order.into();
     }
 
@@ -21159,19 +21159,19 @@ impl<'s> DebugMarkerObjectNameInfoExt<'s> {
         unsafe { CStr::from_ptr(self.raw.pObjectName) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_object_type<'m>(&'s mut self, object_type: DebugReportObjectTypeExt) {
+    pub fn set_object_type<'m>(&mut self, object_type: DebugReportObjectTypeExt) {
         self.raw.objectType = object_type.into();
     }
 
-    pub fn set_object<'m>(&'s mut self, object: u64) {
+    pub fn set_object<'m>(&mut self, object: u64) {
         self.raw.object = object.into();
     }
 
-    pub fn set_object_name<'m, 'a, T>(&'s mut self, object_name: T)
+    pub fn set_object_name<'m, 'a, T>(&mut self, object_name: T)
             where 'a: 's, T: Into<CharStr<'a>> {
         self.object_name = Some(object_name.into());
         {
@@ -21307,27 +21307,27 @@ impl<'s> DebugMarkerObjectTagInfoExt<'s> {
         self.raw.pTag
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_object_type<'m>(&'s mut self, object_type: DebugReportObjectTypeExt) {
+    pub fn set_object_type<'m>(&mut self, object_type: DebugReportObjectTypeExt) {
         self.raw.objectType = object_type.into();
     }
 
-    pub fn set_object<'m>(&'s mut self, object: u64) {
+    pub fn set_object<'m>(&mut self, object: u64) {
         self.raw.object = object.into();
     }
 
-    pub fn set_tag_name<'m>(&'s mut self, tag_name: u64) {
+    pub fn set_tag_name<'m>(&mut self, tag_name: u64) {
         self.raw.tagName = tag_name.into();
     }
 
-    pub fn set_tag_size<'m>(&'s mut self, tag_size: usize) {
+    pub fn set_tag_size<'m>(&mut self, tag_size: usize) {
         self.raw.tagSize = tag_size.into();
     }
 
-    pub unsafe fn set_tag<'m>(&'s mut self, tag: *const c_void) {
+    pub unsafe fn set_tag<'m>(&mut self, tag: *const c_void) {
         self.raw.pTag = tag;
     }
 
@@ -21456,11 +21456,11 @@ impl<'s> DebugMarkerMarkerInfoExt<'s> {
         unsafe { slice::from_raw_parts(&self.raw.color as *const _, 4 as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_marker_name<'m, 'a, T>(&'s mut self, marker_name: T)
+    pub fn set_marker_name<'m, 'a, T>(&mut self, marker_name: T)
             where 'a: 's, T: Into<CharStr<'a>> {
         self.marker_name = Some(marker_name.into());
         {
@@ -21469,7 +21469,7 @@ impl<'s> DebugMarkerMarkerInfoExt<'s> {
         }
     }
 
-    pub fn set_color<'m>(&'s mut self, color: [f32; 4]) {
+    pub fn set_color<'m>(&mut self, color: [f32; 4]) {
         self.raw.color = color;
     }
 
@@ -21575,11 +21575,11 @@ impl<'s> DedicatedAllocationImageCreateInfoNv<'s> {
         self.raw.dedicatedAllocation != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_dedicated_allocation<'m>(&'s mut self, dedicated_allocation: bool) {
+    pub fn set_dedicated_allocation<'m>(&mut self, dedicated_allocation: bool) {
         self.raw.dedicatedAllocation = dedicated_allocation as u32;
     }
 
@@ -21668,11 +21668,11 @@ impl<'s> DedicatedAllocationBufferCreateInfoNv<'s> {
         self.raw.dedicatedAllocation != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_dedicated_allocation<'m>(&'s mut self, dedicated_allocation: bool) {
+    pub fn set_dedicated_allocation<'m>(&mut self, dedicated_allocation: bool) {
         self.raw.dedicatedAllocation = dedicated_allocation as u32;
     }
 
@@ -21765,15 +21765,15 @@ impl<'s> DedicatedAllocationMemoryAllocateInfoNv<'s> {
         self.raw.buffer
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_image<'m, 'a>(&'s mut self, image: &'a Image) {
+    pub fn set_image<'m, 'a>(&mut self, image: &'a Image) {
         self.raw.image = image.handle();
     }
 
-    pub fn set_buffer<'m, 'a>(&'s mut self, buffer: &'a Buffer) {
+    pub fn set_buffer<'m, 'a>(&mut self, buffer: &'a Buffer) {
         self.raw.buffer = buffer.handle();
     }
 
@@ -21881,19 +21881,19 @@ impl ExternalImageFormatPropertiesNv {
             .expect("ExternalImageFormatPropertiesNv::compatible_handle_types: error converting flags")
     }
 
-    pub fn set_image_format_properties<'m>(& mut self, image_format_properties: ImageFormatProperties) {
+    pub fn set_image_format_properties<'m>(&mut self, image_format_properties: ImageFormatProperties) {
         self.raw.imageFormatProperties = image_format_properties.raw;
     }
 
-    pub fn set_external_memory_features<'m>(& mut self, external_memory_features: ExternalMemoryFeatureFlagsNv) {
+    pub fn set_external_memory_features<'m>(&mut self, external_memory_features: ExternalMemoryFeatureFlagsNv) {
         self.raw.externalMemoryFeatures = external_memory_features.bits();
     }
 
-    pub fn set_export_from_imported_handle_types<'m>(& mut self, export_from_imported_handle_types: ExternalMemoryHandleTypeFlagsNv) {
+    pub fn set_export_from_imported_handle_types<'m>(&mut self, export_from_imported_handle_types: ExternalMemoryHandleTypeFlagsNv) {
         self.raw.exportFromImportedHandleTypes = export_from_imported_handle_types.bits();
     }
 
-    pub fn set_compatible_handle_types<'m>(& mut self, compatible_handle_types: ExternalMemoryHandleTypeFlagsNv) {
+    pub fn set_compatible_handle_types<'m>(&mut self, compatible_handle_types: ExternalMemoryHandleTypeFlagsNv) {
         self.raw.compatibleHandleTypes = compatible_handle_types.bits();
     }
 
@@ -22001,11 +22001,11 @@ impl<'s> ExternalMemoryImageCreateInfoNv<'s> {
             .expect("ExternalMemoryImageCreateInfoNv::handle_types: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_types<'m>(&'s mut self, handle_types: ExternalMemoryHandleTypeFlagsNv) {
+    pub fn set_handle_types<'m>(&mut self, handle_types: ExternalMemoryHandleTypeFlagsNv) {
         self.raw.handleTypes = handle_types.bits();
     }
 
@@ -22096,11 +22096,11 @@ impl<'s> ExportMemoryAllocateInfoNv<'s> {
             .expect("ExportMemoryAllocateInfoNv::handle_types: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_types<'m>(&'s mut self, handle_types: ExternalMemoryHandleTypeFlagsNv) {
+    pub fn set_handle_types<'m>(&mut self, handle_types: ExternalMemoryHandleTypeFlagsNv) {
         self.raw.handleTypes = handle_types.bits();
     }
 
@@ -22195,15 +22195,15 @@ impl<'s> ImportMemoryWin32HandleInfoNv<'s> {
         self.raw.handle.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalMemoryHandleTypeFlagsNv) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalMemoryHandleTypeFlagsNv) {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn set_handle<'m>(&'s mut self, handle: HANDLE) {
+    pub fn set_handle<'m>(&mut self, handle: HANDLE) {
         self.raw.handle = handle.into();
     }
 
@@ -22306,15 +22306,15 @@ impl<'s> ExportMemoryWin32HandleInfoNv<'s> {
         self.raw.dwAccess.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_attributes<'m, 'a>(&'s mut self, attributes: &'a SECURITY_ATTRIBUTES) {
+    pub fn set_attributes<'m, 'a>(&mut self, attributes: &'a SECURITY_ATTRIBUTES) {
         self.raw.pAttributes = attributes;
     }
 
-    pub fn set_dw_access<'m>(&'s mut self, dw_access: DWORD) {
+    pub fn set_dw_access<'m>(&mut self, dw_access: DWORD) {
         self.raw.dwAccess = dw_access.into();
     }
 
@@ -22395,8 +22395,8 @@ impl<'b> ExportMemoryWin32HandleInfoNvBuilder<'b> {
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoNv<'s> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV,
-    release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
+    release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     _p: PhantomData<&'s ()>,
 }
 
@@ -22429,11 +22429,11 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
         unsafe { slice::from_raw_parts(self.raw.pReleaseKeys as *const _, self.raw.releaseCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_acquire_syncs<'m, 'a>(&'s mut self, acquire_syncs: &'a [&'a DeviceMemory])
+    pub fn set_acquire_syncs<'m, 'a>(&mut self, acquire_syncs: &'a [&'a DeviceMemory])
             where 'a: 's {
         self.acquire_syncs = Some(acquire_syncs.iter().map(|h| h.handle()).collect());
         {
@@ -22445,21 +22445,21 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
         }
     }
 
-    pub fn set_acquire_keys<'m, 'a>(&'s mut self, acquire_keys: &'a [u64]) {
+    pub fn set_acquire_keys<'m, 'a>(&mut self, acquire_keys: &'a [u64]) {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::acquire_keys`.");
         self.raw.acquireCount = acquire_keys.len() as _;
         self.raw.pAcquireKeys = acquire_keys.as_ptr() as *const u64 as *const _;
     }
 
-    pub fn set_acquire_timeout_milliseconds<'m, 'a>(&'s mut self, acquire_timeout_milliseconds: &'a [u32]) {
+    pub fn set_acquire_timeout_milliseconds<'m, 'a>(&mut self, acquire_timeout_milliseconds: &'a [u32]) {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_timeout_milliseconds.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::acquire_timeout_milliseconds`.");
         self.raw.acquireCount = acquire_timeout_milliseconds.len() as _;
         self.raw.pAcquireTimeoutMilliseconds = acquire_timeout_milliseconds.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_release_syncs<'m, 'a>(&'s mut self, release_syncs: &'a [&'a DeviceMemory])
+    pub fn set_release_syncs<'m, 'a>(&mut self, release_syncs: &'a [&'a DeviceMemory])
             where 'a: 's {
         self.release_syncs = Some(release_syncs.iter().map(|h| h.handle()).collect());
         {
@@ -22471,7 +22471,7 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
         }
     }
 
-    pub fn set_release_keys<'m, 'a>(&'s mut self, release_keys: &'a [u64]) {
+    pub fn set_release_keys<'m, 'a>(&mut self, release_keys: &'a [u64]) {
         assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::release_keys`.");
         self.raw.releaseCount = release_keys.len() as _;
@@ -22491,7 +22491,7 @@ impl<'s> From<Win32KeyedMutexAcquireReleaseInfoNv<'s>> for vks::VkWin32KeyedMute
 
 impl<'s> From<vks::VkWin32KeyedMutexAcquireReleaseInfoNV> for Win32KeyedMutexAcquireReleaseInfoNv<'s> {
     fn from(f: vks::VkWin32KeyedMutexAcquireReleaseInfoNV) -> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
-        Win32KeyedMutexAcquireReleaseInfoNv { raw: f, release_syncs: None, acquire_syncs: None, _p: PhantomData }
+        Win32KeyedMutexAcquireReleaseInfoNv { raw: f, acquire_syncs: None, release_syncs: None, _p: PhantomData }
     }
 }
 
@@ -22502,8 +22502,8 @@ impl<'s> From<vks::VkWin32KeyedMutexAcquireReleaseInfoNV> for Win32KeyedMutexAcq
 #[derive(Debug, Clone, Default)]
 pub struct Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV,
-    release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     acquire_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
+    release_syncs: Option<SmallVec<[vks::VkDeviceMemory; 8]>>,
     _p: PhantomData<&'b ()>, 
 }
 
@@ -22511,8 +22511,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     pub fn new() -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
         Win32KeyedMutexAcquireReleaseInfoNvBuilder {
             raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV::default(),
-            release_syncs: None,
             acquire_syncs: None,
+            release_syncs: None,
             _p: PhantomData,
         }
     }
@@ -22599,8 +22599,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
     pub fn build(self) -> Win32KeyedMutexAcquireReleaseInfoNv<'b> {
         Win32KeyedMutexAcquireReleaseInfoNv {
             raw: self.raw,
-            release_syncs: self.release_syncs,
             acquire_syncs: self.acquire_syncs,
+            release_syncs: self.release_syncs,
             _p: PhantomData,
         }
     }
@@ -22632,11 +22632,11 @@ impl<'s> DeviceGeneratedCommandsFeaturesNvx<'s> {
         self.raw.computeBindingPointSupport != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_compute_binding_point_support<'m>(&'s mut self, compute_binding_point_support: bool) {
+    pub fn set_compute_binding_point_support<'m>(&mut self, compute_binding_point_support: bool) {
         self.raw.computeBindingPointSupport = compute_binding_point_support as u32;
     }
 
@@ -22747,27 +22747,27 @@ impl<'s> DeviceGeneratedCommandsLimitsNvx<'s> {
         self.raw.minCommandsTokenBufferOffsetAlignment.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_max_indirect_commands_layout_token_count<'m>(&'s mut self, max_indirect_commands_layout_token_count: u32) {
+    pub fn set_max_indirect_commands_layout_token_count<'m>(&mut self, max_indirect_commands_layout_token_count: u32) {
         self.raw.maxIndirectCommandsLayoutTokenCount = max_indirect_commands_layout_token_count.into();
     }
 
-    pub fn set_max_object_entry_counts<'m>(&'s mut self, max_object_entry_counts: u32) {
+    pub fn set_max_object_entry_counts<'m>(&mut self, max_object_entry_counts: u32) {
         self.raw.maxObjectEntryCounts = max_object_entry_counts.into();
     }
 
-    pub fn set_min_sequence_count_buffer_offset_alignment<'m>(&'s mut self, min_sequence_count_buffer_offset_alignment: u32) {
+    pub fn set_min_sequence_count_buffer_offset_alignment<'m>(&mut self, min_sequence_count_buffer_offset_alignment: u32) {
         self.raw.minSequenceCountBufferOffsetAlignment = min_sequence_count_buffer_offset_alignment.into();
     }
 
-    pub fn set_min_sequence_index_buffer_offset_alignment<'m>(&'s mut self, min_sequence_index_buffer_offset_alignment: u32) {
+    pub fn set_min_sequence_index_buffer_offset_alignment<'m>(&mut self, min_sequence_index_buffer_offset_alignment: u32) {
         self.raw.minSequenceIndexBufferOffsetAlignment = min_sequence_index_buffer_offset_alignment.into();
     }
 
-    pub fn set_min_commands_token_buffer_offset_alignment<'m>(&'s mut self, min_commands_token_buffer_offset_alignment: u32) {
+    pub fn set_min_commands_token_buffer_offset_alignment<'m>(&mut self, min_commands_token_buffer_offset_alignment: u32) {
         self.raw.minCommandsTokenBufferOffsetAlignment = min_commands_token_buffer_offset_alignment.into();
     }
 
@@ -22901,15 +22901,15 @@ impl IndirectCommandsTokenNvx {
         self.raw.offset.into()
     }
 
-    pub fn set_token_type<'m>(& mut self, token_type: IndirectCommandsTokenTypeNvx) {
+    pub fn set_token_type<'m>(&mut self, token_type: IndirectCommandsTokenTypeNvx) {
         self.raw.tokenType = token_type.into();
     }
 
-    pub fn set_buffer<'m, 'a>(& mut self, buffer: &'a Buffer) {
+    pub fn set_buffer<'m, 'a>(&mut self, buffer: &'a Buffer) {
         self.raw.buffer = buffer.handle();
     }
 
-    pub fn set_offset<'m>(& mut self, offset: u64) {
+    pub fn set_offset<'m>(&mut self, offset: u64) {
         self.raw.offset = offset.into();
     }
 
@@ -23017,19 +23017,19 @@ impl IndirectCommandsLayoutTokenNvx {
         self.raw.divisor.into()
     }
 
-    pub fn set_token_type<'m>(& mut self, token_type: IndirectCommandsTokenTypeNvx) {
+    pub fn set_token_type<'m>(&mut self, token_type: IndirectCommandsTokenTypeNvx) {
         self.raw.tokenType = token_type.into();
     }
 
-    pub fn set_binding_unit<'m>(& mut self, binding_unit: u32) {
+    pub fn set_binding_unit<'m>(&mut self, binding_unit: u32) {
         self.raw.bindingUnit = binding_unit.into();
     }
 
-    pub fn set_dynamic_count<'m>(& mut self, dynamic_count: u32) {
+    pub fn set_dynamic_count<'m>(&mut self, dynamic_count: u32) {
         self.raw.dynamicCount = dynamic_count.into();
     }
 
-    pub fn set_divisor<'m>(& mut self, divisor: u32) {
+    pub fn set_divisor<'m>(&mut self, divisor: u32) {
         self.raw.divisor = divisor.into();
     }
 
@@ -23148,19 +23148,19 @@ impl<'s> IndirectCommandsLayoutCreateInfoNvx<'s> {
         unsafe { slice::from_raw_parts(self.raw.pTokens as *const _, self.raw.tokenCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_pipeline_bind_point<'m>(&'s mut self, pipeline_bind_point: PipelineBindPoint) {
+    pub fn set_pipeline_bind_point<'m>(&mut self, pipeline_bind_point: PipelineBindPoint) {
         self.raw.pipelineBindPoint = pipeline_bind_point.into();
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: IndirectCommandsLayoutUsageFlagsNvx) {
+    pub fn set_flags<'m>(&mut self, flags: IndirectCommandsLayoutUsageFlagsNvx) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_tokens<'m, 'a>(&'s mut self, tokens: &'a [IndirectCommandsLayoutTokenNvx]) {
+    pub fn set_tokens<'m, 'a>(&mut self, tokens: &'a [IndirectCommandsLayoutTokenNvx]) {
         assert!(self.raw.tokenCount == 0 || self.raw.tokenCount == tokens.len() as _, 
             "count inconsistency found when specifying `IndirectCommandsLayoutCreateInfoNvx::tokens`.");
         self.raw.tokenCount = tokens.len() as _;
@@ -23312,46 +23312,46 @@ impl<'s> CmdProcessCommandsInfoNvx<'s> {
         self.raw.sequencesIndexOffset.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_object_table<'m, 'a>(&'s mut self, object_table: &'a ObjectTableNvx) {
+    pub fn set_object_table<'m, 'a>(&mut self, object_table: &'a ObjectTableNvx) {
         self.raw.objectTable = object_table.handle();
     }
 
-    pub fn set_indirect_commands_layout<'m, 'a>(&'s mut self, indirect_commands_layout: &'a IndirectCommandsLayoutNvx) {
+    pub fn set_indirect_commands_layout<'m, 'a>(&mut self, indirect_commands_layout: &'a IndirectCommandsLayoutNvx) {
         self.raw.indirectCommandsLayout = indirect_commands_layout.handle();
     }
 
-    pub fn set_indirect_commands_tokens<'m, 'a>(&'s mut self, indirect_commands_tokens: &'a [IndirectCommandsTokenNvx]) {
+    pub fn set_indirect_commands_tokens<'m, 'a>(&mut self, indirect_commands_tokens: &'a [IndirectCommandsTokenNvx]) {
         assert!(self.raw.indirectCommandsTokenCount == 0 || self.raw.indirectCommandsTokenCount == indirect_commands_tokens.len() as _, 
             "count inconsistency found when specifying `CmdProcessCommandsInfoNvx::indirect_commands_tokens`.");
         self.raw.indirectCommandsTokenCount = indirect_commands_tokens.len() as _;
         self.raw.pIndirectCommandsTokens = indirect_commands_tokens.as_ptr() as *const vks::VkIndirectCommandsTokenNVX as *const _;
     }
 
-    pub fn set_max_sequences_count<'m>(&'s mut self, max_sequences_count: u32) {
+    pub fn set_max_sequences_count<'m>(&mut self, max_sequences_count: u32) {
         self.raw.maxSequencesCount = max_sequences_count.into();
     }
 
-    pub fn set_target_command_buffer<'m, 'a>(&'s mut self, target_command_buffer: &'a CommandBuffer) {
+    pub fn set_target_command_buffer<'m, 'a>(&mut self, target_command_buffer: &'a CommandBuffer) {
         self.raw.targetCommandBuffer = target_command_buffer.handle();
     }
 
-    pub fn set_sequences_count_buffer<'m, 'a>(&'s mut self, sequences_count_buffer: &'a Buffer) {
+    pub fn set_sequences_count_buffer<'m, 'a>(&mut self, sequences_count_buffer: &'a Buffer) {
         self.raw.sequencesCountBuffer = sequences_count_buffer.handle();
     }
 
-    pub fn set_sequences_count_offset<'m>(&'s mut self, sequences_count_offset: u64) {
+    pub fn set_sequences_count_offset<'m>(&mut self, sequences_count_offset: u64) {
         self.raw.sequencesCountOffset = sequences_count_offset.into();
     }
 
-    pub fn set_sequences_index_buffer<'m, 'a>(&'s mut self, sequences_index_buffer: &'a Buffer) {
+    pub fn set_sequences_index_buffer<'m, 'a>(&mut self, sequences_index_buffer: &'a Buffer) {
         self.raw.sequencesIndexBuffer = sequences_index_buffer.handle();
     }
 
-    pub fn set_sequences_index_offset<'m>(&'s mut self, sequences_index_offset: u64) {
+    pub fn set_sequences_index_offset<'m>(&mut self, sequences_index_offset: u64) {
         self.raw.sequencesIndexOffset = sequences_index_offset.into();
     }
 
@@ -23529,19 +23529,19 @@ impl<'s> CmdReserveSpaceForCommandsInfoNvx<'s> {
         self.raw.maxSequencesCount.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_object_table<'m, 'a>(&'s mut self, object_table: &'a ObjectTableNvx) {
+    pub fn set_object_table<'m, 'a>(&mut self, object_table: &'a ObjectTableNvx) {
         self.raw.objectTable = object_table.handle();
     }
 
-    pub fn set_indirect_commands_layout<'m, 'a>(&'s mut self, indirect_commands_layout: &'a IndirectCommandsLayoutNvx) {
+    pub fn set_indirect_commands_layout<'m, 'a>(&mut self, indirect_commands_layout: &'a IndirectCommandsLayoutNvx) {
         self.raw.indirectCommandsLayout = indirect_commands_layout.handle();
     }
 
-    pub fn set_max_sequences_count<'m>(&'s mut self, max_sequences_count: u32) {
+    pub fn set_max_sequences_count<'m>(&mut self, max_sequences_count: u32) {
         self.raw.maxSequencesCount = max_sequences_count.into();
     }
 
@@ -23682,48 +23682,48 @@ impl<'s> ObjectTableCreateInfoNvx<'s> {
         self.raw.maxPipelineLayouts.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_object_entry_types<'m, 'a>(&'s mut self, object_entry_types: &'a [ObjectEntryTypeNvx]) {
+    pub fn set_object_entry_types<'m, 'a>(&mut self, object_entry_types: &'a [ObjectEntryTypeNvx]) {
         assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_types.len() as _, 
             "count inconsistency found when specifying `ObjectTableCreateInfoNvx::object_entry_types`.");
         self.raw.objectCount = object_entry_types.len() as _;
         self.raw.pObjectEntryTypes = object_entry_types.as_ptr() as *const ObjectEntryTypeNvx as *const _;
     }
 
-    pub fn set_object_entry_counts<'m, 'a>(&'s mut self, object_entry_counts: &'a [u32]) {
+    pub fn set_object_entry_counts<'m, 'a>(&mut self, object_entry_counts: &'a [u32]) {
         assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_counts.len() as _, 
             "count inconsistency found when specifying `ObjectTableCreateInfoNvx::object_entry_counts`.");
         self.raw.objectCount = object_entry_counts.len() as _;
         self.raw.pObjectEntryCounts = object_entry_counts.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_object_entry_usage_flags<'m>(&'s mut self, object_entry_usage_flags: ObjectEntryUsageFlagsNvx) {
+    pub fn set_object_entry_usage_flags<'m>(&mut self, object_entry_usage_flags: ObjectEntryUsageFlagsNvx) {
         assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_usage_flags.len() as _, 
             "count inconsistency found when specifying `ObjectTableCreateInfoNvx::object_entry_usage_flags`.");
         self.raw.objectCount = object_entry_usage_flags.len() as _;
         self.raw.pObjectEntryUsageFlags = object_entry_usage_flags.bits();
     }
 
-    pub fn set_max_uniform_buffers_per_descriptor<'m>(&'s mut self, max_uniform_buffers_per_descriptor: u32) {
+    pub fn set_max_uniform_buffers_per_descriptor<'m>(&mut self, max_uniform_buffers_per_descriptor: u32) {
         self.raw.maxUniformBuffersPerDescriptor = max_uniform_buffers_per_descriptor.into();
     }
 
-    pub fn set_max_storage_buffers_per_descriptor<'m>(&'s mut self, max_storage_buffers_per_descriptor: u32) {
+    pub fn set_max_storage_buffers_per_descriptor<'m>(&mut self, max_storage_buffers_per_descriptor: u32) {
         self.raw.maxStorageBuffersPerDescriptor = max_storage_buffers_per_descriptor.into();
     }
 
-    pub fn set_max_storage_images_per_descriptor<'m>(&'s mut self, max_storage_images_per_descriptor: u32) {
+    pub fn set_max_storage_images_per_descriptor<'m>(&mut self, max_storage_images_per_descriptor: u32) {
         self.raw.maxStorageImagesPerDescriptor = max_storage_images_per_descriptor.into();
     }
 
-    pub fn set_max_sampled_images_per_descriptor<'m>(&'s mut self, max_sampled_images_per_descriptor: u32) {
+    pub fn set_max_sampled_images_per_descriptor<'m>(&mut self, max_sampled_images_per_descriptor: u32) {
         self.raw.maxSampledImagesPerDescriptor = max_sampled_images_per_descriptor.into();
     }
 
-    pub fn set_max_pipeline_layouts<'m>(&'s mut self, max_pipeline_layouts: u32) {
+    pub fn set_max_pipeline_layouts<'m>(&mut self, max_pipeline_layouts: u32) {
         self.raw.maxPipelineLayouts = max_pipeline_layouts.into();
     }
 
@@ -23890,11 +23890,11 @@ impl ObjectTableEntryNvx {
             .expect("ObjectTableEntryNvx::flags: error converting flags")
     }
 
-    pub fn set_type_of<'m>(& mut self, type_of: ObjectEntryTypeNvx) {
+    pub fn set_type_of<'m>(&mut self, type_of: ObjectEntryTypeNvx) {
         self.raw.type_ = type_of.into();
     }
 
-    pub fn set_flags<'m>(& mut self, flags: ObjectEntryUsageFlagsNvx) {
+    pub fn set_flags<'m>(&mut self, flags: ObjectEntryUsageFlagsNvx) {
         self.raw.flags = flags.bits();
     }
 
@@ -23991,15 +23991,15 @@ impl ObjectTablePipelineEntryNvx {
         self.raw.pipeline
     }
 
-    pub fn set_type_of<'m>(& mut self, type_of: ObjectEntryTypeNvx) {
+    pub fn set_type_of<'m>(&mut self, type_of: ObjectEntryTypeNvx) {
         self.raw.type_ = type_of.into();
     }
 
-    pub fn set_flags<'m>(& mut self, flags: ObjectEntryUsageFlagsNvx) {
+    pub fn set_flags<'m>(&mut self, flags: ObjectEntryUsageFlagsNvx) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_pipeline<'m, 'a>(& mut self, pipeline: &'a Pipeline) {
+    pub fn set_pipeline<'m, 'a>(&mut self, pipeline: &'a Pipeline) {
         self.raw.pipeline = pipeline.handle();
     }
 
@@ -24109,19 +24109,19 @@ impl ObjectTableDescriptorSetEntryNvx {
         self.raw.descriptorSet
     }
 
-    pub fn set_type_of<'m>(& mut self, type_of: ObjectEntryTypeNvx) {
+    pub fn set_type_of<'m>(&mut self, type_of: ObjectEntryTypeNvx) {
         self.raw.type_ = type_of.into();
     }
 
-    pub fn set_flags<'m>(& mut self, flags: ObjectEntryUsageFlagsNvx) {
+    pub fn set_flags<'m>(&mut self, flags: ObjectEntryUsageFlagsNvx) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_pipeline_layout<'m, 'a>(& mut self, pipeline_layout: &'a PipelineLayout) {
+    pub fn set_pipeline_layout<'m, 'a>(&mut self, pipeline_layout: &'a PipelineLayout) {
         self.raw.pipelineLayout = pipeline_layout.handle();
     }
 
-    pub fn set_descriptor_set<'m, 'a>(& mut self, descriptor_set: &'a DescriptorSet) {
+    pub fn set_descriptor_set<'m, 'a>(&mut self, descriptor_set: &'a DescriptorSet) {
         self.raw.descriptorSet = descriptor_set.handle();
     }
 
@@ -24236,15 +24236,15 @@ impl ObjectTableVertexBufferEntryNvx {
         self.raw.buffer
     }
 
-    pub fn set_type_of<'m>(& mut self, type_of: ObjectEntryTypeNvx) {
+    pub fn set_type_of<'m>(&mut self, type_of: ObjectEntryTypeNvx) {
         self.raw.type_ = type_of.into();
     }
 
-    pub fn set_flags<'m>(& mut self, flags: ObjectEntryUsageFlagsNvx) {
+    pub fn set_flags<'m>(&mut self, flags: ObjectEntryUsageFlagsNvx) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_buffer<'m, 'a>(& mut self, buffer: &'a Buffer) {
+    pub fn set_buffer<'m, 'a>(&mut self, buffer: &'a Buffer) {
         self.raw.buffer = buffer.handle();
     }
 
@@ -24354,19 +24354,19 @@ impl ObjectTableIndexBufferEntryNvx {
         self.raw.indexType.into()
     }
 
-    pub fn set_type_of<'m>(& mut self, type_of: ObjectEntryTypeNvx) {
+    pub fn set_type_of<'m>(&mut self, type_of: ObjectEntryTypeNvx) {
         self.raw.type_ = type_of.into();
     }
 
-    pub fn set_flags<'m>(& mut self, flags: ObjectEntryUsageFlagsNvx) {
+    pub fn set_flags<'m>(&mut self, flags: ObjectEntryUsageFlagsNvx) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_buffer<'m, 'a>(& mut self, buffer: &'a Buffer) {
+    pub fn set_buffer<'m, 'a>(&mut self, buffer: &'a Buffer) {
         self.raw.buffer = buffer.handle();
     }
 
-    pub fn set_index_type<'m>(& mut self, index_type: IndexType) {
+    pub fn set_index_type<'m>(&mut self, index_type: IndexType) {
         self.raw.indexType = index_type.into();
     }
 
@@ -24486,19 +24486,19 @@ impl ObjectTablePushConstantEntryNvx {
             .expect("ObjectTablePushConstantEntryNvx::stage_flags: error converting flags")
     }
 
-    pub fn set_type_of<'m>(& mut self, type_of: ObjectEntryTypeNvx) {
+    pub fn set_type_of<'m>(&mut self, type_of: ObjectEntryTypeNvx) {
         self.raw.type_ = type_of.into();
     }
 
-    pub fn set_flags<'m>(& mut self, flags: ObjectEntryUsageFlagsNvx) {
+    pub fn set_flags<'m>(&mut self, flags: ObjectEntryUsageFlagsNvx) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_pipeline_layout<'m, 'a>(& mut self, pipeline_layout: &'a PipelineLayout) {
+    pub fn set_pipeline_layout<'m, 'a>(&mut self, pipeline_layout: &'a PipelineLayout) {
         self.raw.pipelineLayout = pipeline_layout.handle();
     }
 
-    pub fn set_stage_flags<'m>(& mut self, stage_flags: ShaderStageFlags) {
+    pub fn set_stage_flags<'m>(&mut self, stage_flags: ShaderStageFlags) {
         self.raw.stageFlags = stage_flags.bits();
     }
 
@@ -24608,11 +24608,11 @@ impl<'s> PhysicalDeviceFeatures2Khr<'s> {
         self.raw.features.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_features<'m>(&'s mut self, features: PhysicalDeviceFeatures) {
+    pub fn set_features<'m>(&mut self, features: PhysicalDeviceFeatures) {
         self.raw.features = features.raw;
     }
 
@@ -24701,11 +24701,11 @@ impl<'s> PhysicalDeviceProperties2Khr<'s> {
         self.raw.properties.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_properties<'m>(&'s mut self, properties: PhysicalDeviceProperties) {
+    pub fn set_properties<'m>(&mut self, properties: PhysicalDeviceProperties) {
         self.raw.properties = properties.raw;
     }
 
@@ -24794,11 +24794,11 @@ impl<'s> FormatProperties2Khr<'s> {
         self.raw.formatProperties.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_format_properties<'m>(&'s mut self, format_properties: FormatProperties) {
+    pub fn set_format_properties<'m>(&mut self, format_properties: FormatProperties) {
         self.raw.formatProperties = format_properties.raw;
     }
 
@@ -24887,11 +24887,11 @@ impl<'s> ImageFormatProperties2Khr<'s> {
         self.raw.imageFormatProperties.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_image_format_properties<'m>(&'s mut self, image_format_properties: ImageFormatProperties) {
+    pub fn set_image_format_properties<'m>(&mut self, image_format_properties: ImageFormatProperties) {
         self.raw.imageFormatProperties = image_format_properties.raw;
     }
 
@@ -24998,27 +24998,27 @@ impl<'s> PhysicalDeviceImageFormatInfo2Khr<'s> {
             .expect("PhysicalDeviceImageFormatInfo2Khr::flags: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_format<'m>(&'s mut self, format: Format) {
+    pub fn set_format<'m>(&mut self, format: Format) {
         self.raw.format = format.into();
     }
 
-    pub fn set_type_of<'m>(&'s mut self, type_of: ImageType) {
+    pub fn set_type_of<'m>(&mut self, type_of: ImageType) {
         self.raw.type_ = type_of.into();
     }
 
-    pub fn set_tiling<'m>(&'s mut self, tiling: ImageTiling) {
+    pub fn set_tiling<'m>(&mut self, tiling: ImageTiling) {
         self.raw.tiling = tiling.into();
     }
 
-    pub fn set_usage<'m>(&'s mut self, usage: ImageUsageFlags) {
+    pub fn set_usage<'m>(&mut self, usage: ImageUsageFlags) {
         self.raw.usage = usage.bits();
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: ImageCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: ImageCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
@@ -25145,11 +25145,11 @@ impl<'s> QueueFamilyProperties2Khr<'s> {
         self.raw.queueFamilyProperties.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_queue_family_properties<'m>(&'s mut self, queue_family_properties: QueueFamilyProperties) {
+    pub fn set_queue_family_properties<'m>(&mut self, queue_family_properties: QueueFamilyProperties) {
         self.raw.queueFamilyProperties = queue_family_properties.raw;
     }
 
@@ -25238,11 +25238,11 @@ impl<'s> PhysicalDeviceMemoryProperties2Khr<'s> {
         self.raw.memoryProperties.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_memory_properties<'m>(&'s mut self, memory_properties: PhysicalDeviceMemoryProperties) {
+    pub fn set_memory_properties<'m>(&mut self, memory_properties: PhysicalDeviceMemoryProperties) {
         self.raw.memoryProperties = memory_properties.raw;
     }
 
@@ -25331,11 +25331,11 @@ impl<'s> SparseImageFormatProperties2Khr<'s> {
         self.raw.properties.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_properties<'m>(&'s mut self, properties: SparseImageFormatProperties) {
+    pub fn set_properties<'m>(&mut self, properties: SparseImageFormatProperties) {
         self.raw.properties = properties.raw;
     }
 
@@ -25442,27 +25442,27 @@ impl<'s> PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
         self.raw.tiling.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_format<'m>(&'s mut self, format: Format) {
+    pub fn set_format<'m>(&mut self, format: Format) {
         self.raw.format = format.into();
     }
 
-    pub fn set_type_of<'m>(&'s mut self, type_of: ImageType) {
+    pub fn set_type_of<'m>(&mut self, type_of: ImageType) {
         self.raw.type_ = type_of.into();
     }
 
-    pub fn set_samples<'m>(&'s mut self, samples: SampleCountFlags) {
+    pub fn set_samples<'m>(&mut self, samples: SampleCountFlags) {
         self.raw.samples = samples.bits();
     }
 
-    pub fn set_usage<'m>(&'s mut self, usage: ImageUsageFlags) {
+    pub fn set_usage<'m>(&mut self, usage: ImageUsageFlags) {
         self.raw.usage = usage.bits();
     }
 
-    pub fn set_tiling<'m>(&'s mut self, tiling: ImageTiling) {
+    pub fn set_tiling<'m>(&mut self, tiling: ImageTiling) {
         self.raw.tiling = tiling.into();
     }
 
@@ -25589,11 +25589,11 @@ impl<'s> PhysicalDevicePushDescriptorPropertiesKhr<'s> {
         self.raw.maxPushDescriptors.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_max_push_descriptors<'m>(&'s mut self, max_push_descriptors: u32) {
+    pub fn set_max_push_descriptors<'m>(&mut self, max_push_descriptors: u32) {
         self.raw.maxPushDescriptors = max_push_descriptors.into();
     }
 
@@ -25682,11 +25682,11 @@ impl<'s> PresentRegionsKhr<'s> {
         unsafe { slice::from_raw_parts(self.raw.pRegions as *const _, self.raw.swapchainCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_regions<'m, 'a>(&'s mut self, regions: &'a [PresentRegionKhr]) {
+    pub fn set_regions<'m, 'a>(&mut self, regions: &'a [PresentRegionKhr]) {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == regions.len() as _, 
             "count inconsistency found when specifying `PresentRegionsKhr::regions`.");
         self.raw.swapchainCount = regions.len() as _;
@@ -25777,7 +25777,7 @@ impl<'s> PresentRegionKhr<'s> {
         unsafe { slice::from_raw_parts(self.raw.pRectangles as *const _, self.raw.rectangleCount as usize) }
     }
 
-    pub fn set_rectangles<'m, 'a>(&'s mut self, rectangles: &'a [RectLayerKhr]) {
+    pub fn set_rectangles<'m, 'a>(&mut self, rectangles: &'a [RectLayerKhr]) {
         assert!(self.raw.rectangleCount == 0 || self.raw.rectangleCount == rectangles.len() as _, 
             "count inconsistency found when specifying `PresentRegionKhr::rectangles`.");
         self.raw.rectangleCount = rectangles.len() as _;
@@ -25866,15 +25866,15 @@ impl RectLayerKhr {
         self.raw.layer.into()
     }
 
-    pub fn set_offset<'m>(& mut self, offset: Offset2d) {
+    pub fn set_offset<'m>(&mut self, offset: Offset2d) {
         self.raw.offset = offset.raw;
     }
 
-    pub fn set_extent<'m>(& mut self, extent: Extent2d) {
+    pub fn set_extent<'m>(&mut self, extent: Extent2d) {
         self.raw.extent = extent.raw;
     }
 
-    pub fn set_layer<'m>(& mut self, layer: u32) {
+    pub fn set_layer<'m>(&mut self, layer: u32) {
         self.raw.layer = layer.into();
     }
 
@@ -25973,15 +25973,15 @@ impl<'s> PhysicalDeviceVariablePointerFeaturesKhr<'s> {
         self.raw.variablePointers != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_variable_pointers_storage_buffer<'m>(&'s mut self, variable_pointers_storage_buffer: bool) {
+    pub fn set_variable_pointers_storage_buffer<'m>(&mut self, variable_pointers_storage_buffer: bool) {
         self.raw.variablePointersStorageBuffer = variable_pointers_storage_buffer as u32;
     }
 
-    pub fn set_variable_pointers<'m>(&'s mut self, variable_pointers: bool) {
+    pub fn set_variable_pointers<'m>(&mut self, variable_pointers: bool) {
         self.raw.variablePointers = variable_pointers as u32;
     }
 
@@ -26085,15 +26085,15 @@ impl ExternalMemoryPropertiesKhr {
             .expect("ExternalMemoryPropertiesKhr::compatible_handle_types: error converting flags")
     }
 
-    pub fn set_external_memory_features<'m>(& mut self, external_memory_features: ExternalMemoryFeatureFlagsKhr) {
+    pub fn set_external_memory_features<'m>(&mut self, external_memory_features: ExternalMemoryFeatureFlagsKhr) {
         self.raw.externalMemoryFeatures = external_memory_features.bits();
     }
 
-    pub fn set_export_from_imported_handle_types<'m>(& mut self, export_from_imported_handle_types: ExternalMemoryHandleTypeFlagsKhr) {
+    pub fn set_export_from_imported_handle_types<'m>(&mut self, export_from_imported_handle_types: ExternalMemoryHandleTypeFlagsKhr) {
         self.raw.exportFromImportedHandleTypes = export_from_imported_handle_types.bits();
     }
 
-    pub fn set_compatible_handle_types<'m>(& mut self, compatible_handle_types: ExternalMemoryHandleTypeFlagsKhr) {
+    pub fn set_compatible_handle_types<'m>(&mut self, compatible_handle_types: ExternalMemoryHandleTypeFlagsKhr) {
         self.raw.compatibleHandleTypes = compatible_handle_types.bits();
     }
 
@@ -26192,11 +26192,11 @@ impl<'s> PhysicalDeviceExternalImageFormatInfoKhr<'s> {
             .expect("PhysicalDeviceExternalImageFormatInfoKhr::handle_type: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
@@ -26286,11 +26286,11 @@ impl<'s> ExternalImageFormatPropertiesKhr<'s> {
         self.raw.externalMemoryProperties.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_external_memory_properties<'m>(&'s mut self, external_memory_properties: ExternalMemoryPropertiesKhr) {
+    pub fn set_external_memory_properties<'m>(&mut self, external_memory_properties: ExternalMemoryPropertiesKhr) {
         self.raw.externalMemoryProperties = external_memory_properties.raw;
     }
 
@@ -26390,19 +26390,19 @@ impl<'s> PhysicalDeviceExternalBufferInfoKhr<'s> {
             .expect("PhysicalDeviceExternalBufferInfoKhr::handle_type: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: BufferCreateFlags) {
+    pub fn set_flags<'m>(&mut self, flags: BufferCreateFlags) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_usage<'m>(&'s mut self, usage: BufferUsageFlags) {
+    pub fn set_usage<'m>(&mut self, usage: BufferUsageFlags) {
         self.raw.usage = usage.bits();
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
@@ -26512,11 +26512,11 @@ impl<'s> ExternalBufferPropertiesKhr<'s> {
         self.raw.externalMemoryProperties.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_external_memory_properties<'m>(&'s mut self, external_memory_properties: ExternalMemoryPropertiesKhr) {
+    pub fn set_external_memory_properties<'m>(&mut self, external_memory_properties: ExternalMemoryPropertiesKhr) {
         self.raw.externalMemoryProperties = external_memory_properties.raw;
     }
 
@@ -26621,27 +26621,27 @@ impl<'s> PhysicalDeviceIDPropertiesKhr<'s> {
         self.raw.deviceLUIDValid != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_device_uu_id<'m>(&'s mut self, device_uu_id: [u8; vks::VK_UUID_SIZE]) {
+    pub fn set_device_uu_id<'m>(&mut self, device_uu_id: [u8; vks::VK_UUID_SIZE]) {
         self.raw.deviceUUID = device_uu_id;
     }
 
-    pub fn set_driver_uu_id<'m>(&'s mut self, driver_uu_id: [u8; vks::VK_UUID_SIZE]) {
+    pub fn set_driver_uu_id<'m>(&mut self, driver_uu_id: [u8; vks::VK_UUID_SIZE]) {
         self.raw.driverUUID = driver_uu_id;
     }
 
-    pub fn set_device_lu_id<'m>(&'s mut self, device_lu_id: [u8; vks::VK_LUID_SIZE_KHR]) {
+    pub fn set_device_lu_id<'m>(&mut self, device_lu_id: [u8; vks::VK_LUID_SIZE_KHR]) {
         self.raw.deviceLUID = device_lu_id;
     }
 
-    pub fn set_device_node_mask<'m>(&'s mut self, device_node_mask: u32) {
+    pub fn set_device_node_mask<'m>(&mut self, device_node_mask: u32) {
         self.raw.deviceNodeMask = device_node_mask.into();
     }
 
-    pub fn set_device_lu_id_valid<'m>(&'s mut self, device_lu_id_valid: bool) {
+    pub fn set_device_lu_id_valid<'m>(&mut self, device_lu_id_valid: bool) {
         self.raw.deviceLUIDValid = device_lu_id_valid as u32;
     }
 
@@ -26767,11 +26767,11 @@ impl<'s> ExternalMemoryImageCreateInfoKhr<'s> {
             .expect("ExternalMemoryImageCreateInfoKhr::handle_types: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_types<'m>(&'s mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) {
+    pub fn set_handle_types<'m>(&mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) {
         self.raw.handleTypes = handle_types.bits();
     }
 
@@ -26862,11 +26862,11 @@ impl<'s> ExternalMemoryBufferCreateInfoKhr<'s> {
             .expect("ExternalMemoryBufferCreateInfoKhr::handle_types: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_types<'m>(&'s mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) {
+    pub fn set_handle_types<'m>(&mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) {
         self.raw.handleTypes = handle_types.bits();
     }
 
@@ -26957,11 +26957,11 @@ impl<'s> ExportMemoryAllocateInfoKhr<'s> {
             .expect("ExportMemoryAllocateInfoKhr::handle_types: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_types<'m>(&'s mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) {
+    pub fn set_handle_types<'m>(&mut self, handle_types: ExternalMemoryHandleTypeFlagsKhr) {
         self.raw.handleTypes = handle_types.bits();
     }
 
@@ -27060,19 +27060,19 @@ impl<'s> ImportMemoryWin32HandleInfoKhr<'s> {
         self.raw.name.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn set_handle<'m>(&'s mut self, handle: HANDLE) {
+    pub fn set_handle<'m>(&mut self, handle: HANDLE) {
         self.raw.handle = handle.into();
     }
 
-    pub fn set_name<'m>(&'s mut self, name: LPCWSTR) {
+    pub fn set_name<'m>(&mut self, name: LPCWSTR) {
         self.raw.name = name.into();
     }
 
@@ -27188,19 +27188,19 @@ impl<'s> ExportMemoryWin32HandleInfoKhr<'s> {
         self.raw.name.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_attributes<'m, 'a>(&'s mut self, attributes: &'a SECURITY_ATTRIBUTES) {
+    pub fn set_attributes<'m, 'a>(&mut self, attributes: &'a SECURITY_ATTRIBUTES) {
         self.raw.pAttributes = attributes;
     }
 
-    pub fn set_dw_access<'m>(&'s mut self, dw_access: DWORD) {
+    pub fn set_dw_access<'m>(&mut self, dw_access: DWORD) {
         self.raw.dwAccess = dw_access.into();
     }
 
-    pub fn set_name<'m>(&'s mut self, name: LPCWSTR) {
+    pub fn set_name<'m>(&mut self, name: LPCWSTR) {
         self.raw.name = name.into();
     }
 
@@ -27307,11 +27307,11 @@ impl<'s> MemoryWin32HandlePropertiesKhr<'s> {
         self.raw.memoryTypeBits.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_memory_type_bits<'m>(&'s mut self, memory_type_bits: u32) {
+    pub fn set_memory_type_bits<'m>(&mut self, memory_type_bits: u32) {
         self.raw.memoryTypeBits = memory_type_bits.into();
     }
 
@@ -27405,15 +27405,15 @@ impl<'s> MemoryGetWin32HandleInfoKhr<'s> {
             .expect("MemoryGetWin32HandleInfoKhr::handle_type: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_memory<'m, 'a>(&'s mut self, memory: &'a DeviceMemory) {
+    pub fn set_memory<'m, 'a>(&mut self, memory: &'a DeviceMemory) {
         self.raw.memory = memory.handle();
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
@@ -27517,15 +27517,15 @@ impl<'s> ImportMemoryFdInfoKhr<'s> {
         self.raw.fd.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn set_fd<'m>(&'s mut self, fd: i32) {
+    pub fn set_fd<'m>(&mut self, fd: i32) {
         self.raw.fd = fd.into();
     }
 
@@ -27624,11 +27624,11 @@ impl<'s> MemoryFdPropertiesKhr<'s> {
         self.raw.memoryTypeBits.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_memory_type_bits<'m>(&'s mut self, memory_type_bits: u32) {
+    pub fn set_memory_type_bits<'m>(&mut self, memory_type_bits: u32) {
         self.raw.memoryTypeBits = memory_type_bits.into();
     }
 
@@ -27722,15 +27722,15 @@ impl<'s> MemoryGetFdInfoKhr<'s> {
             .expect("MemoryGetFdInfoKhr::handle_type: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_memory<'m, 'a>(&'s mut self, memory: &'a DeviceMemory) {
+    pub fn set_memory<'m, 'a>(&mut self, memory: &'a DeviceMemory) {
         self.raw.memory = memory.handle();
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
@@ -27846,11 +27846,11 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
         unsafe { slice::from_raw_parts(self.raw.pReleaseKeys as *const _, self.raw.releaseCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_acquire_syncs<'m, 'a>(&'s mut self, acquire_syncs: &'a [&'a DeviceMemory])
+    pub fn set_acquire_syncs<'m, 'a>(&mut self, acquire_syncs: &'a [&'a DeviceMemory])
             where 'a: 's {
         self.acquire_syncs = Some(acquire_syncs.iter().map(|h| h.handle()).collect());
         {
@@ -27862,21 +27862,21 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
         }
     }
 
-    pub fn set_acquire_keys<'m, 'a>(&'s mut self, acquire_keys: &'a [u64]) {
+    pub fn set_acquire_keys<'m, 'a>(&mut self, acquire_keys: &'a [u64]) {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::acquire_keys`.");
         self.raw.acquireCount = acquire_keys.len() as _;
         self.raw.pAcquireKeys = acquire_keys.as_ptr() as *const u64 as *const _;
     }
 
-    pub fn set_acquire_timeouts<'m, 'a>(&'s mut self, acquire_timeouts: &'a [u32]) {
+    pub fn set_acquire_timeouts<'m, 'a>(&mut self, acquire_timeouts: &'a [u32]) {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_timeouts.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::acquire_timeouts`.");
         self.raw.acquireCount = acquire_timeouts.len() as _;
         self.raw.pAcquireTimeouts = acquire_timeouts.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_release_syncs<'m, 'a>(&'s mut self, release_syncs: &'a [&'a DeviceMemory])
+    pub fn set_release_syncs<'m, 'a>(&mut self, release_syncs: &'a [&'a DeviceMemory])
             where 'a: 's {
         self.release_syncs = Some(release_syncs.iter().map(|h| h.handle()).collect());
         {
@@ -27888,7 +27888,7 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
         }
     }
 
-    pub fn set_release_keys<'m, 'a>(&'s mut self, release_keys: &'a [u64]) {
+    pub fn set_release_keys<'m, 'a>(&mut self, release_keys: &'a [u64]) {
         assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::release_keys`.");
         self.raw.releaseCount = release_keys.len() as _;
@@ -28048,11 +28048,11 @@ impl<'s> PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
             .expect("PhysicalDeviceExternalSemaphoreInfoKhr::handle_type: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
@@ -28153,19 +28153,19 @@ impl<'s> ExternalSemaphorePropertiesKhr<'s> {
             .expect("ExternalSemaphorePropertiesKhr::external_semaphore_features: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_export_from_imported_handle_types<'m>(&'s mut self, export_from_imported_handle_types: ExternalSemaphoreHandleTypeFlagsKhr) {
+    pub fn set_export_from_imported_handle_types<'m>(&mut self, export_from_imported_handle_types: ExternalSemaphoreHandleTypeFlagsKhr) {
         self.raw.exportFromImportedHandleTypes = export_from_imported_handle_types.bits();
     }
 
-    pub fn set_compatible_handle_types<'m>(&'s mut self, compatible_handle_types: ExternalSemaphoreHandleTypeFlagsKhr) {
+    pub fn set_compatible_handle_types<'m>(&mut self, compatible_handle_types: ExternalSemaphoreHandleTypeFlagsKhr) {
         self.raw.compatibleHandleTypes = compatible_handle_types.bits();
     }
 
-    pub fn set_external_semaphore_features<'m>(&'s mut self, external_semaphore_features: ExternalSemaphoreFeatureFlagsKhr) {
+    pub fn set_external_semaphore_features<'m>(&mut self, external_semaphore_features: ExternalSemaphoreFeatureFlagsKhr) {
         self.raw.externalSemaphoreFeatures = external_semaphore_features.bits();
     }
 
@@ -28276,11 +28276,11 @@ impl<'s> ExportSemaphoreCreateInfoKhr<'s> {
             .expect("ExportSemaphoreCreateInfoKhr::handle_types: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_types<'m>(&'s mut self, handle_types: ExternalSemaphoreHandleTypeFlagsKhr) {
+    pub fn set_handle_types<'m>(&mut self, handle_types: ExternalSemaphoreHandleTypeFlagsKhr) {
         self.raw.handleTypes = handle_types.bits();
     }
 
@@ -28388,27 +28388,27 @@ impl<'s> ImportSemaphoreWin32HandleInfoKhr<'s> {
         self.raw.name.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_semaphore<'m, 'a>(&'s mut self, semaphore: &'a Semaphore) {
+    pub fn set_semaphore<'m, 'a>(&mut self, semaphore: &'a Semaphore) {
         self.raw.semaphore = semaphore.handle();
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: SemaphoreImportFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: SemaphoreImportFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn set_handle<'m>(&'s mut self, handle: HANDLE) {
+    pub fn set_handle<'m>(&mut self, handle: HANDLE) {
         self.raw.handle = handle.into();
     }
 
-    pub fn set_name<'m>(&'s mut self, name: LPCWSTR) {
+    pub fn set_name<'m>(&mut self, name: LPCWSTR) {
         self.raw.name = name.into();
     }
 
@@ -28543,19 +28543,19 @@ impl<'s> ExportSemaphoreWin32HandleInfoKhr<'s> {
         self.raw.name.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_attributes<'m, 'a>(&'s mut self, attributes: &'a SECURITY_ATTRIBUTES) {
+    pub fn set_attributes<'m, 'a>(&mut self, attributes: &'a SECURITY_ATTRIBUTES) {
         self.raw.pAttributes = attributes;
     }
 
-    pub fn set_dw_access<'m>(&'s mut self, dw_access: DWORD) {
+    pub fn set_dw_access<'m>(&mut self, dw_access: DWORD) {
         self.raw.dwAccess = dw_access.into();
     }
 
-    pub fn set_name<'m>(&'s mut self, name: LPCWSTR) {
+    pub fn set_name<'m>(&mut self, name: LPCWSTR) {
         self.raw.name = name.into();
     }
 
@@ -28666,18 +28666,18 @@ impl<'s> D3d12FenceSubmitInfoKHR<'s> {
         unsafe { slice::from_raw_parts(self.raw.pSignalSemaphoreValues as *const _, self.raw.signalSemaphoreValuesCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_wait_semaphore_values<'m, 'a>(&'s mut self, wait_semaphore_values: &'a [u64]) {
+    pub fn set_wait_semaphore_values<'m, 'a>(&mut self, wait_semaphore_values: &'a [u64]) {
         assert!(self.raw.waitSemaphoreValuesCount == 0 || self.raw.waitSemaphoreValuesCount == wait_semaphore_values.len() as _, 
             "count inconsistency found when specifying `D3d12FenceSubmitInfoKHR::wait_semaphore_values`.");
         self.raw.waitSemaphoreValuesCount = wait_semaphore_values.len() as _;
         self.raw.pWaitSemaphoreValues = wait_semaphore_values.as_ptr() as *const u64 as *const _;
     }
 
-    pub fn set_signal_semaphore_values<'m, 'a>(&'s mut self, signal_semaphore_values: &'a [u64]) {
+    pub fn set_signal_semaphore_values<'m, 'a>(&mut self, signal_semaphore_values: &'a [u64]) {
         assert!(self.raw.signalSemaphoreValuesCount == 0 || self.raw.signalSemaphoreValuesCount == signal_semaphore_values.len() as _, 
             "count inconsistency found when specifying `D3d12FenceSubmitInfoKHR::signal_semaphore_values`.");
         self.raw.signalSemaphoreValuesCount = signal_semaphore_values.len() as _;
@@ -28789,15 +28789,15 @@ impl<'s> SemaphoreGetWin32HandleInfoKhr<'s> {
             .expect("SemaphoreGetWin32HandleInfoKhr::handle_type: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_semaphore<'m, 'a>(&'s mut self, semaphore: &'a Semaphore) {
+    pub fn set_semaphore<'m, 'a>(&mut self, semaphore: &'a Semaphore) {
         self.raw.semaphore = semaphore.handle();
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
@@ -28910,23 +28910,23 @@ impl<'s> ImportSemaphoreFdInfoKhr<'s> {
         self.raw.fd.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_semaphore<'m, 'a>(&'s mut self, semaphore: &'a Semaphore) {
+    pub fn set_semaphore<'m, 'a>(&mut self, semaphore: &'a Semaphore) {
         self.raw.semaphore = semaphore.handle();
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: SemaphoreImportFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: SemaphoreImportFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn set_fd<'m>(&'s mut self, fd: i32) {
+    pub fn set_fd<'m>(&mut self, fd: i32) {
         self.raw.fd = fd.into();
     }
 
@@ -29049,15 +29049,15 @@ impl<'s> SemaphoreGetFdInfoKhr<'s> {
             .expect("SemaphoreGetFdInfoKhr::handle_type: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_semaphore<'m, 'a>(&'s mut self, semaphore: &'a Semaphore) {
+    pub fn set_semaphore<'m, 'a>(&mut self, semaphore: &'a Semaphore) {
         self.raw.semaphore = semaphore.handle();
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
@@ -29157,11 +29157,11 @@ impl<'s> PhysicalDeviceExternalFenceInfoKhr<'s> {
             .expect("PhysicalDeviceExternalFenceInfoKhr::handle_type: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
@@ -29262,19 +29262,19 @@ impl<'s> ExternalFencePropertiesKhr<'s> {
             .expect("ExternalFencePropertiesKhr::external_fence_features: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_export_from_imported_handle_types<'m>(&'s mut self, export_from_imported_handle_types: ExternalFenceHandleTypeFlagsKhr) {
+    pub fn set_export_from_imported_handle_types<'m>(&mut self, export_from_imported_handle_types: ExternalFenceHandleTypeFlagsKhr) {
         self.raw.exportFromImportedHandleTypes = export_from_imported_handle_types.bits();
     }
 
-    pub fn set_compatible_handle_types<'m>(&'s mut self, compatible_handle_types: ExternalFenceHandleTypeFlagsKhr) {
+    pub fn set_compatible_handle_types<'m>(&mut self, compatible_handle_types: ExternalFenceHandleTypeFlagsKhr) {
         self.raw.compatibleHandleTypes = compatible_handle_types.bits();
     }
 
-    pub fn set_external_fence_features<'m>(&'s mut self, external_fence_features: ExternalFenceFeatureFlagsKhr) {
+    pub fn set_external_fence_features<'m>(&mut self, external_fence_features: ExternalFenceFeatureFlagsKhr) {
         self.raw.externalFenceFeatures = external_fence_features.bits();
     }
 
@@ -29385,11 +29385,11 @@ impl<'s> ExportFenceCreateInfoKhr<'s> {
             .expect("ExportFenceCreateInfoKhr::handle_types: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_handle_types<'m>(&'s mut self, handle_types: ExternalFenceHandleTypeFlagsKhr) {
+    pub fn set_handle_types<'m>(&mut self, handle_types: ExternalFenceHandleTypeFlagsKhr) {
         self.raw.handleTypes = handle_types.bits();
     }
 
@@ -29497,27 +29497,27 @@ impl<'s> ImportFenceWin32HandleInfoKhr<'s> {
         self.raw.name.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_fence<'m, 'a>(&'s mut self, fence: &'a Fence) {
+    pub fn set_fence<'m, 'a>(&mut self, fence: &'a Fence) {
         self.raw.fence = fence.handle();
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: FenceImportFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: FenceImportFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn set_handle<'m>(&'s mut self, handle: HANDLE) {
+    pub fn set_handle<'m>(&mut self, handle: HANDLE) {
         self.raw.handle = handle.into();
     }
 
-    pub fn set_name<'m>(&'s mut self, name: LPCWSTR) {
+    pub fn set_name<'m>(&mut self, name: LPCWSTR) {
         self.raw.name = name.into();
     }
 
@@ -29652,19 +29652,19 @@ impl<'s> ExportFenceWin32HandleInfoKhr<'s> {
         self.raw.name.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_attributes<'m, 'a>(&'s mut self, attributes: &'a SECURITY_ATTRIBUTES) {
+    pub fn set_attributes<'m, 'a>(&mut self, attributes: &'a SECURITY_ATTRIBUTES) {
         self.raw.pAttributes = attributes;
     }
 
-    pub fn set_dw_access<'m>(&'s mut self, dw_access: DWORD) {
+    pub fn set_dw_access<'m>(&mut self, dw_access: DWORD) {
         self.raw.dwAccess = dw_access.into();
     }
 
-    pub fn set_name<'m>(&'s mut self, name: LPCWSTR) {
+    pub fn set_name<'m>(&mut self, name: LPCWSTR) {
         self.raw.name = name.into();
     }
 
@@ -29776,15 +29776,15 @@ impl<'s> FenceGetWin32HandleInfoKhr<'s> {
             .expect("FenceGetWin32HandleInfoKhr::handle_type: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_fence<'m, 'a>(&'s mut self, fence: &'a Fence) {
+    pub fn set_fence<'m, 'a>(&mut self, fence: &'a Fence) {
         self.raw.fence = fence.handle();
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
@@ -29897,23 +29897,23 @@ impl<'s> ImportFenceFdInfoKhr<'s> {
         self.raw.fd.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_fence<'m, 'a>(&'s mut self, fence: &'a Fence) {
+    pub fn set_fence<'m, 'a>(&mut self, fence: &'a Fence) {
         self.raw.fence = fence.handle();
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: FenceImportFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: FenceImportFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn set_fd<'m>(&'s mut self, fd: i32) {
+    pub fn set_fd<'m>(&mut self, fd: i32) {
         self.raw.fd = fd.into();
     }
 
@@ -30036,15 +30036,15 @@ impl<'s> FenceGetFdInfoKhr<'s> {
             .expect("FenceGetFdInfoKhr::handle_type: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_fence<'m, 'a>(&'s mut self, fence: &'a Fence) {
+    pub fn set_fence<'m, 'a>(&mut self, fence: &'a Fence) {
         self.raw.fence = fence.handle();
     }
 
-    pub fn set_handle_type<'m>(&'s mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
+    pub fn set_handle_type<'m>(&mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
         self.raw.handleType = handle_type.bits();
     }
 
@@ -30153,19 +30153,19 @@ impl<'s> PhysicalDeviceMultiviewFeaturesKhx<'s> {
         self.raw.multiviewTessellationShader != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_multiview<'m>(&'s mut self, multiview: bool) {
+    pub fn set_multiview<'m>(&mut self, multiview: bool) {
         self.raw.multiview = multiview as u32;
     }
 
-    pub fn set_multiview_geometry_shader<'m>(&'s mut self, multiview_geometry_shader: bool) {
+    pub fn set_multiview_geometry_shader<'m>(&mut self, multiview_geometry_shader: bool) {
         self.raw.multiviewGeometryShader = multiview_geometry_shader as u32;
     }
 
-    pub fn set_multiview_tessellation_shader<'m>(&'s mut self, multiview_tessellation_shader: bool) {
+    pub fn set_multiview_tessellation_shader<'m>(&mut self, multiview_tessellation_shader: bool) {
         self.raw.multiviewTessellationShader = multiview_tessellation_shader as u32;
     }
 
@@ -30282,15 +30282,15 @@ impl<'s> PhysicalDeviceMultiviewPropertiesKhx<'s> {
         self.raw.maxMultiviewInstanceIndex.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_max_multiview_view_count<'m>(&'s mut self, max_multiview_view_count: u32) {
+    pub fn set_max_multiview_view_count<'m>(&mut self, max_multiview_view_count: u32) {
         self.raw.maxMultiviewViewCount = max_multiview_view_count.into();
     }
 
-    pub fn set_max_multiview_instance_index<'m>(&'s mut self, max_multiview_instance_index: u32) {
+    pub fn set_max_multiview_instance_index<'m>(&mut self, max_multiview_instance_index: u32) {
         self.raw.maxMultiviewInstanceIndex = max_multiview_instance_index.into();
     }
 
@@ -30410,27 +30410,27 @@ impl<'s> RenderPassMultiviewCreateInfoKhx<'s> {
         unsafe { slice::from_raw_parts(self.raw.pCorrelationMasks as *const _, self.raw.correlationMaskCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_subpass_count<'m>(&'s mut self, subpass_count: u32) {
+    pub fn set_subpass_count<'m>(&mut self, subpass_count: u32) {
         self.raw.subpassCount = subpass_count.into();
     }
 
-    pub fn set_view_masks<'m, 'a>(&'s mut self, view_masks: &'a [u32]) {
+    pub fn set_view_masks<'m, 'a>(&mut self, view_masks: &'a [u32]) {
         self.raw.pViewMasks = view_masks.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_dependency_count<'m>(&'s mut self, dependency_count: u32) {
+    pub fn set_dependency_count<'m>(&mut self, dependency_count: u32) {
         self.raw.dependencyCount = dependency_count.into();
     }
 
-    pub fn set_view_offsets<'m, 'a>(&'s mut self, view_offsets: &'a [i32]) {
+    pub fn set_view_offsets<'m, 'a>(&mut self, view_offsets: &'a [i32]) {
         self.raw.pViewOffsets = view_offsets.as_ptr() as *const i32 as *const _;
     }
 
-    pub fn set_correlation_masks<'m, 'a>(&'s mut self, correlation_masks: &'a [u32]) {
+    pub fn set_correlation_masks<'m, 'a>(&mut self, correlation_masks: &'a [u32]) {
         assert!(self.raw.correlationMaskCount == 0 || self.raw.correlationMaskCount == correlation_masks.len() as _, 
             "count inconsistency found when specifying `RenderPassMultiviewCreateInfoKhx::correlation_masks`.");
         self.raw.correlationMaskCount = correlation_masks.len() as _;
@@ -30610,51 +30610,51 @@ impl<'s> SurfaceCapabilities2Ext<'s> {
             .expect("SurfaceCapabilities2Ext::supported_surface_counters: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_min_image_count<'m>(&'s mut self, min_image_count: u32) {
+    pub fn set_min_image_count<'m>(&mut self, min_image_count: u32) {
         self.raw.minImageCount = min_image_count.into();
     }
 
-    pub fn set_max_image_count<'m>(&'s mut self, max_image_count: u32) {
+    pub fn set_max_image_count<'m>(&mut self, max_image_count: u32) {
         self.raw.maxImageCount = max_image_count.into();
     }
 
-    pub fn set_current_extent<'m>(&'s mut self, current_extent: Extent2d) {
+    pub fn set_current_extent<'m>(&mut self, current_extent: Extent2d) {
         self.raw.currentExtent = current_extent.raw;
     }
 
-    pub fn set_min_image_extent<'m>(&'s mut self, min_image_extent: Extent2d) {
+    pub fn set_min_image_extent<'m>(&mut self, min_image_extent: Extent2d) {
         self.raw.minImageExtent = min_image_extent.raw;
     }
 
-    pub fn set_max_image_extent<'m>(&'s mut self, max_image_extent: Extent2d) {
+    pub fn set_max_image_extent<'m>(&mut self, max_image_extent: Extent2d) {
         self.raw.maxImageExtent = max_image_extent.raw;
     }
 
-    pub fn set_max_image_array_layers<'m>(&'s mut self, max_image_array_layers: u32) {
+    pub fn set_max_image_array_layers<'m>(&mut self, max_image_array_layers: u32) {
         self.raw.maxImageArrayLayers = max_image_array_layers.into();
     }
 
-    pub fn set_supported_transforms<'m>(&'s mut self, supported_transforms: SurfaceTransformFlagsKhr) {
+    pub fn set_supported_transforms<'m>(&mut self, supported_transforms: SurfaceTransformFlagsKhr) {
         self.raw.supportedTransforms = supported_transforms.bits();
     }
 
-    pub fn set_current_transform<'m>(&'s mut self, current_transform: SurfaceTransformFlagsKhr) {
+    pub fn set_current_transform<'m>(&mut self, current_transform: SurfaceTransformFlagsKhr) {
         self.raw.currentTransform = current_transform.bits();
     }
 
-    pub fn set_supported_composite_alpha<'m>(&'s mut self, supported_composite_alpha: CompositeAlphaFlagsKhr) {
+    pub fn set_supported_composite_alpha<'m>(&mut self, supported_composite_alpha: CompositeAlphaFlagsKhr) {
         self.raw.supportedCompositeAlpha = supported_composite_alpha.bits();
     }
 
-    pub fn set_supported_usage_flags<'m>(&'s mut self, supported_usage_flags: ImageUsageFlags) {
+    pub fn set_supported_usage_flags<'m>(&mut self, supported_usage_flags: ImageUsageFlags) {
         self.raw.supportedUsageFlags = supported_usage_flags.bits();
     }
 
-    pub fn set_supported_surface_counters<'m>(&'s mut self, supported_surface_counters: SurfaceCounterFlagsExt) {
+    pub fn set_supported_surface_counters<'m>(&mut self, supported_surface_counters: SurfaceCounterFlagsExt) {
         self.raw.supportedSurfaceCounters = supported_surface_counters.bits();
     }
 
@@ -30838,11 +30838,11 @@ impl<'s> DisplayPowerInfoExt<'s> {
         self.raw.powerState.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_power_state<'m>(&'s mut self, power_state: DisplayPowerStateExt) {
+    pub fn set_power_state<'m>(&mut self, power_state: DisplayPowerStateExt) {
         self.raw.powerState = power_state.into();
     }
 
@@ -30931,11 +30931,11 @@ impl<'s> DeviceEventInfoExt<'s> {
         self.raw.deviceEvent.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_device_event<'m>(&'s mut self, device_event: DeviceEventTypeExt) {
+    pub fn set_device_event<'m>(&mut self, device_event: DeviceEventTypeExt) {
         self.raw.deviceEvent = device_event.into();
     }
 
@@ -31024,11 +31024,11 @@ impl<'s> DisplayEventInfoExt<'s> {
         self.raw.displayEvent.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_display_event<'m>(&'s mut self, display_event: DisplayEventTypeExt) {
+    pub fn set_display_event<'m>(&mut self, display_event: DisplayEventTypeExt) {
         self.raw.displayEvent = display_event.into();
     }
 
@@ -31118,11 +31118,11 @@ impl<'s> SwapchainCounterCreateInfoExt<'s> {
             .expect("SwapchainCounterCreateInfoExt::surface_counters: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_surface_counters<'m>(&'s mut self, surface_counters: SurfaceCounterFlagsExt) {
+    pub fn set_surface_counters<'m>(&mut self, surface_counters: SurfaceCounterFlagsExt) {
         self.raw.surfaceCounters = surface_counters.bits();
     }
 
@@ -31222,19 +31222,19 @@ impl<'s> PhysicalDeviceGroupPropertiesKhx<'s> {
         self.raw.subsetAllocation != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_physical_device_count<'m>(&'s mut self, physical_device_count: u32) {
+    pub fn set_physical_device_count<'m>(&mut self, physical_device_count: u32) {
         self.raw.physicalDeviceCount = physical_device_count.into();
     }
 
-    pub fn set_physical_devices<'m>(&'s mut self, physical_devices: [PhysicalDevice; vks::VK_MAX_DEVICE_GROUP_SIZE_KHX]) {
+    pub fn set_physical_devices<'m>(&mut self, physical_devices: [PhysicalDevice; vks::VK_MAX_DEVICE_GROUP_SIZE_KHX]) {
         self.raw.physicalDevices = physical_devices.handle();
     }
 
-    pub fn set_subset_allocation<'m>(&'s mut self, subset_allocation: bool) {
+    pub fn set_subset_allocation<'m>(&mut self, subset_allocation: bool) {
         self.raw.subsetAllocation = subset_allocation as u32;
     }
 
@@ -31352,15 +31352,15 @@ impl<'s> MemoryAllocateFlagsInfoKhx<'s> {
         self.raw.deviceMask.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: MemoryAllocateFlagsKhx) {
+    pub fn set_flags<'m>(&mut self, flags: MemoryAllocateFlagsKhx) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_device_mask<'m>(&'s mut self, device_mask: u32) {
+    pub fn set_device_mask<'m>(&mut self, device_mask: u32) {
         self.raw.deviceMask = device_mask.into();
     }
 
@@ -31465,11 +31465,11 @@ impl<'s> BindBufferMemoryDeviceGroupInfoKhx<'s> {
         unsafe { slice::from_raw_parts(self.raw.pDeviceIndices as *const _, self.raw.deviceIndexCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_device_indices<'m, 'a>(&'s mut self, device_indices: &'a [u32]) {
+    pub fn set_device_indices<'m, 'a>(&mut self, device_indices: &'a [u32]) {
         assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as _, 
             "count inconsistency found when specifying `BindBufferMemoryDeviceGroupInfoKhx::device_indices`.");
         self.raw.deviceIndexCount = device_indices.len() as _;
@@ -31574,18 +31574,18 @@ impl<'s> BindImageMemoryDeviceGroupInfoKhx<'s> {
         unsafe { slice::from_raw_parts(self.raw.pSFRRects as *const _, self.raw.SFRRectCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_device_indices<'m, 'a>(&'s mut self, device_indices: &'a [u32]) {
+    pub fn set_device_indices<'m, 'a>(&mut self, device_indices: &'a [u32]) {
         assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as _, 
             "count inconsistency found when specifying `BindImageMemoryDeviceGroupInfoKhx::device_indices`.");
         self.raw.deviceIndexCount = device_indices.len() as _;
         self.raw.pDeviceIndices = device_indices.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_s_fr_rects<'m, 'a>(&'s mut self, s_fr_rects: &'a [Rect2d]) {
+    pub fn set_s_fr_rects<'m, 'a>(&mut self, s_fr_rects: &'a [Rect2d]) {
         assert!(self.raw.SFRRectCount == 0 || self.raw.SFRRectCount == s_fr_rects.len() as _, 
             "count inconsistency found when specifying `BindImageMemoryDeviceGroupInfoKhx::s_fr_rects`.");
         self.raw.SFRRectCount = s_fr_rects.len() as _;
@@ -31702,15 +31702,15 @@ impl<'s> DeviceGroupRenderPassBeginInfoKhx<'s> {
         unsafe { slice::from_raw_parts(self.raw.pDeviceRenderAreas as *const _, self.raw.deviceRenderAreaCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_device_mask<'m>(&'s mut self, device_mask: u32) {
+    pub fn set_device_mask<'m>(&mut self, device_mask: u32) {
         self.raw.deviceMask = device_mask.into();
     }
 
-    pub fn set_device_render_areas<'m, 'a>(&'s mut self, device_render_areas: &'a [Rect2d]) {
+    pub fn set_device_render_areas<'m, 'a>(&mut self, device_render_areas: &'a [Rect2d]) {
         assert!(self.raw.deviceRenderAreaCount == 0 || self.raw.deviceRenderAreaCount == device_render_areas.len() as _, 
             "count inconsistency found when specifying `DeviceGroupRenderPassBeginInfoKhx::device_render_areas`.");
         self.raw.deviceRenderAreaCount = device_render_areas.len() as _;
@@ -31820,11 +31820,11 @@ impl<'s> DeviceGroupCommandBufferBeginInfoKhx<'s> {
         self.raw.deviceMask.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_device_mask<'m>(&'s mut self, device_mask: u32) {
+    pub fn set_device_mask<'m>(&mut self, device_mask: u32) {
         self.raw.deviceMask = device_mask.into();
     }
 
@@ -31927,25 +31927,25 @@ impl<'s> DeviceGroupSubmitInfoKhx<'s> {
         unsafe { slice::from_raw_parts(self.raw.pSignalSemaphoreDeviceIndices as *const _, self.raw.signalSemaphoreCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_wait_semaphore_device_indices<'m, 'a>(&'s mut self, wait_semaphore_device_indices: &'a [u32]) {
+    pub fn set_wait_semaphore_device_indices<'m, 'a>(&mut self, wait_semaphore_device_indices: &'a [u32]) {
         assert!(self.raw.waitSemaphoreCount == 0 || self.raw.waitSemaphoreCount == wait_semaphore_device_indices.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::wait_semaphore_device_indices`.");
         self.raw.waitSemaphoreCount = wait_semaphore_device_indices.len() as _;
         self.raw.pWaitSemaphoreDeviceIndices = wait_semaphore_device_indices.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_command_buffer_device_masks<'m, 'a>(&'s mut self, command_buffer_device_masks: &'a [u32]) {
+    pub fn set_command_buffer_device_masks<'m, 'a>(&mut self, command_buffer_device_masks: &'a [u32]) {
         assert!(self.raw.commandBufferCount == 0 || self.raw.commandBufferCount == command_buffer_device_masks.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::command_buffer_device_masks`.");
         self.raw.commandBufferCount = command_buffer_device_masks.len() as _;
         self.raw.pCommandBufferDeviceMasks = command_buffer_device_masks.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_signal_semaphore_device_indices<'m, 'a>(&'s mut self, signal_semaphore_device_indices: &'a [u32]) {
+    pub fn set_signal_semaphore_device_indices<'m, 'a>(&mut self, signal_semaphore_device_indices: &'a [u32]) {
         assert!(self.raw.signalSemaphoreCount == 0 || self.raw.signalSemaphoreCount == signal_semaphore_device_indices.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::signal_semaphore_device_indices`.");
         self.raw.signalSemaphoreCount = signal_semaphore_device_indices.len() as _;
@@ -32074,15 +32074,15 @@ impl<'s> DeviceGroupBindSparseInfoKhx<'s> {
         self.raw.memoryDeviceIndex.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_resource_device_index<'m>(&'s mut self, resource_device_index: u32) {
+    pub fn set_resource_device_index<'m>(&mut self, resource_device_index: u32) {
         self.raw.resourceDeviceIndex = resource_device_index.into();
     }
 
-    pub fn set_memory_device_index<'m>(&'s mut self, memory_device_index: u32) {
+    pub fn set_memory_device_index<'m>(&mut self, memory_device_index: u32) {
         self.raw.memoryDeviceIndex = memory_device_index.into();
     }
 
@@ -32191,15 +32191,15 @@ impl<'s> DeviceGroupPresentCapabilitiesKhx<'s> {
             .expect("DeviceGroupPresentCapabilitiesKhx::modes: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_present_mask<'m>(&'s mut self, present_mask: [u32; vks::VK_MAX_DEVICE_GROUP_SIZE_KHX]) {
+    pub fn set_present_mask<'m>(&mut self, present_mask: [u32; vks::VK_MAX_DEVICE_GROUP_SIZE_KHX]) {
         self.raw.presentMask = present_mask;
     }
 
-    pub fn set_modes<'m>(&'s mut self, modes: DeviceGroupPresentModeFlagsKhx) {
+    pub fn set_modes<'m>(&mut self, modes: DeviceGroupPresentModeFlagsKhx) {
         self.raw.modes = modes.bits();
     }
 
@@ -32304,11 +32304,11 @@ impl<'s> ImageSwapchainCreateInfoKhx<'s> {
         self.raw.swapchain
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_swapchain<'m, 'a>(&'s mut self, swapchain: &'a Swapchain) {
+    pub fn set_swapchain<'m, 'a>(&mut self, swapchain: &'a Swapchain) {
         self.raw.swapchain = swapchain.handle();
     }
 
@@ -32407,15 +32407,15 @@ impl<'s> BindImageMemorySwapchainInfoKhx<'s> {
         self.raw.imageIndex.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_swapchain<'m, 'a>(&'s mut self, swapchain: &'a Swapchain) {
+    pub fn set_swapchain<'m, 'a>(&mut self, swapchain: &'a Swapchain) {
         self.raw.swapchain = swapchain.handle();
     }
 
-    pub fn set_image_index<'m>(&'s mut self, image_index: u32) {
+    pub fn set_image_index<'m>(&mut self, image_index: u32) {
         self.raw.imageIndex = image_index.into();
     }
 
@@ -32535,27 +32535,27 @@ impl<'s> AcquireNextImageInfoKhx<'s> {
         self.raw.deviceMask.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_swapchain<'m, 'a>(&'s mut self, swapchain: &'a Swapchain) {
+    pub fn set_swapchain<'m, 'a>(&mut self, swapchain: &'a Swapchain) {
         self.raw.swapchain = swapchain.handle();
     }
 
-    pub fn set_timeout<'m>(&'s mut self, timeout: u64) {
+    pub fn set_timeout<'m>(&mut self, timeout: u64) {
         self.raw.timeout = timeout.into();
     }
 
-    pub fn set_semaphore<'m, 'a>(&'s mut self, semaphore: &'a Semaphore) {
+    pub fn set_semaphore<'m, 'a>(&mut self, semaphore: &'a Semaphore) {
         self.raw.semaphore = semaphore.handle();
     }
 
-    pub fn set_fence<'m, 'a>(&'s mut self, fence: &'a Fence) {
+    pub fn set_fence<'m, 'a>(&mut self, fence: &'a Fence) {
         self.raw.fence = fence.handle();
     }
 
-    pub fn set_device_mask<'m>(&'s mut self, device_mask: u32) {
+    pub fn set_device_mask<'m>(&mut self, device_mask: u32) {
         self.raw.deviceMask = device_mask.into();
     }
 
@@ -32695,19 +32695,19 @@ impl<'s> DeviceGroupPresentInfoKhx<'s> {
             .expect("DeviceGroupPresentInfoKhx::mode: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_swapchain_count<'m>(&'s mut self, swapchain_count: u32) {
+    pub fn set_swapchain_count<'m>(&mut self, swapchain_count: u32) {
         self.raw.swapchainCount = swapchain_count.into();
     }
 
-    pub fn set_device_masks<'m, 'a>(&'s mut self, device_masks: &'a [u32]) {
+    pub fn set_device_masks<'m, 'a>(&mut self, device_masks: &'a [u32]) {
         self.raw.pDeviceMasks = device_masks.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_mode<'m>(&'s mut self, mode: DeviceGroupPresentModeFlagsKhx) {
+    pub fn set_mode<'m>(&mut self, mode: DeviceGroupPresentModeFlagsKhx) {
         self.raw.mode = mode.bits();
     }
 
@@ -32821,11 +32821,11 @@ impl<'s> DeviceGroupDeviceCreateInfoKhx<'s> {
         unsafe { slice::from_raw_parts(self.raw.pPhysicalDevices as *const _, self.raw.physicalDeviceCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_physical_devices<'m, 'a>(&'s mut self, physical_devices: &'a [&'a PhysicalDevice])
+    pub fn set_physical_devices<'m, 'a>(&mut self, physical_devices: &'a [&'a PhysicalDevice])
             where 'a: 's {
         self.physical_devices = Some(physical_devices.iter().map(|h| h.handle()).collect());
         {
@@ -32940,11 +32940,11 @@ impl<'s> DeviceGroupSwapchainCreateInfoKhx<'s> {
             .expect("DeviceGroupSwapchainCreateInfoKhx::modes: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_modes<'m>(&'s mut self, modes: DeviceGroupPresentModeFlagsKhx) {
+    pub fn set_modes<'m>(&mut self, modes: DeviceGroupPresentModeFlagsKhx) {
         self.raw.modes = modes.bits();
     }
 
@@ -33053,27 +33053,27 @@ impl DescriptorUpdateTemplateEntryKhr {
         self.raw.stride.into()
     }
 
-    pub fn set_dst_binding<'m>(& mut self, dst_binding: u32) {
+    pub fn set_dst_binding<'m>(&mut self, dst_binding: u32) {
         self.raw.dstBinding = dst_binding.into();
     }
 
-    pub fn set_dst_array_element<'m>(& mut self, dst_array_element: u32) {
+    pub fn set_dst_array_element<'m>(&mut self, dst_array_element: u32) {
         self.raw.dstArrayElement = dst_array_element.into();
     }
 
-    pub fn set_descriptor_count<'m>(& mut self, descriptor_count: u32) {
+    pub fn set_descriptor_count<'m>(&mut self, descriptor_count: u32) {
         self.raw.descriptorCount = descriptor_count.into();
     }
 
-    pub fn set_descriptor_type<'m>(& mut self, descriptor_type: DescriptorType) {
+    pub fn set_descriptor_type<'m>(&mut self, descriptor_type: DescriptorType) {
         self.raw.descriptorType = descriptor_type.into();
     }
 
-    pub fn set_offset<'m>(& mut self, offset: usize) {
+    pub fn set_offset<'m>(&mut self, offset: usize) {
         self.raw.offset = offset.into();
     }
 
-    pub fn set_stride<'m>(& mut self, stride: usize) {
+    pub fn set_stride<'m>(&mut self, stride: usize) {
         self.raw.stride = stride.into();
     }
 
@@ -33220,38 +33220,38 @@ impl<'s> DescriptorUpdateTemplateCreateInfoKhr<'s> {
         self.raw.set.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: DescriptorUpdateTemplateCreateFlagsKhr) {
+    pub fn set_flags<'m>(&mut self, flags: DescriptorUpdateTemplateCreateFlagsKhr) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_descriptor_update_entries<'m, 'a>(&'s mut self, descriptor_update_entries: &'a [DescriptorUpdateTemplateEntryKhr]) {
+    pub fn set_descriptor_update_entries<'m, 'a>(&mut self, descriptor_update_entries: &'a [DescriptorUpdateTemplateEntryKhr]) {
         assert!(self.raw.descriptorUpdateEntryCount == 0 || self.raw.descriptorUpdateEntryCount == descriptor_update_entries.len() as _, 
             "count inconsistency found when specifying `DescriptorUpdateTemplateCreateInfoKhr::descriptor_update_entries`.");
         self.raw.descriptorUpdateEntryCount = descriptor_update_entries.len() as _;
         self.raw.pDescriptorUpdateEntries = descriptor_update_entries.as_ptr() as *const vks::VkDescriptorUpdateTemplateEntryKHR as *const _;
     }
 
-    pub fn set_template_type<'m>(&'s mut self, template_type: DescriptorUpdateTemplateTypeKhr) {
+    pub fn set_template_type<'m>(&mut self, template_type: DescriptorUpdateTemplateTypeKhr) {
         self.raw.templateType = template_type.into();
     }
 
-    pub fn set_descriptor_set_layout<'m, 'a>(&'s mut self, descriptor_set_layout: &'a DescriptorSetLayout) {
+    pub fn set_descriptor_set_layout<'m, 'a>(&mut self, descriptor_set_layout: &'a DescriptorSetLayout) {
         self.raw.descriptorSetLayout = descriptor_set_layout.handle();
     }
 
-    pub fn set_pipeline_bind_point<'m>(&'s mut self, pipeline_bind_point: PipelineBindPoint) {
+    pub fn set_pipeline_bind_point<'m>(&mut self, pipeline_bind_point: PipelineBindPoint) {
         self.raw.pipelineBindPoint = pipeline_bind_point.into();
     }
 
-    pub fn set_pipeline_layout<'m, 'a>(&'s mut self, pipeline_layout: &'a PipelineLayout) {
+    pub fn set_pipeline_layout<'m, 'a>(&mut self, pipeline_layout: &'a PipelineLayout) {
         self.raw.pipelineLayout = pipeline_layout.handle();
     }
 
-    pub fn set_set<'m>(&'s mut self, set: u32) {
+    pub fn set_set<'m>(&mut self, set: u32) {
         self.raw.set = set.into();
     }
 
@@ -33397,11 +33397,11 @@ impl XYColorExt {
         self.raw.y.into()
     }
 
-    pub fn set_x<'m>(& mut self, x: f32) {
+    pub fn set_x<'m>(&mut self, x: f32) {
         self.raw.x = x.into();
     }
 
-    pub fn set_y<'m>(& mut self, y: f32) {
+    pub fn set_y<'m>(&mut self, y: f32) {
         self.raw.y = y.into();
     }
 
@@ -33515,39 +33515,39 @@ impl<'s> HdrMetadataExt<'s> {
         self.raw.maxFrameAverageLightLevel.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_display_primary_red<'m>(&'s mut self, display_primary_red: XYColorExt) {
+    pub fn set_display_primary_red<'m>(&mut self, display_primary_red: XYColorExt) {
         self.raw.displayPrimaryRed = display_primary_red.raw;
     }
 
-    pub fn set_display_primary_green<'m>(&'s mut self, display_primary_green: XYColorExt) {
+    pub fn set_display_primary_green<'m>(&mut self, display_primary_green: XYColorExt) {
         self.raw.displayPrimaryGreen = display_primary_green.raw;
     }
 
-    pub fn set_display_primary_blue<'m>(&'s mut self, display_primary_blue: XYColorExt) {
+    pub fn set_display_primary_blue<'m>(&mut self, display_primary_blue: XYColorExt) {
         self.raw.displayPrimaryBlue = display_primary_blue.raw;
     }
 
-    pub fn set_white_point<'m>(&'s mut self, white_point: XYColorExt) {
+    pub fn set_white_point<'m>(&mut self, white_point: XYColorExt) {
         self.raw.whitePoint = white_point.raw;
     }
 
-    pub fn set_max_luminance<'m>(&'s mut self, max_luminance: f32) {
+    pub fn set_max_luminance<'m>(&mut self, max_luminance: f32) {
         self.raw.maxLuminance = max_luminance.into();
     }
 
-    pub fn set_min_luminance<'m>(&'s mut self, min_luminance: f32) {
+    pub fn set_min_luminance<'m>(&mut self, min_luminance: f32) {
         self.raw.minLuminance = min_luminance.into();
     }
 
-    pub fn set_max_content_light_level<'m>(&'s mut self, max_content_light_level: f32) {
+    pub fn set_max_content_light_level<'m>(&mut self, max_content_light_level: f32) {
         self.raw.maxContentLightLevel = max_content_light_level.into();
     }
 
-    pub fn set_max_frame_average_light_level<'m>(&'s mut self, max_frame_average_light_level: f32) {
+    pub fn set_max_frame_average_light_level<'m>(&mut self, max_frame_average_light_level: f32) {
         self.raw.maxFrameAverageLightLevel = max_frame_average_light_level.into();
     }
 
@@ -33694,7 +33694,7 @@ impl RefreshCycleDurationGoogle {
         self.raw.refreshDuration.into()
     }
 
-    pub fn set_refresh_duration<'m>(& mut self, refresh_duration: u64) {
+    pub fn set_refresh_duration<'m>(&mut self, refresh_duration: u64) {
         self.raw.refreshDuration = refresh_duration.into();
     }
 
@@ -33782,23 +33782,23 @@ impl PastPresentationTimingGoogle {
         self.raw.presentMargin.into()
     }
 
-    pub fn set_present_id<'m>(& mut self, present_id: u32) {
+    pub fn set_present_id<'m>(&mut self, present_id: u32) {
         self.raw.presentID = present_id.into();
     }
 
-    pub fn set_desired_present_time<'m>(& mut self, desired_present_time: u64) {
+    pub fn set_desired_present_time<'m>(&mut self, desired_present_time: u64) {
         self.raw.desiredPresentTime = desired_present_time.into();
     }
 
-    pub fn set_actual_present_time<'m>(& mut self, actual_present_time: u64) {
+    pub fn set_actual_present_time<'m>(&mut self, actual_present_time: u64) {
         self.raw.actualPresentTime = actual_present_time.into();
     }
 
-    pub fn set_earliest_present_time<'m>(& mut self, earliest_present_time: u64) {
+    pub fn set_earliest_present_time<'m>(&mut self, earliest_present_time: u64) {
         self.raw.earliestPresentTime = earliest_present_time.into();
     }
 
-    pub fn set_present_margin<'m>(& mut self, present_margin: u64) {
+    pub fn set_present_margin<'m>(&mut self, present_margin: u64) {
         self.raw.presentMargin = present_margin.into();
     }
 
@@ -33911,11 +33911,11 @@ impl<'s> PresentTimesInfoGoogle<'s> {
         unsafe { slice::from_raw_parts(self.raw.pTimes as *const _, self.raw.swapchainCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_times<'m, 'a>(&'s mut self, times: &'a [PresentTimeGoogle]) {
+    pub fn set_times<'m, 'a>(&mut self, times: &'a [PresentTimeGoogle]) {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == times.len() as _, 
             "count inconsistency found when specifying `PresentTimesInfoGoogle::times`.");
         self.raw.swapchainCount = times.len() as _;
@@ -34009,11 +34009,11 @@ impl PresentTimeGoogle {
         self.raw.desiredPresentTime.into()
     }
 
-    pub fn set_present_id<'m>(& mut self, present_id: u32) {
+    pub fn set_present_id<'m>(&mut self, present_id: u32) {
         self.raw.presentID = present_id.into();
     }
 
-    pub fn set_desired_present_time<'m>(& mut self, desired_present_time: u64) {
+    pub fn set_desired_present_time<'m>(&mut self, desired_present_time: u64) {
         self.raw.desiredPresentTime = desired_present_time.into();
     }
 
@@ -34104,15 +34104,15 @@ impl<'s> IosSurfaceCreateInfoMvk<'s> {
         self.raw.pView
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: IosSurfaceCreateFlagsMvk) {
+    pub fn set_flags<'m>(&mut self, flags: IosSurfaceCreateFlagsMvk) {
         self.raw.flags = flags.bits();
     }
 
-    pub unsafe fn set_view<'m>(&'s mut self, view: *const c_void) {
+    pub unsafe fn set_view<'m>(&mut self, view: *const c_void) {
         self.raw.pView = view;
     }
 
@@ -34216,15 +34216,15 @@ impl<'s> MacOsSurfaceCreateInfoMvk<'s> {
         self.raw.pView
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: MacOsSurfaceCreateFlagsMvk) {
+    pub fn set_flags<'m>(&mut self, flags: MacOsSurfaceCreateFlagsMvk) {
         self.raw.flags = flags.bits();
     }
 
-    pub unsafe fn set_view<'m>(&'s mut self, view: *const c_void) {
+    pub unsafe fn set_view<'m>(&mut self, view: *const c_void) {
         self.raw.pView = view;
     }
 
@@ -34322,11 +34322,11 @@ impl ViewportWScalingNv {
         self.raw.ycoeff.into()
     }
 
-    pub fn set_xcoeff<'m>(& mut self, xcoeff: f32) {
+    pub fn set_xcoeff<'m>(&mut self, xcoeff: f32) {
         self.raw.xcoeff = xcoeff.into();
     }
 
-    pub fn set_ycoeff<'m>(& mut self, ycoeff: f32) {
+    pub fn set_ycoeff<'m>(&mut self, ycoeff: f32) {
         self.raw.ycoeff = ycoeff.into();
     }
 
@@ -34416,15 +34416,15 @@ impl<'s> PipelineViewportWScalingStateCreateInfoNv<'s> {
         unsafe { slice::from_raw_parts(self.raw.pViewportWScalings as *const _, self.raw.viewportCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_viewport_wscaling_enable<'m>(&'s mut self, viewport_wscaling_enable: bool) {
+    pub fn set_viewport_wscaling_enable<'m>(&mut self, viewport_wscaling_enable: bool) {
         self.raw.viewportWScalingEnable = viewport_wscaling_enable as u32;
     }
 
-    pub fn set_viewport_wscalings<'m, 'a>(&'s mut self, viewport_wscalings: &'a [ViewportWScalingNv]) {
+    pub fn set_viewport_wscalings<'m, 'a>(&mut self, viewport_wscalings: &'a [ViewportWScalingNv]) {
         assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewport_wscalings.len() as _, 
             "count inconsistency found when specifying `PipelineViewportWScalingStateCreateInfoNv::viewport_wscalings`.");
         self.raw.viewportCount = viewport_wscalings.len() as _;
@@ -34535,19 +34535,19 @@ impl ViewportSwizzleNv {
         self.raw.w.into()
     }
 
-    pub fn set_x<'m>(& mut self, x: ViewportCoordinateSwizzleNv) {
+    pub fn set_x<'m>(&mut self, x: ViewportCoordinateSwizzleNv) {
         self.raw.x = x.into();
     }
 
-    pub fn set_y<'m>(& mut self, y: ViewportCoordinateSwizzleNv) {
+    pub fn set_y<'m>(&mut self, y: ViewportCoordinateSwizzleNv) {
         self.raw.y = y.into();
     }
 
-    pub fn set_z<'m>(& mut self, z: ViewportCoordinateSwizzleNv) {
+    pub fn set_z<'m>(&mut self, z: ViewportCoordinateSwizzleNv) {
         self.raw.z = z.into();
     }
 
-    pub fn set_w<'m>(& mut self, w: ViewportCoordinateSwizzleNv) {
+    pub fn set_w<'m>(&mut self, w: ViewportCoordinateSwizzleNv) {
         self.raw.w = w.into();
     }
 
@@ -34656,15 +34656,15 @@ impl<'s> PipelineViewportSwizzleStateCreateInfoNv<'s> {
         unsafe { slice::from_raw_parts(self.raw.pViewportSwizzles as *const _, self.raw.viewportCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineViewportSwizzleStateCreateFlagsNv) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineViewportSwizzleStateCreateFlagsNv) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_viewport_swizzles<'m, 'a>(&'s mut self, viewport_swizzles: &'a [ViewportSwizzleNv]) {
+    pub fn set_viewport_swizzles<'m, 'a>(&mut self, viewport_swizzles: &'a [ViewportSwizzleNv]) {
         assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewport_swizzles.len() as _, 
             "count inconsistency found when specifying `PipelineViewportSwizzleStateCreateInfoNv::viewport_swizzles`.");
         self.raw.viewportCount = viewport_swizzles.len() as _;
@@ -34769,11 +34769,11 @@ impl<'s> PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
         self.raw.maxDiscardRectangles.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_max_discard_rectangles<'m>(&'s mut self, max_discard_rectangles: u32) {
+    pub fn set_max_discard_rectangles<'m>(&mut self, max_discard_rectangles: u32) {
         self.raw.maxDiscardRectangles = max_discard_rectangles.into();
     }
 
@@ -34871,19 +34871,19 @@ impl<'s> PipelineDiscardRectangleStateCreateInfoExt<'s> {
         unsafe { slice::from_raw_parts(self.raw.pDiscardRectangles as *const _, self.raw.discardRectangleCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineDiscardRectangleStateCreateFlagsExt) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineDiscardRectangleStateCreateFlagsExt) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_discard_rectangle_mode<'m>(&'s mut self, discard_rectangle_mode: DiscardRectangleModeExt) {
+    pub fn set_discard_rectangle_mode<'m>(&mut self, discard_rectangle_mode: DiscardRectangleModeExt) {
         self.raw.discardRectangleMode = discard_rectangle_mode.into();
     }
 
-    pub fn set_discard_rectangles<'m, 'a>(&'s mut self, discard_rectangles: &'a [Rect2d]) {
+    pub fn set_discard_rectangles<'m, 'a>(&mut self, discard_rectangles: &'a [Rect2d]) {
         assert!(self.raw.discardRectangleCount == 0 || self.raw.discardRectangleCount == discard_rectangles.len() as _, 
             "count inconsistency found when specifying `PipelineDiscardRectangleStateCreateInfoExt::discard_rectangles`.");
         self.raw.discardRectangleCount = discard_rectangles.len() as _;
@@ -34999,11 +34999,11 @@ impl<'s> PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
         self.raw.perViewPositionAllComponents != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_per_view_position_all_components<'m>(&'s mut self, per_view_position_all_components: bool) {
+    pub fn set_per_view_position_all_components<'m>(&mut self, per_view_position_all_components: bool) {
         self.raw.perViewPositionAllComponents = per_view_position_all_components as u32;
     }
 
@@ -35096,11 +35096,11 @@ impl<'s> PhysicalDeviceSurfaceInfo2Khr<'s> {
         self.raw.surface
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_surface<'m, 'a>(&'s mut self, surface: &'a Surface) {
+    pub fn set_surface<'m, 'a>(&mut self, surface: &'a Surface) {
         self.raw.surface = surface.handle();
     }
 
@@ -35189,11 +35189,11 @@ impl<'s> SurfaceCapabilities2Khr<'s> {
         self.raw.surfaceCapabilities.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_surface_capabilities<'m>(&'s mut self, surface_capabilities: SurfaceCapabilitiesKhr) {
+    pub fn set_surface_capabilities<'m>(&mut self, surface_capabilities: SurfaceCapabilitiesKhr) {
         self.raw.surfaceCapabilities = surface_capabilities.raw;
     }
 
@@ -35282,11 +35282,11 @@ impl<'s> SurfaceFormat2Khr<'s> {
         self.raw.surfaceFormat.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_surface_format<'m>(&'s mut self, surface_format: SurfaceFormatKhr) {
+    pub fn set_surface_format<'m>(&mut self, surface_format: SurfaceFormatKhr) {
         self.raw.surfaceFormat = surface_format.raw;
     }
 
@@ -35376,11 +35376,11 @@ impl<'s> SharedPresentSurfaceCapabilitiesKhr<'s> {
             .expect("SharedPresentSurfaceCapabilitiesKhr::shared_present_supported_usage_flags: error converting flags")
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_shared_present_supported_usage_flags<'m>(&'s mut self, shared_present_supported_usage_flags: ImageUsageFlags) {
+    pub fn set_shared_present_supported_usage_flags<'m>(&mut self, shared_present_supported_usage_flags: ImageUsageFlags) {
         self.raw.sharedPresentSupportedUsageFlags = shared_present_supported_usage_flags.bits();
     }
 
@@ -35482,23 +35482,23 @@ impl<'s> PhysicalDevice16BitStorageFeaturesKhr<'s> {
         self.raw.storageInputOutput16 != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_storage_buffer_16_bit_access<'m>(&'s mut self, storage_buffer_16_bit_access: bool) {
+    pub fn set_storage_buffer_16_bit_access<'m>(&mut self, storage_buffer_16_bit_access: bool) {
         self.raw.storageBuffer16BitAccess = storage_buffer_16_bit_access as u32;
     }
 
-    pub fn set_uniform_and_storage_buffer_16_bit_access<'m>(&'s mut self, uniform_and_storage_buffer_16_bit_access: bool) {
+    pub fn set_uniform_and_storage_buffer_16_bit_access<'m>(&mut self, uniform_and_storage_buffer_16_bit_access: bool) {
         self.raw.uniformAndStorageBuffer16BitAccess = uniform_and_storage_buffer_16_bit_access as u32;
     }
 
-    pub fn set_storage_push_constant_16<'m>(&'s mut self, storage_push_constant_16: bool) {
+    pub fn set_storage_push_constant_16<'m>(&mut self, storage_push_constant_16: bool) {
         self.raw.storagePushConstant16 = storage_push_constant_16 as u32;
     }
 
-    pub fn set_storage_input_output_16<'m>(&'s mut self, storage_input_output_16: bool) {
+    pub fn set_storage_input_output_16<'m>(&mut self, storage_input_output_16: bool) {
         self.raw.storageInputOutput16 = storage_input_output_16 as u32;
     }
 
@@ -35614,11 +35614,11 @@ impl<'s> BufferMemoryRequirementsInfo2Khr<'s> {
         self.raw.buffer
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_buffer<'m, 'a>(&'s mut self, buffer: &'a Buffer) {
+    pub fn set_buffer<'m, 'a>(&mut self, buffer: &'a Buffer) {
         self.raw.buffer = buffer.handle();
     }
 
@@ -35707,11 +35707,11 @@ impl<'s> ImageMemoryRequirementsInfo2Khr<'s> {
         self.raw.image
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_image<'m, 'a>(&'s mut self, image: &'a Image) {
+    pub fn set_image<'m, 'a>(&mut self, image: &'a Image) {
         self.raw.image = image.handle();
     }
 
@@ -35800,11 +35800,11 @@ impl<'s> ImageSparseMemoryRequirementsInfo2Khr<'s> {
         self.raw.image
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_image<'m, 'a>(&'s mut self, image: &'a Image) {
+    pub fn set_image<'m, 'a>(&mut self, image: &'a Image) {
         self.raw.image = image.handle();
     }
 
@@ -35893,11 +35893,11 @@ impl<'s> MemoryRequirements2Khr<'s> {
         self.raw.memoryRequirements.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_memory_requirements<'m>(&'s mut self, memory_requirements: MemoryRequirements) {
+    pub fn set_memory_requirements<'m>(&mut self, memory_requirements: MemoryRequirements) {
         self.raw.memoryRequirements = memory_requirements.raw;
     }
 
@@ -35986,11 +35986,11 @@ impl<'s> SparseImageMemoryRequirements2Khr<'s> {
         self.raw.memoryRequirements.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_memory_requirements<'m>(&'s mut self, memory_requirements: SparseImageMemoryRequirements) {
+    pub fn set_memory_requirements<'m>(&mut self, memory_requirements: SparseImageMemoryRequirements) {
         self.raw.memoryRequirements = memory_requirements.raw;
     }
 
@@ -36083,15 +36083,15 @@ impl<'s> MemoryDedicatedRequirementsKhr<'s> {
         self.raw.requiresDedicatedAllocation != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_prefers_dedicated_allocation<'m>(&'s mut self, prefers_dedicated_allocation: bool) {
+    pub fn set_prefers_dedicated_allocation<'m>(&mut self, prefers_dedicated_allocation: bool) {
         self.raw.prefersDedicatedAllocation = prefers_dedicated_allocation as u32;
     }
 
-    pub fn set_requires_dedicated_allocation<'m>(&'s mut self, requires_dedicated_allocation: bool) {
+    pub fn set_requires_dedicated_allocation<'m>(&mut self, requires_dedicated_allocation: bool) {
         self.raw.requiresDedicatedAllocation = requires_dedicated_allocation as u32;
     }
 
@@ -36193,15 +36193,15 @@ impl<'s> MemoryDedicatedAllocateInfoKhr<'s> {
         self.raw.buffer
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_image<'m, 'a>(&'s mut self, image: &'a Image) {
+    pub fn set_image<'m, 'a>(&mut self, image: &'a Image) {
         self.raw.image = image.handle();
     }
 
-    pub fn set_buffer<'m, 'a>(&'s mut self, buffer: &'a Buffer) {
+    pub fn set_buffer<'m, 'a>(&mut self, buffer: &'a Buffer) {
         self.raw.buffer = buffer.handle();
     }
 
@@ -36299,11 +36299,11 @@ impl<'s> TextureLODGatherFormatPropertiesAmd<'s> {
         self.raw.supportsTextureGatherLODBiasAMD != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_supports_texture_gather_lo_dbias_am_d<'m>(&'s mut self, supports_texture_gather_lo_dbias_am_d: bool) {
+    pub fn set_supports_texture_gather_lo_dbias_am_d<'m>(&mut self, supports_texture_gather_lo_dbias_am_d: bool) {
         self.raw.supportsTextureGatherLODBiasAMD = supports_texture_gather_lo_dbias_am_d as u32;
     }
 
@@ -36401,19 +36401,19 @@ impl<'s> PipelineCoverageToColorStateCreateInfoNv<'s> {
         self.raw.coverageToColorLocation.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineCoverageToColorStateCreateFlagsNv) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineCoverageToColorStateCreateFlagsNv) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_coverage_to_color_enable<'m>(&'s mut self, coverage_to_color_enable: bool) {
+    pub fn set_coverage_to_color_enable<'m>(&mut self, coverage_to_color_enable: bool) {
         self.raw.coverageToColorEnable = coverage_to_color_enable as u32;
     }
 
-    pub fn set_coverage_to_color_location<'m>(&'s mut self, coverage_to_color_location: u32) {
+    pub fn set_coverage_to_color_location<'m>(&mut self, coverage_to_color_location: u32) {
         self.raw.coverageToColorLocation = coverage_to_color_location.into();
     }
 
@@ -36525,15 +36525,15 @@ impl<'s> PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
         self.raw.filterMinmaxImageComponentMapping != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_filter_minmax_single_component_formats<'m>(&'s mut self, filter_minmax_single_component_formats: bool) {
+    pub fn set_filter_minmax_single_component_formats<'m>(&mut self, filter_minmax_single_component_formats: bool) {
         self.raw.filterMinmaxSingleComponentFormats = filter_minmax_single_component_formats as u32;
     }
 
-    pub fn set_filter_minmax_image_component_mapping<'m>(&'s mut self, filter_minmax_image_component_mapping: bool) {
+    pub fn set_filter_minmax_image_component_mapping<'m>(&mut self, filter_minmax_image_component_mapping: bool) {
         self.raw.filterMinmaxImageComponentMapping = filter_minmax_image_component_mapping as u32;
     }
 
@@ -36631,11 +36631,11 @@ impl<'s> SamplerReductionModeCreateInfoExt<'s> {
         self.raw.reductionMode.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_reduction_mode<'m>(&'s mut self, reduction_mode: SamplerReductionModeExt) {
+    pub fn set_reduction_mode<'m>(&mut self, reduction_mode: SamplerReductionModeExt) {
         self.raw.reductionMode = reduction_mode.into();
     }
 
@@ -36724,11 +36724,11 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
         self.raw.advancedBlendCoherentOperations != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_advanced_blend_coherent_operations<'m>(&'s mut self, advanced_blend_coherent_operations: bool) {
+    pub fn set_advanced_blend_coherent_operations<'m>(&mut self, advanced_blend_coherent_operations: bool) {
         self.raw.advancedBlendCoherentOperations = advanced_blend_coherent_operations as u32;
     }
 
@@ -36837,31 +36837,31 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
         self.raw.advancedBlendAllOperations != 0
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *mut c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *mut c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_advanced_blend_max_color_attachments<'m>(&'s mut self, advanced_blend_max_color_attachments: u32) {
+    pub fn set_advanced_blend_max_color_attachments<'m>(&mut self, advanced_blend_max_color_attachments: u32) {
         self.raw.advancedBlendMaxColorAttachments = advanced_blend_max_color_attachments.into();
     }
 
-    pub fn set_advanced_blend_independent_blend<'m>(&'s mut self, advanced_blend_independent_blend: bool) {
+    pub fn set_advanced_blend_independent_blend<'m>(&mut self, advanced_blend_independent_blend: bool) {
         self.raw.advancedBlendIndependentBlend = advanced_blend_independent_blend as u32;
     }
 
-    pub fn set_advanced_blend_non_premultiplied_src_color<'m>(&'s mut self, advanced_blend_non_premultiplied_src_color: bool) {
+    pub fn set_advanced_blend_non_premultiplied_src_color<'m>(&mut self, advanced_blend_non_premultiplied_src_color: bool) {
         self.raw.advancedBlendNonPremultipliedSrcColor = advanced_blend_non_premultiplied_src_color as u32;
     }
 
-    pub fn set_advanced_blend_non_premultiplied_dst_color<'m>(&'s mut self, advanced_blend_non_premultiplied_dst_color: bool) {
+    pub fn set_advanced_blend_non_premultiplied_dst_color<'m>(&mut self, advanced_blend_non_premultiplied_dst_color: bool) {
         self.raw.advancedBlendNonPremultipliedDstColor = advanced_blend_non_premultiplied_dst_color as u32;
     }
 
-    pub fn set_advanced_blend_correlated_overlap<'m>(&'s mut self, advanced_blend_correlated_overlap: bool) {
+    pub fn set_advanced_blend_correlated_overlap<'m>(&mut self, advanced_blend_correlated_overlap: bool) {
         self.raw.advancedBlendCorrelatedOverlap = advanced_blend_correlated_overlap as u32;
     }
 
-    pub fn set_advanced_blend_all_operations<'m>(&'s mut self, advanced_blend_all_operations: bool) {
+    pub fn set_advanced_blend_all_operations<'m>(&mut self, advanced_blend_all_operations: bool) {
         self.raw.advancedBlendAllOperations = advanced_blend_all_operations as u32;
     }
 
@@ -37003,19 +37003,19 @@ impl<'s> PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
         self.raw.blendOverlap.into()
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_src_premultiplied<'m>(&'s mut self, src_premultiplied: bool) {
+    pub fn set_src_premultiplied<'m>(&mut self, src_premultiplied: bool) {
         self.raw.srcPremultiplied = src_premultiplied as u32;
     }
 
-    pub fn set_dst_premultiplied<'m>(&'s mut self, dst_premultiplied: bool) {
+    pub fn set_dst_premultiplied<'m>(&mut self, dst_premultiplied: bool) {
         self.raw.dstPremultiplied = dst_premultiplied as u32;
     }
 
-    pub fn set_blend_overlap<'m>(&'s mut self, blend_overlap: BlendOverlapExt) {
+    pub fn set_blend_overlap<'m>(&mut self, blend_overlap: BlendOverlapExt) {
         self.raw.blendOverlap = blend_overlap.into();
     }
 
@@ -37135,23 +37135,23 @@ impl<'s> PipelineCoverageModulationStateCreateInfoNv<'s> {
         unsafe { slice::from_raw_parts(self.raw.pCoverageModulationTable as *const _, self.raw.coverageModulationTableCount as usize) }
     }
 
-    pub unsafe fn set_next<'m>(&'s mut self, next: *const c_void) {
+    pub unsafe fn set_next<'m>(&mut self, next: *const c_void) {
         self.raw.pNext = next;
     }
 
-    pub fn set_flags<'m>(&'s mut self, flags: PipelineCoverageModulationStateCreateFlagsNv) {
+    pub fn set_flags<'m>(&mut self, flags: PipelineCoverageModulationStateCreateFlagsNv) {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_coverage_modulation_mode<'m>(&'s mut self, coverage_modulation_mode: CoverageModulationModeNv) {
+    pub fn set_coverage_modulation_mode<'m>(&mut self, coverage_modulation_mode: CoverageModulationModeNv) {
         self.raw.coverageModulationMode = coverage_modulation_mode.into();
     }
 
-    pub fn set_coverage_modulation_table_enable<'m>(&'s mut self, coverage_modulation_table_enable: bool) {
+    pub fn set_coverage_modulation_table_enable<'m>(&mut self, coverage_modulation_table_enable: bool) {
         self.raw.coverageModulationTableEnable = coverage_modulation_table_enable as u32;
     }
 
-    pub fn set_coverage_modulation_table<'m, 'a>(&'s mut self, coverage_modulation_table: &'a [f32]) {
+    pub fn set_coverage_modulation_table<'m, 'a>(&mut self, coverage_modulation_table: &'a [f32]) {
         assert!(self.raw.coverageModulationTableCount == 0 || self.raw.coverageModulationTableCount == coverage_modulation_table.len() as _, 
             "count inconsistency found when specifying `PipelineCoverageModulationStateCreateInfoNv::coverage_modulation_table`.");
         self.raw.coverageModulationTableCount = coverage_modulation_table.len() as _;
