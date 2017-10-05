@@ -2,17 +2,25 @@
 use std::sync::Arc;
 use std::ptr;
 use vks;
-use ::{VooResult, Swapchain, Device, ImageHandle};
+use ::{VooResult, Swapchain, Device, ImageHandle, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct ImageViewHandle(pub(crate) vks::VkImageView);
 
+impl Handle for ImageViewHandle {
+    type Target = ImageViewHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug)]
 pub struct Inner {
-    handle: vks::VkImageView,
+    handle: ImageViewHandle,
     device: Device,
     swapchain: Option<Swapchain>,
 }
@@ -28,7 +36,7 @@ impl ImageView {
         ImageViewBuilder::new()
     }
 
-    pub fn handle(&self) -> vks::VkImageView {
+    pub fn handle(&self) -> ImageViewHandle {
         self.inner.handle
     }
 
@@ -38,11 +46,19 @@ impl ImageView {
     }
 }
 
+impl<'i> Handle for &'i ImageView {
+    type Target = ImageViewHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyImageView(self.device.handle(),
-                self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyImageView(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -60,7 +76,8 @@ impl<'b> ImageViewBuilder<'b> {
     }
 
     /// Specifies the image on which the view will be created.
-    pub fn image<'s>(&'s mut self, image: ImageHandle) -> &'s mut ImageViewBuilder<'b> {
+    pub fn image<'s, H>(&'s mut self, image: H) -> &'s mut ImageViewBuilder<'b>
+            where H: Handle<Target=ImageHandle> {
         self.create_info.set_image(image);
         self
     }
@@ -98,13 +115,13 @@ impl<'b> ImageViewBuilder<'b> {
         let mut handle = 0;
 
         unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateImageView(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreateImageView(device.handle().0,
                 self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         Ok(ImageView {
             inner: Arc::new(Inner {
-                handle,
+                handle: ImageViewHandle(handle),
                 device,
                 swapchain,
             })

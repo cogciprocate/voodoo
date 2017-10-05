@@ -7,7 +7,7 @@ use libc::c_char;
 use smallvec::SmallVec;
 use vks;
 use ::{VooResult, Instance, Surface, PhysicalDevice, SwapchainSupportDetails,
-    DeviceQueueCreateInfo, CharStrs, PhysicalDeviceFeatures, PRINT};
+    DeviceQueueCreateInfo, CharStrs, PhysicalDeviceFeatures, PRINT, Handle};
 use queue::{self, Queue};
 use instance;
 
@@ -16,10 +16,18 @@ use instance;
 #[repr(C)]
 pub struct DeviceHandle(pub(crate) vks::VkDevice);
 
+impl Handle for DeviceHandle {
+    type Target = DeviceHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkDevice,
+    handle: DeviceHandle,
     physical_device: PhysicalDevice,
     // features: vks::VkPhysicalDeviceFeatures,
     // queues: SmallVec<[u32; 32]>,
@@ -46,7 +54,7 @@ impl Device {
         assert!(self.inner.queue_family_indices.len() == 1,
             "Update this shitty queue family code.");
         unsafe {
-            self.proc_addr_loader().core.vkGetDeviceQueue(self.inner.handle,
+            self.proc_addr_loader().core.vkGetDeviceQueue(self.inner.handle.0,
                 self.inner.queue_family_indices[0], queue_idx,
                 &mut queue_handle);
         }
@@ -60,7 +68,7 @@ impl Device {
     }
 
     #[inline]
-    pub fn handle(&self) -> vks::VkDevice {
+    pub fn handle(&self) -> DeviceHandle {
         self.inner.handle
     }
 
@@ -107,10 +115,18 @@ impl Device {
         };
 
         unsafe {
-            self.proc_addr_loader().vkUpdateDescriptorSets(self.handle(),
+            self.proc_addr_loader().vkUpdateDescriptorSets(self.handle().0,
                 descriptor_writes_len, descriptor_writes_ptr as *const vks::VkWriteDescriptorSet,
                 descriptor_copies_len, descriptor_copies_ptr as *const vks::VkCopyDescriptorSet);
         }
+    }
+}
+
+impl<'h> Handle for &'h Device {
+    type Target = DeviceHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
     }
 }
 
@@ -118,7 +134,7 @@ impl Drop for Inner {
     fn drop(&mut self) {
         if PRINT { println!("Destroying device..."); }
         unsafe {
-            self.instance.proc_addr_loader().core.vkDestroyDevice(self.handle, ptr::null());
+            self.instance.proc_addr_loader().core.vkDestroyDevice(self.handle.0, ptr::null());
         }
     }
 }
@@ -221,7 +237,7 @@ impl<'db> DeviceBuilder<'db> {
                 // Device:
         let mut handle = ptr::null_mut();
         unsafe {
-            ::check(physical_device.instance().proc_addr_loader().core.vkCreateDevice(physical_device.handle(),
+            ::check(physical_device.instance().proc_addr_loader().core.vkCreateDevice(physical_device.handle().0,
                 self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
@@ -270,7 +286,7 @@ impl<'db> DeviceBuilder<'db> {
 
         Ok(Device {
             inner: Arc::new(Inner {
-                handle,
+                handle: DeviceHandle(handle),
                 physical_device,
                 // features,
                 queue_family_indices: queue_family_indices,

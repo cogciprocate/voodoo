@@ -4,17 +4,25 @@ use std::ptr;
 use std::marker::PhantomData;
 use vks;
 use smallvec::SmallVec;
-use ::{util, VooResult, Device, ShaderModule, DescriptorSetLayout};
+use ::{util, VooResult, Device, ShaderModule, DescriptorSetLayout, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct PipelineLayoutHandle(pub(crate) vks::VkPipelineLayout);
 
+impl Handle for PipelineLayoutHandle {
+    type Target = PipelineLayoutHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkPipelineLayout,
+    handle: PipelineLayoutHandle,
     device: Device,
 }
 
@@ -29,7 +37,7 @@ impl PipelineLayout {
         PipelineLayoutBuilder::new()
     }
 
-    pub fn handle(&self) -> vks::VkPipelineLayout {
+    pub fn handle(&self) -> PipelineLayoutHandle {
         self.inner.handle
     }
 
@@ -39,11 +47,19 @@ impl PipelineLayout {
     }
 }
 
+impl<'h> Handle for &'h PipelineLayout {
+    type Target = PipelineLayoutHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
 
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyPipelineLayout(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyPipelineLayout(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -104,13 +120,13 @@ impl<'b> PipelineLayoutBuilder<'b> {
     pub fn build(&self, device: Device) -> VooResult<PipelineLayout> {
         let mut handle = 0;
         unsafe {
-            ::check(device.proc_addr_loader().core.vkCreatePipelineLayout(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreatePipelineLayout(device.handle().0,
                 &self.create_info, ptr::null(), &mut handle));
         }
 
         Ok(PipelineLayout {
             inner: Arc::new(Inner {
-                handle,
+                handle: PipelineLayoutHandle(handle),
                 device,
             })
         })

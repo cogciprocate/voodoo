@@ -3063,8 +3063,9 @@ impl<'s> MappedMemoryRange<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_memory<'m>(&mut self, memory: DeviceMemoryHandle) {
-        self.raw.memory = memory.0;
+    pub fn set_memory<'m, H>(&mut self, memory: H)
+            where H: Handle<Target=DeviceMemoryHandle> {
+        self.raw.memory = memory.handle().0;
     }
 
     pub fn set_offset<'m>(&mut self, offset: u64) {
@@ -3115,8 +3116,9 @@ impl<'b> MappedMemoryRangeBuilder<'b> {
         self
     }
 
-    pub fn memory<'m>(mut self, memory: DeviceMemoryHandle) -> MappedMemoryRangeBuilder<'b> {
-        self.raw.memory = memory.0;
+    pub fn memory<'m, H>(mut self, memory: H) -> MappedMemoryRangeBuilder<'b>
+            where H: Handle<Target=DeviceMemoryHandle> {
+        self.raw.memory = memory.handle().0;
         self
     }
 
@@ -3435,8 +3437,9 @@ impl DescriptorBufferInfo {
         self.raw.range.into()
     }
 
-    pub fn set_buffer<'m>(&mut self, buffer: BufferHandle) {
-        self.raw.buffer = buffer.0;
+    pub fn set_buffer<'m, H>(&mut self, buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
     }
 
     pub fn set_offset<'m>(&mut self, offset: u64) {
@@ -3480,8 +3483,9 @@ impl DescriptorBufferInfoBuilder {
         }
     }
 
-    pub fn buffer<'m>(mut self, buffer: BufferHandle) -> DescriptorBufferInfoBuilder {
-        self.raw.buffer = buffer.0;
+    pub fn buffer<'m, H>(mut self, buffer: H) -> DescriptorBufferInfoBuilder
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
         self
     }
 
@@ -3541,12 +3545,14 @@ impl DescriptorImageInfo {
         self.raw.imageLayout.into()
     }
 
-    pub fn set_sampler<'m>(&mut self, sampler: SamplerHandle) {
-        self.raw.sampler = sampler.0;
+    pub fn set_sampler<'m, H>(&mut self, sampler: H)
+            where H: Handle<Target=SamplerHandle> {
+        self.raw.sampler = sampler.handle().0;
     }
 
-    pub fn set_image_view<'m>(&mut self, image_view: ImageViewHandle) {
-        self.raw.imageView = image_view.0;
+    pub fn set_image_view<'m, H>(&mut self, image_view: H)
+            where H: Handle<Target=ImageViewHandle> {
+        self.raw.imageView = image_view.handle().0;
     }
 
     pub fn set_image_layout<'m>(&mut self, image_layout: ImageLayout) {
@@ -3586,13 +3592,15 @@ impl DescriptorImageInfoBuilder {
         }
     }
 
-    pub fn sampler<'m>(mut self, sampler: SamplerHandle) -> DescriptorImageInfoBuilder {
-        self.raw.sampler = sampler.0;
+    pub fn sampler<'m, H>(mut self, sampler: H) -> DescriptorImageInfoBuilder
+            where H: Handle<Target=SamplerHandle> {
+        self.raw.sampler = sampler.handle().0;
         self
     }
 
-    pub fn image_view<'m>(mut self, image_view: ImageViewHandle) -> DescriptorImageInfoBuilder {
-        self.raw.imageView = image_view.0;
+    pub fn image_view<'m, H>(mut self, image_view: H) -> DescriptorImageInfoBuilder
+            where H: Handle<Target=ImageViewHandle> {
+        self.raw.imageView = image_view.handle().0;
         self
     }
 
@@ -3676,8 +3684,9 @@ impl<'s> WriteDescriptorSet<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_dst_set<'m>(&mut self, dst_set: DescriptorSetHandle) {
-        self.raw.dstSet = dst_set.0;
+    pub fn set_dst_set<'m, H>(&mut self, dst_set: H)
+            where H: Handle<Target=DescriptorSetHandle> {
+        self.raw.dstSet = dst_set.handle().0;
     }
 
     pub fn set_dst_binding<'m>(&mut self, dst_binding: u32) {
@@ -3706,8 +3715,9 @@ impl<'s> WriteDescriptorSet<'s> {
         self.raw.pBufferInfo = buffer_info.as_raw();
     }
 
-    pub fn set_texel_buffer_view<'m, 'a>(&mut self, texel_buffer_view: &'a BufferViewHandle) {
-        self.raw.pTexelBufferView = &texel_buffer_view.0;
+    pub fn set_texel_buffer_view<'m, 'a, H>(&mut self, texel_buffer_view: &'a H)
+            where H: Handle<Target=BufferViewHandle> {
+        self.raw.pTexelBufferView = &texel_buffer_view.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkWriteDescriptorSet {
@@ -3750,8 +3760,9 @@ impl<'b> WriteDescriptorSetBuilder<'b> {
         self
     }
 
-    pub fn dst_set<'m>(mut self, dst_set: DescriptorSetHandle) -> WriteDescriptorSetBuilder<'b> {
-        self.raw.dstSet = dst_set.0;
+    pub fn dst_set<'m, H>(mut self, dst_set: H) -> WriteDescriptorSetBuilder<'b>
+            where H: Handle<Target=DescriptorSetHandle> {
+        self.raw.dstSet = dst_set.handle().0;
         self
     }
 
@@ -3787,8 +3798,9 @@ impl<'b> WriteDescriptorSetBuilder<'b> {
         self
     }
 
-    pub fn texel_buffer_view<'m, 'a>(mut self, texel_buffer_view: &'a BufferViewHandle) -> WriteDescriptorSetBuilder<'b> {
-        self.raw.pTexelBufferView = &texel_buffer_view.0;
+    pub fn texel_buffer_view<'m, 'a, H>(mut self, texel_buffer_view: &'a H) -> WriteDescriptorSetBuilder<'b>
+            where H: Handle<Target=BufferViewHandle> {
+        self.raw.pTexelBufferView = &texel_buffer_view.handle().0;
         self
     }
 
@@ -3888,8 +3900,9 @@ impl<'s> CopyDescriptorSet<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_src_set<'m>(&mut self, src_set: DescriptorSetHandle) {
-        self.raw.srcSet = src_set.0;
+    pub fn set_src_set<'m, H>(&mut self, src_set: H)
+            where H: Handle<Target=DescriptorSetHandle> {
+        self.raw.srcSet = src_set.handle().0;
     }
 
     pub fn set_src_binding<'m>(&mut self, src_binding: u32) {
@@ -3900,8 +3913,9 @@ impl<'s> CopyDescriptorSet<'s> {
         self.raw.srcArrayElement = src_array_element.into();
     }
 
-    pub fn set_dst_set<'m>(&mut self, dst_set: DescriptorSetHandle) {
-        self.raw.dstSet = dst_set.0;
+    pub fn set_dst_set<'m, H>(&mut self, dst_set: H)
+            where H: Handle<Target=DescriptorSetHandle> {
+        self.raw.dstSet = dst_set.handle().0;
     }
 
     pub fn set_dst_binding<'m>(&mut self, dst_binding: u32) {
@@ -3956,8 +3970,9 @@ impl<'b> CopyDescriptorSetBuilder<'b> {
         self
     }
 
-    pub fn src_set<'m>(mut self, src_set: DescriptorSetHandle) -> CopyDescriptorSetBuilder<'b> {
-        self.raw.srcSet = src_set.0;
+    pub fn src_set<'m, H>(mut self, src_set: H) -> CopyDescriptorSetBuilder<'b>
+            where H: Handle<Target=DescriptorSetHandle> {
+        self.raw.srcSet = src_set.handle().0;
         self
     }
 
@@ -3971,8 +3986,9 @@ impl<'b> CopyDescriptorSetBuilder<'b> {
         self
     }
 
-    pub fn dst_set<'m>(mut self, dst_set: DescriptorSetHandle) -> CopyDescriptorSetBuilder<'b> {
-        self.raw.dstSet = dst_set.0;
+    pub fn dst_set<'m, H>(mut self, dst_set: H) -> CopyDescriptorSetBuilder<'b>
+            where H: Handle<Target=DescriptorSetHandle> {
+        self.raw.dstSet = dst_set.handle().0;
         self
     }
 
@@ -4251,8 +4267,9 @@ impl<'s> BufferViewCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_buffer<'m>(&mut self, buffer: BufferHandle) {
-        self.raw.buffer = buffer.0;
+    pub fn set_buffer<'m, H>(&mut self, buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
     }
 
     pub fn set_format<'m>(&mut self, format: Format) {
@@ -4312,8 +4329,9 @@ impl<'b> BufferViewCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn buffer<'m>(mut self, buffer: BufferHandle) -> BufferViewCreateInfoBuilder<'b> {
-        self.raw.buffer = buffer.0;
+    pub fn buffer<'m, H>(mut self, buffer: H) -> BufferViewCreateInfoBuilder<'b>
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
         self
     }
 
@@ -4924,8 +4942,9 @@ impl<'s> BufferMemoryBarrier<'s> {
         self.raw.dstQueueFamilyIndex = dst_queue_family_index.into();
     }
 
-    pub fn set_buffer<'m>(&mut self, buffer: BufferHandle) {
-        self.raw.buffer = buffer.0;
+    pub fn set_buffer<'m, H>(&mut self, buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
     }
 
     pub fn set_offset<'m>(&mut self, offset: u64) {
@@ -4996,8 +5015,9 @@ impl<'b> BufferMemoryBarrierBuilder<'b> {
         self
     }
 
-    pub fn buffer<'m>(mut self, buffer: BufferHandle) -> BufferMemoryBarrierBuilder<'b> {
-        self.raw.buffer = buffer.0;
+    pub fn buffer<'m, H>(mut self, buffer: H) -> BufferMemoryBarrierBuilder<'b>
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
         self
     }
 
@@ -5135,8 +5155,9 @@ impl<'s> ImageMemoryBarrier<'s> {
         self.raw.dstQueueFamilyIndex = dst_queue_family_index.into();
     }
 
-    pub fn set_image<'m>(&mut self, image: ImageHandle) {
-        self.raw.image = image.0;
+    pub fn set_image<'m, H>(&mut self, image: H)
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
     }
 
     pub fn set_subresource_range<'m>(&mut self, subresource_range: ImageSubresourceRange) {
@@ -5213,8 +5234,9 @@ impl<'b> ImageMemoryBarrierBuilder<'b> {
         self
     }
 
-    pub fn image<'m>(mut self, image: ImageHandle) -> ImageMemoryBarrierBuilder<'b> {
-        self.raw.image = image.0;
+    pub fn image<'m, H>(mut self, image: H) -> ImageMemoryBarrierBuilder<'b>
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
         self
     }
 
@@ -5754,8 +5776,9 @@ impl<'s> ImageViewCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_image<'m>(&mut self, image: ImageHandle) {
-        self.raw.image = image.0;
+    pub fn set_image<'m, H>(&mut self, image: H)
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
     }
 
     pub fn set_view_type<'m>(&mut self, view_type: ImageViewType) {
@@ -5819,8 +5842,9 @@ impl<'b> ImageViewCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn image<'m>(mut self, image: ImageHandle) -> ImageViewCreateInfoBuilder<'b> {
-        self.raw.image = image.0;
+    pub fn image<'m, H>(mut self, image: H) -> ImageViewCreateInfoBuilder<'b>
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
         self
     }
 
@@ -6031,8 +6055,9 @@ impl SparseMemoryBind {
         self.raw.size = size.into();
     }
 
-    pub fn set_memory<'m>(&mut self, memory: DeviceMemoryHandle) {
-        self.raw.memory = memory.0;
+    pub fn set_memory<'m, H>(&mut self, memory: H)
+            where H: Handle<Target=DeviceMemoryHandle> {
+        self.raw.memory = memory.handle().0;
     }
 
     pub fn set_memory_offset<'m>(&mut self, memory_offset: u64) {
@@ -6086,8 +6111,9 @@ impl SparseMemoryBindBuilder {
         self
     }
 
-    pub fn memory<'m>(mut self, memory: DeviceMemoryHandle) -> SparseMemoryBindBuilder {
-        self.raw.memory = memory.0;
+    pub fn memory<'m, H>(mut self, memory: H) -> SparseMemoryBindBuilder
+            where H: Handle<Target=DeviceMemoryHandle> {
+        self.raw.memory = memory.handle().0;
         self
     }
 
@@ -6181,8 +6207,9 @@ impl SparseImageMemoryBind {
         self.raw.extent = extent.raw;
     }
 
-    pub fn set_memory<'m>(&mut self, memory: DeviceMemoryHandle) {
-        self.raw.memory = memory.0;
+    pub fn set_memory<'m, H>(&mut self, memory: H)
+            where H: Handle<Target=DeviceMemoryHandle> {
+        self.raw.memory = memory.handle().0;
     }
 
     pub fn set_memory_offset<'m>(&mut self, memory_offset: u64) {
@@ -6241,8 +6268,9 @@ impl SparseImageMemoryBindBuilder {
         self
     }
 
-    pub fn memory<'m>(mut self, memory: DeviceMemoryHandle) -> SparseImageMemoryBindBuilder {
-        self.raw.memory = memory.0;
+    pub fn memory<'m, H>(mut self, memory: H) -> SparseImageMemoryBindBuilder
+            where H: Handle<Target=DeviceMemoryHandle> {
+        self.raw.memory = memory.handle().0;
         self
     }
 
@@ -6312,8 +6340,9 @@ impl<'s> SparseBufferMemoryBindInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pBinds as *const _, self.raw.bindCount as usize) }
     }
 
-    pub fn set_buffer<'m>(&mut self, buffer: BufferHandle) {
-        self.raw.buffer = buffer.0;
+    pub fn set_buffer<'m, H>(&mut self, buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
     }
 
     pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseMemoryBind]) {
@@ -6358,8 +6387,9 @@ impl<'b> SparseBufferMemoryBindInfoBuilder<'b> {
         }
     }
 
-    pub fn buffer<'m>(mut self, buffer: BufferHandle) -> SparseBufferMemoryBindInfoBuilder<'b> {
-        self.raw.buffer = buffer.0;
+    pub fn buffer<'m, H>(mut self, buffer: H) -> SparseBufferMemoryBindInfoBuilder<'b>
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
         self
     }
 
@@ -6411,8 +6441,9 @@ impl<'s> SparseImageOpaqueMemoryBindInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pBinds as *const _, self.raw.bindCount as usize) }
     }
 
-    pub fn set_image<'m>(&mut self, image: ImageHandle) {
-        self.raw.image = image.0;
+    pub fn set_image<'m, H>(&mut self, image: H)
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
     }
 
     pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseMemoryBind]) {
@@ -6457,8 +6488,9 @@ impl<'b> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
         }
     }
 
-    pub fn image<'m>(mut self, image: ImageHandle) -> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
-        self.raw.image = image.0;
+    pub fn image<'m, H>(mut self, image: H) -> SparseImageOpaqueMemoryBindInfoBuilder<'b>
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
         self
     }
 
@@ -6510,8 +6542,9 @@ impl<'s> SparseImageMemoryBindInfo<'s> {
         unsafe { slice::from_raw_parts(self.raw.pBinds as *const _, self.raw.bindCount as usize) }
     }
 
-    pub fn set_image<'m>(&mut self, image: ImageHandle) {
-        self.raw.image = image.0;
+    pub fn set_image<'m, H>(&mut self, image: H)
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
     }
 
     pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseImageMemoryBind]) {
@@ -6556,8 +6589,9 @@ impl<'b> SparseImageMemoryBindInfoBuilder<'b> {
         }
     }
 
-    pub fn image<'m>(mut self, image: ImageHandle) -> SparseImageMemoryBindInfoBuilder<'b> {
-        self.raw.image = image.0;
+    pub fn image<'m, H>(mut self, image: H) -> SparseImageMemoryBindInfoBuilder<'b>
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
         self
     }
 
@@ -7980,8 +8014,9 @@ impl<'s> DescriptorSetAllocateInfo<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_descriptor_pool<'m>(&mut self, descriptor_pool: DescriptorPoolHandle) {
-        self.raw.descriptorPool = descriptor_pool.0;
+    pub fn set_descriptor_pool<'m, H>(&mut self, descriptor_pool: H)
+            where H: Handle<Target=DescriptorPoolHandle> {
+        self.raw.descriptorPool = descriptor_pool.handle().0;
     }
 
     pub fn set_set_layouts<'m, 'a>(&mut self, set_layouts: &'a [DescriptorSetLayoutHandle])
@@ -8032,8 +8067,9 @@ impl<'b> DescriptorSetAllocateInfoBuilder<'b> {
         self
     }
 
-    pub fn descriptor_pool<'m>(mut self, descriptor_pool: DescriptorPoolHandle) -> DescriptorSetAllocateInfoBuilder<'b> {
-        self.raw.descriptorPool = descriptor_pool.0;
+    pub fn descriptor_pool<'m, H>(mut self, descriptor_pool: H) -> DescriptorSetAllocateInfoBuilder<'b>
+            where H: Handle<Target=DescriptorPoolHandle> {
+        self.raw.descriptorPool = descriptor_pool.handle().0;
         self
     }
 
@@ -8342,8 +8378,9 @@ impl<'s> PipelineShaderStageCreateInfo<'s> {
         self.raw.stage = stage.bits();
     }
 
-    pub fn set_module<'m>(&mut self, module: ShaderModuleHandle) {
-        self.raw.module = module.0;
+    pub fn set_module<'m, H>(&mut self, module: H)
+            where H: Handle<Target=ShaderModuleHandle> {
+        self.raw.module = module.handle().0;
     }
 
     pub fn set_name<'m, 'a>(&mut self, name: &'a CStr)
@@ -8406,8 +8443,9 @@ impl<'b> PipelineShaderStageCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn module<'m>(mut self, module: ShaderModuleHandle) -> PipelineShaderStageCreateInfoBuilder<'b> {
-        self.raw.module = module.0;
+    pub fn module<'m, H>(mut self, module: H) -> PipelineShaderStageCreateInfoBuilder<'b>
+            where H: Handle<Target=ShaderModuleHandle> {
+        self.raw.module = module.handle().0;
         self
     }
 
@@ -8510,12 +8548,14 @@ impl<'s> ComputePipelineCreateInfo<'s> {
         self.raw.stage = stage.raw;
     }
 
-    pub fn set_layout<'m>(&mut self, layout: PipelineLayoutHandle) {
-        self.raw.layout = layout.0;
+    pub fn set_layout<'m, H>(&mut self, layout: H)
+            where H: Handle<Target=PipelineLayoutHandle> {
+        self.raw.layout = layout.handle().0;
     }
 
-    pub fn set_base_pipeline_handle<'m>(&mut self, base_pipeline_handle: PipelineHandle) {
-        self.raw.basePipelineHandle = base_pipeline_handle.0;
+    pub fn set_base_pipeline_handle<'m, H>(&mut self, base_pipeline_handle: H)
+            where H: Handle<Target=PipelineHandle> {
+        self.raw.basePipelineHandle = base_pipeline_handle.handle().0;
     }
 
     pub fn set_base_pipeline_index<'m>(&mut self, base_pipeline_index: i32) {
@@ -8572,13 +8612,15 @@ impl<'b> ComputePipelineCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn layout<'m>(mut self, layout: PipelineLayoutHandle) -> ComputePipelineCreateInfoBuilder<'b> {
-        self.raw.layout = layout.0;
+    pub fn layout<'m, H>(mut self, layout: H) -> ComputePipelineCreateInfoBuilder<'b>
+            where H: Handle<Target=PipelineLayoutHandle> {
+        self.raw.layout = layout.handle().0;
         self
     }
 
-    pub fn base_pipeline_handle<'m>(mut self, base_pipeline_handle: PipelineHandle) -> ComputePipelineCreateInfoBuilder<'b> {
-        self.raw.basePipelineHandle = base_pipeline_handle.0;
+    pub fn base_pipeline_handle<'m, H>(mut self, base_pipeline_handle: H) -> ComputePipelineCreateInfoBuilder<'b>
+            where H: Handle<Target=PipelineHandle> {
+        self.raw.basePipelineHandle = base_pipeline_handle.handle().0;
         self
     }
 
@@ -10885,20 +10927,23 @@ impl<'s> GraphicsPipelineCreateInfo<'s> {
         self.raw.pDynamicState = dynamic_state.as_raw();
     }
 
-    pub fn set_layout<'m>(&mut self, layout: PipelineLayoutHandle) {
-        self.raw.layout = layout.0;
+    pub fn set_layout<'m, H>(&mut self, layout: H)
+            where H: Handle<Target=PipelineLayoutHandle> {
+        self.raw.layout = layout.handle().0;
     }
 
-    pub fn set_render_pass<'m>(&mut self, render_pass: RenderPassHandle) {
-        self.raw.renderPass = render_pass.0;
+    pub fn set_render_pass<'m, H>(&mut self, render_pass: H)
+            where H: Handle<Target=RenderPassHandle> {
+        self.raw.renderPass = render_pass.handle().0;
     }
 
     pub fn set_subpass<'m>(&mut self, subpass: u32) {
         self.raw.subpass = subpass.into();
     }
 
-    pub fn set_base_pipeline_handle<'m>(&mut self, base_pipeline_handle: PipelineHandle) {
-        self.raw.basePipelineHandle = base_pipeline_handle.0;
+    pub fn set_base_pipeline_handle<'m, H>(&mut self, base_pipeline_handle: H)
+            where H: Handle<Target=PipelineHandle> {
+        self.raw.basePipelineHandle = base_pipeline_handle.handle().0;
     }
 
     pub fn set_base_pipeline_index<'m>(&mut self, base_pipeline_index: i32) {
@@ -11012,13 +11057,15 @@ impl<'b> GraphicsPipelineCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn layout<'m>(mut self, layout: PipelineLayoutHandle) -> GraphicsPipelineCreateInfoBuilder<'b> {
-        self.raw.layout = layout.0;
+    pub fn layout<'m, H>(mut self, layout: H) -> GraphicsPipelineCreateInfoBuilder<'b>
+            where H: Handle<Target=PipelineLayoutHandle> {
+        self.raw.layout = layout.handle().0;
         self
     }
 
-    pub fn render_pass<'m>(mut self, render_pass: RenderPassHandle) -> GraphicsPipelineCreateInfoBuilder<'b> {
-        self.raw.renderPass = render_pass.0;
+    pub fn render_pass<'m, H>(mut self, render_pass: H) -> GraphicsPipelineCreateInfoBuilder<'b>
+            where H: Handle<Target=RenderPassHandle> {
+        self.raw.renderPass = render_pass.handle().0;
         self
     }
 
@@ -11027,8 +11074,9 @@ impl<'b> GraphicsPipelineCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn base_pipeline_handle<'m>(mut self, base_pipeline_handle: PipelineHandle) -> GraphicsPipelineCreateInfoBuilder<'b> {
-        self.raw.basePipelineHandle = base_pipeline_handle.0;
+    pub fn base_pipeline_handle<'m, H>(mut self, base_pipeline_handle: H) -> GraphicsPipelineCreateInfoBuilder<'b>
+            where H: Handle<Target=PipelineHandle> {
+        self.raw.basePipelineHandle = base_pipeline_handle.handle().0;
         self
     }
 
@@ -11992,8 +12040,9 @@ impl<'s> CommandBufferAllocateInfo<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_command_pool<'m>(&mut self, command_pool: CommandPoolHandle) {
-        self.raw.commandPool = command_pool.0;
+    pub fn set_command_pool<'m, H>(&mut self, command_pool: H)
+            where H: Handle<Target=CommandPoolHandle> {
+        self.raw.commandPool = command_pool.handle().0;
     }
 
     pub fn set_level<'m>(&mut self, level: CommandBufferLevel) {
@@ -12044,8 +12093,9 @@ impl<'b> CommandBufferAllocateInfoBuilder<'b> {
         self
     }
 
-    pub fn command_pool<'m>(mut self, command_pool: CommandPoolHandle) -> CommandBufferAllocateInfoBuilder<'b> {
-        self.raw.commandPool = command_pool.0;
+    pub fn command_pool<'m, H>(mut self, command_pool: H) -> CommandBufferAllocateInfoBuilder<'b>
+            where H: Handle<Target=CommandPoolHandle> {
+        self.raw.commandPool = command_pool.handle().0;
         self
     }
 
@@ -12133,16 +12183,18 @@ impl<'s> CommandBufferInheritanceInfo<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_render_pass<'m>(&mut self, render_pass: RenderPassHandle) {
-        self.raw.renderPass = render_pass.0;
+    pub fn set_render_pass<'m, H>(&mut self, render_pass: H)
+            where H: Handle<Target=RenderPassHandle> {
+        self.raw.renderPass = render_pass.handle().0;
     }
 
     pub fn set_subpass<'m>(&mut self, subpass: u32) {
         self.raw.subpass = subpass.into();
     }
 
-    pub fn set_framebuffer<'m>(&mut self, framebuffer: FramebufferHandle) {
-        self.raw.framebuffer = framebuffer.0;
+    pub fn set_framebuffer<'m, H>(&mut self, framebuffer: H)
+            where H: Handle<Target=FramebufferHandle> {
+        self.raw.framebuffer = framebuffer.handle().0;
     }
 
     pub fn set_occlusion_query_enable<'m>(&mut self, occlusion_query_enable: bool) {
@@ -12197,8 +12249,9 @@ impl<'b> CommandBufferInheritanceInfoBuilder<'b> {
         self
     }
 
-    pub fn render_pass<'m>(mut self, render_pass: RenderPassHandle) -> CommandBufferInheritanceInfoBuilder<'b> {
-        self.raw.renderPass = render_pass.0;
+    pub fn render_pass<'m, H>(mut self, render_pass: H) -> CommandBufferInheritanceInfoBuilder<'b>
+            where H: Handle<Target=RenderPassHandle> {
+        self.raw.renderPass = render_pass.handle().0;
         self
     }
 
@@ -12207,8 +12260,9 @@ impl<'b> CommandBufferInheritanceInfoBuilder<'b> {
         self
     }
 
-    pub fn framebuffer<'m>(mut self, framebuffer: FramebufferHandle) -> CommandBufferInheritanceInfoBuilder<'b> {
-        self.raw.framebuffer = framebuffer.0;
+    pub fn framebuffer<'m, H>(mut self, framebuffer: H) -> CommandBufferInheritanceInfoBuilder<'b>
+            where H: Handle<Target=FramebufferHandle> {
+        self.raw.framebuffer = framebuffer.handle().0;
         self
     }
 
@@ -12419,12 +12473,14 @@ impl<'s> RenderPassBeginInfo<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_render_pass<'m>(&mut self, render_pass: RenderPassHandle) {
-        self.raw.renderPass = render_pass.0;
+    pub fn set_render_pass<'m, H>(&mut self, render_pass: H)
+            where H: Handle<Target=RenderPassHandle> {
+        self.raw.renderPass = render_pass.handle().0;
     }
 
-    pub fn set_framebuffer<'m>(&mut self, framebuffer: FramebufferHandle) {
-        self.raw.framebuffer = framebuffer.0;
+    pub fn set_framebuffer<'m, H>(&mut self, framebuffer: H)
+            where H: Handle<Target=FramebufferHandle> {
+        self.raw.framebuffer = framebuffer.handle().0;
     }
 
     pub fn set_render_area<'m>(&mut self, render_area: Rect2d) {
@@ -12478,13 +12534,15 @@ impl<'b> RenderPassBeginInfoBuilder<'b> {
         self
     }
 
-    pub fn render_pass<'m>(mut self, render_pass: RenderPassHandle) -> RenderPassBeginInfoBuilder<'b> {
-        self.raw.renderPass = render_pass.0;
+    pub fn render_pass<'m, H>(mut self, render_pass: H) -> RenderPassBeginInfoBuilder<'b>
+            where H: Handle<Target=RenderPassHandle> {
+        self.raw.renderPass = render_pass.handle().0;
         self
     }
 
-    pub fn framebuffer<'m>(mut self, framebuffer: FramebufferHandle) -> RenderPassBeginInfoBuilder<'b> {
-        self.raw.framebuffer = framebuffer.0;
+    pub fn framebuffer<'m, H>(mut self, framebuffer: H) -> RenderPassBeginInfoBuilder<'b>
+            where H: Handle<Target=FramebufferHandle> {
+        self.raw.framebuffer = framebuffer.handle().0;
         self
     }
 
@@ -17072,8 +17130,9 @@ impl<'s> FramebufferCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_render_pass<'m>(&mut self, render_pass: RenderPassHandle) {
-        self.raw.renderPass = render_pass.0;
+    pub fn set_render_pass<'m, H>(&mut self, render_pass: H)
+            where H: Handle<Target=RenderPassHandle> {
+        self.raw.renderPass = render_pass.handle().0;
     }
 
     pub fn set_attachments<'m, 'a>(&mut self, attachments: &'a [ImageViewHandle])
@@ -17141,8 +17200,9 @@ impl<'b> FramebufferCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn render_pass<'m>(mut self, render_pass: RenderPassHandle) -> FramebufferCreateInfoBuilder<'b> {
-        self.raw.renderPass = render_pass.0;
+    pub fn render_pass<'m, H>(mut self, render_pass: H) -> FramebufferCreateInfoBuilder<'b>
+            where H: Handle<Target=RenderPassHandle> {
+        self.raw.renderPass = render_pass.handle().0;
         self
     }
 
@@ -17789,8 +17849,9 @@ impl<'s> DisplayPropertiesKhr<'s> {
         self.raw.persistentContent != 0
     }
 
-    pub fn set_display<'m>(&mut self, display: DisplayHandle) {
-        self.raw.display = display.0;
+    pub fn set_display<'m, H>(&mut self, display: H)
+            where H: Handle<Target=DisplayHandle> {
+        self.raw.display = display.handle().0;
     }
 
     pub fn set_display_name<'m, 'a>(&mut self, display_name: &'a CStr)
@@ -17853,8 +17914,9 @@ impl<'b> DisplayPropertiesKhrBuilder<'b> {
         }
     }
 
-    pub fn display<'m>(mut self, display: DisplayHandle) -> DisplayPropertiesKhrBuilder<'b> {
-        self.raw.display = display.0;
+    pub fn display<'m, H>(mut self, display: H) -> DisplayPropertiesKhrBuilder<'b>
+            where H: Handle<Target=DisplayHandle> {
+        self.raw.display = display.handle().0;
         self
     }
 
@@ -17949,8 +18011,9 @@ impl DisplayPlanePropertiesKhr {
         self.raw.currentStackIndex.into()
     }
 
-    pub fn set_current_display<'m>(&mut self, current_display: DisplayHandle) {
-        self.raw.currentDisplay = current_display.0;
+    pub fn set_current_display<'m, H>(&mut self, current_display: H)
+            where H: Handle<Target=DisplayHandle> {
+        self.raw.currentDisplay = current_display.handle().0;
     }
 
     pub fn set_current_stack_index<'m>(&mut self, current_stack_index: u32) {
@@ -17990,8 +18053,9 @@ impl DisplayPlanePropertiesKhrBuilder {
         }
     }
 
-    pub fn current_display<'m>(mut self, current_display: DisplayHandle) -> DisplayPlanePropertiesKhrBuilder {
-        self.raw.currentDisplay = current_display.0;
+    pub fn current_display<'m, H>(mut self, current_display: H) -> DisplayPlanePropertiesKhrBuilder
+            where H: Handle<Target=DisplayHandle> {
+        self.raw.currentDisplay = current_display.handle().0;
         self
     }
 
@@ -18127,8 +18191,9 @@ impl DisplayModePropertiesKhr {
         self.raw.parameters.into()
     }
 
-    pub fn set_display_mode<'m>(&mut self, display_mode: DisplayModeHandle) {
-        self.raw.displayMode = display_mode.0;
+    pub fn set_display_mode<'m, H>(&mut self, display_mode: H)
+            where H: Handle<Target=DisplayModeHandle> {
+        self.raw.displayMode = display_mode.handle().0;
     }
 
     pub fn set_parameters<'m>(&mut self, parameters: DisplayModeParametersKhr) {
@@ -18168,8 +18233,9 @@ impl DisplayModePropertiesKhrBuilder {
         }
     }
 
-    pub fn display_mode<'m>(mut self, display_mode: DisplayModeHandle) -> DisplayModePropertiesKhrBuilder {
-        self.raw.displayMode = display_mode.0;
+    pub fn display_mode<'m, H>(mut self, display_mode: H) -> DisplayModePropertiesKhrBuilder
+            where H: Handle<Target=DisplayModeHandle> {
+        self.raw.displayMode = display_mode.handle().0;
         self
     }
 
@@ -18578,8 +18644,9 @@ impl<'s> DisplaySurfaceCreateInfoKhr<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_display_mode<'m>(&mut self, display_mode: DisplayModeHandle) {
-        self.raw.displayMode = display_mode.0;
+    pub fn set_display_mode<'m, H>(&mut self, display_mode: H)
+            where H: Handle<Target=DisplayModeHandle> {
+        self.raw.displayMode = display_mode.handle().0;
     }
 
     pub fn set_plane_index<'m>(&mut self, plane_index: u32) {
@@ -18651,8 +18718,9 @@ impl<'b> DisplaySurfaceCreateInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn display_mode<'m>(mut self, display_mode: DisplayModeHandle) -> DisplaySurfaceCreateInfoKhrBuilder<'b> {
-        self.raw.displayMode = display_mode.0;
+    pub fn display_mode<'m, H>(mut self, display_mode: H) -> DisplaySurfaceCreateInfoKhrBuilder<'b>
+            where H: Handle<Target=DisplayModeHandle> {
+        self.raw.displayMode = display_mode.handle().0;
         self
     }
 
@@ -20143,8 +20211,9 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_surface<'m>(&mut self, surface: SurfaceHandle) {
-        self.raw.surface = surface.0;
+    pub fn set_surface<'m, H>(&mut self, surface: H)
+            where H: Handle<Target=SurfaceHandle> {
+        self.raw.surface = surface.handle().0;
     }
 
     pub fn set_min_image_count<'m>(&mut self, min_image_count: u32) {
@@ -20198,8 +20267,9 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
         self.raw.clipped = clipped as u32;
     }
 
-    pub fn set_old_swapchain<'m>(&mut self, old_swapchain: SwapchainHandle) {
-        self.raw.oldSwapchain = old_swapchain.0;
+    pub fn set_old_swapchain<'m, H>(&mut self, old_swapchain: H)
+            where H: Handle<Target=SwapchainHandle> {
+        self.raw.oldSwapchain = old_swapchain.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkSwapchainCreateInfoKHR {
@@ -20247,8 +20317,9 @@ impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn surface<'m>(mut self, surface: SurfaceHandle) -> SwapchainCreateInfoKhrBuilder<'b> {
-        self.raw.surface = surface.0;
+    pub fn surface<'m, H>(mut self, surface: H) -> SwapchainCreateInfoKhrBuilder<'b>
+            where H: Handle<Target=SurfaceHandle> {
+        self.raw.surface = surface.handle().0;
         self
     }
 
@@ -20315,8 +20386,9 @@ impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn old_swapchain<'m>(mut self, old_swapchain: SwapchainHandle) -> SwapchainCreateInfoKhrBuilder<'b> {
-        self.raw.oldSwapchain = old_swapchain.0;
+    pub fn old_swapchain<'m, H>(mut self, old_swapchain: H) -> SwapchainCreateInfoKhrBuilder<'b>
+            where H: Handle<Target=SwapchainHandle> {
+        self.raw.oldSwapchain = old_swapchain.handle().0;
         self
     }
 
@@ -21509,12 +21581,14 @@ impl<'s> DedicatedAllocationMemoryAllocateInfoNv<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_image<'m>(&mut self, image: ImageHandle) {
-        self.raw.image = image.0;
+    pub fn set_image<'m, H>(&mut self, image: H)
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
     }
 
-    pub fn set_buffer<'m>(&mut self, buffer: BufferHandle) {
-        self.raw.buffer = buffer.0;
+    pub fn set_buffer<'m, H>(&mut self, buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkDedicatedAllocationMemoryAllocateInfoNV {
@@ -21557,13 +21631,15 @@ impl<'b> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
         self
     }
 
-    pub fn image<'m>(mut self, image: ImageHandle) -> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
-        self.raw.image = image.0;
+    pub fn image<'m, H>(mut self, image: H) -> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b>
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
         self
     }
 
-    pub fn buffer<'m>(mut self, buffer: BufferHandle) -> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b> {
-        self.raw.buffer = buffer.0;
+    pub fn buffer<'m, H>(mut self, buffer: H) -> DedicatedAllocationMemoryAllocateInfoNvBuilder<'b>
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
         self
     }
 
@@ -22622,8 +22698,9 @@ impl IndirectCommandsTokenNvx {
         self.raw.tokenType = token_type.into();
     }
 
-    pub fn set_buffer<'m>(&mut self, buffer: BufferHandle) {
-        self.raw.buffer = buffer.0;
+    pub fn set_buffer<'m, H>(&mut self, buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
     }
 
     pub fn set_offset<'m>(&mut self, offset: u64) {
@@ -22672,8 +22749,9 @@ impl IndirectCommandsTokenNvxBuilder {
         self
     }
 
-    pub fn buffer<'m>(mut self, buffer: BufferHandle) -> IndirectCommandsTokenNvxBuilder {
-        self.raw.buffer = buffer.0;
+    pub fn buffer<'m, H>(mut self, buffer: H) -> IndirectCommandsTokenNvxBuilder
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
         self
     }
 
@@ -23033,12 +23111,14 @@ impl<'s> CmdProcessCommandsInfoNvx<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_object_table<'m>(&mut self, object_table: ObjectTableNvxHandle) {
-        self.raw.objectTable = object_table.0;
+    pub fn set_object_table<'m, H>(&mut self, object_table: H)
+            where H: Handle<Target=ObjectTableNvxHandle> {
+        self.raw.objectTable = object_table.handle().0;
     }
 
-    pub fn set_indirect_commands_layout<'m>(&mut self, indirect_commands_layout: IndirectCommandsLayoutNvxHandle) {
-        self.raw.indirectCommandsLayout = indirect_commands_layout.0;
+    pub fn set_indirect_commands_layout<'m, H>(&mut self, indirect_commands_layout: H)
+            where H: Handle<Target=IndirectCommandsLayoutNvxHandle> {
+        self.raw.indirectCommandsLayout = indirect_commands_layout.handle().0;
     }
 
     pub fn set_indirect_commands_tokens<'m, 'a>(&mut self, indirect_commands_tokens: &'a [IndirectCommandsTokenNvx]) {
@@ -23052,20 +23132,23 @@ impl<'s> CmdProcessCommandsInfoNvx<'s> {
         self.raw.maxSequencesCount = max_sequences_count.into();
     }
 
-    pub fn set_target_command_buffer<'m>(&mut self, target_command_buffer: CommandBufferHandle) {
-        self.raw.targetCommandBuffer = target_command_buffer.0;
+    pub fn set_target_command_buffer<'m, H>(&mut self, target_command_buffer: H)
+            where H: Handle<Target=CommandBufferHandle> {
+        self.raw.targetCommandBuffer = target_command_buffer.handle().0;
     }
 
-    pub fn set_sequences_count_buffer<'m>(&mut self, sequences_count_buffer: BufferHandle) {
-        self.raw.sequencesCountBuffer = sequences_count_buffer.0;
+    pub fn set_sequences_count_buffer<'m, H>(&mut self, sequences_count_buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.sequencesCountBuffer = sequences_count_buffer.handle().0;
     }
 
     pub fn set_sequences_count_offset<'m>(&mut self, sequences_count_offset: u64) {
         self.raw.sequencesCountOffset = sequences_count_offset.into();
     }
 
-    pub fn set_sequences_index_buffer<'m>(&mut self, sequences_index_buffer: BufferHandle) {
-        self.raw.sequencesIndexBuffer = sequences_index_buffer.0;
+    pub fn set_sequences_index_buffer<'m, H>(&mut self, sequences_index_buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.sequencesIndexBuffer = sequences_index_buffer.handle().0;
     }
 
     pub fn set_sequences_index_offset<'m>(&mut self, sequences_index_offset: u64) {
@@ -23116,13 +23199,15 @@ impl<'b> CmdProcessCommandsInfoNvxBuilder<'b> {
         self
     }
 
-    pub fn object_table<'m>(mut self, object_table: ObjectTableNvxHandle) -> CmdProcessCommandsInfoNvxBuilder<'b> {
-        self.raw.objectTable = object_table.0;
+    pub fn object_table<'m, H>(mut self, object_table: H) -> CmdProcessCommandsInfoNvxBuilder<'b>
+            where H: Handle<Target=ObjectTableNvxHandle> {
+        self.raw.objectTable = object_table.handle().0;
         self
     }
 
-    pub fn indirect_commands_layout<'m>(mut self, indirect_commands_layout: IndirectCommandsLayoutNvxHandle) -> CmdProcessCommandsInfoNvxBuilder<'b> {
-        self.raw.indirectCommandsLayout = indirect_commands_layout.0;
+    pub fn indirect_commands_layout<'m, H>(mut self, indirect_commands_layout: H) -> CmdProcessCommandsInfoNvxBuilder<'b>
+            where H: Handle<Target=IndirectCommandsLayoutNvxHandle> {
+        self.raw.indirectCommandsLayout = indirect_commands_layout.handle().0;
         self
     }
 
@@ -23139,13 +23224,15 @@ impl<'b> CmdProcessCommandsInfoNvxBuilder<'b> {
         self
     }
 
-    pub fn target_command_buffer<'m>(mut self, target_command_buffer: CommandBufferHandle) -> CmdProcessCommandsInfoNvxBuilder<'b> {
-        self.raw.targetCommandBuffer = target_command_buffer.0;
+    pub fn target_command_buffer<'m, H>(mut self, target_command_buffer: H) -> CmdProcessCommandsInfoNvxBuilder<'b>
+            where H: Handle<Target=CommandBufferHandle> {
+        self.raw.targetCommandBuffer = target_command_buffer.handle().0;
         self
     }
 
-    pub fn sequences_count_buffer<'m>(mut self, sequences_count_buffer: BufferHandle) -> CmdProcessCommandsInfoNvxBuilder<'b> {
-        self.raw.sequencesCountBuffer = sequences_count_buffer.0;
+    pub fn sequences_count_buffer<'m, H>(mut self, sequences_count_buffer: H) -> CmdProcessCommandsInfoNvxBuilder<'b>
+            where H: Handle<Target=BufferHandle> {
+        self.raw.sequencesCountBuffer = sequences_count_buffer.handle().0;
         self
     }
 
@@ -23154,8 +23241,9 @@ impl<'b> CmdProcessCommandsInfoNvxBuilder<'b> {
         self
     }
 
-    pub fn sequences_index_buffer<'m>(mut self, sequences_index_buffer: BufferHandle) -> CmdProcessCommandsInfoNvxBuilder<'b> {
-        self.raw.sequencesIndexBuffer = sequences_index_buffer.0;
+    pub fn sequences_index_buffer<'m, H>(mut self, sequences_index_buffer: H) -> CmdProcessCommandsInfoNvxBuilder<'b>
+            where H: Handle<Target=BufferHandle> {
+        self.raw.sequencesIndexBuffer = sequences_index_buffer.handle().0;
         self
     }
 
@@ -23250,12 +23338,14 @@ impl<'s> CmdReserveSpaceForCommandsInfoNvx<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_object_table<'m>(&mut self, object_table: ObjectTableNvxHandle) {
-        self.raw.objectTable = object_table.0;
+    pub fn set_object_table<'m, H>(&mut self, object_table: H)
+            where H: Handle<Target=ObjectTableNvxHandle> {
+        self.raw.objectTable = object_table.handle().0;
     }
 
-    pub fn set_indirect_commands_layout<'m>(&mut self, indirect_commands_layout: IndirectCommandsLayoutNvxHandle) {
-        self.raw.indirectCommandsLayout = indirect_commands_layout.0;
+    pub fn set_indirect_commands_layout<'m, H>(&mut self, indirect_commands_layout: H)
+            where H: Handle<Target=IndirectCommandsLayoutNvxHandle> {
+        self.raw.indirectCommandsLayout = indirect_commands_layout.handle().0;
     }
 
     pub fn set_max_sequences_count<'m>(&mut self, max_sequences_count: u32) {
@@ -23306,13 +23396,15 @@ impl<'b> CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
         self
     }
 
-    pub fn object_table<'m>(mut self, object_table: ObjectTableNvxHandle) -> CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
-        self.raw.objectTable = object_table.0;
+    pub fn object_table<'m, H>(mut self, object_table: H) -> CmdReserveSpaceForCommandsInfoNvxBuilder<'b>
+            where H: Handle<Target=ObjectTableNvxHandle> {
+        self.raw.objectTable = object_table.handle().0;
         self
     }
 
-    pub fn indirect_commands_layout<'m>(mut self, indirect_commands_layout: IndirectCommandsLayoutNvxHandle) -> CmdReserveSpaceForCommandsInfoNvxBuilder<'b> {
-        self.raw.indirectCommandsLayout = indirect_commands_layout.0;
+    pub fn indirect_commands_layout<'m, H>(mut self, indirect_commands_layout: H) -> CmdReserveSpaceForCommandsInfoNvxBuilder<'b>
+            where H: Handle<Target=IndirectCommandsLayoutNvxHandle> {
+        self.raw.indirectCommandsLayout = indirect_commands_layout.handle().0;
         self
     }
 
@@ -23716,8 +23808,9 @@ impl ObjectTablePipelineEntryNvx {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_pipeline<'m>(&mut self, pipeline: PipelineHandle) {
-        self.raw.pipeline = pipeline.0;
+    pub fn set_pipeline<'m, H>(&mut self, pipeline: H)
+            where H: Handle<Target=PipelineHandle> {
+        self.raw.pipeline = pipeline.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkObjectTablePipelineEntryNVX {
@@ -23767,8 +23860,9 @@ impl ObjectTablePipelineEntryNvxBuilder {
         self
     }
 
-    pub fn pipeline<'m>(mut self, pipeline: PipelineHandle) -> ObjectTablePipelineEntryNvxBuilder {
-        self.raw.pipeline = pipeline.0;
+    pub fn pipeline<'m, H>(mut self, pipeline: H) -> ObjectTablePipelineEntryNvxBuilder
+            where H: Handle<Target=PipelineHandle> {
+        self.raw.pipeline = pipeline.handle().0;
         self
     }
 
@@ -23834,12 +23928,14 @@ impl ObjectTableDescriptorSetEntryNvx {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_pipeline_layout<'m>(&mut self, pipeline_layout: PipelineLayoutHandle) {
-        self.raw.pipelineLayout = pipeline_layout.0;
+    pub fn set_pipeline_layout<'m, H>(&mut self, pipeline_layout: H)
+            where H: Handle<Target=PipelineLayoutHandle> {
+        self.raw.pipelineLayout = pipeline_layout.handle().0;
     }
 
-    pub fn set_descriptor_set<'m>(&mut self, descriptor_set: DescriptorSetHandle) {
-        self.raw.descriptorSet = descriptor_set.0;
+    pub fn set_descriptor_set<'m, H>(&mut self, descriptor_set: H)
+            where H: Handle<Target=DescriptorSetHandle> {
+        self.raw.descriptorSet = descriptor_set.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkObjectTableDescriptorSetEntryNVX {
@@ -23889,13 +23985,15 @@ impl ObjectTableDescriptorSetEntryNvxBuilder {
         self
     }
 
-    pub fn pipeline_layout<'m>(mut self, pipeline_layout: PipelineLayoutHandle) -> ObjectTableDescriptorSetEntryNvxBuilder {
-        self.raw.pipelineLayout = pipeline_layout.0;
+    pub fn pipeline_layout<'m, H>(mut self, pipeline_layout: H) -> ObjectTableDescriptorSetEntryNvxBuilder
+            where H: Handle<Target=PipelineLayoutHandle> {
+        self.raw.pipelineLayout = pipeline_layout.handle().0;
         self
     }
 
-    pub fn descriptor_set<'m>(mut self, descriptor_set: DescriptorSetHandle) -> ObjectTableDescriptorSetEntryNvxBuilder {
-        self.raw.descriptorSet = descriptor_set.0;
+    pub fn descriptor_set<'m, H>(mut self, descriptor_set: H) -> ObjectTableDescriptorSetEntryNvxBuilder
+            where H: Handle<Target=DescriptorSetHandle> {
+        self.raw.descriptorSet = descriptor_set.handle().0;
         self
     }
 
@@ -23961,8 +24059,9 @@ impl ObjectTableVertexBufferEntryNvx {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_buffer<'m>(&mut self, buffer: BufferHandle) {
-        self.raw.buffer = buffer.0;
+    pub fn set_buffer<'m, H>(&mut self, buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkObjectTableVertexBufferEntryNVX {
@@ -24012,8 +24111,9 @@ impl ObjectTableVertexBufferEntryNvxBuilder {
         self
     }
 
-    pub fn buffer<'m>(mut self, buffer: BufferHandle) -> ObjectTableVertexBufferEntryNvxBuilder {
-        self.raw.buffer = buffer.0;
+    pub fn buffer<'m, H>(mut self, buffer: H) -> ObjectTableVertexBufferEntryNvxBuilder
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
         self
     }
 
@@ -24079,8 +24179,9 @@ impl ObjectTableIndexBufferEntryNvx {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_buffer<'m>(&mut self, buffer: BufferHandle) {
-        self.raw.buffer = buffer.0;
+    pub fn set_buffer<'m, H>(&mut self, buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
     }
 
     pub fn set_index_type<'m>(&mut self, index_type: IndexType) {
@@ -24134,8 +24235,9 @@ impl ObjectTableIndexBufferEntryNvxBuilder {
         self
     }
 
-    pub fn buffer<'m>(mut self, buffer: BufferHandle) -> ObjectTableIndexBufferEntryNvxBuilder {
-        self.raw.buffer = buffer.0;
+    pub fn buffer<'m, H>(mut self, buffer: H) -> ObjectTableIndexBufferEntryNvxBuilder
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
         self
     }
 
@@ -24211,8 +24313,9 @@ impl ObjectTablePushConstantEntryNvx {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_pipeline_layout<'m>(&mut self, pipeline_layout: PipelineLayoutHandle) {
-        self.raw.pipelineLayout = pipeline_layout.0;
+    pub fn set_pipeline_layout<'m, H>(&mut self, pipeline_layout: H)
+            where H: Handle<Target=PipelineLayoutHandle> {
+        self.raw.pipelineLayout = pipeline_layout.handle().0;
     }
 
     pub fn set_stage_flags<'m>(&mut self, stage_flags: ShaderStageFlags) {
@@ -24266,8 +24369,9 @@ impl ObjectTablePushConstantEntryNvxBuilder {
         self
     }
 
-    pub fn pipeline_layout<'m>(mut self, pipeline_layout: PipelineLayoutHandle) -> ObjectTablePushConstantEntryNvxBuilder {
-        self.raw.pipelineLayout = pipeline_layout.0;
+    pub fn pipeline_layout<'m, H>(mut self, pipeline_layout: H) -> ObjectTablePushConstantEntryNvxBuilder
+            where H: Handle<Target=PipelineLayoutHandle> {
+        self.raw.pipelineLayout = pipeline_layout.handle().0;
         self
     }
 
@@ -27126,8 +27230,9 @@ impl<'s> MemoryGetWin32HandleInfoKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_memory<'m>(&mut self, memory: DeviceMemoryHandle) {
-        self.raw.memory = memory.0;
+    pub fn set_memory<'m, H>(&mut self, memory: H)
+            where H: Handle<Target=DeviceMemoryHandle> {
+        self.raw.memory = memory.handle().0;
     }
 
     pub fn set_handle_type<'m>(&mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
@@ -27174,8 +27279,9 @@ impl<'b> MemoryGetWin32HandleInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn memory<'m>(mut self, memory: DeviceMemoryHandle) -> MemoryGetWin32HandleInfoKhrBuilder<'b> {
-        self.raw.memory = memory.0;
+    pub fn memory<'m, H>(mut self, memory: H) -> MemoryGetWin32HandleInfoKhrBuilder<'b>
+            where H: Handle<Target=DeviceMemoryHandle> {
+        self.raw.memory = memory.handle().0;
         self
     }
 
@@ -27443,8 +27549,9 @@ impl<'s> MemoryGetFdInfoKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_memory<'m>(&mut self, memory: DeviceMemoryHandle) {
-        self.raw.memory = memory.0;
+    pub fn set_memory<'m, H>(&mut self, memory: H)
+            where H: Handle<Target=DeviceMemoryHandle> {
+        self.raw.memory = memory.handle().0;
     }
 
     pub fn set_handle_type<'m>(&mut self, handle_type: ExternalMemoryHandleTypeFlagsKhr) {
@@ -27491,8 +27598,9 @@ impl<'b> MemoryGetFdInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn memory<'m>(mut self, memory: DeviceMemoryHandle) -> MemoryGetFdInfoKhrBuilder<'b> {
-        self.raw.memory = memory.0;
+    pub fn memory<'m, H>(mut self, memory: H) -> MemoryGetFdInfoKhrBuilder<'b>
+            where H: Handle<Target=DeviceMemoryHandle> {
+        self.raw.memory = memory.handle().0;
         self
     }
 
@@ -28086,8 +28194,9 @@ impl<'s> ImportSemaphoreWin32HandleInfoKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_semaphore<'m>(&mut self, semaphore: SemaphoreHandle) {
-        self.raw.semaphore = semaphore.0;
+    pub fn set_semaphore<'m, H>(&mut self, semaphore: H)
+            where H: Handle<Target=SemaphoreHandle> {
+        self.raw.semaphore = semaphore.handle().0;
     }
 
     pub fn set_flags<'m>(&mut self, flags: SemaphoreImportFlagsKhr) {
@@ -28146,8 +28255,9 @@ impl<'b> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn semaphore<'m>(mut self, semaphore: SemaphoreHandle) -> ImportSemaphoreWin32HandleInfoKhrBuilder<'b> {
-        self.raw.semaphore = semaphore.0;
+    pub fn semaphore<'m, H>(mut self, semaphore: H) -> ImportSemaphoreWin32HandleInfoKhrBuilder<'b>
+            where H: Handle<Target=SemaphoreHandle> {
+        self.raw.semaphore = semaphore.handle().0;
         self
     }
 
@@ -28487,8 +28597,9 @@ impl<'s> SemaphoreGetWin32HandleInfoKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_semaphore<'m>(&mut self, semaphore: SemaphoreHandle) {
-        self.raw.semaphore = semaphore.0;
+    pub fn set_semaphore<'m, H>(&mut self, semaphore: H)
+            where H: Handle<Target=SemaphoreHandle> {
+        self.raw.semaphore = semaphore.handle().0;
     }
 
     pub fn set_handle_type<'m>(&mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
@@ -28535,8 +28646,9 @@ impl<'b> SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn semaphore<'m>(mut self, semaphore: SemaphoreHandle) -> SemaphoreGetWin32HandleInfoKhrBuilder<'b> {
-        self.raw.semaphore = semaphore.0;
+    pub fn semaphore<'m, H>(mut self, semaphore: H) -> SemaphoreGetWin32HandleInfoKhrBuilder<'b>
+            where H: Handle<Target=SemaphoreHandle> {
+        self.raw.semaphore = semaphore.handle().0;
         self
     }
 
@@ -28608,8 +28720,9 @@ impl<'s> ImportSemaphoreFdInfoKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_semaphore<'m>(&mut self, semaphore: SemaphoreHandle) {
-        self.raw.semaphore = semaphore.0;
+    pub fn set_semaphore<'m, H>(&mut self, semaphore: H)
+            where H: Handle<Target=SemaphoreHandle> {
+        self.raw.semaphore = semaphore.handle().0;
     }
 
     pub fn set_flags<'m>(&mut self, flags: SemaphoreImportFlagsKhr) {
@@ -28664,8 +28777,9 @@ impl<'b> ImportSemaphoreFdInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn semaphore<'m>(mut self, semaphore: SemaphoreHandle) -> ImportSemaphoreFdInfoKhrBuilder<'b> {
-        self.raw.semaphore = semaphore.0;
+    pub fn semaphore<'m, H>(mut self, semaphore: H) -> ImportSemaphoreFdInfoKhrBuilder<'b>
+            where H: Handle<Target=SemaphoreHandle> {
+        self.raw.semaphore = semaphore.handle().0;
         self
     }
 
@@ -28747,8 +28861,9 @@ impl<'s> SemaphoreGetFdInfoKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_semaphore<'m>(&mut self, semaphore: SemaphoreHandle) {
-        self.raw.semaphore = semaphore.0;
+    pub fn set_semaphore<'m, H>(&mut self, semaphore: H)
+            where H: Handle<Target=SemaphoreHandle> {
+        self.raw.semaphore = semaphore.handle().0;
     }
 
     pub fn set_handle_type<'m>(&mut self, handle_type: ExternalSemaphoreHandleTypeFlagsKhr) {
@@ -28795,8 +28910,9 @@ impl<'b> SemaphoreGetFdInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn semaphore<'m>(mut self, semaphore: SemaphoreHandle) -> SemaphoreGetFdInfoKhrBuilder<'b> {
-        self.raw.semaphore = semaphore.0;
+    pub fn semaphore<'m, H>(mut self, semaphore: H) -> SemaphoreGetFdInfoKhrBuilder<'b>
+            where H: Handle<Target=SemaphoreHandle> {
+        self.raw.semaphore = semaphore.handle().0;
         self
     }
 
@@ -29195,8 +29311,9 @@ impl<'s> ImportFenceWin32HandleInfoKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_fence<'m>(&mut self, fence: FenceHandle) {
-        self.raw.fence = fence.0;
+    pub fn set_fence<'m, H>(&mut self, fence: H)
+            where H: Handle<Target=FenceHandle> {
+        self.raw.fence = fence.handle().0;
     }
 
     pub fn set_flags<'m>(&mut self, flags: FenceImportFlagsKhr) {
@@ -29255,8 +29372,9 @@ impl<'b> ImportFenceWin32HandleInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn fence<'m>(mut self, fence: FenceHandle) -> ImportFenceWin32HandleInfoKhrBuilder<'b> {
-        self.raw.fence = fence.0;
+    pub fn fence<'m, H>(mut self, fence: H) -> ImportFenceWin32HandleInfoKhrBuilder<'b>
+            where H: Handle<Target=FenceHandle> {
+        self.raw.fence = fence.handle().0;
         self
     }
 
@@ -29474,8 +29592,9 @@ impl<'s> FenceGetWin32HandleInfoKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_fence<'m>(&mut self, fence: FenceHandle) {
-        self.raw.fence = fence.0;
+    pub fn set_fence<'m, H>(&mut self, fence: H)
+            where H: Handle<Target=FenceHandle> {
+        self.raw.fence = fence.handle().0;
     }
 
     pub fn set_handle_type<'m>(&mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
@@ -29522,8 +29641,9 @@ impl<'b> FenceGetWin32HandleInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn fence<'m>(mut self, fence: FenceHandle) -> FenceGetWin32HandleInfoKhrBuilder<'b> {
-        self.raw.fence = fence.0;
+    pub fn fence<'m, H>(mut self, fence: H) -> FenceGetWin32HandleInfoKhrBuilder<'b>
+            where H: Handle<Target=FenceHandle> {
+        self.raw.fence = fence.handle().0;
         self
     }
 
@@ -29595,8 +29715,9 @@ impl<'s> ImportFenceFdInfoKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_fence<'m>(&mut self, fence: FenceHandle) {
-        self.raw.fence = fence.0;
+    pub fn set_fence<'m, H>(&mut self, fence: H)
+            where H: Handle<Target=FenceHandle> {
+        self.raw.fence = fence.handle().0;
     }
 
     pub fn set_flags<'m>(&mut self, flags: FenceImportFlagsKhr) {
@@ -29651,8 +29772,9 @@ impl<'b> ImportFenceFdInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn fence<'m>(mut self, fence: FenceHandle) -> ImportFenceFdInfoKhrBuilder<'b> {
-        self.raw.fence = fence.0;
+    pub fn fence<'m, H>(mut self, fence: H) -> ImportFenceFdInfoKhrBuilder<'b>
+            where H: Handle<Target=FenceHandle> {
+        self.raw.fence = fence.handle().0;
         self
     }
 
@@ -29734,8 +29856,9 @@ impl<'s> FenceGetFdInfoKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_fence<'m>(&mut self, fence: FenceHandle) {
-        self.raw.fence = fence.0;
+    pub fn set_fence<'m, H>(&mut self, fence: H)
+            where H: Handle<Target=FenceHandle> {
+        self.raw.fence = fence.handle().0;
     }
 
     pub fn set_handle_type<'m>(&mut self, handle_type: ExternalFenceHandleTypeFlagsKhr) {
@@ -29782,8 +29905,9 @@ impl<'b> FenceGetFdInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn fence<'m>(mut self, fence: FenceHandle) -> FenceGetFdInfoKhrBuilder<'b> {
-        self.raw.fence = fence.0;
+    pub fn fence<'m, H>(mut self, fence: H) -> FenceGetFdInfoKhrBuilder<'b>
+            where H: Handle<Target=FenceHandle> {
+        self.raw.fence = fence.handle().0;
         self
     }
 
@@ -30925,7 +31049,7 @@ impl<'s> PhysicalDeviceGroupPropertiesKhx<'s> {
     }
 
     pub fn set_physical_devices<'m>(&mut self, physical_devices: [PhysicalDevice; vks::VK_MAX_DEVICE_GROUP_SIZE_KHX]) {
-        self.raw.physicalDevices = physical_devices.0;
+        self.raw.physicalDevices = physical_devices.handle().0;
     }
 
     pub fn set_subset_allocation<'m>(&mut self, subset_allocation: bool) {
@@ -30982,7 +31106,7 @@ impl<'b> PhysicalDeviceGroupPropertiesKhxBuilder<'b> {
     }
 
     pub fn physical_devices<'m>(mut self, physical_devices: [PhysicalDevice; vks::VK_MAX_DEVICE_GROUP_SIZE_KHX]) -> PhysicalDeviceGroupPropertiesKhxBuilder<'b> {
-        self.raw.physicalDevices = physical_devices.0;
+        self.raw.physicalDevices = physical_devices.handle().0;
         self
     }
 
@@ -32002,8 +32126,9 @@ impl<'s> ImageSwapchainCreateInfoKhx<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_swapchain<'m>(&mut self, swapchain: SwapchainHandle) {
-        self.raw.swapchain = swapchain.0;
+    pub fn set_swapchain<'m, H>(&mut self, swapchain: H)
+            where H: Handle<Target=SwapchainHandle> {
+        self.raw.swapchain = swapchain.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkImageSwapchainCreateInfoKHX {
@@ -32050,8 +32175,9 @@ impl<'b> ImageSwapchainCreateInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn swapchain<'m>(mut self, swapchain: SwapchainHandle) -> ImageSwapchainCreateInfoKhxBuilder<'b> {
-        self.raw.swapchain = swapchain.0;
+    pub fn swapchain<'m, H>(mut self, swapchain: H) -> ImageSwapchainCreateInfoKhxBuilder<'b>
+            where H: Handle<Target=SwapchainHandle> {
+        self.raw.swapchain = swapchain.handle().0;
         self
     }
 
@@ -32105,8 +32231,9 @@ impl<'s> BindImageMemorySwapchainInfoKhx<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_swapchain<'m>(&mut self, swapchain: SwapchainHandle) {
-        self.raw.swapchain = swapchain.0;
+    pub fn set_swapchain<'m, H>(&mut self, swapchain: H)
+            where H: Handle<Target=SwapchainHandle> {
+        self.raw.swapchain = swapchain.handle().0;
     }
 
     pub fn set_image_index<'m>(&mut self, image_index: u32) {
@@ -32157,8 +32284,9 @@ impl<'b> BindImageMemorySwapchainInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn swapchain<'m>(mut self, swapchain: SwapchainHandle) -> BindImageMemorySwapchainInfoKhxBuilder<'b> {
-        self.raw.swapchain = swapchain.0;
+    pub fn swapchain<'m, H>(mut self, swapchain: H) -> BindImageMemorySwapchainInfoKhxBuilder<'b>
+            where H: Handle<Target=SwapchainHandle> {
+        self.raw.swapchain = swapchain.handle().0;
         self
     }
 
@@ -32233,20 +32361,23 @@ impl<'s> AcquireNextImageInfoKhx<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_swapchain<'m>(&mut self, swapchain: SwapchainHandle) {
-        self.raw.swapchain = swapchain.0;
+    pub fn set_swapchain<'m, H>(&mut self, swapchain: H)
+            where H: Handle<Target=SwapchainHandle> {
+        self.raw.swapchain = swapchain.handle().0;
     }
 
     pub fn set_timeout<'m>(&mut self, timeout: u64) {
         self.raw.timeout = timeout.into();
     }
 
-    pub fn set_semaphore<'m>(&mut self, semaphore: SemaphoreHandle) {
-        self.raw.semaphore = semaphore.0;
+    pub fn set_semaphore<'m, H>(&mut self, semaphore: H)
+            where H: Handle<Target=SemaphoreHandle> {
+        self.raw.semaphore = semaphore.handle().0;
     }
 
-    pub fn set_fence<'m>(&mut self, fence: FenceHandle) {
-        self.raw.fence = fence.0;
+    pub fn set_fence<'m, H>(&mut self, fence: H)
+            where H: Handle<Target=FenceHandle> {
+        self.raw.fence = fence.handle().0;
     }
 
     pub fn set_device_mask<'m>(&mut self, device_mask: u32) {
@@ -32297,8 +32428,9 @@ impl<'b> AcquireNextImageInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn swapchain<'m>(mut self, swapchain: SwapchainHandle) -> AcquireNextImageInfoKhxBuilder<'b> {
-        self.raw.swapchain = swapchain.0;
+    pub fn swapchain<'m, H>(mut self, swapchain: H) -> AcquireNextImageInfoKhxBuilder<'b>
+            where H: Handle<Target=SwapchainHandle> {
+        self.raw.swapchain = swapchain.handle().0;
         self
     }
 
@@ -32307,13 +32439,15 @@ impl<'b> AcquireNextImageInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn semaphore<'m>(mut self, semaphore: SemaphoreHandle) -> AcquireNextImageInfoKhxBuilder<'b> {
-        self.raw.semaphore = semaphore.0;
+    pub fn semaphore<'m, H>(mut self, semaphore: H) -> AcquireNextImageInfoKhxBuilder<'b>
+            where H: Handle<Target=SemaphoreHandle> {
+        self.raw.semaphore = semaphore.handle().0;
         self
     }
 
-    pub fn fence<'m>(mut self, fence: FenceHandle) -> AcquireNextImageInfoKhxBuilder<'b> {
-        self.raw.fence = fence.0;
+    pub fn fence<'m, H>(mut self, fence: H) -> AcquireNextImageInfoKhxBuilder<'b>
+            where H: Handle<Target=FenceHandle> {
+        self.raw.fence = fence.handle().0;
         self
     }
 
@@ -32922,16 +33056,18 @@ impl<'s> DescriptorUpdateTemplateCreateInfoKhr<'s> {
         self.raw.templateType = template_type.into();
     }
 
-    pub fn set_descriptor_set_layout<'m>(&mut self, descriptor_set_layout: DescriptorSetLayoutHandle) {
-        self.raw.descriptorSetLayout = descriptor_set_layout.0;
+    pub fn set_descriptor_set_layout<'m, H>(&mut self, descriptor_set_layout: H)
+            where H: Handle<Target=DescriptorSetLayoutHandle> {
+        self.raw.descriptorSetLayout = descriptor_set_layout.handle().0;
     }
 
     pub fn set_pipeline_bind_point<'m>(&mut self, pipeline_bind_point: PipelineBindPoint) {
         self.raw.pipelineBindPoint = pipeline_bind_point.into();
     }
 
-    pub fn set_pipeline_layout<'m>(&mut self, pipeline_layout: PipelineLayoutHandle) {
-        self.raw.pipelineLayout = pipeline_layout.0;
+    pub fn set_pipeline_layout<'m, H>(&mut self, pipeline_layout: H)
+            where H: Handle<Target=PipelineLayoutHandle> {
+        self.raw.pipelineLayout = pipeline_layout.handle().0;
     }
 
     pub fn set_set<'m>(&mut self, set: u32) {
@@ -32996,8 +33132,9 @@ impl<'b> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn descriptor_set_layout<'m>(mut self, descriptor_set_layout: DescriptorSetLayoutHandle) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
-        self.raw.descriptorSetLayout = descriptor_set_layout.0;
+    pub fn descriptor_set_layout<'m, H>(mut self, descriptor_set_layout: H) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b>
+            where H: Handle<Target=DescriptorSetLayoutHandle> {
+        self.raw.descriptorSetLayout = descriptor_set_layout.handle().0;
         self
     }
 
@@ -33006,8 +33143,9 @@ impl<'b> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn pipeline_layout<'m>(mut self, pipeline_layout: PipelineLayoutHandle) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
-        self.raw.pipelineLayout = pipeline_layout.0;
+    pub fn pipeline_layout<'m, H>(mut self, pipeline_layout: H) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b>
+            where H: Handle<Target=PipelineLayoutHandle> {
+        self.raw.pipelineLayout = pipeline_layout.handle().0;
         self
     }
 
@@ -34783,8 +34921,9 @@ impl<'s> PhysicalDeviceSurfaceInfo2Khr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_surface<'m>(&mut self, surface: SurfaceHandle) {
-        self.raw.surface = surface.0;
+    pub fn set_surface<'m, H>(&mut self, surface: H)
+            where H: Handle<Target=SurfaceHandle> {
+        self.raw.surface = surface.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkPhysicalDeviceSurfaceInfo2KHR {
@@ -34827,8 +34966,9 @@ impl<'b> PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
         self
     }
 
-    pub fn surface<'m>(mut self, surface: SurfaceHandle) -> PhysicalDeviceSurfaceInfo2KhrBuilder<'b> {
-        self.raw.surface = surface.0;
+    pub fn surface<'m, H>(mut self, surface: H) -> PhysicalDeviceSurfaceInfo2KhrBuilder<'b>
+            where H: Handle<Target=SurfaceHandle> {
+        self.raw.surface = surface.handle().0;
         self
     }
 
@@ -35301,8 +35441,9 @@ impl<'s> BufferMemoryRequirementsInfo2Khr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_buffer<'m>(&mut self, buffer: BufferHandle) {
-        self.raw.buffer = buffer.0;
+    pub fn set_buffer<'m, H>(&mut self, buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkBufferMemoryRequirementsInfo2KHR {
@@ -35345,8 +35486,9 @@ impl<'b> BufferMemoryRequirementsInfo2KhrBuilder<'b> {
         self
     }
 
-    pub fn buffer<'m>(mut self, buffer: BufferHandle) -> BufferMemoryRequirementsInfo2KhrBuilder<'b> {
-        self.raw.buffer = buffer.0;
+    pub fn buffer<'m, H>(mut self, buffer: H) -> BufferMemoryRequirementsInfo2KhrBuilder<'b>
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
         self
     }
 
@@ -35394,8 +35536,9 @@ impl<'s> ImageMemoryRequirementsInfo2Khr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_image<'m>(&mut self, image: ImageHandle) {
-        self.raw.image = image.0;
+    pub fn set_image<'m, H>(&mut self, image: H)
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkImageMemoryRequirementsInfo2KHR {
@@ -35438,8 +35581,9 @@ impl<'b> ImageMemoryRequirementsInfo2KhrBuilder<'b> {
         self
     }
 
-    pub fn image<'m>(mut self, image: ImageHandle) -> ImageMemoryRequirementsInfo2KhrBuilder<'b> {
-        self.raw.image = image.0;
+    pub fn image<'m, H>(mut self, image: H) -> ImageMemoryRequirementsInfo2KhrBuilder<'b>
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
         self
     }
 
@@ -35487,8 +35631,9 @@ impl<'s> ImageSparseMemoryRequirementsInfo2Khr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_image<'m>(&mut self, image: ImageHandle) {
-        self.raw.image = image.0;
+    pub fn set_image<'m, H>(&mut self, image: H)
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkImageSparseMemoryRequirementsInfo2KHR {
@@ -35531,8 +35676,9 @@ impl<'b> ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
         self
     }
 
-    pub fn image<'m>(mut self, image: ImageHandle) -> ImageSparseMemoryRequirementsInfo2KhrBuilder<'b> {
-        self.raw.image = image.0;
+    pub fn image<'m, H>(mut self, image: H) -> ImageSparseMemoryRequirementsInfo2KhrBuilder<'b>
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
         self
     }
 
@@ -35880,12 +36026,14 @@ impl<'s> MemoryDedicatedAllocateInfoKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_image<'m>(&mut self, image: ImageHandle) {
-        self.raw.image = image.0;
+    pub fn set_image<'m, H>(&mut self, image: H)
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
     }
 
-    pub fn set_buffer<'m>(&mut self, buffer: BufferHandle) {
-        self.raw.buffer = buffer.0;
+    pub fn set_buffer<'m, H>(&mut self, buffer: H)
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
     }
 
     pub fn as_raw(&self) -> &vks::VkMemoryDedicatedAllocateInfoKHR {
@@ -35928,13 +36076,15 @@ impl<'b> MemoryDedicatedAllocateInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn image<'m>(mut self, image: ImageHandle) -> MemoryDedicatedAllocateInfoKhrBuilder<'b> {
-        self.raw.image = image.0;
+    pub fn image<'m, H>(mut self, image: H) -> MemoryDedicatedAllocateInfoKhrBuilder<'b>
+            where H: Handle<Target=ImageHandle> {
+        self.raw.image = image.handle().0;
         self
     }
 
-    pub fn buffer<'m>(mut self, buffer: BufferHandle) -> MemoryDedicatedAllocateInfoKhrBuilder<'b> {
-        self.raw.buffer = buffer.0;
+    pub fn buffer<'m, H>(mut self, buffer: H) -> MemoryDedicatedAllocateInfoKhrBuilder<'b>
+            where H: Handle<Target=BufferHandle> {
+        self.raw.buffer = buffer.handle().0;
         self
     }
 

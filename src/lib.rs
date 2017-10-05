@@ -164,7 +164,7 @@ pub use loader::Loader;
 pub use error::{Error, Result};
 pub use version::Version;
 pub use instance::{InstanceHandle, Instance};
-pub use physical_device::{PhysicalDevice};
+pub use physical_device::{PhysicalDeviceHandle, PhysicalDevice};
 pub use device::{DeviceHandle, Device};
 pub use surface::{SurfaceHandle, Surface};
 pub use queue::{queue_families, QueueHandle, Queue};
@@ -181,7 +181,7 @@ pub use semaphore::{SemaphoreHandle, Semaphore};
 pub use buffer::{BufferHandle, Buffer};
 pub use image::{ImageHandle, Image};
 pub use sampler::{SamplerHandle, Sampler};
-pub use device_memory::DeviceMemory;
+pub use device_memory::{DeviceMemoryHandle, DeviceMemory};
 pub use descriptor_set_layout::{DescriptorSetLayoutHandle, DescriptorSetLayout};
 pub use descriptor_pool::{DescriptorPoolHandle, DescriptorPool};
 pub use structs::*;
@@ -192,9 +192,9 @@ pub use bitflags::*;
 // pub type DescriptorSet = vks::VkDescriptorSet;
 
 pub trait Handle {
-    type Handle;
+    type Target;
 
-    fn handle(&self) -> Self::Handle;
+    fn handle(&self) -> Self::Target;
 }
 
 
@@ -202,67 +202,230 @@ pub trait Handle {
 #[repr(C)]
 pub struct CommandBufferHandle(pub(crate) vks::VkCommandBuffer);
 
+impl Handle for CommandBufferHandle {
+    type Target = CommandBufferHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct FenceHandle(pub(crate) vks::VkFence);
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct DeviceMemoryHandle(pub(crate) vks::VkDeviceMemory);
+impl Handle for FenceHandle {
+    type Target = FenceHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
+// #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+// #[repr(C)]
+// pub struct DeviceMemoryHandle(pub(crate) vks::VkDeviceMemory);
+
+// impl Handle for DeviceMemoryHandle {
+//     type Target = DeviceMemoryHandle;
+
+//     fn handle(&self) -> Self::Target {
+//         *self
+//     }
+// }
+
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct EventHandle(pub(crate) vks::VkEvent);
 
+impl Handle for EventHandle {
+    type Target = EventHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct QueryPoolHandle(pub(crate) vks::VkQueryPool);
+
+impl Handle for QueryPoolHandle {
+    type Target = QueryPoolHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct BufferViewHandle(pub(crate) vks::VkBufferView);
 
+impl Handle for BufferViewHandle {
+    type Target = BufferViewHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct PipelineCacheHandle(pub(crate) vks::VkPipelineCache);
+
+impl Handle for PipelineCacheHandle {
+    type Target = PipelineCacheHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct PipelineHandle(pub(crate) vks::VkPipeline);
 
+impl Handle for PipelineHandle {
+    type Target = PipelineHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct DescriptorSetHandle(pub(crate) vks::VkDescriptorSet);
+
+impl Handle for DescriptorSetHandle {
+    type Target = DescriptorSetHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct DisplayHandle(pub(crate) vks::VkDisplayKHR);
 
+impl Handle for DisplayHandle {
+    type Target = DisplayHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct DisplayModeHandle(pub(crate) vks::VkDisplayModeKHR);
+
+impl Handle for DisplayModeHandle {
+    type Target = DisplayModeHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct DescriptorUpdateTemplateHandle(pub(crate) vks::VkDescriptorUpdateTemplateKHR);
 
+impl Handle for DescriptorUpdateTemplateHandle {
+    type Target = DescriptorUpdateTemplateHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct DebugReportCallbackExtHandle(pub(crate) vks::VkDebugReportCallbackEXT);
 
+impl Handle for DebugReportCallbackExtHandle {
+    type Target = DebugReportCallbackExtHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
 pub struct SamplerYcbcrConversionKhrHandle(pub(crate) u64);
+
+impl Handle for SamplerYcbcrConversionKhrHandle {
+    type Target = SamplerYcbcrConversionKhrHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
 pub struct ObjectTableNvxHandle(pub(crate) u64);
+
+impl Handle for ObjectTableNvxHandle {
+    type Target = ObjectTableNvxHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
 pub struct IndirectCommandsLayoutNvxHandle(pub(crate) u64);
+
+impl Handle for IndirectCommandsLayoutNvxHandle {
+    type Target = IndirectCommandsLayoutNvxHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
 pub struct ValidationCacheExtHandle(pub(crate) u64);
+
+impl Handle for ValidationCacheExtHandle {
+    type Target = ValidationCacheExtHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
 
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DescriptorSet(vks::VkDescriptorSet);
+pub struct DescriptorSet(DescriptorSetHandle);
 
 impl DescriptorSet {
-    pub fn handle(&self) -> vks::VkDescriptorSet {
+    pub fn handle(&self) -> DescriptorSetHandle {
         self.0
     }
 }
@@ -548,7 +711,7 @@ pub fn check(code: i32) {
 //     pub fn new() -> VooResult<AbstractTemplate> {
 //         let mut handle = 0;
 //         unsafe {
-//             ::check(device.proc_addr_loader().vkCreateAbstractTemplate(device.handle(), &create_info,
+//             ::check(device.proc_addr_loader().vkCreateAbstractTemplate(device.handle().0, &create_info,
 //                 ptr::null(), &mut handle));
 //         }
 
@@ -573,7 +736,7 @@ pub fn check(code: i32) {
 // impl Drop for Inner {
 //     fn drop(&mut self) {
 //         unsafe {
-//             self.device.proc_addr_loader().vkDestroyAbstractTemplate(self.device.handle(), self.handle, ptr::null());
+//             self.device.proc_addr_loader().vkDestroyAbstractTemplate(self.device.handle().0, self.handle, ptr::null());
 //         }
 //     }
 // }
@@ -631,7 +794,7 @@ pub fn check(code: i32) {
 //     pub fn build(&self, device: Device) -> VooResult<AbstractTemplate> {
 //         let mut handle = 0;
 //         unsafe {
-//             ::check(device.proc_addr_loader().core.vkCreateAbstractTemplate(device.handle(),
+//             ::check(device.proc_addr_loader().core.vkCreateAbstractTemplate(device.handle().0,
 //                 &self.create_info, ptr::null(), &mut handle));
 //         }
 

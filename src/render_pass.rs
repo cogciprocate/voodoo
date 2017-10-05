@@ -3,17 +3,25 @@ use std::ffi::CStr;
 use std::ptr;
 use std::marker::PhantomData;
 use vks;
-use ::{util, VooResult, Device, ShaderModule};
+use ::{util, VooResult, Device, ShaderModule, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct RenderPassHandle(pub(crate) vks::VkRenderPass);
 
+impl Handle for RenderPassHandle {
+    type Target = RenderPassHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkRenderPass,
+    handle: RenderPassHandle,
     device: Device,
 }
 
@@ -29,7 +37,7 @@ impl RenderPass {
         RenderPassBuilder::new()
     }
 
-    pub fn handle(&self) -> vks::VkRenderPass {
+    pub fn handle(&self) -> RenderPassHandle {
         self.inner.handle
     }
 
@@ -39,10 +47,19 @@ impl RenderPass {
     }
 }
 
+impl<'h> Handle for &'h RenderPass {
+    type Target = RenderPassHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyRenderPass(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyRenderPass(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -116,13 +133,13 @@ impl<'b> RenderPassBuilder<'b> {
     pub fn build(&self, device: Device) -> VooResult<RenderPass> {
         let mut handle = 0;
         unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateRenderPass(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreateRenderPass(device.handle().0,
                 self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         Ok(RenderPass {
             inner: Arc::new(Inner {
-                handle,
+                handle: RenderPassHandle(handle),
                 device,
             })
         })

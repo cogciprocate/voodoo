@@ -3,17 +3,25 @@ use std::sync::Arc;
 use std::ptr;
 use std::marker::PhantomData;
 use vks;
-use ::{util, VooResult, Device, Surface};
+use ::{util, VooResult, Device, Surface, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct CommandPoolHandle(pub(crate) vks::VkCommandPool);
 
+impl Handle for CommandPoolHandle {
+    type Target = CommandPoolHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkCommandPool,
+    handle: CommandPoolHandle,
     device: Device,
 }
 
@@ -45,7 +53,7 @@ impl CommandPool {
 
     //     let mut handle = 0;
     //     unsafe {
-    //         ::check(device.proc_addr_loader().core.vkCreateCommandPool(device.handle(), &create_info,
+    //         ::check(device.proc_addr_loader().core.vkCreateCommandPool(device.handle().0, &create_info,
     //             ptr::null(), &mut handle));
     //     }
 
@@ -57,7 +65,7 @@ impl CommandPool {
     //     })
     // }
 
-    pub fn handle(&self) -> vks::VkCommandPool {
+    pub fn handle(&self) -> CommandPoolHandle {
         self.inner.handle
     }
 
@@ -67,10 +75,19 @@ impl CommandPool {
     }
 }
 
+impl<'h> Handle for &'h CommandPool {
+    type Target = CommandPoolHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyCommandPool(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyCommandPool(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -122,13 +139,13 @@ impl<'b> CommandPoolBuilder<'b> {
     pub fn build(&self, device: Device) -> VooResult<CommandPool> {
         let mut handle = 0;
         unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateCommandPool(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreateCommandPool(device.handle().0,
                 &self.create_info, ptr::null(), &mut handle));
         }
 
         Ok(CommandPool {
             inner: Arc::new(Inner {
-                handle,
+                handle: CommandPoolHandle(handle),
                 device,
             })
         })

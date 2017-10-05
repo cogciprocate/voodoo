@@ -90,7 +90,7 @@ impl Queue {
     pub fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VooResult<Queue> {
         let mut handle = ptr::null_mut();
         unsafe {
-            device.proc_addr_loader().core.vkGetDeviceQueue(device.handle(), queue_family_index,
+            device.proc_addr_loader().core.vkGetDeviceQueue(device.handle().0, queue_family_index,
                 queue_index, &mut handle);
         }
 

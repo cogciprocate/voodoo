@@ -5,7 +5,7 @@ use std::ffi::CStr;
 use libc::c_char;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, Surface, SwapchainSupportDetails, PRINT};
+use ::{VooResult, Instance, Surface, SwapchainSupportDetails, PRINT, Handle};
 use queue::{self, Queue};
 use instance;
 
@@ -15,22 +15,30 @@ use instance;
 #[repr(C)]
 pub struct PhysicalDeviceHandle(pub(crate) vks::VkPhysicalDevice);
 
+impl Handle for PhysicalDeviceHandle {
+    type Target = PhysicalDeviceHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug, Clone)]
 pub struct PhysicalDevice {
-    handle: vks::VkPhysicalDevice,
+    handle: PhysicalDeviceHandle,
     instance: Instance
 }
 
 impl PhysicalDevice {
-    pub fn new(instance: Instance, handle: vks::VkPhysicalDevice) -> PhysicalDevice {
+    pub fn new(instance: Instance, handle: PhysicalDeviceHandle) -> PhysicalDevice {
         PhysicalDevice {
             handle,
             instance,
         }
     }
 
-    pub fn handle(&self) -> vks::VkPhysicalDevice {
+    pub fn handle(&self) -> PhysicalDeviceHandle {
         self.handle
     }
 
@@ -42,12 +50,13 @@ impl PhysicalDevice {
         let mut ext_count = 0u32;
         let mut exts = SmallVec::<[::ExtensionProperties; 64]>::new();
         unsafe {
-            ::check(self.instance.proc_addr_loader().core.vkEnumerateDeviceExtensionProperties(self.handle, ptr::null(),
-                &mut ext_count, ptr::null_mut()));
+            ::check(self.instance.proc_addr_loader().core.vkEnumerateDeviceExtensionProperties(
+                self.handle.0, ptr::null(), &mut ext_count, ptr::null_mut()));
             assert!(ext_count as usize <= exts.inline_size());
             exts.set_len(ext_count as usize);
-            ::check(self.instance.proc_addr_loader().core.vkEnumerateDeviceExtensionProperties(self.handle, ptr::null(),
-                &mut ext_count, exts.as_mut_ptr() as *mut vks::VkExtensionProperties));
+            ::check(self.instance.proc_addr_loader().core.vkEnumerateDeviceExtensionProperties(
+                self.handle.0, ptr::null(), &mut ext_count,
+                exts.as_mut_ptr() as *mut vks::VkExtensionProperties));
         }
         exts
     }
@@ -55,7 +64,7 @@ impl PhysicalDevice {
     pub fn properties(&self) -> ::PhysicalDeviceProperties {
         unsafe {
             let mut device_properties: vks::VkPhysicalDeviceProperties = mem::uninitialized();
-            self.instance.proc_addr_loader().vkGetPhysicalDeviceProperties(self.handle,
+            self.instance.proc_addr_loader().vkGetPhysicalDeviceProperties(self.handle.0,
                 &mut device_properties);
             device_properties.into()
         }
@@ -64,7 +73,7 @@ impl PhysicalDevice {
     pub fn features(&self) -> ::PhysicalDeviceFeatures {
         unsafe {
             let mut device_features: vks::VkPhysicalDeviceFeatures = mem::uninitialized();
-            self.instance.proc_addr_loader().core.vkGetPhysicalDeviceFeatures(self.handle,
+            self.instance.proc_addr_loader().core.vkGetPhysicalDeviceFeatures(self.handle.0,
                 &mut device_features);
             device_features.into()
         }
@@ -74,7 +83,7 @@ impl PhysicalDevice {
         unsafe {
             let mut capabilities = mem::uninitialized();
             self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-                self.handle(), surface.handle().0, &mut capabilities);
+                self.handle().0, surface.handle().0, &mut capabilities);
             capabilities.into()
         }
     }
@@ -83,13 +92,14 @@ impl PhysicalDevice {
         let mut format_count = 0u32;
         let mut formats: SmallVec<[::SurfaceFormatKhr; 64]> = SmallVec::new();
         unsafe {
-            self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(self.handle(),
-                surface.handle().0, &mut format_count, ptr::null_mut());
+            self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(
+                self.handle().0, surface.handle().0, &mut format_count, ptr::null_mut());
             assert!(format_count as usize <= formats.inline_size());
             formats.set_len(format_count as usize);
             if format_count != 0 {
-                self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(self.handle(),
-                    surface.handle().0, &mut format_count, formats.as_mut_ptr() as *mut vks::VkSurfaceFormatKHR);
+                self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceFormatsKHR(
+                    self.handle().0, surface.handle().0, &mut format_count,
+                    formats.as_mut_ptr() as *mut vks::VkSurfaceFormatKHR);
             }
         }
         if PRINT { println!("Physical device format count: {:?}", formats.len()); }
@@ -100,13 +110,13 @@ impl PhysicalDevice {
         let mut present_mode_count = 0u32;
         let mut present_modes: SmallVec<[::PresentModeKhr; 16]> = SmallVec::new();
         unsafe {
-            self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(self.handle(),
-                surface.handle().0, &mut present_mode_count, ptr::null_mut());
+            self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(
+                self.handle().0, surface.handle().0, &mut present_mode_count, ptr::null_mut());
             assert!(present_mode_count as usize <= present_modes.inline_size());
             present_modes.set_len(present_mode_count as usize);
             if present_mode_count != 0 {
-                self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(self.handle(),
-                    surface.handle().0, &mut present_mode_count, present_modes.as_mut_ptr() as *mut _);
+                self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfacePresentModesKHR(
+                    self.handle().0, surface.handle().0, &mut present_mode_count, present_modes.as_mut_ptr() as *mut _);
             }
         }
         if PRINT { println!("Physical device present mode count: {:?}", present_modes.len()); }
@@ -118,11 +128,11 @@ impl PhysicalDevice {
         let mut queue_families = SmallVec::<[::QueueFamilyProperties; 16]>::new();
         unsafe {
             self.instance.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(
-                self.handle, &mut queue_family_count, ptr::null_mut());
+                self.handle.0, &mut queue_family_count, ptr::null_mut());
             assert!(queue_family_count as usize <= queue_families.inline_size());
             queue_families.set_len(queue_family_count as usize);
             self.instance.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(
-                self.handle, &mut queue_family_count,
+                self.handle.0, &mut queue_family_count,
                 queue_families.as_mut_ptr() as *mut vks::VkQueueFamilyProperties);
         }
         if PRINT {  println!("Physical device queue family count: {:?}", queue_families.len()); }
@@ -133,7 +143,7 @@ impl PhysicalDevice {
         let mut supported: vks::VkBool32 = vks::VK_FALSE;
         unsafe {
             ::check(self.instance.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceSupportKHR(
-                self.handle, queue_family_index, surface.handle().0, &mut supported));
+                self.handle.0, queue_family_index, surface.handle().0, &mut supported));
         }
         supported == vks::VK_TRUE
     }
@@ -170,9 +180,17 @@ impl PhysicalDevice {
         unsafe {
             mem_props = mem::uninitialized();
             self.instance().proc_addr_loader().core.vkGetPhysicalDeviceMemoryProperties(
-                self.handle, &mut mem_props);
+                self.handle.0, &mut mem_props);
         }
         mem_props.into()
+    }
+}
+
+impl<'p> Handle for &'p PhysicalDevice {
+    type Target = PhysicalDeviceHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.handle
     }
 }
 

@@ -6,12 +6,22 @@ use std::fmt;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{queue, VooResult, Instance, Surface, Device, PhysicalDevice, Image, SurfaceHandle};
+use ::{queue, VooResult, Instance, Surface, Device, PhysicalDevice, ImageHandle,
+    Image, SurfaceHandle, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct SwapchainHandle(pub(crate) vks::VkSwapchainKHR);
+
+impl Handle for SwapchainHandle {
+    type Target = SwapchainHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 // pub struct SwapchainSupportDetails {
 //     pub capabilities: vks::khr_surface::VkSurfaceCapabilitiesKHR,
@@ -47,7 +57,7 @@ struct Inner {
     device: Device,
     surface: Surface,
     // TODO: Revisit whether we should simply store a handle.
-    images: SmallVec<[vks::VkImage; 8]>,
+    images: SmallVec<[ImageHandle; 8]>,
     image_format: ::Format,
     extent: ::Extent2d,
 }
@@ -62,7 +72,7 @@ impl Swapchain {
         SwapchainBuilder::new()
     }
 
-    pub fn images(&self) -> &[vks::VkImage] {
+    pub fn images(&self) -> &[ImageHandle] {
         &self.inner.images
     }
 
@@ -84,10 +94,19 @@ impl Swapchain {
     }
 }
 
+impl<'s> Handle for &'s Swapchain {
+    type Target = SwapchainHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().vkDestroySwapchainKHR(self.device.handle(),
+            self.device.proc_addr_loader().vkDestroySwapchainKHR(self.device.handle().0,
                 self.handle.0, ptr::null());
         }
     }
@@ -299,8 +318,9 @@ impl<'b> SwapchainBuilder<'b> {
     /// obtained from oldSwapchain until a presentable image is acquired from
     /// the new swapchain, as long as it has not entered a state that causes
     /// it to return VK_ERROR_OUT_OF_DATE_KHR.
-    pub fn old_swapchain<'s>(&'s mut self, old_swapchain: SwapchainHandle)
-            -> &'s mut SwapchainBuilder<'b> {
+    pub fn old_swapchain<'s, H>(&'s mut self, old_swapchain: H)
+            -> &'s mut SwapchainBuilder<'b>
+            where H: Handle<Target=SwapchainHandle> {
         self.create_info.set_old_swapchain(old_swapchain);
         self
     }
@@ -311,7 +331,7 @@ impl<'b> SwapchainBuilder<'b> {
         let extent = self.create_info.image_extent().clone();
 
         let mut handle = 0;
-        let res = unsafe { device.proc_addr_loader().vkCreateSwapchainKHR(device.handle(),
+        let res = unsafe { device.proc_addr_loader().vkCreateSwapchainKHR(device.handle().0,
             self.create_info.as_raw(), ptr::null(), &mut handle) };
 
         if res != vks::VK_SUCCESS {
@@ -319,13 +339,13 @@ impl<'b> SwapchainBuilder<'b> {
         }
 
         let mut image_count = 0;
-        let mut image_handles = SmallVec::<[vks::VkImage; 8]>::new();
+        let mut image_handles = SmallVec::<[ImageHandle; 8]>::new();
         unsafe {
-            ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle(), handle,
+            ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle().0, handle,
                 &mut image_count, ptr::null_mut()));
             assert!(image_count as usize <= image_handles.inline_size());
             image_handles.set_len(image_count as usize);
-            ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle(), handle,
+            ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle().0, handle,
                 &mut image_count, image_handles.as_mut_ptr() as *mut vks::VkImage));
         }
 

@@ -3,17 +3,25 @@ use std::sync::Arc;
 use std::ptr;
 use std::marker::PhantomData;
 use vks;
-use ::{util, VooResult, Device};
+use ::{util, VooResult, Device, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct SamplerHandle(pub(crate) vks::VkSampler);
 
+impl Handle for SamplerHandle {
+    type Target = SamplerHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkSampler,
+    handle: SamplerHandle,
     device: Device,
 }
 
@@ -54,7 +62,7 @@ impl Sampler {
 
     //     let mut handle = 0;
     //     unsafe {
-    //         ::check(device.proc_addr_loader().vkCreateSampler(device.handle(), &create_info,
+    //         ::check(device.proc_addr_loader().vkCreateSampler(device.handle().0, &create_info,
     //             ptr::null(), &mut handle));
     //     }
 
@@ -66,7 +74,7 @@ impl Sampler {
     //     })
     // }
 
-    pub fn handle(&self) -> vks::VkSampler {
+    pub fn handle(&self) -> SamplerHandle {
         self.inner.handle
     }
 
@@ -76,10 +84,19 @@ impl Sampler {
     }
 }
 
+impl<'h> Handle for &'h Sampler {
+    type Target = SamplerHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().vkDestroySampler(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().vkDestroySampler(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -283,13 +300,13 @@ impl<'b> SamplerBuilder<'b> {
     pub fn build(&self, device: Device) -> VooResult<Sampler> {
         let mut handle = 0;
         unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateSampler(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreateSampler(device.handle().0,
                 self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         Ok(Sampler {
             inner: Arc::new(Inner {
-                handle,
+                handle: SamplerHandle(handle),
                 device,
             })
         })

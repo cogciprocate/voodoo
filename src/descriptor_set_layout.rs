@@ -3,17 +3,25 @@ use std::sync::Arc;
 use std::ptr;
 use std::marker::PhantomData;
 use vks;
-use ::{util, VooResult, Device};
+use ::{util, VooResult, Device, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct DescriptorSetLayoutHandle(pub(crate) vks::VkDescriptorSetLayout);
 
+impl Handle for DescriptorSetLayoutHandle {
+    type Target = DescriptorSetLayoutHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkDescriptorSetLayout,
+    handle: DescriptorSetLayoutHandle,
     device: Device,
 }
 
@@ -57,7 +65,7 @@ impl DescriptorSetLayout {
 
     //     let mut handle = 0;
     //     unsafe {
-    //         ::check(device.proc_addr_loader().vkCreateDescriptorSetLayout(device.handle(), &create_info,
+    //         ::check(device.proc_addr_loader().vkCreateDescriptorSetLayout(device.handle().0, &create_info,
     //             ptr::null(), &mut handle));
     //     }
 
@@ -69,7 +77,7 @@ impl DescriptorSetLayout {
     //     })
     // }
 
-    pub fn handle(&self) -> vks::VkDescriptorSetLayout {
+    pub fn handle(&self) -> DescriptorSetLayoutHandle {
         self.inner.handle
     }
 
@@ -79,10 +87,19 @@ impl DescriptorSetLayout {
     }
 }
 
+impl<'h> Handle for &'h DescriptorSetLayout {
+    type Target = DescriptorSetLayoutHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().vkDestroyDescriptorSetLayout(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().vkDestroyDescriptorSetLayout(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -134,13 +151,13 @@ impl<'b> DescriptorSetLayoutBuilder<'b> {
     pub fn build(&self, device: Device) -> VooResult<DescriptorSetLayout> {
         let mut handle = 0;
         unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateDescriptorSetLayout(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreateDescriptorSetLayout(device.handle().0,
                 self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         Ok(DescriptorSetLayout {
             inner: Arc::new(Inner {
-                handle,
+                handle: DescriptorSetLayoutHandle(handle),
                 device,
             })
         })

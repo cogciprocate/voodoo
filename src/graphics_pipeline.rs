@@ -6,13 +6,13 @@ use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
 use ::{util, VooResult, Device, ShaderModule, PipelineLayoutHandle, PipelineLayout,
-    RenderPassHandle, RenderPass, PipelineHandle, Vertex};
+    PipelineHandle, RenderPassHandle, RenderPass, Handle};
 
 
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkPipeline,
+    handle: PipelineHandle,
     device: Device,
 }
 
@@ -32,7 +32,7 @@ impl GraphicsPipeline {
             -> VooResult<SmallVec<[GraphicsPipeline; 8]>>
             where Gpb: AsRef<::GraphicsPipelineCreateInfo<'b>> {
         let mut create_infos = SmallVec::<[vks::VkGraphicsPipelineCreateInfo; 8]>::new();
-        let mut pipeline_handles = SmallVec::<[vks::VkPipeline; 8]>::new();
+        let mut pipeline_handles = SmallVec::<[PipelineHandle; 8]>::new();
         let mut pipelines = SmallVec::<[GraphicsPipeline; 8]>::new();
         create_infos.reserve_exact(builders.len());
         pipeline_handles.reserve_exact(builders.len());
@@ -44,9 +44,9 @@ impl GraphicsPipeline {
 
         unsafe {
             pipeline_handles.set_len(builders.len());
-            ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle().0,
                 0, create_infos.len() as u32, create_infos.as_ptr(), ptr::null(),
-                pipeline_handles.as_mut_ptr()));
+                pipeline_handles.as_mut_ptr() as *mut vks::VkPipeline));
         }
 
         for handle in pipeline_handles {
@@ -63,7 +63,7 @@ impl GraphicsPipeline {
         Ok(pipelines)
     }
 
-    pub fn handle(&self) -> vks::VkPipeline {
+    pub fn handle(&self) -> PipelineHandle {
         self.inner.handle
     }
 
@@ -73,10 +73,19 @@ impl GraphicsPipeline {
     }
 }
 
+impl<'g> Handle for &'g GraphicsPipeline {
+    type Target = PipelineHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyPipeline(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyPipeline(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -234,8 +243,8 @@ impl<'b> GraphicsPipelineBuilder<'b> {
 
     /// Specifies the binding locations used by both the pipeline and
     /// descriptor sets used with the pipeline.
-    pub fn layout<'s>(&'s mut self, layout: PipelineLayoutHandle)
-            -> &'s mut GraphicsPipelineBuilder<'b> {
+    pub fn layout<'s, H>(&'s mut self, layout: H) -> &'s mut GraphicsPipelineBuilder<'b>
+            where H: Handle<Target=PipelineLayoutHandle> {
         self.create_info.set_layout(layout);
         self
     }
@@ -243,8 +252,9 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// Specifies the environment in which the pipeline will be used; the
     /// pipeline must only be used with an instance of any render pass
     /// compatible with the one provided.
-    pub fn render_pass<'s>(&'s mut self, render_pass: RenderPassHandle)
-            -> &'s mut GraphicsPipelineBuilder<'b> {
+    pub fn render_pass<'s, H>(&'s mut self, render_pass: H)
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where H: Handle<Target=RenderPassHandle> {
         self.create_info.set_render_pass(render_pass);
         self
     }
@@ -258,8 +268,9 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     }
 
     /// Specifies the pipeline to derive from.
-    pub fn base_pipeline<'s>(&'s mut self, base_pipeline: PipelineHandle)
-            -> &'s mut GraphicsPipelineBuilder<'b> {
+    pub fn base_pipeline<'s, H>(&'s mut self, base_pipeline: H)
+            -> &'s mut GraphicsPipelineBuilder<'b>
+            where H: Handle<Target=PipelineHandle> {
         self.create_info.set_base_pipeline_handle(base_pipeline);
         self
     }
@@ -277,13 +288,13 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     pub fn build(&self, device: Device) -> VooResult<GraphicsPipeline> {
         let mut handle = 0;
         unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle().0,
                 0, 1, self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         Ok(GraphicsPipeline {
             inner: Arc::new(Inner {
-                handle,
+                handle: PipelineHandle(handle),
                 device,
             })
         })

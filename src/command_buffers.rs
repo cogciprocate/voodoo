@@ -17,7 +17,7 @@ use ::{util, VooResult, Device, Framebuffer, CommandPool, RenderPass, GraphicsPi
 
 //         let mut handle = 0;
 //         unsafe {
-//             ::check(device.proc_addr_loader().CreateCommandBuffer(device.handle(), &create_info,
+//             ::check(device.proc_addr_loader().CreateCommandBuffer(device.handle().0, &create_info,
 //                 ptr::null(), &mut handle));
 //         }
 
@@ -61,7 +61,7 @@ use ::{util, VooResult, Device, Framebuffer, CommandPool, RenderPass, GraphicsPi
 //     };
 
 //     unsafe {
-//         ::check(device.proc_addr_loader().vkAllocateCommandBuffers(device.handle(), &alloc_info,
+//         ::check(device.proc_addr_loader().vkAllocateCommandBuffers(device.handle().0, &alloc_info,
 //             command_buffers.as_mut_ptr()));
 //     }
 
@@ -167,7 +167,7 @@ use ::{util, VooResult, Device, Framebuffer, CommandPool, RenderPass, GraphicsPi
 
 //         let mut handle = 0;
 //         unsafe {
-//             ::check(device.proc_addr_loader().CreateCommandBuffer(device.handle(), &create_info,
+//             ::check(device.proc_addr_loader().CreateCommandBuffer(device.handle().0, &create_info,
 //                 ptr::null(), &mut handle));
 //         }
 
@@ -191,7 +191,7 @@ use ::{util, VooResult, Device, Framebuffer, CommandPool, RenderPass, GraphicsPi
 // impl Drop for Inner {
 //     fn drop(&mut self) {
 //         unsafe {
-//             self.device.proc_addr_loader().DestroyCommandBuffer(self.device.handle(), self.handle, ptr::null());
+//             self.device.proc_addr_loader().DestroyCommandBuffer(self.device.handle().0, self.handle, ptr::null());
 //         }
 //     }
 // }

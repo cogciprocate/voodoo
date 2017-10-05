@@ -4,12 +4,20 @@ use std::ptr;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{util, VooResult, Device, DescriptorSetLayout, DescriptorSetLayoutHandle};
+use ::{util, VooResult, Device, DescriptorSetLayout, DescriptorSetLayoutHandle, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct DescriptorPoolHandle(pub(crate) vks::VkDescriptorPool);
+
+impl Handle for DescriptorPoolHandle {
+    type Target = DescriptorPoolHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
 
 
 #[derive(Debug)]
@@ -49,7 +57,7 @@ impl DescriptorPool {
         // let alloc_info = vks::VkDescriptorSetAllocateInfo {
         //     sType: vks::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
         //     pNext: ptr::null(),
-        //     descriptorPool: self.inner.handle,
+        //     descriptorPool: self.inner.handle.0,
         //     descriptorSetCount: layout_handles.len() as u32,
         //     pSetLayouts: layout_handles.as_ptr(),
         // };
@@ -65,7 +73,7 @@ impl DescriptorPool {
         unsafe {
             descriptor_sets.set_len(len);
             ::check(self.inner.device.proc_addr_loader().vkAllocateDescriptorSets(
-                self.inner.device.handle(),
+                self.inner.device.handle().0,
                 // &alloc_info,
                 alloc_info.as_raw(),
                 descriptor_sets.as_mut_ptr() as *mut vks::VkDescriptorSet));
@@ -81,10 +89,18 @@ impl DescriptorPool {
 
 }
 
+impl<'d> Handle for &'d DescriptorPool {
+    type Target = DescriptorPoolHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().vkDestroyDescriptorPool(self.device.handle(),
+            self.device.proc_addr_loader().vkDestroyDescriptorPool(self.device.handle().0,
                 self.handle.0, ptr::null());
         }
     }
@@ -150,7 +166,7 @@ impl<'b> DescriptorPoolBuilder<'b> {
     pub fn build(&self, device: Device) -> VooResult<DescriptorPool> {
         let mut handle = 0;
         unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateDescriptorPool(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreateDescriptorPool(device.handle().0,
                 self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 

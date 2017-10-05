@@ -4,17 +4,25 @@ use std::ptr;
 use std::mem;
 use std::marker::PhantomData;
 use vks;
-use ::{util, VooResult, Device, DeviceMemory, PRINT};
+use ::{util, VooResult, Device, DeviceMemory, PRINT, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct BufferHandle(pub(crate) vks::VkBuffer);
 
+impl Handle for BufferHandle {
+    type Target = BufferHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkBuffer,
+    handle: BufferHandle,
     // device_memory: DeviceMemory,
     memory_requirements: ::MemoryRequirements,
     device: Device,
@@ -31,7 +39,7 @@ impl Buffer {
         BufferBuilder::new()
     }
 
-    pub fn handle(&self) -> vks::VkBuffer {
+    pub fn handle(&self) -> BufferHandle {
         self.inner.handle
     }
 
@@ -47,7 +55,7 @@ impl Buffer {
             -> VooResult<()> {
         unsafe {
             ::check(self.inner.device.proc_addr_loader().vkBindBufferMemory(
-                self.inner.device.handle(), self.inner.handle, device_memory.handle(), offset));
+                self.inner.device.handle().0, self.inner.handle.0, device_memory.handle().0, offset));
         }
         Ok(())
     }
@@ -58,10 +66,19 @@ impl Buffer {
     }
 }
 
+impl<'b> Handle for &'b Buffer {
+    type Target = BufferHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyBuffer(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyBuffer(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -138,7 +155,7 @@ impl<'b> BufferBuilder<'b> {
     pub fn build(&self, device: Device) -> VooResult<Buffer> {
         let mut handle = 0;
         unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateBuffer(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreateBuffer(device.handle().0,
                 self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
@@ -146,13 +163,13 @@ impl<'b> BufferBuilder<'b> {
         let mut memory_requirements: vks::VkMemoryRequirements;
         unsafe {
             memory_requirements = mem::uninitialized();
-            device.proc_addr_loader().core.vkGetBufferMemoryRequirements(device.handle(),
+            device.proc_addr_loader().core.vkGetBufferMemoryRequirements(device.handle().0,
                 handle, &mut memory_requirements);
         }
 
         Ok(Buffer {
             inner: Arc::new(Inner {
-                handle,
+                handle: BufferHandle(handle),
                 device,
                 memory_requirements: memory_requirements.into(),
             })

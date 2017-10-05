@@ -317,7 +317,7 @@ fn create_swapchain_fake(surface: Surface, device: Device, queue_flags: QueueFla
         .clipped(true);
 
     if let Some(old_sc) = old_swapchain {
-        bldr.old_swapchain(old_sc);
+        bldr.old_swapchain(old_sc.handle());
     }
 
     if queue_family_indices[0] != queue_family_indices[1] {
@@ -539,7 +539,7 @@ fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
 fn create_descriptor_sets(device: &Device, layout: &DescriptorSetLayout,
         pool: &DescriptorPool, uniform_buffer: &Buffer, texture_image_view: &ImageView,
         texture_sampler: &Sampler) -> VooResult<SmallVec<[voo::DescriptorSet; 8]>> {
-    let descriptor_sets = pool.allocate_descriptor_sets(&[layout][..]);
+    let descriptor_sets = pool.allocate_descriptor_sets(&[layout.handle()][..]);
 
     let buffer_info = voo::DescriptorBufferInfo::builder()
         .buffer(uniform_buffer)
@@ -869,7 +869,7 @@ fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
 
     let mut command_buffer = ptr::null_mut();
     unsafe {
-        voo::check(device.proc_addr_loader().core.vkAllocateCommandBuffers(device.handle(),
+        voo::check(device.proc_addr_loader().core.vkAllocateCommandBuffers(device.handle().0,
             alloc_info.raw(), &mut command_buffer));
     }
 
@@ -932,7 +932,7 @@ fn end_single_time_commands(device: &Device, command_pool: &CommandPool,
             // submit_info.raw(), 0));
             &submit_info, 0));
         voo::check(device.proc_addr_loader().core.vkQueueWaitIdle(device.queue(0)));
-        device.proc_addr_loader().core.vkFreeCommandBuffers(device.handle(),
+        device.proc_addr_loader().core.vkFreeCommandBuffers(device.handle().0,
             // command_pool.handle(), 1, command_buffer.handle()
             command_pool.handle(), 1,
             // &command_buffer as *const vks::VkCommandBuffer);
@@ -1436,7 +1436,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
         .build();
 
     unsafe {
-        voo::check(device.proc_addr_loader().vkAllocateCommandBuffers(device.handle(),
+        voo::check(device.proc_addr_loader().vkAllocateCommandBuffers(device.handle().0,
             alloc_info.raw(), command_buffers.as_mut_ptr() as *mut _
             as *mut vks::VkCommandBuffer));
     }
@@ -1673,7 +1673,7 @@ impl App {
         self.swapchain = None;
         self.swapchain_components = None;
         unsafe {
-            self.device.proc_addr_loader().core.vkFreeCommandBuffers(self.device.handle(),
+            self.device.proc_addr_loader().core.vkFreeCommandBuffers(self.device.handle().0,
                 self.command_pool.handle(),
                 self.command_buffers.as_ref().unwrap().len() as u32,
                 self.command_buffers.as_mut().unwrap().as_mut_ptr() as *mut _
@@ -1757,7 +1757,7 @@ impl App {
         let mut image_index = 0u32;
         let acq_res = unsafe {
             self.device.proc_addr_loader().khr_swapchain.vkAcquireNextImageKHR(
-                self.device.handle(), self.swapchain.as_ref().unwrap().handle(),
+                self.device.handle().0, self.swapchain.as_ref().unwrap().handle(),
                 u64::max_value(), self.image_available_semaphore.handle(), 0, &mut image_index)
         };
         if acq_res == voo::ResultEnum::ErrorOutOfDateKhr as i32 {

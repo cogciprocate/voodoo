@@ -1045,10 +1045,12 @@ impl MemberSig {
             if m.is_ptr && sig.arg_is_struct {
                 sig.where_clause = format!("where {a}: {i}", a=sig.arg_lifetime, i=impl_type_param);
             }
-            sig.arg_type.push_str(&m.voodoo_type);
             if m.is_handle_type {
-                sig.arg_type.push_str("Handle");
+                sig.set_fn_type_params.push_str(", H");
+                sig.arg_type.push_str("H");
+                sig.where_clause = format!("where H: Handle<Target={}Handle>", m.voodoo_type);
             } else {
+                sig.arg_type.push_str(&m.voodoo_type);
                 // Irregularities:
                 if m.orig_name != "pSampleMask" &&
                     m.orig_name != "pCoverageModulationTable" {
@@ -1180,7 +1182,7 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
                         write!(o, "&")?;
                     }
                     // write!(o, "{}.handle()", sig.fn_name)?;
-                    write!(o, "{}.0", sig.fn_name)?;
+                    write!(o, "{}.handle().0", sig.fn_name)?;
                 }
             } else if m.voodoo_type.as_str() == "bool" {
                 write!(o, "{} as u32", sig.fn_name)?;

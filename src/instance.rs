@@ -6,8 +6,8 @@ use std::marker::PhantomData;
 use smallvec::SmallVec;
 use libc::{c_char, c_void};
 use vks;
-use ::{VooResult, Loader, ApplicationInfo, PhysicalDevice, CharStrs, PRINT, FormatProperties,
-    Format};
+use ::{VooResult, Loader, ApplicationInfo, PhysicalDeviceHandle, PhysicalDevice, CharStrs,
+    PRINT, FormatProperties, Format, Handle};
 
 
 unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,
@@ -22,17 +22,25 @@ unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,
 #[repr(C)]
 pub struct InstanceHandle(pub(crate) vks::VkInstance);
 
+impl Handle for InstanceHandle {
+    type Target = InstanceHandle;
 
-fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::InstanceProcAddrLoader)
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
+fn enumerate_physical_devices(instance: InstanceHandle, loader: &vks::InstanceProcAddrLoader)
         -> SmallVec<[vks::VkPhysicalDevice; 16]> {
     let mut device_count = 0;
     let mut devices_raw = SmallVec::new();
     unsafe {
-        ::check(loader.core.vkEnumeratePhysicalDevices(instance, &mut device_count, ptr::null_mut()));
+        ::check(loader.core.vkEnumeratePhysicalDevices(instance.0, &mut device_count, ptr::null_mut()));
         if device_count == 0 { panic!("No physical devices found."); }
         assert!(device_count as usize <= devices_raw.inline_size());
         devices_raw.set_len(device_count as usize);
-        ::check(loader.core.vkEnumeratePhysicalDevices(instance, &mut device_count, devices_raw.as_mut_ptr()));
+        ::check(loader.core.vkEnumeratePhysicalDevices(instance.0, &mut device_count, devices_raw.as_mut_ptr()));
     }
     if PRINT { println!("Available devices: {:?}", devices_raw); }
     devices_raw
@@ -40,7 +48,7 @@ fn enumerate_physical_devices(instance: vks::VkInstance, loader: &vks::InstanceP
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkInstance,
+    handle: InstanceHandle,
     loader: Loader,
     debug_callback: Option<vks::VkDebugReportCallbackEXT>,
     // physical_devices: SmallVec<[PhysicalDevice; 16]>,
@@ -63,7 +71,7 @@ impl Instance {
     }
 
     #[inline]
-    pub fn handle(&self) -> vks::VkInstance {
+    pub fn handle(&self) -> InstanceHandle {
         self.inner.handle
     }
 
@@ -75,7 +83,8 @@ impl Instance {
     #[inline]
     pub fn physical_devices(&self) -> SmallVec<[PhysicalDevice; 16]> {
         enumerate_physical_devices(self.inner.handle, self.inner.loader.loader())
-            .iter().map(|&pdr| PhysicalDevice::new(self.clone(), pdr)).collect()
+            .iter().map(|&pdr| PhysicalDevice::new(self.clone(), PhysicalDeviceHandle(pdr)))
+            .collect()
     }
 
     pub fn physical_device_format_properties(&self, physical_device: &PhysicalDevice,
@@ -83,10 +92,18 @@ impl Instance {
         unsafe {
             let mut props: FormatProperties = mem::uninitialized();
             self.proc_addr_loader().vkGetPhysicalDeviceFormatProperties(
-                physical_device.handle(), format.into(),
+                physical_device.handle().0, format.into(),
                 &mut props as *mut FormatProperties as *mut _);
             props
         }
+    }
+}
+
+impl<'h> Handle for &'h Instance {
+    type Target = InstanceHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
     }
 }
 
@@ -95,11 +112,12 @@ impl Drop for Inner {
         unsafe {
             if PRINT { println!("Destroying debug callback..."); }
             if let Some(callback) = self.debug_callback {
-                self.loader.loader().ext_debug_report.vkDestroyDebugReportCallbackEXT(self.handle, callback, ptr::null());
+                self.loader.loader().ext_debug_report.vkDestroyDebugReportCallbackEXT(self.handle.0,
+                    callback, ptr::null());
             }
 
             if PRINT { println!("Destroying instance..."); }
-            self.loader.loader().core.vkDestroyInstance(self.handle, ptr::null());
+            self.loader.loader().core.vkDestroyInstance(self.handle.0, ptr::null());
         }
     }
 }
@@ -253,7 +271,7 @@ impl<'ib> InstanceBuilder<'ib> {
 
         Ok(Instance {
             inner: Arc::new(Inner {
-                handle,
+                handle: InstanceHandle(handle),
                 loader,
                 debug_callback,
                 // physical_devices,

@@ -5,7 +5,7 @@ use std::path::Path;
 use std::fs::File;
 use std::io::{Read, BufReader};
 use vks;
-use ::{VooResult, Device};
+use ::{VooResult, Device, Handle};
 
 
 
@@ -13,10 +13,18 @@ use ::{VooResult, Device};
 #[repr(C)]
 pub struct ShaderModuleHandle(pub(crate) vks::VkShaderModule);
 
+impl Handle for ShaderModuleHandle {
+    type Target = ShaderModuleHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkShaderModule,
+    handle: ShaderModuleHandle,
     device: Device,
 }
 
@@ -45,19 +53,19 @@ impl ShaderModule {
 
         let mut handle = 0;
         unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateShaderModule(device.handle(), &create_info,
+            ::check(device.proc_addr_loader().core.vkCreateShaderModule(device.handle().0, &create_info,
                 ptr::null(), &mut handle));
         }
 
         Ok(ShaderModule {
             inner: Arc::new(Inner {
-                handle,
+                handle: ShaderModuleHandle(handle),
                 device,
             })
         })
     }
 
-    pub fn handle(&self) -> vks::VkShaderModule {
+    pub fn handle(&self) -> ShaderModuleHandle {
         self.inner.handle
     }
 
@@ -67,10 +75,19 @@ impl ShaderModule {
     }
 }
 
+impl<'h> Handle for &'h ShaderModule {
+    type Target = ShaderModuleHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyShaderModule(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyShaderModule(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }

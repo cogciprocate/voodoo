@@ -7,8 +7,20 @@ use std::slice;
 use std::marker::PhantomData;
 use libc::c_void;
 use vks;
-use ::{util, VooResult, Device};
+use ::{util, VooResult, Device, Handle};
 
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+pub struct DeviceMemoryHandle(pub(crate) vks::VkDeviceMemory);
+
+impl Handle for DeviceMemoryHandle {
+    type Target = DeviceMemoryHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
 
 /// A slice of mapped memory.
 ///
@@ -16,13 +28,13 @@ use ::{util, VooResult, Device};
 pub struct MemoryMapping<'m, T> {
     ptr: *mut T,
     len: usize,
-    mem_handle: vks::VkDeviceMemory,
+    mem_handle: DeviceMemoryHandle,
     _p: PhantomData<&'m ()>,
 }
 
 impl<'m, T> MemoryMapping<'m, T> {
     /// Returns a new `MemoryMapping`
-    fn new(ptr: *mut T, len: usize, mem_handle: vks::VkDeviceMemory) -> MemoryMapping<'m, T> {
+    fn new(ptr: *mut T, len: usize, mem_handle: DeviceMemoryHandle) -> MemoryMapping<'m, T> {
         MemoryMapping {ptr, len, mem_handle, _p: PhantomData}
     }
 }
@@ -45,7 +57,7 @@ impl<'m, T> DerefMut for MemoryMapping<'m, T> {
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkDeviceMemory,
+    handle: DeviceMemoryHandle,
     device: Device,
     allocation_size: u64,
     memory_type_index: u32,
@@ -78,8 +90,8 @@ impl DeviceMemory {
             flags: vks::VkMemoryMapFlags)
             -> VooResult<*mut T> {
         let mut data = ptr::null_mut();
-        ::check(self.inner.device.proc_addr_loader().vkMapMemory(self.inner.device.handle(),
-            self.inner.handle, offset_bytes, size_bytes, flags, &mut data));
+        ::check(self.inner.device.proc_addr_loader().vkMapMemory(self.inner.device.handle().0,
+            self.inner.handle.0, offset_bytes, size_bytes, flags, &mut data));
         Ok(data as *mut T)
     }
 
@@ -89,8 +101,8 @@ impl DeviceMemory {
     ///
     /// Use `::unmap` to unmap memory mapped by `::map`.
     pub unsafe fn unmap_ptr(&self) {
-        self.inner.device.proc_addr_loader().core.vkUnmapMemory(self.inner.device.handle(),
-            self.inner.handle);
+        self.inner.device.proc_addr_loader().core.vkUnmapMemory(self.inner.device.handle().0,
+            self.inner.handle.0);
     }
 
     /// Maps a region of memory and returns a mutable reference to it.
@@ -129,7 +141,7 @@ impl DeviceMemory {
     }
 
     /// Returns a handle.
-    pub fn handle(&self) -> vks::VkDeviceMemory {
+    pub fn handle(&self) -> DeviceMemoryHandle {
         self.inner.handle
     }
 
@@ -139,10 +151,19 @@ impl DeviceMemory {
     }
 }
 
+impl<'h> Handle for &'h DeviceMemory {
+    type Target = DeviceMemoryHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkFreeMemory(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkFreeMemory(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -189,13 +210,13 @@ impl DeviceMemoryBuilder {
     pub fn build(&self, device: Device) -> VooResult<DeviceMemory> {
         let mut handle = 0;
         unsafe {
-            ::check(device.proc_addr_loader().core.vkAllocateMemory(device.handle(),
+            ::check(device.proc_addr_loader().core.vkAllocateMemory(device.handle().0,
                 &self.allocate_info, ptr::null(), &mut handle));
         }
 
         Ok(DeviceMemory {
             inner: Arc::new(Inner {
-                handle,
+                handle: DeviceMemoryHandle(handle),
                 device,
                 allocation_size: self.allocate_info.allocationSize,
                 memory_type_index: self.allocate_info.memoryTypeIndex,

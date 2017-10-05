@@ -4,7 +4,7 @@ use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
 use winit;
 use vks;
-use ::{VooResult, Instance};
+use ::{VooResult, Instance, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -14,6 +14,14 @@ pub struct SurfaceHandle(pub(crate) vks::VkSurfaceKHR);
 impl SurfaceHandle {
     pub fn raw(&self) -> vks::VkSurfaceKHR {
         self.0
+    }
+}
+
+impl Handle for SurfaceHandle {
+    type Target = SurfaceHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
     }
 }
 
@@ -50,10 +58,19 @@ impl Surface {
     }
 }
 
+impl<'s> Handle for &'s Surface {
+    type Target = SurfaceHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.instance.proc_addr_loader().khr_surface.vkDestroySurfaceKHR(self.instance.handle(), self.handle.0, ptr::null());
+            self.instance.proc_addr_loader().khr_surface.vkDestroySurfaceKHR(self.instance.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -176,8 +193,8 @@ impl SurfaceBuilder {
         unsafe {
             match self.create_info {
                 CreateInfo::Win32(ref ci) => {
-                    ::check(instance.proc_addr_loader().khr_win32_surface.vkCreateWin32SurfaceKHR(instance.handle(),
-                        ci, ptr::null(), &mut handle));
+                    ::check(instance.proc_addr_loader().khr_win32_surface.vkCreateWin32SurfaceKHR(
+                        instance.handle().0, ci, ptr::null(), &mut handle));
                 },
                 CreateInfo::None => panic!("no surface window information provided"),
                 _ => unimplemented!(),

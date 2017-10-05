@@ -4,17 +4,25 @@ use std::ptr;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{util, VooResult, Device, RenderPass, ImageView};
+use ::{util, VooResult, Device, RenderPass, ImageViewHandle, ImageView, Handle, RenderPassHandle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct FramebufferHandle(pub(crate) vks::VkFramebuffer);
 
+impl Handle for FramebufferHandle {
+    type Target = FramebufferHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
 
 #[derive(Debug)]
 struct Inner {
-    handle: vks::VkFramebuffer,
+    handle: FramebufferHandle,
     device: Device,
     render_pass: RenderPass,
     attachments: SmallVec<[ImageView; 8]>,
@@ -31,7 +39,7 @@ impl Framebuffer {
         FramebufferBuilder::new()
     }
 
-    pub fn handle(&self) -> vks::VkFramebuffer {
+    pub fn handle(&self) -> FramebufferHandle {
         self.inner.handle
     }
 
@@ -41,10 +49,19 @@ impl Framebuffer {
     }
 }
 
+impl<'h> Handle for &'h Framebuffer {
+    type Target = FramebufferHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.inner.handle
+    }
+}
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyFramebuffer(self.device.handle(), self.handle, ptr::null());
+            self.device.proc_addr_loader().core.vkDestroyFramebuffer(self.device.handle().0,
+                self.handle.0, ptr::null());
         }
     }
 }
@@ -70,7 +87,7 @@ pub struct FramebufferBuilder<'b> {
     create_info: vks::VkFramebufferCreateInfo,
     render_pass: Option<&'b RenderPass>,
     attachments: Option<&'b [&'b ImageView]>,
-    attachment_handles: Option<SmallVec<[vks::VkImageView; 8]>>,
+    attachment_handles: Option<Vec<ImageViewHandle>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -98,7 +115,7 @@ impl<'b> FramebufferBuilder<'b> {
     pub fn render_pass<'s, 'p>(&'s mut self, render_pass: &'p RenderPass)
             -> &'s mut FramebufferBuilder<'b>
             where 'p: 'b {
-        self.create_info.renderPass = render_pass.handle();
+        self.create_info.renderPass = render_pass.handle().0;
         self.render_pass = Some(render_pass);
         self
     }
@@ -111,7 +128,7 @@ impl<'b> FramebufferBuilder<'b> {
         self.attachment_handles = Some(attachments.iter().map(|att| att.handle()).collect());
         if let Some(ref att_hnd) = self.attachment_handles {
             self.create_info.attachmentCount = att_hnd.len() as u32;
-            self.create_info.pAttachments = att_hnd.as_ptr();
+            self.create_info.pAttachments = att_hnd.as_ptr() as *const vks::VkImageView;
         }
         self.attachments = Some(attachments);
         self
@@ -142,13 +159,13 @@ impl<'b> FramebufferBuilder<'b> {
     pub fn build(&self, device: Device) -> VooResult<Framebuffer> {
         let mut handle = 0;
         unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateFramebuffer(device.handle(),
+            ::check(device.proc_addr_loader().core.vkCreateFramebuffer(device.handle().0,
                 &self.create_info, ptr::null(), &mut handle));
         }
 
         Ok(Framebuffer {
             inner: Arc::new(Inner {
-                handle,
+                handle: FramebufferHandle(handle),
                 device,
                 render_pass: self.render_pass.cloned()
                     .expect("unable to create framebuffer: no render pass specified"),
