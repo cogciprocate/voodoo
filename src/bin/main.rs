@@ -7,7 +7,6 @@ extern crate smallvec;
 extern crate libc;
 extern crate tobj;
 
-
 use std::mem;
 use std::ptr;
 use std::time;
@@ -27,7 +26,6 @@ use voo::{voodoo_winit, vks, util, device, queue, Result as VooResult, Version, 
     Image, Sampler, Loader, SwapchainSupportDetails, PhysicalDevice, PhysicalDeviceFeatures,
     ShaderModule, QueueFlags, Format};
 
-
 #[cfg(debug_assertions)]
 pub const ENABLE_VALIDATION_LAYERS: bool = true;
 #[cfg(not(debug_assertions))]
@@ -41,7 +39,6 @@ static REQUIRED_INSTANCE_EXTENSIONS: &[&[u8]] = &[
 static REQUIRED_DEVICE_EXTENSIONS: &[&[u8]] = &[
     b"VK_KHR_swapchain\0",
 ];
-
 
 static MODEL_PATH: &str = "/src/shared_assets/models/chalet.obj";
 // static TEXTURE_PATH: &str = "/src/shared_assets/textures/chalet.jpg";
@@ -138,23 +135,20 @@ fn device_is_suitable(instance: &Instance, surface: &SurfaceKhr,
 
 /// Returns a physical device from the list of available physical devices if
 /// it meets the criteria specified in the above function.
-fn choose_physical_device(instance: &Instance, surface: &SurfaceKhr, queue_family_flags: QueueFlags)
-        -> VooResult<PhysicalDevice> {
+fn choose_physical_device(instance: &Instance, surface: &SurfaceKhr,
+        queue_family_flags: QueueFlags) -> VooResult<PhysicalDevice> {
     let mut preferred_device = None;
-
     for device in instance.physical_devices() {
         if device_is_suitable(instance, surface, &device, queue_family_flags) {
             preferred_device = Some(device);
             break;
         }
     }
-
     if let Some(preferred_device) = preferred_device {
         Ok(preferred_device)
     } else {
         panic!("Failed to find a suitable device.");
     }
-
 }
 
 fn create_device(instance: Instance, surface: &SurfaceKhr, physical_device: PhysicalDevice,
@@ -683,29 +677,37 @@ pub fn create_framebuffers(device: &Device, render_pass: &RenderPass,
 }
 
 
-fn begin_single_time_commands(device: &Device, command_pool: &CommandPool)
+fn begin_single_time_commands(command_pool: &CommandPool)
         -> VooResult<voo::CommandBuffer> {
-    let alloc_info = voo::CommandBufferAllocateInfo::builder()
-        .command_pool(command_pool)
-        .level(voo::CommandBufferLevel::Primary)
-        .command_buffer_count(1)
-        .build();
+    // let alloc_info = voo::CommandBufferAllocateInfo::builder()
+    //     .command_pool(command_pool)
+    //     .level(voo::CommandBufferLevel::Primary)
+    //     .command_buffer_count(1)
+    //     .build();
 
-    let mut command_buffer = ptr::null_mut();
-    unsafe {
-        voo::check(device.proc_addr_loader().core.vkAllocateCommandBuffers(device.handle().0,
-            alloc_info.as_raw(), &mut command_buffer));
-    }
+    // let mut command_buffer = ptr::null_mut();
+    // unsafe {
+    //     voo::check(command_pool.device().proc_addr_loader().core.vkAllocateCommandBuffers(
+    //         command_pool.device().handle().0,
+    //         alloc_info.as_raw(), &mut command_buffer));
+    // }
 
-    let begin_info = voo::CommandBufferBeginInfo::builder()
-        .flags(voo::CommandBufferUsageFlags::ONE_TIME_SUBMIT)
-        .build();
+    let command_buffer = command_pool.allocate_command_buffer(voo::CommandBufferLevel::Primary)?;
 
-    unsafe {
-        device.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer, begin_info.as_raw());
-    }
-    Ok(voo::CommandBuffer::new(voo::CommandBufferHandle(command_buffer)))
-    // Ok(command_buffer)
+
+    // let begin_info = voo::CommandBufferBeginInfo::builder()
+    //     .flags(voo::CommandBufferUsageFlags::ONE_TIME_SUBMIT)
+    //     .build();
+
+    // unsafe {
+    //     command_pool.device().proc_addr_loader().core.vkBeginCommandBuffer(command_buffer,
+    //         begin_info.as_raw());
+    // }
+
+    command_buffer.begin(voo::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
+
+    // voo::CommandBuffer::from_parts(command_pool.clone(), voo::CommandBufferHandle(command_buffer))
+    Ok(command_buffer)
 }
 
 fn end_single_time_commands(device: &Device, command_pool: &CommandPool,
@@ -739,7 +741,7 @@ fn has_stencil_component(format: voo::Format) -> bool {
 fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &Image,
         format: voo::Format, old_layout: voo::ImageLayout, new_layout: voo::ImageLayout)
          -> VooResult<()> {
-    let command_buffer = begin_single_time_commands(device, command_pool)?;
+    let command_buffer = begin_single_time_commands(command_pool)?;
 
     let subresource_range = voo::ImageSubresourceRange::builder()
         .aspect_mask(voo::ImageAspectFlags::COLOR)
@@ -816,7 +818,7 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
 
 fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Buffer,
         image: &Image, width: u32, height: u32)  -> VooResult<()> {
-    let command_buffer = begin_single_time_commands(device, command_pool)?;
+    let command_buffer = begin_single_time_commands(command_pool)?;
 
     let image_subresource_layers = voo::ImageSubresourceLayers::builder()
         .aspect_mask(voo::ImageAspectFlags::COLOR)
@@ -853,7 +855,7 @@ fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
     // TODO: Look into creating a separate command pool with the
     // `VK_COMMAND_POOL_CREATE_TRANSIENT_BIT` flag for short lived command
     // buffers like this.
-    let command_buffer = begin_single_time_commands(device, command_pool)?;
+    let command_buffer = begin_single_time_commands(command_pool)?;
 
     let copy_region = voo::BufferCopy::builder()
         .src_offset(0)
@@ -1168,9 +1170,9 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
         vertex_buffer: &Buffer, index_buffer: &Buffer, vertex_count: u32,
         index_count: u32, pipeline_layout: &PipelineLayout,
         descriptor_set: voo::DescriptorSet)
-        -> VooResult<Vec<voo::CommandBuffer>>
+        -> VooResult<Vec<voo::CommandBufferHandle>>
 {
-    let mut command_buffers: Vec<voo::CommandBuffer> =
+    let mut command_buffers: Vec<voo::CommandBufferHandle> =
         Vec::with_capacity(swapchain_framebuffers.len());
     unsafe { command_buffers.set_len(swapchain_framebuffers.len()); }
 
@@ -1190,7 +1192,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             as *mut vks::VkCommandBuffer));
     }
 
-    for (command_buffer, swapchain_framebuffer) in command_buffers.iter()
+    for (command_buffer_handle, swapchain_framebuffer) in command_buffers.iter()
             .zip(swapchain_framebuffers.iter())
     {
         let begin_info = voo::CommandBufferBeginInfo::builder()
@@ -1207,7 +1209,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
 
         unsafe {
             voo::check(device.proc_addr_loader().core.vkBeginCommandBuffer(
-                command_buffer.handle().0, begin_info.as_raw()));
+                command_buffer_handle.0, begin_info.as_raw()));
         }
 
         let clear_values = &[
@@ -1228,20 +1230,20 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             .build();
 
         unsafe {
-            device.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer.handle().0,
+            device.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer_handle.0,
                 render_pass_info.as_raw(), voo::SubpassContents::Inline.into());
-            device.proc_addr_loader().core.vkCmdBindPipeline(command_buffer.handle().0,
+            device.proc_addr_loader().core.vkCmdBindPipeline(command_buffer_handle.0,
                 voo::PipelineBindPoint::Graphics as u32, graphics_pipeline.handle().0);
 
             let vertex_buffers = [vertex_buffer.handle()];
             let offsets = [0];
             device.proc_addr_loader().core.vkCmdBindVertexBuffers(
-                command_buffer.handle().0, 0, 1, vertex_buffers.as_ptr() as *const vks::VkBuffer,
+                command_buffer_handle.0, 0, 1, vertex_buffers.as_ptr() as *const vks::VkBuffer,
                 offsets.as_ptr());
-            device.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer.handle().0,
+            device.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer_handle.0,
                 index_buffer.handle().0, 0, voo::IndexType::Uint32 as u32);
 
-            device.proc_addr_loader().core.vkCmdBindDescriptorSets(command_buffer.handle().0,
+            device.proc_addr_loader().core.vkCmdBindDescriptorSets(command_buffer_handle.0,
                 voo::PipelineBindPoint::Graphics as u32, pipeline_layout.handle().0, 0, 1,
                 &descriptor_set.handle().0, 0, ptr::null());
 
@@ -1254,11 +1256,11 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             // // * firstInstance: Used as an offset for instanced rendering,
             // //   defines the lowest value of gl_InstanceIndex.
             // device.proc_addr_loader().core.vkCmdDraw(command_buffer, vertex_count, 1, 0, 0);
-            device.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer.handle().0, index_count,
+            device.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer_handle.0, index_count,
                 1, 0, 0, 0);
 
-            device.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer.handle().0);
-            device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.handle().0);
+            device.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer_handle.0);
+            device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer_handle.0);
         }
     }
     Ok(command_buffers)
@@ -1307,7 +1309,7 @@ struct App {
     start_time: time::Instant,
     swapchain: Option<SwapchainKhr>,
     swapchain_components: Option<SwapchainComponents>,
-    command_buffers: Option<Vec<voo::CommandBuffer>>,
+    command_buffers: Option<Vec<voo::CommandBufferHandle>>,
 }
 
 impl App {
@@ -1511,7 +1513,7 @@ impl App {
         let wait_semaphores = [self.image_available_semaphore.handle()];
         let wait_stages = voo::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT;
         let signal_semaphores = [self.render_finished_semaphore.handle()];
-        let command_buffers = [self.command_buffers.as_ref().unwrap().get(image_index as usize).unwrap().handle()];
+        let command_buffers = [self.command_buffers.as_ref().unwrap().get(image_index as usize).unwrap().clone()];
 
         let submit_info = voo::SubmitInfo::builder()
             .wait_semaphores(&wait_semaphores[..])

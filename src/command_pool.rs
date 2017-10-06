@@ -2,8 +2,10 @@
 use std::sync::Arc;
 use std::ptr;
 use std::marker::PhantomData;
+use smallvec::SmallVec;
 use vks;
-use ::{util, VooResult, Device, Handle};
+use ::{util, VooResult, Device, Handle, CommandPoolCreateInfo, CommandPoolCreateFlags,
+    CommandBufferAllocateInfo, CommandBufferHandle, CommandBufferLevel, CommandBuffer};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -36,34 +38,35 @@ impl CommandPool {
         CommandPoolBuilder::new()
     }
 
-    // pub fn new(device: Device, surface: &Surface, queue_family_flags: vks::VkQueueFlags)
-    //     -> VooResult<CommandPool>
-    // {
-    //     let queue_family_idx = ::queue_families(device.instance(), surface,
-    //         device.physical_device(), queue_family_flags).family_idxs()[0];
+    pub fn allocate_command_buffer_handles(&self, level: CommandBufferLevel, count: u32)
+            -> VooResult<SmallVec<[CommandBufferHandle; 16]>> {
+        let alloc_info = CommandBufferAllocateInfo::builder()
+            .command_pool(self.handle())
+            .level(level)
+            .command_buffer_count(count)
+            .build();
 
-    //     let create_info = vks::VkCommandPoolCreateInfo {
-    //         sType: vks::VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-    //         pNext: ptr::null(),
-    //         // vks::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT
-    //         // vks::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT
-    //         flags: 0,
-    //         queueFamilyIndex: queue_family_idx as u32,
-    //     };
+        let mut command_buffers: SmallVec<[CommandBufferHandle; 16]> = SmallVec::new();
+        command_buffers.reserve_exact(count as usize);
+        unsafe {
+            command_buffers.set_len(count as usize);
+            ::check(self.inner.device.proc_addr_loader().core.vkAllocateCommandBuffers(
+                self.inner.device.handle().0, alloc_info.as_raw(),
+                command_buffers.as_mut_ptr() as *mut vks::VkCommandBuffer));
+        }
+        Ok(command_buffers)
+    }
 
-    //     let mut handle = 0;
-    //     unsafe {
-    //         ::check(device.proc_addr_loader().core.vkCreateCommandPool(device.handle().0, &create_info,
-    //             ptr::null(), &mut handle));
-    //     }
+    pub fn allocate_command_buffers(&self, level: CommandBufferLevel, count: u32)
+            -> VooResult<SmallVec<[CommandBuffer; 16]>> {
+        self.allocate_command_buffer_handles(level, count)?.iter().map(|&hndl| {
+            CommandBuffer::from_parts(self.clone(), hndl)
+        }).collect::<Result<SmallVec<_>, _>>()
+    }
 
-    //     Ok(CommandPool {
-    //         inner: Arc::new(Inner {
-    //             handle,
-    //             device,
-    //         })
-    //     })
-    // }
+    pub fn allocate_command_buffer(&self, level: CommandBufferLevel) -> VooResult<CommandBuffer> {
+        self.allocate_command_buffers(level, 1).map(|mut cbs| cbs.remove(0))
+    }
 
     pub fn handle(&self) -> CommandPoolHandle {
         self.inner.handle
@@ -94,17 +97,9 @@ impl Drop for Inner {
 
 
 /// A builder for `CommandPool`.
-//
-// typedef struct VkCommandPoolCreateInfo {
-//     VkStructureType             sType;
-//     const void*                 pNext;
-//     VkCommandPoolCreateFlags    flags;
-//     uint32_t                    queueFamilyIndex;
-// } VkCommandPoolCreateInfo;
-//
 #[derive(Debug, Clone)]
 pub struct CommandPoolBuilder<'b> {
-    create_info: vks::VkCommandPoolCreateInfo,
+    create_info: CommandPoolCreateInfo<'b>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -112,16 +107,16 @@ impl<'b> CommandPoolBuilder<'b> {
     /// Returns a new render pass builder.
     pub fn new() -> CommandPoolBuilder<'b> {
         CommandPoolBuilder {
-            create_info: vks::VkCommandPoolCreateInfo::default(),
+            create_info: CommandPoolCreateInfo::default(),
             _p: PhantomData,
         }
     }
 
     /// Specifies the usage behavior for the pool and command buffers
     /// allocated from it.
-    pub fn flags<'s>(&'s mut self, flags: vks::VkCommandPoolCreateFlags)
+    pub fn flags<'s>(&'s mut self, flags: CommandPoolCreateFlags)
             -> &'s mut CommandPoolBuilder<'b> {
-        self.create_info.flags = flags;
+        self.create_info.set_flags(flags);
         self
     }
 
@@ -131,7 +126,7 @@ impl<'b> CommandPoolBuilder<'b> {
     /// on queues from the same queue family.
     pub fn queue_family_index<'s>(&'s mut self, queue_family_index: u32)
             -> &'s mut CommandPoolBuilder<'b> {
-        self.create_info.queueFamilyIndex = queue_family_index;
+        self.create_info.set_queue_family_index(queue_family_index);
         self
     }
 
@@ -140,7 +135,7 @@ impl<'b> CommandPoolBuilder<'b> {
         let mut handle = 0;
         unsafe {
             ::check(device.proc_addr_loader().core.vkCreateCommandPool(device.handle().0,
-                &self.create_info, ptr::null(), &mut handle));
+                self.create_info.as_raw(), ptr::null(), &mut handle));
         }
 
         Ok(CommandPool {

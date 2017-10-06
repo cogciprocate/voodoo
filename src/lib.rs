@@ -32,7 +32,7 @@ mod framebuffer;
 mod surface;
 pub mod queue;
 mod command_pool;
-mod command_buffers;
+mod command_buffer;
 mod semaphore;
 mod buffer;
 mod image;
@@ -176,7 +176,7 @@ pub use render_pass::{RenderPassHandle, RenderPass, RenderPassBuilder};
 pub use graphics_pipeline::{GraphicsPipeline, GraphicsPipelineBuilder};
 pub use framebuffer::{FramebufferHandle, Framebuffer, FramebufferBuilder};
 pub use command_pool::{CommandPoolHandle, CommandPool, CommandPoolBuilder};
-// pub use command_buffers::create_command_buffers;
+pub use command_buffer::{CommandBufferHandle, CommandBuffer};
 pub use semaphore::{SemaphoreHandle, Semaphore};
 pub use buffer::{BufferHandle, Buffer, BufferBuilder};
 pub use image::{ImageHandle, Image, ImageBuilder};
@@ -199,17 +199,7 @@ pub trait Handle {
 }
 
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct CommandBufferHandle(pub vks::VkCommandBuffer);
 
-impl Handle for CommandBufferHandle {
-    type Target = CommandBufferHandle;
-
-    fn handle(&self) -> Self::Target {
-        *self
-    }
-}
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -483,27 +473,6 @@ impl<'h> Handle for &'h Pipeline {
     }
 }
 
-
-#[derive(Clone, Debug)]
-pub struct CommandBuffer(CommandBufferHandle);
-
-impl CommandBuffer {
-    pub fn new(h: CommandBufferHandle) -> CommandBuffer {
-        CommandBuffer(h)
-    }
-
-    pub fn handle(&self) -> CommandBufferHandle {
-        self.0
-    }
-}
-
-impl<'h> Handle for &'h CommandBuffer {
-    type Target = CommandBufferHandle;
-
-    fn handle(&self) -> Self::Target {
-        self.0
-    }
-}
 
 // impl From<vks::VkCommandBuffer> for CommandBuffer {
 //     fn from
