@@ -66,19 +66,6 @@ impl Drop for Inner {
 
 
 /// A builder for `RenderPass`.
-//
-// typedef struct VkRenderPassCreateInfo {
-//     VkStructureType                   sType;
-//     const void*                       pNext;
-//     VkRenderPassCreateFlags           flags;
-//     uint32_t                          attachmentCount;
-//     const VkAttachmentDescription*    pAttachments;
-//     uint32_t                          subpassCount;
-//     const VkSubpassDescription*       pSubpasses;
-//     uint32_t                          dependencyCount;
-//     const VkSubpassDependency*        pDependencies;
-// } VkRenderPassCreateInfo;
-//
 #[derive(Debug, Clone)]
 pub struct RenderPassBuilder<'b> {
     create_info: ::RenderPassCreateInfo<'b>,
@@ -101,7 +88,6 @@ impl<'b> RenderPassBuilder<'b> {
             attachments: &'ad [::AttachmentDescription])
             -> &'s mut RenderPassBuilder<'b>
             where 'ad: 'b {
-        // self.create_info.attachmentCount = attachments.len() as u32;
         self.create_info.set_attachments(attachments);
         self
     }
@@ -112,7 +98,6 @@ impl<'b> RenderPassBuilder<'b> {
     pub fn subpasses<'s, 'ad>(&'s mut self, subpasses: &'ad [::SubpassDescription])
             -> &'s mut RenderPassBuilder<'b>
             where 'ad: 'b {
-        // self.create_info.subpassCount = subpasses.len() as u32;
         self.create_info.set_subpasses(subpasses);
         self
     }
@@ -124,7 +109,6 @@ impl<'b> RenderPassBuilder<'b> {
             dependencies: &'ad [::SubpassDependency])
             -> &'s mut RenderPassBuilder<'b>
             where 'ad: 'b {
-        // self.create_info.dependencyCount = dependencies.len() as u32;
         self.create_info.set_dependencies(dependencies);
         self
     }

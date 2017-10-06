@@ -761,17 +761,14 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
         .build();
 
     if new_layout == voo::ImageLayout::DepthStencilAttachmentOptimal {
-        let mut subresource_range = barrier.subresource_range();
-        subresource_range.set_aspect_mask(voo::ImageAspectFlags::DEPTH);
+        barrier.subresource_range_mut().set_aspect_mask(voo::ImageAspectFlags::DEPTH);
         if has_stencil_component(format) {
-            let aspect_mask = subresource_range.aspect_mask() | voo::ImageAspectFlags::STENCIL;
-            subresource_range.set_aspect_mask(aspect_mask);
+            let aspect_mask = barrier.subresource_range().aspect_mask() |
+                voo::ImageAspectFlags::STENCIL;
+            barrier.subresource_range_mut().set_aspect_mask(aspect_mask);
         }
-        barrier.set_subresource_range(subresource_range);
     } else {
-        let mut subresource_range = barrier.subresource_range();
-        subresource_range.set_aspect_mask(voo::ImageAspectFlags::COLOR);
-        barrier.set_subresource_range(subresource_range);
+        barrier.subresource_range_mut().set_aspect_mask(voo::ImageAspectFlags::COLOR);
     }
 
     let source_stage: voo::PipelineStageFlags;

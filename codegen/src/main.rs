@@ -34,7 +34,7 @@ fn filter_member_name(orig: &mut String) {
 fn to_voodoo_name(orig: &str, prune_p: bool) -> (String, bool, bool) {
     let mut output = String::with_capacity(48);
     let mut prev_was_new_word = true;
-
+    let mut prev_was_uppercase = false;
     let mut first_is_p = false;
     let mut second_is_p = false;
     let mut p_was_pruned = false;
@@ -73,16 +73,25 @@ fn to_voodoo_name(orig: &str, prune_p: bool) -> (String, bool, bool) {
         }
     }
 
-    for c in orig_pruned.chars() {
+    // TODO: Remove redundant checks:
+    let mut char_iter = orig_pruned.chars().peekable();
+    while let Some(c) = char_iter.next() {
         if c.is_lowercase() {
             output.push(c);
             prev_was_new_word = false;
+            prev_was_uppercase = false;
         } else if c.is_uppercase() || c.is_numeric() {
-            if !prev_was_new_word {
-                output.push('_');
-                prev_was_new_word = true;
-            } else {
+            if prev_was_new_word {
                 prev_was_new_word = false;
+            } else {
+                if !prev_was_uppercase {
+                    output.push('_');
+                } else if let Some(next_c) = char_iter.peek() {
+                    if next_c.is_lowercase() {
+                        output.push('_');
+                    }
+                }
+                prev_was_new_word = true;
             }
 
             if c.is_uppercase() {
@@ -90,6 +99,8 @@ fn to_voodoo_name(orig: &str, prune_p: bool) -> (String, bool, bool) {
             } else {
                 output.push(c);
             }
+            // Consider numerics uppercase for underscore purposes:
+            prev_was_uppercase = true;
         }
     }
 
@@ -257,6 +268,7 @@ struct Member {
     is_struct: bool,
     is_handle_type: bool,
     is_flags_type: bool,
+    is_fn_ptr_type: bool,
     ptr_count_member_orig_name: Option<String>,
     is_ptr_count: bool,
     optional: bool,
@@ -283,6 +295,7 @@ impl Member {
             is_struct: false,
             is_handle_type: false,
             is_flags_type: false,
+            is_fn_ptr_type: false,
             ptr_count_member_orig_name: None,
             is_ptr_count: false,
             optional: false,
@@ -336,6 +349,9 @@ impl Member {
         self.is_handle_type = struct_is_handle_type(&orig_type);
         if orig_type.contains("FlagBits") || orig_type.contains("Flags") {
             self.is_flags_type = true;
+        }
+        if orig_type.starts_with("PFN_") {
+            self.is_fn_ptr_type = true;
         }
         self.voodoo_type = to_voodoo_type(&orig_type);
         self.orig_type = orig_type;
@@ -859,6 +875,7 @@ struct MemberSig {
     arg_is_struct: bool,
     arg_is_repr_c: bool,
     arg_is_c_str: bool,
+    member_is_contained_struct: bool,
     convert_arg: bool,
     convert_arg_twice: bool,
     convert_to_bits: bool,
@@ -897,6 +914,7 @@ impl MemberSig {
             arg_is_struct: structs.contains_key(&m.voodoo_type),
             arg_is_repr_c,
             arg_is_c_str: false,
+            member_is_contained_struct: false,
             convert_arg: false,
             convert_arg_twice: false,
             convert_to_bits: false,
@@ -927,6 +945,7 @@ impl MemberSig {
             if m.voodoo_type == "i8" {
                 sig.convert_return_to_c_str = true;
                 sig.return_type.push_str("&'a CStr");
+                sig.unsafe_to_set = true;
             } else {
                 sig.convert_return_to_slice = true;
                 sig.return_type.push_str(&format!("&[{}]", m.voodoo_type));
@@ -1059,7 +1078,13 @@ impl MemberSig {
                     sig.convert_return = true;
                 }
             }
-            sig.return_type.push_str(&sig.arg_type);
+            if sig.arg_is_struct && !m.is_ptr && m.array_len.is_none() {
+                sig.member_is_contained_struct = true;
+                sig.return_type.push_str("&'a ");
+                sig.return_type.push_str(&sig.arg_type);
+            } else {
+                sig.return_type.push_str(&sig.arg_type);
+            }
         }
 
         sig
@@ -1084,7 +1109,7 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
     // Signature and all kinds of other stuff:
     let sig = MemberSig::new(m, s, structs, impl_type_param);
 
-    let unsafe_str = if sig.unsafe_to_set { " unsafe" } else { "" };
+    let unsafe_str = if sig.unsafe_to_set || m.is_fn_ptr_type { " unsafe" } else { "" };
     let set_pre = if is_for_builder { "" } else { "set_" };
     let self_arg_pre = if is_for_builder { "mut" } else { "&mut" };
 
@@ -1228,11 +1253,12 @@ fn write_get_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
     if member_is_excluded(&m.orig_name) || m.is_ptr_count { return Ok(()); }
     let sig = MemberSig::new(m, s, structs, impl_type_param);
 
-    let fn_name = if m.is_handle_type {
-        format!("{}_handle", sig.fn_name)
-    } else {
-        sig.fn_name
-    };
+    let fn_name = sig.fn_name;
+    // let fn_name = if m.is_handle_type {
+    //     format!("{}_handle", sig.fn_name)
+    // } else {
+    //     sig.fn_name
+    // };
 
     let return_type = if m.is_handle_type {
         if let Some(_) = m.ptr_count_member_orig_name {
@@ -1272,6 +1298,7 @@ fn write_get_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
                     //     self.raw.{} as usize) }}", m.orig_name, count_orig_name)?;
                 }
             } else {
+                assert!(sig.arg_is_repr_c);
                 write!(o, "{t}{t}unsafe {{ &*(self.raw.{} as *const {}{} as *const _) }}", m.orig_name,
                     ORIG_PRE, m.orig_type, t=t)?;
             }
@@ -1286,9 +1313,9 @@ fn write_get_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
                 }
                 write!(o, "}}",  )?;
             } else {
-                // write!(o, "{}.raw", sig.fn_name)?;
-                write!(o, "{t}{t}self.raw.{}", m.orig_name, t=t)?;
-                write!(o, ".into()")?;
+                assert!(sig.arg_is_repr_c);
+                write!(o, "{t}{t}unsafe {{ &*(&self.raw.{} as *const {}{} as *const {}) }}", m.orig_name,
+                    ORIG_PRE, m.orig_type, m.voodoo_type, t=t)?;
             }
         }
     } else {
@@ -1351,6 +1378,35 @@ fn write_get_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
     // unsafe { *(&self.raw.memoryTypes
     //         as *const [vks::VkMemoryType; vks::VK_MAX_MEMORY_TYPES]
     //         as *const [MemoryType; vks::VK_MAX_MEMORY_TYPES]) }
+
+    write!(o, "\n")?;
+
+    write!(o, "{t}}}\n\n", t=t)?;
+    Ok(())
+}
+
+
+/// Writes a mutable getter function for contained structs to the output buffer.
+fn write_get_mut_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param: &str,
+        impl_type_param_block: &str, structs: &HashMap<String, Struct>, is_for_builder: bool)
+        -> io::Result<()> {
+    let t = INDENT;
+    let sig = MemberSig::new(m, s, structs, impl_type_param);
+    if member_is_excluded(&m.orig_name) || m.is_ptr_count || !sig.member_is_contained_struct {
+        return Ok(());
+    }
+    assert!(!m.is_handle_type);
+    assert!(!m.is_ptr);
+    assert!(m.array_len.is_none());
+    assert!(sig.arg_is_repr_c);
+    let return_type = format!("&'a mut {}", &sig.arg_type);
+    let get_pre = if is_for_builder { "get_" } else { "" };
+
+    writeln!(o, "{t}pub fn {}{}_mut<{}>(&'a mut self) -> {} {{", get_pre, sig.fn_name,
+        sig.get_fn_type_params, return_type, t=t)?;
+
+    write!(o, "{t}{t}unsafe {{ &mut *(&mut self.raw.{} as *mut  {}{} as *mut {}) }}", m.orig_name,
+        ORIG_PRE, m.orig_type, m.voodoo_type, t=t)?;
 
     write!(o, "\n")?;
 
@@ -1456,13 +1512,14 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
         writeln!(o, "{t}{t}{}Builder::new()", s.voodoo_name, t=t)?;
         write!(o, "{t}}}\n\n", t=t)?;
 
+        // Write getter functions:
         for m in &s.members {
-            // Write getter function:
             write_get_fn(o, s, m, struct_type_param, &struct_type_param_block, structs, false)?;
+            write_get_mut_fn(o, s, m, struct_type_param, &struct_type_param_block, structs, false)?;
         }
 
+        // Write setter function:
         for m in &s.members {
-            // Write setter function:
             write_set_fn(o, s, m, struct_type_param, &struct_type_param_block, structs, false)?;
         }
 
@@ -1555,12 +1612,13 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
 
         // Write setter functions:
         for m in &s.members {
-            write_set_fn(o, s, m, bldr_type_param, &bldr_type_param_block, &structs, true)?
+            write_set_fn(o, s, m, bldr_type_param, &bldr_type_param_block, &structs, true)?;
         }
 
         // Write getter functions:
         for m in &s.members {
-            write_get_fn(o, s, m, bldr_type_param, &bldr_type_param_block, &structs, true)?
+            write_get_fn(o, s, m, bldr_type_param, &bldr_type_param_block, &structs, true)?;
+            write_get_mut_fn(o, s, m, bldr_type_param, &bldr_type_param_block, &structs, true)?;
         }
 
         // BUILD:
