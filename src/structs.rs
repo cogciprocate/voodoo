@@ -1690,7 +1690,8 @@ impl<'s> DeviceQueueCreateInfo<'s> {
         self.raw.queueFamilyIndex = queue_family_index.into();
     }
 
-    pub fn set_queue_priorities<'m, 'a>(&mut self, queue_priorities: &'a [f32]) {
+    pub fn set_queue_priorities<'m, 'a>(&mut self, queue_priorities: &'a [f32])
+            where 'a: 's {
         assert!(self.raw.queueCount == 0 || self.raw.queueCount == queue_priorities.len() as _, 
             "count inconsistency found when specifying `DeviceQueueCreateInfo::queue_priorities`.");
         self.raw.queueCount = queue_priorities.len() as _;
@@ -1747,7 +1748,8 @@ impl<'b> DeviceQueueCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn queue_priorities<'m, 'a>(mut self, queue_priorities: &'a [f32]) -> DeviceQueueCreateInfoBuilder<'b> {
+    pub fn queue_priorities<'m, 'a>(mut self, queue_priorities: &'a [f32]) -> DeviceQueueCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.queueCount == 0 || self.raw.queueCount == queue_priorities.len() as _, 
             "count inconsistency found when specifying `DeviceQueueCreateInfo::queue_priorities`.");
         self.raw.queueCount = queue_priorities.len() as _;
@@ -1829,11 +1831,12 @@ impl<'s> DeviceCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_queue_create_infos<'m, 'a>(&mut self, queue_create_infos: &'a [DeviceQueueCreateInfo]) {
+    pub fn set_queue_create_infos<'m, 'a>(&mut self, queue_create_infos: &'a [DeviceQueueCreateInfo])
+            where 'a: 's {
         assert!(self.raw.queueCreateInfoCount == 0 || self.raw.queueCreateInfoCount == queue_create_infos.len() as _, 
             "count inconsistency found when specifying `DeviceCreateInfo::queue_create_infos`.");
         self.raw.queueCreateInfoCount = queue_create_infos.len() as _;
-        self.raw.pQueueCreateInfos = queue_create_infos.as_ptr() as *const vks::VkDeviceQueueCreateInfo as *const _;
+        self.raw.pQueueCreateInfos = queue_create_infos.as_ptr() as *const vks::VkDeviceQueueCreateInfo;
     }
 
     pub fn set_enabled_layer_names<'m, 'a>(&mut self, enabled_layer_names: &'a [*const c_char])
@@ -1902,11 +1905,12 @@ impl<'b> DeviceCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn queue_create_infos<'m, 'a>(mut self, queue_create_infos: &'a [DeviceQueueCreateInfo]) -> DeviceCreateInfoBuilder<'b> {
+    pub fn queue_create_infos<'m, 'a>(mut self, queue_create_infos: &'a [DeviceQueueCreateInfo]) -> DeviceCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.queueCreateInfoCount == 0 || self.raw.queueCreateInfoCount == queue_create_infos.len() as _, 
             "count inconsistency found when specifying `DeviceCreateInfo::queue_create_infos`.");
         self.raw.queueCreateInfoCount = queue_create_infos.len() as _;
-        self.raw.pQueueCreateInfos = queue_create_infos.as_ptr() as *const vks::VkDeviceQueueCreateInfo as *const _;
+        self.raw.pQueueCreateInfos = queue_create_infos.as_ptr() as *const vks::VkDeviceQueueCreateInfo;
         self
     }
 
@@ -4109,7 +4113,8 @@ impl<'s> BufferCreateInfo<'s> {
         self.raw.sharingMode = sharing_mode.into();
     }
 
-    pub fn set_queue_family_indices<'m, 'a>(&mut self, queue_family_indices: &'a [u32]) {
+    pub fn set_queue_family_indices<'m, 'a>(&mut self, queue_family_indices: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `BufferCreateInfo::queue_family_indices`.");
         self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
@@ -4176,7 +4181,8 @@ impl<'b> BufferCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> BufferCreateInfoBuilder<'b> {
+    pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> BufferCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `BufferCreateInfo::queue_family_indices`.");
         self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
@@ -5406,7 +5412,8 @@ impl<'s> ImageCreateInfo<'s> {
         self.raw.sharingMode = sharing_mode.into();
     }
 
-    pub fn set_queue_family_indices<'m, 'a>(&mut self, queue_family_indices: &'a [u32]) {
+    pub fn set_queue_family_indices<'m, 'a>(&mut self, queue_family_indices: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `ImageCreateInfo::queue_family_indices`.");
         self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
@@ -5507,7 +5514,8 @@ impl<'b> ImageCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> ImageCreateInfoBuilder<'b> {
+    pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> ImageCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `ImageCreateInfo::queue_family_indices`.");
         self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
@@ -6345,11 +6353,12 @@ impl<'s> SparseBufferMemoryBindInfo<'s> {
         self.raw.buffer = buffer.handle().0;
     }
 
-    pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseMemoryBind]) {
+    pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseMemoryBind])
+            where 'a: 's {
         assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseBufferMemoryBindInfo::binds`.");
         self.raw.bindCount = binds.len() as _;
-        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind as *const _;
+        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind;
     }
 
     pub fn as_raw(&self) -> &vks::VkSparseBufferMemoryBindInfo {
@@ -6393,11 +6402,12 @@ impl<'b> SparseBufferMemoryBindInfoBuilder<'b> {
         self
     }
 
-    pub fn binds<'m, 'a>(mut self, binds: &'a [SparseMemoryBind]) -> SparseBufferMemoryBindInfoBuilder<'b> {
+    pub fn binds<'m, 'a>(mut self, binds: &'a [SparseMemoryBind]) -> SparseBufferMemoryBindInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseBufferMemoryBindInfo::binds`.");
         self.raw.bindCount = binds.len() as _;
-        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind as *const _;
+        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind;
         self
     }
 
@@ -6446,11 +6456,12 @@ impl<'s> SparseImageOpaqueMemoryBindInfo<'s> {
         self.raw.image = image.handle().0;
     }
 
-    pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseMemoryBind]) {
+    pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseMemoryBind])
+            where 'a: 's {
         assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseImageOpaqueMemoryBindInfo::binds`.");
         self.raw.bindCount = binds.len() as _;
-        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind as *const _;
+        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind;
     }
 
     pub fn as_raw(&self) -> &vks::VkSparseImageOpaqueMemoryBindInfo {
@@ -6494,11 +6505,12 @@ impl<'b> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
         self
     }
 
-    pub fn binds<'m, 'a>(mut self, binds: &'a [SparseMemoryBind]) -> SparseImageOpaqueMemoryBindInfoBuilder<'b> {
+    pub fn binds<'m, 'a>(mut self, binds: &'a [SparseMemoryBind]) -> SparseImageOpaqueMemoryBindInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseImageOpaqueMemoryBindInfo::binds`.");
         self.raw.bindCount = binds.len() as _;
-        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind as *const _;
+        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind;
         self
     }
 
@@ -6547,11 +6559,12 @@ impl<'s> SparseImageMemoryBindInfo<'s> {
         self.raw.image = image.handle().0;
     }
 
-    pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseImageMemoryBind]) {
+    pub fn set_binds<'m, 'a>(&mut self, binds: &'a [SparseImageMemoryBind])
+            where 'a: 's {
         assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseImageMemoryBindInfo::binds`.");
         self.raw.bindCount = binds.len() as _;
-        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseImageMemoryBind as *const _;
+        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseImageMemoryBind;
     }
 
     pub fn as_raw(&self) -> &vks::VkSparseImageMemoryBindInfo {
@@ -6595,11 +6608,12 @@ impl<'b> SparseImageMemoryBindInfoBuilder<'b> {
         self
     }
 
-    pub fn binds<'m, 'a>(mut self, binds: &'a [SparseImageMemoryBind]) -> SparseImageMemoryBindInfoBuilder<'b> {
+    pub fn binds<'m, 'a>(mut self, binds: &'a [SparseImageMemoryBind]) -> SparseImageMemoryBindInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.bindCount == 0 || self.raw.bindCount == binds.len() as _, 
             "count inconsistency found when specifying `SparseImageMemoryBindInfo::binds`.");
         self.raw.bindCount = binds.len() as _;
-        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseImageMemoryBind as *const _;
+        self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseImageMemoryBind;
         self
     }
 
@@ -6671,25 +6685,28 @@ impl<'s> BindSparseInfo<'s> {
         self.raw.pWaitSemaphores = wait_semaphores.as_ptr() as *const vks::VkSemaphore;
     }
 
-    pub fn set_buffer_binds<'m, 'a>(&mut self, buffer_binds: &'a [SparseBufferMemoryBindInfo]) {
+    pub fn set_buffer_binds<'m, 'a>(&mut self, buffer_binds: &'a [SparseBufferMemoryBindInfo])
+            where 'a: 's {
         assert!(self.raw.bufferBindCount == 0 || self.raw.bufferBindCount == buffer_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::buffer_binds`.");
         self.raw.bufferBindCount = buffer_binds.len() as _;
-        self.raw.pBufferBinds = buffer_binds.as_ptr() as *const vks::VkSparseBufferMemoryBindInfo as *const _;
+        self.raw.pBufferBinds = buffer_binds.as_ptr() as *const vks::VkSparseBufferMemoryBindInfo;
     }
 
-    pub fn set_image_opaque_binds<'m, 'a>(&mut self, image_opaque_binds: &'a [SparseImageOpaqueMemoryBindInfo]) {
+    pub fn set_image_opaque_binds<'m, 'a>(&mut self, image_opaque_binds: &'a [SparseImageOpaqueMemoryBindInfo])
+            where 'a: 's {
         assert!(self.raw.imageOpaqueBindCount == 0 || self.raw.imageOpaqueBindCount == image_opaque_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::image_opaque_binds`.");
         self.raw.imageOpaqueBindCount = image_opaque_binds.len() as _;
-        self.raw.pImageOpaqueBinds = image_opaque_binds.as_ptr() as *const vks::VkSparseImageOpaqueMemoryBindInfo as *const _;
+        self.raw.pImageOpaqueBinds = image_opaque_binds.as_ptr() as *const vks::VkSparseImageOpaqueMemoryBindInfo;
     }
 
-    pub fn set_image_binds<'m, 'a>(&mut self, image_binds: &'a [SparseImageMemoryBindInfo]) {
+    pub fn set_image_binds<'m, 'a>(&mut self, image_binds: &'a [SparseImageMemoryBindInfo])
+            where 'a: 's {
         assert!(self.raw.imageBindCount == 0 || self.raw.imageBindCount == image_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::image_binds`.");
         self.raw.imageBindCount = image_binds.len() as _;
-        self.raw.pImageBinds = image_binds.as_ptr() as *const vks::VkSparseImageMemoryBindInfo as *const _;
+        self.raw.pImageBinds = image_binds.as_ptr() as *const vks::VkSparseImageMemoryBindInfo;
     }
 
     pub fn set_signal_semaphores<'m, 'a>(&mut self, signal_semaphores: &'a [SemaphoreHandle])
@@ -6749,27 +6766,30 @@ impl<'b> BindSparseInfoBuilder<'b> {
         self
     }
 
-    pub fn buffer_binds<'m, 'a>(mut self, buffer_binds: &'a [SparseBufferMemoryBindInfo]) -> BindSparseInfoBuilder<'b> {
+    pub fn buffer_binds<'m, 'a>(mut self, buffer_binds: &'a [SparseBufferMemoryBindInfo]) -> BindSparseInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.bufferBindCount == 0 || self.raw.bufferBindCount == buffer_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::buffer_binds`.");
         self.raw.bufferBindCount = buffer_binds.len() as _;
-        self.raw.pBufferBinds = buffer_binds.as_ptr() as *const vks::VkSparseBufferMemoryBindInfo as *const _;
+        self.raw.pBufferBinds = buffer_binds.as_ptr() as *const vks::VkSparseBufferMemoryBindInfo;
         self
     }
 
-    pub fn image_opaque_binds<'m, 'a>(mut self, image_opaque_binds: &'a [SparseImageOpaqueMemoryBindInfo]) -> BindSparseInfoBuilder<'b> {
+    pub fn image_opaque_binds<'m, 'a>(mut self, image_opaque_binds: &'a [SparseImageOpaqueMemoryBindInfo]) -> BindSparseInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.imageOpaqueBindCount == 0 || self.raw.imageOpaqueBindCount == image_opaque_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::image_opaque_binds`.");
         self.raw.imageOpaqueBindCount = image_opaque_binds.len() as _;
-        self.raw.pImageOpaqueBinds = image_opaque_binds.as_ptr() as *const vks::VkSparseImageOpaqueMemoryBindInfo as *const _;
+        self.raw.pImageOpaqueBinds = image_opaque_binds.as_ptr() as *const vks::VkSparseImageOpaqueMemoryBindInfo;
         self
     }
 
-    pub fn image_binds<'m, 'a>(mut self, image_binds: &'a [SparseImageMemoryBindInfo]) -> BindSparseInfoBuilder<'b> {
+    pub fn image_binds<'m, 'a>(mut self, image_binds: &'a [SparseImageMemoryBindInfo]) -> BindSparseInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.imageBindCount == 0 || self.raw.imageBindCount == image_binds.len() as _, 
             "count inconsistency found when specifying `BindSparseInfo::image_binds`.");
         self.raw.imageBindCount = image_binds.len() as _;
-        self.raw.pImageBinds = image_binds.as_ptr() as *const vks::VkSparseImageMemoryBindInfo as *const _;
+        self.raw.pImageBinds = image_binds.as_ptr() as *const vks::VkSparseImageMemoryBindInfo;
         self
     }
 
@@ -7411,7 +7431,8 @@ impl<'s> ShaderModuleCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_code<'m, 'a>(&mut self, code: &'a [u32]) {
+    pub fn set_code<'m, 'a>(&mut self, code: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.codeSize == 0 || self.raw.codeSize == code.len() as _, 
             "count inconsistency found when specifying `ShaderModuleCreateInfo::code`.");
         self.raw.codeSize = code.len() as _;
@@ -7463,7 +7484,8 @@ impl<'b> ShaderModuleCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn code<'m, 'a>(mut self, code: &'a [u32]) -> ShaderModuleCreateInfoBuilder<'b> {
+    pub fn code<'m, 'a>(mut self, code: &'a [u32]) -> ShaderModuleCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.codeSize == 0 || self.raw.codeSize == code.len() as _, 
             "count inconsistency found when specifying `ShaderModuleCreateInfo::code`.");
         self.raw.codeSize = code.len() as _;
@@ -7677,11 +7699,12 @@ impl<'s> DescriptorSetLayoutCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_bindings<'m, 'a>(&mut self, bindings: &'a [DescriptorSetLayoutBinding]) {
+    pub fn set_bindings<'m, 'a>(&mut self, bindings: &'a [DescriptorSetLayoutBinding])
+            where 'a: 's {
         assert!(self.raw.bindingCount == 0 || self.raw.bindingCount == bindings.len() as _, 
             "count inconsistency found when specifying `DescriptorSetLayoutCreateInfo::bindings`.");
         self.raw.bindingCount = bindings.len() as _;
-        self.raw.pBindings = bindings.as_ptr() as *const vks::VkDescriptorSetLayoutBinding as *const _;
+        self.raw.pBindings = bindings.as_ptr() as *const vks::VkDescriptorSetLayoutBinding;
     }
 
     pub fn as_raw(&self) -> &vks::VkDescriptorSetLayoutCreateInfo {
@@ -7729,11 +7752,12 @@ impl<'b> DescriptorSetLayoutCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn bindings<'m, 'a>(mut self, bindings: &'a [DescriptorSetLayoutBinding]) -> DescriptorSetLayoutCreateInfoBuilder<'b> {
+    pub fn bindings<'m, 'a>(mut self, bindings: &'a [DescriptorSetLayoutBinding]) -> DescriptorSetLayoutCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.bindingCount == 0 || self.raw.bindingCount == bindings.len() as _, 
             "count inconsistency found when specifying `DescriptorSetLayoutCreateInfo::bindings`.");
         self.raw.bindingCount = bindings.len() as _;
-        self.raw.pBindings = bindings.as_ptr() as *const vks::VkDescriptorSetLayoutBinding as *const _;
+        self.raw.pBindings = bindings.as_ptr() as *const vks::VkDescriptorSetLayoutBinding;
         self
     }
 
@@ -7892,11 +7916,12 @@ impl<'s> DescriptorPoolCreateInfo<'s> {
         self.raw.maxSets = max_sets.into();
     }
 
-    pub fn set_pool_sizes<'m, 'a>(&mut self, pool_sizes: &'a [DescriptorPoolSize]) {
+    pub fn set_pool_sizes<'m, 'a>(&mut self, pool_sizes: &'a [DescriptorPoolSize])
+            where 'a: 's {
         assert!(self.raw.poolSizeCount == 0 || self.raw.poolSizeCount == pool_sizes.len() as _, 
             "count inconsistency found when specifying `DescriptorPoolCreateInfo::pool_sizes`.");
         self.raw.poolSizeCount = pool_sizes.len() as _;
-        self.raw.pPoolSizes = pool_sizes.as_ptr() as *const vks::VkDescriptorPoolSize as *const _;
+        self.raw.pPoolSizes = pool_sizes.as_ptr() as *const vks::VkDescriptorPoolSize;
     }
 
     pub fn as_raw(&self) -> &vks::VkDescriptorPoolCreateInfo {
@@ -7949,11 +7974,12 @@ impl<'b> DescriptorPoolCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn pool_sizes<'m, 'a>(mut self, pool_sizes: &'a [DescriptorPoolSize]) -> DescriptorPoolCreateInfoBuilder<'b> {
+    pub fn pool_sizes<'m, 'a>(mut self, pool_sizes: &'a [DescriptorPoolSize]) -> DescriptorPoolCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.poolSizeCount == 0 || self.raw.poolSizeCount == pool_sizes.len() as _, 
             "count inconsistency found when specifying `DescriptorPoolCreateInfo::pool_sizes`.");
         self.raw.poolSizeCount = pool_sizes.len() as _;
-        self.raw.pPoolSizes = pool_sizes.as_ptr() as *const vks::VkDescriptorPoolSize as *const _;
+        self.raw.pPoolSizes = pool_sizes.as_ptr() as *const vks::VkDescriptorPoolSize;
         self
     }
 
@@ -8236,11 +8262,12 @@ impl<'s> SpecializationInfo<'s> {
         self.raw.pData
     }
 
-    pub fn set_map_entries<'m, 'a>(&mut self, map_entries: &'a [SpecializationMapEntry]) {
+    pub fn set_map_entries<'m, 'a>(&mut self, map_entries: &'a [SpecializationMapEntry])
+            where 'a: 's {
         assert!(self.raw.mapEntryCount == 0 || self.raw.mapEntryCount == map_entries.len() as _, 
             "count inconsistency found when specifying `SpecializationInfo::map_entries`.");
         self.raw.mapEntryCount = map_entries.len() as _;
-        self.raw.pMapEntries = map_entries.as_ptr() as *const vks::VkSpecializationMapEntry as *const _;
+        self.raw.pMapEntries = map_entries.as_ptr() as *const vks::VkSpecializationMapEntry;
     }
 
     pub fn set_data_size<'m>(&mut self, data_size: usize) {
@@ -8286,11 +8313,12 @@ impl<'b> SpecializationInfoBuilder<'b> {
         }
     }
 
-    pub fn map_entries<'m, 'a>(mut self, map_entries: &'a [SpecializationMapEntry]) -> SpecializationInfoBuilder<'b> {
+    pub fn map_entries<'m, 'a>(mut self, map_entries: &'a [SpecializationMapEntry]) -> SpecializationInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.mapEntryCount == 0 || self.raw.mapEntryCount == map_entries.len() as _, 
             "count inconsistency found when specifying `SpecializationInfo::map_entries`.");
         self.raw.mapEntryCount = map_entries.len() as _;
-        self.raw.pMapEntries = map_entries.as_ptr() as *const vks::VkSpecializationMapEntry as *const _;
+        self.raw.pMapEntries = map_entries.as_ptr() as *const vks::VkSpecializationMapEntry;
         self
     }
 
@@ -8932,18 +8960,20 @@ impl<'s> PipelineVertexInputStateCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_vertex_binding_descriptions<'m, 'a>(&mut self, vertex_binding_descriptions: &'a [VertexInputBindingDescription]) {
+    pub fn set_vertex_binding_descriptions<'m, 'a>(&mut self, vertex_binding_descriptions: &'a [VertexInputBindingDescription])
+            where 'a: 's {
         assert!(self.raw.vertexBindingDescriptionCount == 0 || self.raw.vertexBindingDescriptionCount == vertex_binding_descriptions.len() as _, 
             "count inconsistency found when specifying `PipelineVertexInputStateCreateInfo::vertex_binding_descriptions`.");
         self.raw.vertexBindingDescriptionCount = vertex_binding_descriptions.len() as _;
-        self.raw.pVertexBindingDescriptions = vertex_binding_descriptions.as_ptr() as *const vks::VkVertexInputBindingDescription as *const _;
+        self.raw.pVertexBindingDescriptions = vertex_binding_descriptions.as_ptr() as *const vks::VkVertexInputBindingDescription;
     }
 
-    pub fn set_vertex_attribute_descriptions<'m, 'a>(&mut self, vertex_attribute_descriptions: &'a [VertexInputAttributeDescription]) {
+    pub fn set_vertex_attribute_descriptions<'m, 'a>(&mut self, vertex_attribute_descriptions: &'a [VertexInputAttributeDescription])
+            where 'a: 's {
         assert!(self.raw.vertexAttributeDescriptionCount == 0 || self.raw.vertexAttributeDescriptionCount == vertex_attribute_descriptions.len() as _, 
             "count inconsistency found when specifying `PipelineVertexInputStateCreateInfo::vertex_attribute_descriptions`.");
         self.raw.vertexAttributeDescriptionCount = vertex_attribute_descriptions.len() as _;
-        self.raw.pVertexAttributeDescriptions = vertex_attribute_descriptions.as_ptr() as *const vks::VkVertexInputAttributeDescription as *const _;
+        self.raw.pVertexAttributeDescriptions = vertex_attribute_descriptions.as_ptr() as *const vks::VkVertexInputAttributeDescription;
     }
 
     pub fn as_raw(&self) -> &vks::VkPipelineVertexInputStateCreateInfo {
@@ -8991,19 +9021,21 @@ impl<'b> PipelineVertexInputStateCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn vertex_binding_descriptions<'m, 'a>(mut self, vertex_binding_descriptions: &'a [VertexInputBindingDescription]) -> PipelineVertexInputStateCreateInfoBuilder<'b> {
+    pub fn vertex_binding_descriptions<'m, 'a>(mut self, vertex_binding_descriptions: &'a [VertexInputBindingDescription]) -> PipelineVertexInputStateCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.vertexBindingDescriptionCount == 0 || self.raw.vertexBindingDescriptionCount == vertex_binding_descriptions.len() as _, 
             "count inconsistency found when specifying `PipelineVertexInputStateCreateInfo::vertex_binding_descriptions`.");
         self.raw.vertexBindingDescriptionCount = vertex_binding_descriptions.len() as _;
-        self.raw.pVertexBindingDescriptions = vertex_binding_descriptions.as_ptr() as *const vks::VkVertexInputBindingDescription as *const _;
+        self.raw.pVertexBindingDescriptions = vertex_binding_descriptions.as_ptr() as *const vks::VkVertexInputBindingDescription;
         self
     }
 
-    pub fn vertex_attribute_descriptions<'m, 'a>(mut self, vertex_attribute_descriptions: &'a [VertexInputAttributeDescription]) -> PipelineVertexInputStateCreateInfoBuilder<'b> {
+    pub fn vertex_attribute_descriptions<'m, 'a>(mut self, vertex_attribute_descriptions: &'a [VertexInputAttributeDescription]) -> PipelineVertexInputStateCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.vertexAttributeDescriptionCount == 0 || self.raw.vertexAttributeDescriptionCount == vertex_attribute_descriptions.len() as _, 
             "count inconsistency found when specifying `PipelineVertexInputStateCreateInfo::vertex_attribute_descriptions`.");
         self.raw.vertexAttributeDescriptionCount = vertex_attribute_descriptions.len() as _;
-        self.raw.pVertexAttributeDescriptions = vertex_attribute_descriptions.as_ptr() as *const vks::VkVertexInputAttributeDescription as *const _;
+        self.raw.pVertexAttributeDescriptions = vertex_attribute_descriptions.as_ptr() as *const vks::VkVertexInputAttributeDescription;
         self
     }
 
@@ -9314,18 +9346,20 @@ impl<'s> PipelineViewportStateCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_viewports<'m, 'a>(&mut self, viewports: &'a [Viewport]) {
+    pub fn set_viewports<'m, 'a>(&mut self, viewports: &'a [Viewport])
+            where 'a: 's {
         assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewports.len() as _, 
             "count inconsistency found when specifying `PipelineViewportStateCreateInfo::viewports`.");
         self.raw.viewportCount = viewports.len() as _;
-        self.raw.pViewports = viewports.as_ptr() as *const vks::VkViewport as *const _;
+        self.raw.pViewports = viewports.as_ptr() as *const vks::VkViewport;
     }
 
-    pub fn set_scissors<'m, 'a>(&mut self, scissors: &'a [Rect2d]) {
+    pub fn set_scissors<'m, 'a>(&mut self, scissors: &'a [Rect2d])
+            where 'a: 's {
         assert!(self.raw.scissorCount == 0 || self.raw.scissorCount == scissors.len() as _, 
             "count inconsistency found when specifying `PipelineViewportStateCreateInfo::scissors`.");
         self.raw.scissorCount = scissors.len() as _;
-        self.raw.pScissors = scissors.as_ptr() as *const vks::VkRect2D as *const _;
+        self.raw.pScissors = scissors.as_ptr() as *const vks::VkRect2D;
     }
 
     pub fn as_raw(&self) -> &vks::VkPipelineViewportStateCreateInfo {
@@ -9373,19 +9407,21 @@ impl<'b> PipelineViewportStateCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn viewports<'m, 'a>(mut self, viewports: &'a [Viewport]) -> PipelineViewportStateCreateInfoBuilder<'b> {
+    pub fn viewports<'m, 'a>(mut self, viewports: &'a [Viewport]) -> PipelineViewportStateCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewports.len() as _, 
             "count inconsistency found when specifying `PipelineViewportStateCreateInfo::viewports`.");
         self.raw.viewportCount = viewports.len() as _;
-        self.raw.pViewports = viewports.as_ptr() as *const vks::VkViewport as *const _;
+        self.raw.pViewports = viewports.as_ptr() as *const vks::VkViewport;
         self
     }
 
-    pub fn scissors<'m, 'a>(mut self, scissors: &'a [Rect2d]) -> PipelineViewportStateCreateInfoBuilder<'b> {
+    pub fn scissors<'m, 'a>(mut self, scissors: &'a [Rect2d]) -> PipelineViewportStateCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.scissorCount == 0 || self.raw.scissorCount == scissors.len() as _, 
             "count inconsistency found when specifying `PipelineViewportStateCreateInfo::scissors`.");
         self.raw.scissorCount = scissors.len() as _;
-        self.raw.pScissors = scissors.as_ptr() as *const vks::VkRect2D as *const _;
+        self.raw.pScissors = scissors.as_ptr() as *const vks::VkRect2D;
         self
     }
 
@@ -10130,11 +10166,12 @@ impl<'s> PipelineColorBlendStateCreateInfo<'s> {
         self.raw.logicOp = logic_op.into();
     }
 
-    pub fn set_attachments<'m, 'a>(&mut self, attachments: &'a [PipelineColorBlendAttachmentState]) {
+    pub fn set_attachments<'m, 'a>(&mut self, attachments: &'a [PipelineColorBlendAttachmentState])
+            where 'a: 's {
         assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as _, 
             "count inconsistency found when specifying `PipelineColorBlendStateCreateInfo::attachments`.");
         self.raw.attachmentCount = attachments.len() as _;
-        self.raw.pAttachments = attachments.as_ptr() as *const vks::VkPipelineColorBlendAttachmentState as *const _;
+        self.raw.pAttachments = attachments.as_ptr() as *const vks::VkPipelineColorBlendAttachmentState;
     }
 
     pub fn set_blend_constants<'m>(&mut self, blend_constants: [f32; 4]) {
@@ -10196,11 +10233,12 @@ impl<'b> PipelineColorBlendStateCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn attachments<'m, 'a>(mut self, attachments: &'a [PipelineColorBlendAttachmentState]) -> PipelineColorBlendStateCreateInfoBuilder<'b> {
+    pub fn attachments<'m, 'a>(mut self, attachments: &'a [PipelineColorBlendAttachmentState]) -> PipelineColorBlendStateCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as _, 
             "count inconsistency found when specifying `PipelineColorBlendStateCreateInfo::attachments`.");
         self.raw.attachmentCount = attachments.len() as _;
-        self.raw.pAttachments = attachments.as_ptr() as *const vks::VkPipelineColorBlendAttachmentState as *const _;
+        self.raw.pAttachments = attachments.as_ptr() as *const vks::VkPipelineColorBlendAttachmentState;
         self
     }
 
@@ -10279,7 +10317,8 @@ impl<'s> PipelineDynamicStateCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_dynamic_states<'m, 'a>(&mut self, dynamic_states: &'a [DynamicState]) {
+    pub fn set_dynamic_states<'m, 'a>(&mut self, dynamic_states: &'a [DynamicState])
+            where 'a: 's {
         assert!(self.raw.dynamicStateCount == 0 || self.raw.dynamicStateCount == dynamic_states.len() as _, 
             "count inconsistency found when specifying `PipelineDynamicStateCreateInfo::dynamic_states`.");
         self.raw.dynamicStateCount = dynamic_states.len() as _;
@@ -10331,7 +10370,8 @@ impl<'b> PipelineDynamicStateCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn dynamic_states<'m, 'a>(mut self, dynamic_states: &'a [DynamicState]) -> PipelineDynamicStateCreateInfoBuilder<'b> {
+    pub fn dynamic_states<'m, 'a>(mut self, dynamic_states: &'a [DynamicState]) -> PipelineDynamicStateCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.dynamicStateCount == 0 || self.raw.dynamicStateCount == dynamic_states.len() as _, 
             "count inconsistency found when specifying `PipelineDynamicStateCreateInfo::dynamic_states`.");
         self.raw.dynamicStateCount = dynamic_states.len() as _;
@@ -10875,11 +10915,12 @@ impl<'s> GraphicsPipelineCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_stages<'m, 'a>(&mut self, stages: &'a [PipelineShaderStageCreateInfo]) {
+    pub fn set_stages<'m, 'a>(&mut self, stages: &'a [PipelineShaderStageCreateInfo])
+            where 'a: 's {
         assert!(self.raw.stageCount == 0 || self.raw.stageCount == stages.len() as _, 
             "count inconsistency found when specifying `GraphicsPipelineCreateInfo::stages`.");
         self.raw.stageCount = stages.len() as _;
-        self.raw.pStages = stages.as_ptr() as *const vks::VkPipelineShaderStageCreateInfo as *const _;
+        self.raw.pStages = stages.as_ptr() as *const vks::VkPipelineShaderStageCreateInfo;
     }
 
     pub fn set_vertex_input_state<'m, 'a>(&mut self, vertex_input_state: &'a PipelineVertexInputStateCreateInfo)
@@ -10995,11 +11036,12 @@ impl<'b> GraphicsPipelineCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn stages<'m, 'a>(mut self, stages: &'a [PipelineShaderStageCreateInfo]) -> GraphicsPipelineCreateInfoBuilder<'b> {
+    pub fn stages<'m, 'a>(mut self, stages: &'a [PipelineShaderStageCreateInfo]) -> GraphicsPipelineCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.stageCount == 0 || self.raw.stageCount == stages.len() as _, 
             "count inconsistency found when specifying `GraphicsPipelineCreateInfo::stages`.");
         self.raw.stageCount = stages.len() as _;
-        self.raw.pStages = stages.as_ptr() as *const vks::VkPipelineShaderStageCreateInfo as *const _;
+        self.raw.pStages = stages.as_ptr() as *const vks::VkPipelineShaderStageCreateInfo;
         self
     }
 
@@ -11448,11 +11490,12 @@ impl<'s> PipelineLayoutCreateInfo<'s> {
         self.raw.pSetLayouts = set_layouts.as_ptr() as *const vks::VkDescriptorSetLayout;
     }
 
-    pub fn set_push_constant_ranges<'m, 'a>(&mut self, push_constant_ranges: &'a [PushConstantRange]) {
+    pub fn set_push_constant_ranges<'m, 'a>(&mut self, push_constant_ranges: &'a [PushConstantRange])
+            where 'a: 's {
         assert!(self.raw.pushConstantRangeCount == 0 || self.raw.pushConstantRangeCount == push_constant_ranges.len() as _, 
             "count inconsistency found when specifying `PipelineLayoutCreateInfo::push_constant_ranges`.");
         self.raw.pushConstantRangeCount = push_constant_ranges.len() as _;
-        self.raw.pPushConstantRanges = push_constant_ranges.as_ptr() as *const vks::VkPushConstantRange as *const _;
+        self.raw.pPushConstantRanges = push_constant_ranges.as_ptr() as *const vks::VkPushConstantRange;
     }
 
     pub fn as_raw(&self) -> &vks::VkPipelineLayoutCreateInfo {
@@ -11509,11 +11552,12 @@ impl<'b> PipelineLayoutCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn push_constant_ranges<'m, 'a>(mut self, push_constant_ranges: &'a [PushConstantRange]) -> PipelineLayoutCreateInfoBuilder<'b> {
+    pub fn push_constant_ranges<'m, 'a>(mut self, push_constant_ranges: &'a [PushConstantRange]) -> PipelineLayoutCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.pushConstantRangeCount == 0 || self.raw.pushConstantRangeCount == push_constant_ranges.len() as _, 
             "count inconsistency found when specifying `PipelineLayoutCreateInfo::push_constant_ranges`.");
         self.raw.pushConstantRangeCount = push_constant_ranges.len() as _;
-        self.raw.pPushConstantRanges = push_constant_ranges.as_ptr() as *const vks::VkPushConstantRange as *const _;
+        self.raw.pPushConstantRanges = push_constant_ranges.as_ptr() as *const vks::VkPushConstantRange;
         self
     }
 
@@ -12487,7 +12531,8 @@ impl<'s> RenderPassBeginInfo<'s> {
         self.raw.renderArea = render_area.raw;
     }
 
-    pub fn set_clear_values<'m, 'a>(&mut self, clear_values: &'a [ClearValue]) {
+    pub fn set_clear_values<'m, 'a>(&mut self, clear_values: &'a [ClearValue])
+            where 'a: 's {
         assert!(self.raw.clearValueCount == 0 || self.raw.clearValueCount == clear_values.len() as _, 
             "count inconsistency found when specifying `RenderPassBeginInfo::clear_values`.");
         self.raw.clearValueCount = clear_values.len() as _;
@@ -12551,7 +12596,8 @@ impl<'b> RenderPassBeginInfoBuilder<'b> {
         self
     }
 
-    pub fn clear_values<'m, 'a>(mut self, clear_values: &'a [ClearValue]) -> RenderPassBeginInfoBuilder<'b> {
+    pub fn clear_values<'m, 'a>(mut self, clear_values: &'a [ClearValue]) -> RenderPassBeginInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.clearValueCount == 0 || self.raw.clearValueCount == clear_values.len() as _, 
             "count inconsistency found when specifying `RenderPassBeginInfo::clear_values`.");
         self.raw.clearValueCount = clear_values.len() as _;
@@ -13138,25 +13184,28 @@ impl<'s> SubpassDescription<'s> {
         self.raw.pipelineBindPoint = pipeline_bind_point.into();
     }
 
-    pub fn set_input_attachments<'m, 'a>(&mut self, input_attachments: &'a [AttachmentReference]) {
+    pub fn set_input_attachments<'m, 'a>(&mut self, input_attachments: &'a [AttachmentReference])
+            where 'a: 's {
         assert!(self.raw.inputAttachmentCount == 0 || self.raw.inputAttachmentCount == input_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::input_attachments`.");
         self.raw.inputAttachmentCount = input_attachments.len() as _;
-        self.raw.pInputAttachments = input_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
+        self.raw.pInputAttachments = input_attachments.as_ptr() as *const vks::VkAttachmentReference;
     }
 
-    pub fn set_color_attachments<'m, 'a>(&mut self, color_attachments: &'a [AttachmentReference]) {
+    pub fn set_color_attachments<'m, 'a>(&mut self, color_attachments: &'a [AttachmentReference])
+            where 'a: 's {
         assert!(self.raw.colorAttachmentCount == 0 || self.raw.colorAttachmentCount == color_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::color_attachments`.");
         self.raw.colorAttachmentCount = color_attachments.len() as _;
-        self.raw.pColorAttachments = color_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
+        self.raw.pColorAttachments = color_attachments.as_ptr() as *const vks::VkAttachmentReference;
     }
 
-    pub fn set_resolve_attachments<'m, 'a>(&mut self, resolve_attachments: &'a [AttachmentReference]) {
+    pub fn set_resolve_attachments<'m, 'a>(&mut self, resolve_attachments: &'a [AttachmentReference])
+            where 'a: 's {
         assert!(self.raw.colorAttachmentCount == 0 || self.raw.colorAttachmentCount == resolve_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::resolve_attachments`.");
         self.raw.colorAttachmentCount = resolve_attachments.len() as _;
-        self.raw.pResolveAttachments = resolve_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
+        self.raw.pResolveAttachments = resolve_attachments.as_ptr() as *const vks::VkAttachmentReference;
     }
 
     pub fn set_depth_stencil_attachment<'m, 'a>(&mut self, depth_stencil_attachment: &'a AttachmentReference)
@@ -13164,7 +13213,8 @@ impl<'s> SubpassDescription<'s> {
         self.raw.pDepthStencilAttachment = depth_stencil_attachment.as_raw();
     }
 
-    pub fn set_preserve_attachments<'m, 'a>(&mut self, preserve_attachments: &'a [u32]) {
+    pub fn set_preserve_attachments<'m, 'a>(&mut self, preserve_attachments: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.preserveAttachmentCount == 0 || self.raw.preserveAttachmentCount == preserve_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::preserve_attachments`.");
         self.raw.preserveAttachmentCount = preserve_attachments.len() as _;
@@ -13216,27 +13266,30 @@ impl<'b> SubpassDescriptionBuilder<'b> {
         self
     }
 
-    pub fn input_attachments<'m, 'a>(mut self, input_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b> {
+    pub fn input_attachments<'m, 'a>(mut self, input_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.inputAttachmentCount == 0 || self.raw.inputAttachmentCount == input_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::input_attachments`.");
         self.raw.inputAttachmentCount = input_attachments.len() as _;
-        self.raw.pInputAttachments = input_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
+        self.raw.pInputAttachments = input_attachments.as_ptr() as *const vks::VkAttachmentReference;
         self
     }
 
-    pub fn color_attachments<'m, 'a>(mut self, color_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b> {
+    pub fn color_attachments<'m, 'a>(mut self, color_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.colorAttachmentCount == 0 || self.raw.colorAttachmentCount == color_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::color_attachments`.");
         self.raw.colorAttachmentCount = color_attachments.len() as _;
-        self.raw.pColorAttachments = color_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
+        self.raw.pColorAttachments = color_attachments.as_ptr() as *const vks::VkAttachmentReference;
         self
     }
 
-    pub fn resolve_attachments<'m, 'a>(mut self, resolve_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b> {
+    pub fn resolve_attachments<'m, 'a>(mut self, resolve_attachments: &'a [AttachmentReference]) -> SubpassDescriptionBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.colorAttachmentCount == 0 || self.raw.colorAttachmentCount == resolve_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::resolve_attachments`.");
         self.raw.colorAttachmentCount = resolve_attachments.len() as _;
-        self.raw.pResolveAttachments = resolve_attachments.as_ptr() as *const vks::VkAttachmentReference as *const _;
+        self.raw.pResolveAttachments = resolve_attachments.as_ptr() as *const vks::VkAttachmentReference;
         self
     }
 
@@ -13246,7 +13299,8 @@ impl<'b> SubpassDescriptionBuilder<'b> {
         self
     }
 
-    pub fn preserve_attachments<'m, 'a>(mut self, preserve_attachments: &'a [u32]) -> SubpassDescriptionBuilder<'b> {
+    pub fn preserve_attachments<'m, 'a>(mut self, preserve_attachments: &'a [u32]) -> SubpassDescriptionBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.preserveAttachmentCount == 0 || self.raw.preserveAttachmentCount == preserve_attachments.len() as _, 
             "count inconsistency found when specifying `SubpassDescription::preserve_attachments`.");
         self.raw.preserveAttachmentCount = preserve_attachments.len() as _;
@@ -13520,25 +13574,28 @@ impl<'s> RenderPassCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_attachments<'m, 'a>(&mut self, attachments: &'a [AttachmentDescription]) {
+    pub fn set_attachments<'m, 'a>(&mut self, attachments: &'a [AttachmentDescription])
+            where 'a: 's {
         assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::attachments`.");
         self.raw.attachmentCount = attachments.len() as _;
-        self.raw.pAttachments = attachments.as_ptr() as *const vks::VkAttachmentDescription as *const _;
+        self.raw.pAttachments = attachments.as_ptr() as *const vks::VkAttachmentDescription;
     }
 
-    pub fn set_subpasses<'m, 'a>(&mut self, subpasses: &'a [SubpassDescription]) {
+    pub fn set_subpasses<'m, 'a>(&mut self, subpasses: &'a [SubpassDescription])
+            where 'a: 's {
         assert!(self.raw.subpassCount == 0 || self.raw.subpassCount == subpasses.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::subpasses`.");
         self.raw.subpassCount = subpasses.len() as _;
-        self.raw.pSubpasses = subpasses.as_ptr() as *const vks::VkSubpassDescription as *const _;
+        self.raw.pSubpasses = subpasses.as_ptr() as *const vks::VkSubpassDescription;
     }
 
-    pub fn set_dependencies<'m, 'a>(&mut self, dependencies: &'a [SubpassDependency]) {
+    pub fn set_dependencies<'m, 'a>(&mut self, dependencies: &'a [SubpassDependency])
+            where 'a: 's {
         assert!(self.raw.dependencyCount == 0 || self.raw.dependencyCount == dependencies.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::dependencies`.");
         self.raw.dependencyCount = dependencies.len() as _;
-        self.raw.pDependencies = dependencies.as_ptr() as *const vks::VkSubpassDependency as *const _;
+        self.raw.pDependencies = dependencies.as_ptr() as *const vks::VkSubpassDependency;
     }
 
     pub fn as_raw(&self) -> &vks::VkRenderPassCreateInfo {
@@ -13586,27 +13643,30 @@ impl<'b> RenderPassCreateInfoBuilder<'b> {
         self
     }
 
-    pub fn attachments<'m, 'a>(mut self, attachments: &'a [AttachmentDescription]) -> RenderPassCreateInfoBuilder<'b> {
+    pub fn attachments<'m, 'a>(mut self, attachments: &'a [AttachmentDescription]) -> RenderPassCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.attachmentCount == 0 || self.raw.attachmentCount == attachments.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::attachments`.");
         self.raw.attachmentCount = attachments.len() as _;
-        self.raw.pAttachments = attachments.as_ptr() as *const vks::VkAttachmentDescription as *const _;
+        self.raw.pAttachments = attachments.as_ptr() as *const vks::VkAttachmentDescription;
         self
     }
 
-    pub fn subpasses<'m, 'a>(mut self, subpasses: &'a [SubpassDescription]) -> RenderPassCreateInfoBuilder<'b> {
+    pub fn subpasses<'m, 'a>(mut self, subpasses: &'a [SubpassDescription]) -> RenderPassCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.subpassCount == 0 || self.raw.subpassCount == subpasses.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::subpasses`.");
         self.raw.subpassCount = subpasses.len() as _;
-        self.raw.pSubpasses = subpasses.as_ptr() as *const vks::VkSubpassDescription as *const _;
+        self.raw.pSubpasses = subpasses.as_ptr() as *const vks::VkSubpassDescription;
         self
     }
 
-    pub fn dependencies<'m, 'a>(mut self, dependencies: &'a [SubpassDependency]) -> RenderPassCreateInfoBuilder<'b> {
+    pub fn dependencies<'m, 'a>(mut self, dependencies: &'a [SubpassDependency]) -> RenderPassCreateInfoBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.dependencyCount == 0 || self.raw.dependencyCount == dependencies.len() as _, 
             "count inconsistency found when specifying `RenderPassCreateInfo::dependencies`.");
         self.raw.dependencyCount = dependencies.len() as _;
-        self.raw.pDependencies = dependencies.as_ptr() as *const vks::VkSubpassDependency as *const _;
+        self.raw.pDependencies = dependencies.as_ptr() as *const vks::VkSubpassDependency;
         self
     }
 
@@ -20244,7 +20304,8 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
         self.raw.imageSharingMode = image_sharing_mode.into();
     }
 
-    pub fn set_queue_family_indices<'m, 'a>(&mut self, queue_family_indices: &'a [u32]) {
+    pub fn set_queue_family_indices<'m, 'a>(&mut self, queue_family_indices: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `SwapchainCreateInfoKhr::queue_family_indices`.");
         self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
@@ -20358,7 +20419,8 @@ impl<'b> SwapchainCreateInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> SwapchainCreateInfoKhrBuilder<'b> {
+    pub fn queue_family_indices<'m, 'a>(mut self, queue_family_indices: &'a [u32]) -> SwapchainCreateInfoKhrBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.queueFamilyIndexCount == 0 || self.raw.queueFamilyIndexCount == queue_family_indices.len() as _, 
             "count inconsistency found when specifying `SwapchainCreateInfoKhr::queue_family_indices`.");
         self.raw.queueFamilyIndexCount = queue_family_indices.len() as _;
@@ -20524,14 +20586,16 @@ impl<'s> PresentInfoKhr<'s> {
         self.raw.pSwapchains = swapchains.as_ptr() as *const vks::VkSwapchainKHR;
     }
 
-    pub fn set_image_indices<'m, 'a>(&mut self, image_indices: &'a [u32]) {
+    pub fn set_image_indices<'m, 'a>(&mut self, image_indices: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == image_indices.len() as _, 
             "count inconsistency found when specifying `PresentInfoKhr::image_indices`.");
         self.raw.swapchainCount = image_indices.len() as _;
         self.raw.pImageIndices = image_indices.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_results<'m, 'a>(&mut self, results: &'a mut [ResultEnum]) {
+    pub fn set_results<'m, 'a>(&mut self, results: &'a mut [ResultEnum])
+            where 'a: 's {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == results.len() as _, 
             "count inconsistency found when specifying `PresentInfoKhr::results`.");
         self.raw.swapchainCount = results.len() as _;
@@ -20596,7 +20660,8 @@ impl<'b> PresentInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn image_indices<'m, 'a>(mut self, image_indices: &'a [u32]) -> PresentInfoKhrBuilder<'b> {
+    pub fn image_indices<'m, 'a>(mut self, image_indices: &'a [u32]) -> PresentInfoKhrBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == image_indices.len() as _, 
             "count inconsistency found when specifying `PresentInfoKhr::image_indices`.");
         self.raw.swapchainCount = image_indices.len() as _;
@@ -20604,7 +20669,8 @@ impl<'b> PresentInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn results<'m, 'a>(mut self, results: &'a mut [ResultEnum]) -> PresentInfoKhrBuilder<'b> {
+    pub fn results<'m, 'a>(mut self, results: &'a mut [ResultEnum]) -> PresentInfoKhrBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == results.len() as _, 
             "count inconsistency found when specifying `PresentInfoKhr::results`.");
         self.raw.swapchainCount = results.len() as _;
@@ -20797,7 +20863,8 @@ impl<'s> ValidationFlagsExt<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_disabled_validation_checks<'m, 'a>(&mut self, disabled_validation_checks: &'a mut [ValidationCheckExt]) {
+    pub fn set_disabled_validation_checks<'m, 'a>(&mut self, disabled_validation_checks: &'a mut [ValidationCheckExt])
+            where 'a: 's {
         assert!(self.raw.disabledValidationCheckCount == 0 || self.raw.disabledValidationCheckCount == disabled_validation_checks.len() as _, 
             "count inconsistency found when specifying `ValidationFlagsExt::disabled_validation_checks`.");
         self.raw.disabledValidationCheckCount = disabled_validation_checks.len() as _;
@@ -20844,7 +20911,8 @@ impl<'b> ValidationFlagsExtBuilder<'b> {
         self
     }
 
-    pub fn disabled_validation_checks<'m, 'a>(mut self, disabled_validation_checks: &'a mut [ValidationCheckExt]) -> ValidationFlagsExtBuilder<'b> {
+    pub fn disabled_validation_checks<'m, 'a>(mut self, disabled_validation_checks: &'a mut [ValidationCheckExt]) -> ValidationFlagsExtBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.disabledValidationCheckCount == 0 || self.raw.disabledValidationCheckCount == disabled_validation_checks.len() as _, 
             "count inconsistency found when specifying `ValidationFlagsExt::disabled_validation_checks`.");
         self.raw.disabledValidationCheckCount = disabled_validation_checks.len() as _;
@@ -22256,14 +22324,16 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
         self.raw.pAcquireSyncs = acquire_syncs.as_ptr() as *const vks::VkDeviceMemory;
     }
 
-    pub fn set_acquire_keys<'m, 'a>(&mut self, acquire_keys: &'a [u64]) {
+    pub fn set_acquire_keys<'m, 'a>(&mut self, acquire_keys: &'a [u64])
+            where 'a: 's {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::acquire_keys`.");
         self.raw.acquireCount = acquire_keys.len() as _;
         self.raw.pAcquireKeys = acquire_keys.as_ptr() as *const u64 as *const _;
     }
 
-    pub fn set_acquire_timeout_milliseconds<'m, 'a>(&mut self, acquire_timeout_milliseconds: &'a [u32]) {
+    pub fn set_acquire_timeout_milliseconds<'m, 'a>(&mut self, acquire_timeout_milliseconds: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_timeout_milliseconds.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::acquire_timeout_milliseconds`.");
         self.raw.acquireCount = acquire_timeout_milliseconds.len() as _;
@@ -22278,7 +22348,8 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
         self.raw.pReleaseSyncs = release_syncs.as_ptr() as *const vks::VkDeviceMemory;
     }
 
-    pub fn set_release_keys<'m, 'a>(&mut self, release_keys: &'a [u64]) {
+    pub fn set_release_keys<'m, 'a>(&mut self, release_keys: &'a [u64])
+            where 'a: 's {
         assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::release_keys`.");
         self.raw.releaseCount = release_keys.len() as _;
@@ -22334,7 +22405,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
         self
     }
 
-    pub fn acquire_keys<'m, 'a>(mut self, acquire_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+    pub fn acquire_keys<'m, 'a>(mut self, acquire_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::acquire_keys`.");
         self.raw.acquireCount = acquire_keys.len() as _;
@@ -22342,7 +22414,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
         self
     }
 
-    pub fn acquire_timeout_milliseconds<'m, 'a>(mut self, acquire_timeout_milliseconds: &'a [u32]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+    pub fn acquire_timeout_milliseconds<'m, 'a>(mut self, acquire_timeout_milliseconds: &'a [u32]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_timeout_milliseconds.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::acquire_timeout_milliseconds`.");
         self.raw.acquireCount = acquire_timeout_milliseconds.len() as _;
@@ -22359,7 +22432,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
         self
     }
 
-    pub fn release_keys<'m, 'a>(mut self, release_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
+    pub fn release_keys<'m, 'a>(mut self, release_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoNv::release_keys`.");
         self.raw.releaseCount = release_keys.len() as _;
@@ -22955,11 +23029,12 @@ impl<'s> IndirectCommandsLayoutCreateInfoNvx<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_tokens<'m, 'a>(&mut self, tokens: &'a [IndirectCommandsLayoutTokenNvx]) {
+    pub fn set_tokens<'m, 'a>(&mut self, tokens: &'a [IndirectCommandsLayoutTokenNvx])
+            where 'a: 's {
         assert!(self.raw.tokenCount == 0 || self.raw.tokenCount == tokens.len() as _, 
             "count inconsistency found when specifying `IndirectCommandsLayoutCreateInfoNvx::tokens`.");
         self.raw.tokenCount = tokens.len() as _;
-        self.raw.pTokens = tokens.as_ptr() as *const vks::VkIndirectCommandsLayoutTokenNVX as *const _;
+        self.raw.pTokens = tokens.as_ptr() as *const vks::VkIndirectCommandsLayoutTokenNVX;
     }
 
     pub fn as_raw(&self) -> &vks::VkIndirectCommandsLayoutCreateInfoNVX {
@@ -23016,11 +23091,12 @@ impl<'b> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
         self
     }
 
-    pub fn tokens<'m, 'a>(mut self, tokens: &'a [IndirectCommandsLayoutTokenNvx]) -> IndirectCommandsLayoutCreateInfoNvxBuilder<'b> {
+    pub fn tokens<'m, 'a>(mut self, tokens: &'a [IndirectCommandsLayoutTokenNvx]) -> IndirectCommandsLayoutCreateInfoNvxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.tokenCount == 0 || self.raw.tokenCount == tokens.len() as _, 
             "count inconsistency found when specifying `IndirectCommandsLayoutCreateInfoNvx::tokens`.");
         self.raw.tokenCount = tokens.len() as _;
-        self.raw.pTokens = tokens.as_ptr() as *const vks::VkIndirectCommandsLayoutTokenNVX as *const _;
+        self.raw.pTokens = tokens.as_ptr() as *const vks::VkIndirectCommandsLayoutTokenNVX;
         self
     }
 
@@ -23121,11 +23197,12 @@ impl<'s> CmdProcessCommandsInfoNvx<'s> {
         self.raw.indirectCommandsLayout = indirect_commands_layout.handle().0;
     }
 
-    pub fn set_indirect_commands_tokens<'m, 'a>(&mut self, indirect_commands_tokens: &'a [IndirectCommandsTokenNvx]) {
+    pub fn set_indirect_commands_tokens<'m, 'a>(&mut self, indirect_commands_tokens: &'a [IndirectCommandsTokenNvx])
+            where 'a: 's {
         assert!(self.raw.indirectCommandsTokenCount == 0 || self.raw.indirectCommandsTokenCount == indirect_commands_tokens.len() as _, 
             "count inconsistency found when specifying `CmdProcessCommandsInfoNvx::indirect_commands_tokens`.");
         self.raw.indirectCommandsTokenCount = indirect_commands_tokens.len() as _;
-        self.raw.pIndirectCommandsTokens = indirect_commands_tokens.as_ptr() as *const vks::VkIndirectCommandsTokenNVX as *const _;
+        self.raw.pIndirectCommandsTokens = indirect_commands_tokens.as_ptr() as *const vks::VkIndirectCommandsTokenNVX;
     }
 
     pub fn set_max_sequences_count<'m>(&mut self, max_sequences_count: u32) {
@@ -23211,11 +23288,12 @@ impl<'b> CmdProcessCommandsInfoNvxBuilder<'b> {
         self
     }
 
-    pub fn indirect_commands_tokens<'m, 'a>(mut self, indirect_commands_tokens: &'a [IndirectCommandsTokenNvx]) -> CmdProcessCommandsInfoNvxBuilder<'b> {
+    pub fn indirect_commands_tokens<'m, 'a>(mut self, indirect_commands_tokens: &'a [IndirectCommandsTokenNvx]) -> CmdProcessCommandsInfoNvxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.indirectCommandsTokenCount == 0 || self.raw.indirectCommandsTokenCount == indirect_commands_tokens.len() as _, 
             "count inconsistency found when specifying `CmdProcessCommandsInfoNvx::indirect_commands_tokens`.");
         self.raw.indirectCommandsTokenCount = indirect_commands_tokens.len() as _;
-        self.raw.pIndirectCommandsTokens = indirect_commands_tokens.as_ptr() as *const vks::VkIndirectCommandsTokenNVX as *const _;
+        self.raw.pIndirectCommandsTokens = indirect_commands_tokens.as_ptr() as *const vks::VkIndirectCommandsTokenNVX;
         self
     }
 
@@ -23495,14 +23573,16 @@ impl<'s> ObjectTableCreateInfoNvx<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_object_entry_types<'m, 'a>(&mut self, object_entry_types: &'a [ObjectEntryTypeNvx]) {
+    pub fn set_object_entry_types<'m, 'a>(&mut self, object_entry_types: &'a [ObjectEntryTypeNvx])
+            where 'a: 's {
         assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_types.len() as _, 
             "count inconsistency found when specifying `ObjectTableCreateInfoNvx::object_entry_types`.");
         self.raw.objectCount = object_entry_types.len() as _;
         self.raw.pObjectEntryTypes = object_entry_types.as_ptr() as *const ObjectEntryTypeNvx as *const _;
     }
 
-    pub fn set_object_entry_counts<'m, 'a>(&mut self, object_entry_counts: &'a [u32]) {
+    pub fn set_object_entry_counts<'m, 'a>(&mut self, object_entry_counts: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_counts.len() as _, 
             "count inconsistency found when specifying `ObjectTableCreateInfoNvx::object_entry_counts`.");
         self.raw.objectCount = object_entry_counts.len() as _;
@@ -23580,7 +23660,8 @@ impl<'b> ObjectTableCreateInfoNvxBuilder<'b> {
         self
     }
 
-    pub fn object_entry_types<'m, 'a>(mut self, object_entry_types: &'a [ObjectEntryTypeNvx]) -> ObjectTableCreateInfoNvxBuilder<'b> {
+    pub fn object_entry_types<'m, 'a>(mut self, object_entry_types: &'a [ObjectEntryTypeNvx]) -> ObjectTableCreateInfoNvxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_types.len() as _, 
             "count inconsistency found when specifying `ObjectTableCreateInfoNvx::object_entry_types`.");
         self.raw.objectCount = object_entry_types.len() as _;
@@ -23588,7 +23669,8 @@ impl<'b> ObjectTableCreateInfoNvxBuilder<'b> {
         self
     }
 
-    pub fn object_entry_counts<'m, 'a>(mut self, object_entry_counts: &'a [u32]) -> ObjectTableCreateInfoNvxBuilder<'b> {
+    pub fn object_entry_counts<'m, 'a>(mut self, object_entry_counts: &'a [u32]) -> ObjectTableCreateInfoNvxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.objectCount == 0 || self.raw.objectCount == object_entry_counts.len() as _, 
             "count inconsistency found when specifying `ObjectTableCreateInfoNvx::object_entry_counts`.");
         self.raw.objectCount = object_entry_counts.len() as _;
@@ -25507,11 +25589,12 @@ impl<'s> PresentRegionsKhr<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_regions<'m, 'a>(&mut self, regions: &'a [PresentRegionKhr]) {
+    pub fn set_regions<'m, 'a>(&mut self, regions: &'a [PresentRegionKhr])
+            where 'a: 's {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == regions.len() as _, 
             "count inconsistency found when specifying `PresentRegionsKhr::regions`.");
         self.raw.swapchainCount = regions.len() as _;
-        self.raw.pRegions = regions.as_ptr() as *const vks::VkPresentRegionKHR as *const _;
+        self.raw.pRegions = regions.as_ptr() as *const vks::VkPresentRegionKHR;
     }
 
     pub fn as_raw(&self) -> &vks::VkPresentRegionsKHR {
@@ -25554,11 +25637,12 @@ impl<'b> PresentRegionsKhrBuilder<'b> {
         self
     }
 
-    pub fn regions<'m, 'a>(mut self, regions: &'a [PresentRegionKhr]) -> PresentRegionsKhrBuilder<'b> {
+    pub fn regions<'m, 'a>(mut self, regions: &'a [PresentRegionKhr]) -> PresentRegionsKhrBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == regions.len() as _, 
             "count inconsistency found when specifying `PresentRegionsKhr::regions`.");
         self.raw.swapchainCount = regions.len() as _;
-        self.raw.pRegions = regions.as_ptr() as *const vks::VkPresentRegionKHR as *const _;
+        self.raw.pRegions = regions.as_ptr() as *const vks::VkPresentRegionKHR;
         self
     }
 
@@ -25598,11 +25682,12 @@ impl<'s> PresentRegionKhr<'s> {
         unsafe { slice::from_raw_parts(self.raw.pRectangles as *const _, self.raw.rectangleCount as usize) }
     }
 
-    pub fn set_rectangles<'m, 'a>(&mut self, rectangles: &'a [RectLayerKhr]) {
+    pub fn set_rectangles<'m, 'a>(&mut self, rectangles: &'a [RectLayerKhr])
+            where 'a: 's {
         assert!(self.raw.rectangleCount == 0 || self.raw.rectangleCount == rectangles.len() as _, 
             "count inconsistency found when specifying `PresentRegionKhr::rectangles`.");
         self.raw.rectangleCount = rectangles.len() as _;
-        self.raw.pRectangles = rectangles.as_ptr() as *const vks::VkRectLayerKHR as *const _;
+        self.raw.pRectangles = rectangles.as_ptr() as *const vks::VkRectLayerKHR;
     }
 
     pub fn as_raw(&self) -> &vks::VkPresentRegionKHR {
@@ -25640,11 +25725,12 @@ impl<'b> PresentRegionKhrBuilder<'b> {
         }
     }
 
-    pub fn rectangles<'m, 'a>(mut self, rectangles: &'a [RectLayerKhr]) -> PresentRegionKhrBuilder<'b> {
+    pub fn rectangles<'m, 'a>(mut self, rectangles: &'a [RectLayerKhr]) -> PresentRegionKhrBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.rectangleCount == 0 || self.raw.rectangleCount == rectangles.len() as _, 
             "count inconsistency found when specifying `PresentRegionKhr::rectangles`.");
         self.raw.rectangleCount = rectangles.len() as _;
-        self.raw.pRectangles = rectangles.as_ptr() as *const vks::VkRectLayerKHR as *const _;
+        self.raw.pRectangles = rectangles.as_ptr() as *const vks::VkRectLayerKHR;
         self
     }
 
@@ -27682,14 +27768,16 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
         self.raw.pAcquireSyncs = acquire_syncs.as_ptr() as *const vks::VkDeviceMemory;
     }
 
-    pub fn set_acquire_keys<'m, 'a>(&mut self, acquire_keys: &'a [u64]) {
+    pub fn set_acquire_keys<'m, 'a>(&mut self, acquire_keys: &'a [u64])
+            where 'a: 's {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::acquire_keys`.");
         self.raw.acquireCount = acquire_keys.len() as _;
         self.raw.pAcquireKeys = acquire_keys.as_ptr() as *const u64 as *const _;
     }
 
-    pub fn set_acquire_timeouts<'m, 'a>(&mut self, acquire_timeouts: &'a [u32]) {
+    pub fn set_acquire_timeouts<'m, 'a>(&mut self, acquire_timeouts: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_timeouts.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::acquire_timeouts`.");
         self.raw.acquireCount = acquire_timeouts.len() as _;
@@ -27704,7 +27792,8 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
         self.raw.pReleaseSyncs = release_syncs.as_ptr() as *const vks::VkDeviceMemory;
     }
 
-    pub fn set_release_keys<'m, 'a>(&mut self, release_keys: &'a [u64]) {
+    pub fn set_release_keys<'m, 'a>(&mut self, release_keys: &'a [u64])
+            where 'a: 's {
         assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::release_keys`.");
         self.raw.releaseCount = release_keys.len() as _;
@@ -27760,7 +27849,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn acquire_keys<'m, 'a>(mut self, acquire_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+    pub fn acquire_keys<'m, 'a>(mut self, acquire_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::acquire_keys`.");
         self.raw.acquireCount = acquire_keys.len() as _;
@@ -27768,7 +27858,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn acquire_timeouts<'m, 'a>(mut self, acquire_timeouts: &'a [u32]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+    pub fn acquire_timeouts<'m, 'a>(mut self, acquire_timeouts: &'a [u32]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.acquireCount == 0 || self.raw.acquireCount == acquire_timeouts.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::acquire_timeouts`.");
         self.raw.acquireCount = acquire_timeouts.len() as _;
@@ -27785,7 +27876,8 @@ impl<'b> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn release_keys<'m, 'a>(mut self, release_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
+    pub fn release_keys<'m, 'a>(mut self, release_keys: &'a [u64]) -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.releaseCount == 0 || self.raw.releaseCount == release_keys.len() as _, 
             "count inconsistency found when specifying `Win32KeyedMutexAcquireReleaseInfoKhr::release_keys`.");
         self.raw.releaseCount = release_keys.len() as _;
@@ -28474,14 +28566,16 @@ impl<'s> D3d12FenceSubmitInfoKHR<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_wait_semaphore_values<'m, 'a>(&mut self, wait_semaphore_values: &'a [u64]) {
+    pub fn set_wait_semaphore_values<'m, 'a>(&mut self, wait_semaphore_values: &'a [u64])
+            where 'a: 's {
         assert!(self.raw.waitSemaphoreValuesCount == 0 || self.raw.waitSemaphoreValuesCount == wait_semaphore_values.len() as _, 
             "count inconsistency found when specifying `D3d12FenceSubmitInfoKHR::wait_semaphore_values`.");
         self.raw.waitSemaphoreValuesCount = wait_semaphore_values.len() as _;
         self.raw.pWaitSemaphoreValues = wait_semaphore_values.as_ptr() as *const u64 as *const _;
     }
 
-    pub fn set_signal_semaphore_values<'m, 'a>(&mut self, signal_semaphore_values: &'a [u64]) {
+    pub fn set_signal_semaphore_values<'m, 'a>(&mut self, signal_semaphore_values: &'a [u64])
+            where 'a: 's {
         assert!(self.raw.signalSemaphoreValuesCount == 0 || self.raw.signalSemaphoreValuesCount == signal_semaphore_values.len() as _, 
             "count inconsistency found when specifying `D3d12FenceSubmitInfoKHR::signal_semaphore_values`.");
         self.raw.signalSemaphoreValuesCount = signal_semaphore_values.len() as _;
@@ -28528,7 +28622,8 @@ impl<'b> D3d12FenceSubmitInfoKHRBuilder<'b> {
         self
     }
 
-    pub fn wait_semaphore_values<'m, 'a>(mut self, wait_semaphore_values: &'a [u64]) -> D3d12FenceSubmitInfoKHRBuilder<'b> {
+    pub fn wait_semaphore_values<'m, 'a>(mut self, wait_semaphore_values: &'a [u64]) -> D3d12FenceSubmitInfoKHRBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.waitSemaphoreValuesCount == 0 || self.raw.waitSemaphoreValuesCount == wait_semaphore_values.len() as _, 
             "count inconsistency found when specifying `D3d12FenceSubmitInfoKHR::wait_semaphore_values`.");
         self.raw.waitSemaphoreValuesCount = wait_semaphore_values.len() as _;
@@ -28536,7 +28631,8 @@ impl<'b> D3d12FenceSubmitInfoKHRBuilder<'b> {
         self
     }
 
-    pub fn signal_semaphore_values<'m, 'a>(mut self, signal_semaphore_values: &'a [u64]) -> D3d12FenceSubmitInfoKHRBuilder<'b> {
+    pub fn signal_semaphore_values<'m, 'a>(mut self, signal_semaphore_values: &'a [u64]) -> D3d12FenceSubmitInfoKHRBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.signalSemaphoreValuesCount == 0 || self.raw.signalSemaphoreValuesCount == signal_semaphore_values.len() as _, 
             "count inconsistency found when specifying `D3d12FenceSubmitInfoKHR::signal_semaphore_values`.");
         self.raw.signalSemaphoreValuesCount = signal_semaphore_values.len() as _;
@@ -30236,7 +30332,8 @@ impl<'s> RenderPassMultiviewCreateInfoKhx<'s> {
         self.raw.subpassCount = subpass_count.into();
     }
 
-    pub fn set_view_masks<'m, 'a>(&mut self, view_masks: &'a [u32]) {
+    pub fn set_view_masks<'m, 'a>(&mut self, view_masks: &'a [u32])
+            where 'a: 's {
         self.raw.pViewMasks = view_masks.as_ptr() as *const u32 as *const _;
     }
 
@@ -30244,11 +30341,13 @@ impl<'s> RenderPassMultiviewCreateInfoKhx<'s> {
         self.raw.dependencyCount = dependency_count.into();
     }
 
-    pub fn set_view_offsets<'m, 'a>(&mut self, view_offsets: &'a [i32]) {
+    pub fn set_view_offsets<'m, 'a>(&mut self, view_offsets: &'a [i32])
+            where 'a: 's {
         self.raw.pViewOffsets = view_offsets.as_ptr() as *const i32 as *const _;
     }
 
-    pub fn set_correlation_masks<'m, 'a>(&mut self, correlation_masks: &'a [u32]) {
+    pub fn set_correlation_masks<'m, 'a>(&mut self, correlation_masks: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.correlationMaskCount == 0 || self.raw.correlationMaskCount == correlation_masks.len() as _, 
             "count inconsistency found when specifying `RenderPassMultiviewCreateInfoKhx::correlation_masks`.");
         self.raw.correlationMaskCount = correlation_masks.len() as _;
@@ -30304,7 +30403,8 @@ impl<'b> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn view_masks<'m, 'a>(mut self, view_masks: &'a [u32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+    pub fn view_masks<'m, 'a>(mut self, view_masks: &'a [u32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b>
+            where 'a: 'b {
         self.raw.pViewMasks = view_masks.as_ptr() as *const u32 as *const _;
         self
     }
@@ -30314,12 +30414,14 @@ impl<'b> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn view_offsets<'m, 'a>(mut self, view_offsets: &'a [i32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+    pub fn view_offsets<'m, 'a>(mut self, view_offsets: &'a [i32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b>
+            where 'a: 'b {
         self.raw.pViewOffsets = view_offsets.as_ptr() as *const i32 as *const _;
         self
     }
 
-    pub fn correlation_masks<'m, 'a>(mut self, correlation_masks: &'a [u32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b> {
+    pub fn correlation_masks<'m, 'a>(mut self, correlation_masks: &'a [u32]) -> RenderPassMultiviewCreateInfoKhxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.correlationMaskCount == 0 || self.raw.correlationMaskCount == correlation_masks.len() as _, 
             "count inconsistency found when specifying `RenderPassMultiviewCreateInfoKhx::correlation_masks`.");
         self.raw.correlationMaskCount = correlation_masks.len() as _;
@@ -31287,7 +31389,8 @@ impl<'s> BindBufferMemoryDeviceGroupInfoKhx<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_device_indices<'m, 'a>(&mut self, device_indices: &'a [u32]) {
+    pub fn set_device_indices<'m, 'a>(&mut self, device_indices: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as _, 
             "count inconsistency found when specifying `BindBufferMemoryDeviceGroupInfoKhx::device_indices`.");
         self.raw.deviceIndexCount = device_indices.len() as _;
@@ -31338,7 +31441,8 @@ impl<'b> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn device_indices<'m, 'a>(mut self, device_indices: &'a [u32]) -> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b> {
+    pub fn device_indices<'m, 'a>(mut self, device_indices: &'a [u32]) -> BindBufferMemoryDeviceGroupInfoKhxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as _, 
             "count inconsistency found when specifying `BindBufferMemoryDeviceGroupInfoKhx::device_indices`.");
         self.raw.deviceIndexCount = device_indices.len() as _;
@@ -31396,18 +31500,20 @@ impl<'s> BindImageMemoryDeviceGroupInfoKhx<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_device_indices<'m, 'a>(&mut self, device_indices: &'a [u32]) {
+    pub fn set_device_indices<'m, 'a>(&mut self, device_indices: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as _, 
             "count inconsistency found when specifying `BindImageMemoryDeviceGroupInfoKhx::device_indices`.");
         self.raw.deviceIndexCount = device_indices.len() as _;
         self.raw.pDeviceIndices = device_indices.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_s_fr_rects<'m, 'a>(&mut self, s_fr_rects: &'a [Rect2d]) {
+    pub fn set_s_fr_rects<'m, 'a>(&mut self, s_fr_rects: &'a [Rect2d])
+            where 'a: 's {
         assert!(self.raw.SFRRectCount == 0 || self.raw.SFRRectCount == s_fr_rects.len() as _, 
             "count inconsistency found when specifying `BindImageMemoryDeviceGroupInfoKhx::s_fr_rects`.");
         self.raw.SFRRectCount = s_fr_rects.len() as _;
-        self.raw.pSFRRects = s_fr_rects.as_ptr() as *const vks::VkRect2D as *const _;
+        self.raw.pSFRRects = s_fr_rects.as_ptr() as *const vks::VkRect2D;
     }
 
     pub fn as_raw(&self) -> &vks::VkBindImageMemoryDeviceGroupInfoKHX {
@@ -31454,7 +31560,8 @@ impl<'b> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn device_indices<'m, 'a>(mut self, device_indices: &'a [u32]) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+    pub fn device_indices<'m, 'a>(mut self, device_indices: &'a [u32]) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.deviceIndexCount == 0 || self.raw.deviceIndexCount == device_indices.len() as _, 
             "count inconsistency found when specifying `BindImageMemoryDeviceGroupInfoKhx::device_indices`.");
         self.raw.deviceIndexCount = device_indices.len() as _;
@@ -31462,11 +31569,12 @@ impl<'b> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn s_fr_rects<'m, 'a>(mut self, s_fr_rects: &'a [Rect2d]) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b> {
+    pub fn s_fr_rects<'m, 'a>(mut self, s_fr_rects: &'a [Rect2d]) -> BindImageMemoryDeviceGroupInfoKhxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.SFRRectCount == 0 || self.raw.SFRRectCount == s_fr_rects.len() as _, 
             "count inconsistency found when specifying `BindImageMemoryDeviceGroupInfoKhx::s_fr_rects`.");
         self.raw.SFRRectCount = s_fr_rects.len() as _;
-        self.raw.pSFRRects = s_fr_rects.as_ptr() as *const vks::VkRect2D as *const _;
+        self.raw.pSFRRects = s_fr_rects.as_ptr() as *const vks::VkRect2D;
         self
     }
 
@@ -31528,11 +31636,12 @@ impl<'s> DeviceGroupRenderPassBeginInfoKhx<'s> {
         self.raw.deviceMask = device_mask.into();
     }
 
-    pub fn set_device_render_areas<'m, 'a>(&mut self, device_render_areas: &'a [Rect2d]) {
+    pub fn set_device_render_areas<'m, 'a>(&mut self, device_render_areas: &'a [Rect2d])
+            where 'a: 's {
         assert!(self.raw.deviceRenderAreaCount == 0 || self.raw.deviceRenderAreaCount == device_render_areas.len() as _, 
             "count inconsistency found when specifying `DeviceGroupRenderPassBeginInfoKhx::device_render_areas`.");
         self.raw.deviceRenderAreaCount = device_render_areas.len() as _;
-        self.raw.pDeviceRenderAreas = device_render_areas.as_ptr() as *const vks::VkRect2D as *const _;
+        self.raw.pDeviceRenderAreas = device_render_areas.as_ptr() as *const vks::VkRect2D;
     }
 
     pub fn as_raw(&self) -> &vks::VkDeviceGroupRenderPassBeginInfoKHX {
@@ -31584,11 +31693,12 @@ impl<'b> DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn device_render_areas<'m, 'a>(mut self, device_render_areas: &'a [Rect2d]) -> DeviceGroupRenderPassBeginInfoKhxBuilder<'b> {
+    pub fn device_render_areas<'m, 'a>(mut self, device_render_areas: &'a [Rect2d]) -> DeviceGroupRenderPassBeginInfoKhxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.deviceRenderAreaCount == 0 || self.raw.deviceRenderAreaCount == device_render_areas.len() as _, 
             "count inconsistency found when specifying `DeviceGroupRenderPassBeginInfoKhx::device_render_areas`.");
         self.raw.deviceRenderAreaCount = device_render_areas.len() as _;
-        self.raw.pDeviceRenderAreas = device_render_areas.as_ptr() as *const vks::VkRect2D as *const _;
+        self.raw.pDeviceRenderAreas = device_render_areas.as_ptr() as *const vks::VkRect2D;
         self
     }
 
@@ -31749,21 +31859,24 @@ impl<'s> DeviceGroupSubmitInfoKhx<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_wait_semaphore_device_indices<'m, 'a>(&mut self, wait_semaphore_device_indices: &'a [u32]) {
+    pub fn set_wait_semaphore_device_indices<'m, 'a>(&mut self, wait_semaphore_device_indices: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.waitSemaphoreCount == 0 || self.raw.waitSemaphoreCount == wait_semaphore_device_indices.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::wait_semaphore_device_indices`.");
         self.raw.waitSemaphoreCount = wait_semaphore_device_indices.len() as _;
         self.raw.pWaitSemaphoreDeviceIndices = wait_semaphore_device_indices.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_command_buffer_device_masks<'m, 'a>(&mut self, command_buffer_device_masks: &'a [u32]) {
+    pub fn set_command_buffer_device_masks<'m, 'a>(&mut self, command_buffer_device_masks: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.commandBufferCount == 0 || self.raw.commandBufferCount == command_buffer_device_masks.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::command_buffer_device_masks`.");
         self.raw.commandBufferCount = command_buffer_device_masks.len() as _;
         self.raw.pCommandBufferDeviceMasks = command_buffer_device_masks.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn set_signal_semaphore_device_indices<'m, 'a>(&mut self, signal_semaphore_device_indices: &'a [u32]) {
+    pub fn set_signal_semaphore_device_indices<'m, 'a>(&mut self, signal_semaphore_device_indices: &'a [u32])
+            where 'a: 's {
         assert!(self.raw.signalSemaphoreCount == 0 || self.raw.signalSemaphoreCount == signal_semaphore_device_indices.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::signal_semaphore_device_indices`.");
         self.raw.signalSemaphoreCount = signal_semaphore_device_indices.len() as _;
@@ -31814,7 +31927,8 @@ impl<'b> DeviceGroupSubmitInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn wait_semaphore_device_indices<'m, 'a>(mut self, wait_semaphore_device_indices: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
+    pub fn wait_semaphore_device_indices<'m, 'a>(mut self, wait_semaphore_device_indices: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.waitSemaphoreCount == 0 || self.raw.waitSemaphoreCount == wait_semaphore_device_indices.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::wait_semaphore_device_indices`.");
         self.raw.waitSemaphoreCount = wait_semaphore_device_indices.len() as _;
@@ -31822,7 +31936,8 @@ impl<'b> DeviceGroupSubmitInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn command_buffer_device_masks<'m, 'a>(mut self, command_buffer_device_masks: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
+    pub fn command_buffer_device_masks<'m, 'a>(mut self, command_buffer_device_masks: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.commandBufferCount == 0 || self.raw.commandBufferCount == command_buffer_device_masks.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::command_buffer_device_masks`.");
         self.raw.commandBufferCount = command_buffer_device_masks.len() as _;
@@ -31830,7 +31945,8 @@ impl<'b> DeviceGroupSubmitInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn signal_semaphore_device_indices<'m, 'a>(mut self, signal_semaphore_device_indices: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b> {
+    pub fn signal_semaphore_device_indices<'m, 'a>(mut self, signal_semaphore_device_indices: &'a [u32]) -> DeviceGroupSubmitInfoKhxBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.signalSemaphoreCount == 0 || self.raw.signalSemaphoreCount == signal_semaphore_device_indices.len() as _, 
             "count inconsistency found when specifying `DeviceGroupSubmitInfoKhx::signal_semaphore_device_indices`.");
         self.raw.signalSemaphoreCount = signal_semaphore_device_indices.len() as _;
@@ -32531,7 +32647,8 @@ impl<'s> DeviceGroupPresentInfoKhx<'s> {
         self.raw.swapchainCount = swapchain_count.into();
     }
 
-    pub fn set_device_masks<'m, 'a>(&mut self, device_masks: &'a [u32]) {
+    pub fn set_device_masks<'m, 'a>(&mut self, device_masks: &'a [u32])
+            where 'a: 's {
         self.raw.pDeviceMasks = device_masks.as_ptr() as *const u32 as *const _;
     }
 
@@ -32588,7 +32705,8 @@ impl<'b> DeviceGroupPresentInfoKhxBuilder<'b> {
         self
     }
 
-    pub fn device_masks<'m, 'a>(mut self, device_masks: &'a [u32]) -> DeviceGroupPresentInfoKhxBuilder<'b> {
+    pub fn device_masks<'m, 'a>(mut self, device_masks: &'a [u32]) -> DeviceGroupPresentInfoKhxBuilder<'b>
+            where 'a: 'b {
         self.raw.pDeviceMasks = device_masks.as_ptr() as *const u32 as *const _;
         self
     }
@@ -33045,11 +33163,12 @@ impl<'s> DescriptorUpdateTemplateCreateInfoKhr<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_descriptor_update_entries<'m, 'a>(&mut self, descriptor_update_entries: &'a [DescriptorUpdateTemplateEntryKhr]) {
+    pub fn set_descriptor_update_entries<'m, 'a>(&mut self, descriptor_update_entries: &'a [DescriptorUpdateTemplateEntryKhr])
+            where 'a: 's {
         assert!(self.raw.descriptorUpdateEntryCount == 0 || self.raw.descriptorUpdateEntryCount == descriptor_update_entries.len() as _, 
             "count inconsistency found when specifying `DescriptorUpdateTemplateCreateInfoKhr::descriptor_update_entries`.");
         self.raw.descriptorUpdateEntryCount = descriptor_update_entries.len() as _;
-        self.raw.pDescriptorUpdateEntries = descriptor_update_entries.as_ptr() as *const vks::VkDescriptorUpdateTemplateEntryKHR as *const _;
+        self.raw.pDescriptorUpdateEntries = descriptor_update_entries.as_ptr() as *const vks::VkDescriptorUpdateTemplateEntryKHR;
     }
 
     pub fn set_template_type<'m>(&mut self, template_type: DescriptorUpdateTemplateTypeKhr) {
@@ -33119,11 +33238,12 @@ impl<'b> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
         self
     }
 
-    pub fn descriptor_update_entries<'m, 'a>(mut self, descriptor_update_entries: &'a [DescriptorUpdateTemplateEntryKhr]) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b> {
+    pub fn descriptor_update_entries<'m, 'a>(mut self, descriptor_update_entries: &'a [DescriptorUpdateTemplateEntryKhr]) -> DescriptorUpdateTemplateCreateInfoKhrBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.descriptorUpdateEntryCount == 0 || self.raw.descriptorUpdateEntryCount == descriptor_update_entries.len() as _, 
             "count inconsistency found when specifying `DescriptorUpdateTemplateCreateInfoKhr::descriptor_update_entries`.");
         self.raw.descriptorUpdateEntryCount = descriptor_update_entries.len() as _;
-        self.raw.pDescriptorUpdateEntries = descriptor_update_entries.as_ptr() as *const vks::VkDescriptorUpdateTemplateEntryKHR as *const _;
+        self.raw.pDescriptorUpdateEntries = descriptor_update_entries.as_ptr() as *const vks::VkDescriptorUpdateTemplateEntryKHR;
         self
     }
 
@@ -33736,11 +33856,12 @@ impl<'s> PresentTimesInfoGoogle<'s> {
         self.raw.pNext = next;
     }
 
-    pub fn set_times<'m, 'a>(&mut self, times: &'a [PresentTimeGoogle]) {
+    pub fn set_times<'m, 'a>(&mut self, times: &'a [PresentTimeGoogle])
+            where 'a: 's {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == times.len() as _, 
             "count inconsistency found when specifying `PresentTimesInfoGoogle::times`.");
         self.raw.swapchainCount = times.len() as _;
-        self.raw.pTimes = times.as_ptr() as *const vks::VkPresentTimeGOOGLE as *const _;
+        self.raw.pTimes = times.as_ptr() as *const vks::VkPresentTimeGOOGLE;
     }
 
     pub fn as_raw(&self) -> &vks::VkPresentTimesInfoGOOGLE {
@@ -33783,11 +33904,12 @@ impl<'b> PresentTimesInfoGoogleBuilder<'b> {
         self
     }
 
-    pub fn times<'m, 'a>(mut self, times: &'a [PresentTimeGoogle]) -> PresentTimesInfoGoogleBuilder<'b> {
+    pub fn times<'m, 'a>(mut self, times: &'a [PresentTimeGoogle]) -> PresentTimesInfoGoogleBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.swapchainCount == 0 || self.raw.swapchainCount == times.len() as _, 
             "count inconsistency found when specifying `PresentTimesInfoGoogle::times`.");
         self.raw.swapchainCount = times.len() as _;
-        self.raw.pTimes = times.as_ptr() as *const vks::VkPresentTimeGOOGLE as *const _;
+        self.raw.pTimes = times.as_ptr() as *const vks::VkPresentTimeGOOGLE;
         self
     }
 
@@ -34245,11 +34367,12 @@ impl<'s> PipelineViewportWScalingStateCreateInfoNv<'s> {
         self.raw.viewportWScalingEnable = viewport_wscaling_enable as u32;
     }
 
-    pub fn set_viewport_wscalings<'m, 'a>(&mut self, viewport_wscalings: &'a [ViewportWScalingNv]) {
+    pub fn set_viewport_wscalings<'m, 'a>(&mut self, viewport_wscalings: &'a [ViewportWScalingNv])
+            where 'a: 's {
         assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewport_wscalings.len() as _, 
             "count inconsistency found when specifying `PipelineViewportWScalingStateCreateInfoNv::viewport_wscalings`.");
         self.raw.viewportCount = viewport_wscalings.len() as _;
-        self.raw.pViewportWScalings = viewport_wscalings.as_ptr() as *const vks::VkViewportWScalingNV as *const _;
+        self.raw.pViewportWScalings = viewport_wscalings.as_ptr() as *const vks::VkViewportWScalingNV;
     }
 
     pub fn as_raw(&self) -> &vks::VkPipelineViewportWScalingStateCreateInfoNV {
@@ -34297,11 +34420,12 @@ impl<'b> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
         self
     }
 
-    pub fn viewport_wscalings<'m, 'a>(mut self, viewport_wscalings: &'a [ViewportWScalingNv]) -> PipelineViewportWScalingStateCreateInfoNvBuilder<'b> {
+    pub fn viewport_wscalings<'m, 'a>(mut self, viewport_wscalings: &'a [ViewportWScalingNv]) -> PipelineViewportWScalingStateCreateInfoNvBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewport_wscalings.len() as _, 
             "count inconsistency found when specifying `PipelineViewportWScalingStateCreateInfoNv::viewport_wscalings`.");
         self.raw.viewportCount = viewport_wscalings.len() as _;
-        self.raw.pViewportWScalings = viewport_wscalings.as_ptr() as *const vks::VkViewportWScalingNV as *const _;
+        self.raw.pViewportWScalings = viewport_wscalings.as_ptr() as *const vks::VkViewportWScalingNV;
         self
     }
 
@@ -34485,11 +34609,12 @@ impl<'s> PipelineViewportSwizzleStateCreateInfoNv<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn set_viewport_swizzles<'m, 'a>(&mut self, viewport_swizzles: &'a [ViewportSwizzleNv]) {
+    pub fn set_viewport_swizzles<'m, 'a>(&mut self, viewport_swizzles: &'a [ViewportSwizzleNv])
+            where 'a: 's {
         assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewport_swizzles.len() as _, 
             "count inconsistency found when specifying `PipelineViewportSwizzleStateCreateInfoNv::viewport_swizzles`.");
         self.raw.viewportCount = viewport_swizzles.len() as _;
-        self.raw.pViewportSwizzles = viewport_swizzles.as_ptr() as *const vks::VkViewportSwizzleNV as *const _;
+        self.raw.pViewportSwizzles = viewport_swizzles.as_ptr() as *const vks::VkViewportSwizzleNV;
     }
 
     pub fn as_raw(&self) -> &vks::VkPipelineViewportSwizzleStateCreateInfoNV {
@@ -34537,11 +34662,12 @@ impl<'b> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
         self
     }
 
-    pub fn viewport_swizzles<'m, 'a>(mut self, viewport_swizzles: &'a [ViewportSwizzleNv]) -> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b> {
+    pub fn viewport_swizzles<'m, 'a>(mut self, viewport_swizzles: &'a [ViewportSwizzleNv]) -> PipelineViewportSwizzleStateCreateInfoNvBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.viewportCount == 0 || self.raw.viewportCount == viewport_swizzles.len() as _, 
             "count inconsistency found when specifying `PipelineViewportSwizzleStateCreateInfoNv::viewport_swizzles`.");
         self.raw.viewportCount = viewport_swizzles.len() as _;
-        self.raw.pViewportSwizzles = viewport_swizzles.as_ptr() as *const vks::VkViewportSwizzleNV as *const _;
+        self.raw.pViewportSwizzles = viewport_swizzles.as_ptr() as *const vks::VkViewportSwizzleNV;
         self
     }
 
@@ -34704,11 +34830,12 @@ impl<'s> PipelineDiscardRectangleStateCreateInfoExt<'s> {
         self.raw.discardRectangleMode = discard_rectangle_mode.into();
     }
 
-    pub fn set_discard_rectangles<'m, 'a>(&mut self, discard_rectangles: &'a [Rect2d]) {
+    pub fn set_discard_rectangles<'m, 'a>(&mut self, discard_rectangles: &'a [Rect2d])
+            where 'a: 's {
         assert!(self.raw.discardRectangleCount == 0 || self.raw.discardRectangleCount == discard_rectangles.len() as _, 
             "count inconsistency found when specifying `PipelineDiscardRectangleStateCreateInfoExt::discard_rectangles`.");
         self.raw.discardRectangleCount = discard_rectangles.len() as _;
-        self.raw.pDiscardRectangles = discard_rectangles.as_ptr() as *const vks::VkRect2D as *const _;
+        self.raw.pDiscardRectangles = discard_rectangles.as_ptr() as *const vks::VkRect2D;
     }
 
     pub fn as_raw(&self) -> &vks::VkPipelineDiscardRectangleStateCreateInfoEXT {
@@ -34761,11 +34888,12 @@ impl<'b> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
         self
     }
 
-    pub fn discard_rectangles<'m, 'a>(mut self, discard_rectangles: &'a [Rect2d]) -> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b> {
+    pub fn discard_rectangles<'m, 'a>(mut self, discard_rectangles: &'a [Rect2d]) -> PipelineDiscardRectangleStateCreateInfoExtBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.discardRectangleCount == 0 || self.raw.discardRectangleCount == discard_rectangles.len() as _, 
             "count inconsistency found when specifying `PipelineDiscardRectangleStateCreateInfoExt::discard_rectangles`.");
         self.raw.discardRectangleCount = discard_rectangles.len() as _;
-        self.raw.pDiscardRectangles = discard_rectangles.as_ptr() as *const vks::VkRect2D as *const _;
+        self.raw.pDiscardRectangles = discard_rectangles.as_ptr() as *const vks::VkRect2D;
         self
     }
 
@@ -36984,7 +37112,8 @@ impl<'s> PipelineCoverageModulationStateCreateInfoNv<'s> {
         self.raw.coverageModulationTableEnable = coverage_modulation_table_enable as u32;
     }
 
-    pub fn set_coverage_modulation_table<'m, 'a>(&mut self, coverage_modulation_table: &'a [f32]) {
+    pub fn set_coverage_modulation_table<'m, 'a>(&mut self, coverage_modulation_table: &'a [f32])
+            where 'a: 's {
         assert!(self.raw.coverageModulationTableCount == 0 || self.raw.coverageModulationTableCount == coverage_modulation_table.len() as _, 
             "count inconsistency found when specifying `PipelineCoverageModulationStateCreateInfoNv::coverage_modulation_table`.");
         self.raw.coverageModulationTableCount = coverage_modulation_table.len() as _;
@@ -37046,7 +37175,8 @@ impl<'b> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
         self
     }
 
-    pub fn coverage_modulation_table<'m, 'a>(mut self, coverage_modulation_table: &'a [f32]) -> PipelineCoverageModulationStateCreateInfoNvBuilder<'b> {
+    pub fn coverage_modulation_table<'m, 'a>(mut self, coverage_modulation_table: &'a [f32]) -> PipelineCoverageModulationStateCreateInfoNvBuilder<'b>
+            where 'a: 'b {
         assert!(self.raw.coverageModulationTableCount == 0 || self.raw.coverageModulationTableCount == coverage_modulation_table.len() as _, 
             "count inconsistency found when specifying `PipelineCoverageModulationStateCreateInfoNv::coverage_modulation_table`.");
         self.raw.coverageModulationTableCount = coverage_modulation_table.len() as _;

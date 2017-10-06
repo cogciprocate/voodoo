@@ -7,6 +7,7 @@ extern crate smallvec;
 extern crate libc;
 extern crate tobj;
 
+
 use std::mem;
 use std::ptr;
 use std::time;
@@ -25,6 +26,7 @@ use voo::{voodoo_winit, vks, util, device, queue, Result as VooResult, Version, 
     Buffer, DeviceMemory, Vertex, DescriptorSetLayout, UniformBufferObject, DescriptorPool,
     Image, Sampler, Loader, SwapchainSupportDetails, PhysicalDevice, PhysicalDeviceFeatures,
     ShaderModule, QueueFlags, Format};
+
 
 #[cfg(debug_assertions)]
 pub const ENABLE_VALIDATION_LAYERS: bool = true;
@@ -111,7 +113,7 @@ fn init_instance() -> VooResult<Instance> {
 /// extensions, queue families and if the supported swap chain has the correct
 /// presentation modes.
 fn device_is_suitable(instance: &Instance, surface: &SurfaceKhr,
-        physical_device: &PhysicalDevice, queue_flags: QueueFlags) -> bool {
+        physical_device: &PhysicalDevice, queue_family_flags: QueueFlags) -> bool {
     let device_features = physical_device.features();
 
     let reqd_exts: SmallVec<[_; 16]> = (&REQUIRED_DEVICE_EXTENSIONS[..]).iter().map(|ext_name| {
@@ -128,7 +130,7 @@ fn device_is_suitable(instance: &Instance, surface: &SurfaceKhr,
             !swap_chain_details.present_modes.is_empty()
     }
 
-    queue::queue_families(instance, surface, &physical_device, queue_flags).is_complete() &&
+    queue::queue_families(instance, surface, &physical_device, queue_family_flags).is_complete() &&
         extensions_supported &&
         swap_chain_adequate &&
         device_features.sampler_anisotropy()
@@ -136,12 +138,12 @@ fn device_is_suitable(instance: &Instance, surface: &SurfaceKhr,
 
 /// Returns a physical device from the list of available physical devices if
 /// it meets the criteria specified in the above function.
-fn choose_physical_device(instance: &Instance, surface: &SurfaceKhr, queue_flags: QueueFlags)
+fn choose_physical_device(instance: &Instance, surface: &SurfaceKhr, queue_family_flags: QueueFlags)
         -> VooResult<PhysicalDevice> {
     let mut preferred_device = None;
 
     for device in instance.physical_devices() {
-        if device_is_suitable(instance, surface, &device, queue_flags) {
+        if device_is_suitable(instance, surface, &device, queue_family_flags) {
             preferred_device = Some(device);
             break;
         }
@@ -230,7 +232,7 @@ fn choose_swap_extent(capabilities: &voo::SurfaceCapabilitiesKhr,
     }
 }
 
-fn create_swapchain(surface: SurfaceKhr, device: Device, queue_flags: QueueFlags,
+fn create_swapchain(surface: SurfaceKhr, device: Device, queue_family_flags: QueueFlags,
         window_size: Option<voo::Extent2d>, old_swapchain: Option<&SwapchainKhr>)
         -> VooResult<SwapchainKhr> {
     let swapchain_details: SwapchainSupportDetails = SwapchainSupportDetails::new(
@@ -246,7 +248,7 @@ fn create_swapchain(surface: SurfaceKhr, device: Device, queue_flags: QueueFlags
         image_count = swapchain_details.capabilities.max_image_count();
     }
     let indices = queue::queue_families(device.instance(), &surface,
-        device.physical_device(), queue_flags);
+        device.physical_device(), queue_family_flags);
     let queue_family_indices = [indices.flag_idxs[0] as u32,
         indices.presentation_support_idxs[0] as u32];
 
@@ -280,58 +282,58 @@ fn create_swapchain(surface: SurfaceKhr, device: Device, queue_flags: QueueFlags
     bldr.build(device)
 }
 
-fn create_swapchain_fake(surface: SurfaceKhr, device: Device, queue_flags: QueueFlags,
-        window_size: Option<voo::Extent2d>, old_swapchain: Option<&SwapchainKhr>)
-        -> VooResult<SwapchainKhr> {
-        // -> VooResult<()> {
-    let swapchain_details: SwapchainSupportDetails = SwapchainSupportDetails::new(
-        device.instance(), &surface, device.physical_device());
-    let surface_format = choose_swap_surface_format(&swapchain_details.formats);
-    let present_mode = choose_swap_present_mode(&swapchain_details.present_modes);
-    let extent = choose_swap_extent(&swapchain_details.capabilities, window_size);
+// fn create_swapchain_fake(surface: SurfaceKhr, device: Device, queue_flags: QueueFlags,
+//         window_size: Option<voo::Extent2d>, old_swapchain: Option<&SwapchainKhr>)
+//         -> VooResult<SwapchainKhr> {
+//         // -> VooResult<()> {
+//     let swapchain_details: SwapchainSupportDetails = SwapchainSupportDetails::new(
+//         device.instance(), &surface, device.physical_device());
+//     let surface_format = choose_swap_surface_format(&swapchain_details.formats);
+//     let present_mode = choose_swap_present_mode(&swapchain_details.present_modes);
+//     let extent = choose_swap_extent(&swapchain_details.capabilities, window_size);
 
-    // TODO: REVISIT THIS: https://vulkan-tutorial.com/Drawing_a_triangle/Presentation/Swap_chain
-    let mut image_count = swapchain_details.capabilities.min_image_count() + 1;
-    if swapchain_details.capabilities.max_image_count() > 0 &&
-            image_count > swapchain_details.capabilities.max_image_count() {
-        image_count = swapchain_details.capabilities.max_image_count();
-    }
-    let indices = queue::queue_families(device.instance(), &surface,
-        device.physical_device(), queue_flags);
-    let queue_family_indices = [indices.flag_idxs[0] as u32,
-        indices.presentation_support_idxs[0] as u32];
+//     // TODO: REVISIT THIS: https://vulkan-tutorial.com/Drawing_a_triangle/Presentation/Swap_chain
+//     let mut image_count = swapchain_details.capabilities.min_image_count() + 1;
+//     if swapchain_details.capabilities.max_image_count() > 0 &&
+//             image_count > swapchain_details.capabilities.max_image_count() {
+//         image_count = swapchain_details.capabilities.max_image_count();
+//     }
+//     let indices = queue::queue_families(device.instance(), &surface,
+//         device.physical_device(), queue_flags);
+//     let queue_family_indices = [indices.flag_idxs[0] as u32,
+//         indices.presentation_support_idxs[0] as u32];
 
-    let mut bldr = SwapchainKhr::builder();
-    bldr.surface(&surface)
-        .min_image_count(image_count)
-        .image_format(surface_format.format())
-        .image_color_space(surface_format.color_space())
-        .image_extent(extent.clone())
-        .image_array_layers(1)
-        // .image_usage(voo::IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
-        .image_usage(voo::ImageUsageFlags::COLOR_ATTACHMENT)
-        .pre_transform(swapchain_details.capabilities.current_transform())
-        // .composite_alpha(voo::COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
-        .composite_alpha(voo::CompositeAlphaFlagsKhr::OPAQUE)
-        .present_mode(present_mode)
-        .clipped(true);
+//     let mut bldr = SwapchainKhr::builder();
+//     bldr.surface(&surface)
+//         .min_image_count(image_count)
+//         .image_format(surface_format.format())
+//         .image_color_space(surface_format.color_space())
+//         .image_extent(extent.clone())
+//         .image_array_layers(1)
+//         // .image_usage(voo::IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
+//         .image_usage(voo::ImageUsageFlags::COLOR_ATTACHMENT)
+//         .pre_transform(swapchain_details.capabilities.current_transform())
+//         // .composite_alpha(voo::COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
+//         .composite_alpha(voo::CompositeAlphaFlagsKhr::OPAQUE)
+//         .present_mode(present_mode)
+//         .clipped(true);
 
-    if let Some(old_sc) = old_swapchain {
-        bldr.old_swapchain(old_sc.handle());
-    }
+//     if let Some(old_sc) = old_swapchain {
+//         bldr.old_swapchain(old_sc.handle());
+//     }
 
-    if queue_family_indices[0] != queue_family_indices[1] {
-        // bldr.image_sharing_mode(voo::SHARING_MODE_CONCURRENT);
-        bldr.image_sharing_mode(voo::SharingMode::Concurrent);
-        bldr.queue_family_indices(&queue_family_indices[..]);
-    } else {
-        // bldr.image_sharing_mode(voo::SHARING_MODE_EXCLUSIVE);
-        bldr.image_sharing_mode(voo::SharingMode::Exclusive);
-    }
+//     if queue_family_indices[0] != queue_family_indices[1] {
+//         // bldr.image_sharing_mode(voo::SHARING_MODE_CONCURRENT);
+//         bldr.image_sharing_mode(voo::SharingMode::Concurrent);
+//         bldr.queue_family_indices(&queue_family_indices[..]);
+//     } else {
+//         // bldr.image_sharing_mode(voo::SHARING_MODE_EXCLUSIVE);
+//         bldr.image_sharing_mode(voo::SharingMode::Exclusive);
+//     }
 
-    bldr.build(device)
-    // Ok(())
-}
+//     bldr.build(device)
+//     // Ok(())
+// }
 
 pub fn create_image_views(swapchain: &SwapchainKhr) -> VooResult<Vec<ImageView>> {
     swapchain.images().iter().map(|&image| {
@@ -453,6 +455,8 @@ fn create_render_pass(device: Device, swapchain_image_format: voo::Format)
         .layout(voo::ImageLayout::DepthStencilAttachmentOptimal)
         .build();
 
+    let color_attachments = [color_attachment_ref];
+
     let subpass = voo::SubpassDescription::builder()
         // .flags(0)
         // .pipeline_bind_point(voo::PIPELINE_BIND_POINT_GRAPHICS)
@@ -460,7 +464,7 @@ fn create_render_pass(device: Device, swapchain_image_format: voo::Format)
         // .input_attachment_count(0)
         // .pInputAttachments(ptr::null())
         // .color_attachment_count(1)
-        .color_attachments(&[color_attachment_ref])
+        .color_attachments(&color_attachments[..])
         // .pResolveAttachments(ptr::null())
         .depth_stencil_attachment(&depth_attachment_ref)
         // .preserve_attachment_Count(0)
@@ -481,12 +485,95 @@ fn create_render_pass(device: Device, swapchain_image_format: voo::Format)
             voo::AccessFlags::COLOR_ATTACHMENT_WRITE)
         .build();
 
-    RenderPass::builder()
+    // println!("###### Creating render pass...");
+
+    let rp = RenderPass::builder()
         .attachments(&[color_attachment, depth_attachment])
         .subpasses(&[subpass])
         .dependencies(&[dependency])
-        .build(device)
+        .build(device).unwrap();
+
+    // println!("##### rp: {:?}", rp);
+
+    Ok(rp)
 }
+
+// fn create_render_pass_fake<'b>(device: Device, swapchain_image_format: voo::Format)
+//         -> VooResult<voo::RenderPass> {
+//         // -> VooResult<()> {
+//     let depth_image_format = find_depth_format(&device)?;
+
+//     let color_attachment = voo::AttachmentDescription::builder()
+//         .format(swapchain_image_format)
+//         .samples(voo::SampleCountFlags::COUNT_1)
+//         .load_op(voo::AttachmentLoadOp::Clear)
+//         .store_op(voo::AttachmentStoreOp::Store)
+//         .stencil_load_op(voo::AttachmentLoadOp::DontCare)
+//         .stencil_store_op(voo::AttachmentStoreOp::DontCare)
+//         .initial_layout(voo::ImageLayout::Undefined)
+//         .final_layout(voo::ImageLayout::PresentSrcKhr)
+//         .build();
+
+//     let depth_attachment = voo::AttachmentDescription::builder()
+//         .format(depth_image_format)
+//         .samples(voo::SampleCountFlags::COUNT_1)
+//         .load_op(voo::AttachmentLoadOp::Clear)
+//         .store_op(voo::AttachmentStoreOp::DontCare)
+//         .stencil_load_op(voo::AttachmentLoadOp::DontCare)
+//         .stencil_store_op(voo::AttachmentStoreOp::DontCare)
+//         .initial_layout(voo::ImageLayout::Undefined)
+//         .final_layout(voo::ImageLayout::DepthStencilAttachmentOptimal)
+//         .build();
+
+//     let color_attachment_ref = voo::AttachmentReference::builder()
+//         .attachment(0)
+//         .layout(voo::ImageLayout::ColorAttachmentOptimal)
+//         .build();
+
+//     let depth_attachment_ref = voo::AttachmentReference::builder()
+//         .attachment(1)
+//         .layout(voo::ImageLayout::DepthStencilAttachmentOptimal)
+//         .build();
+
+//     let color_attachments = [color_attachment_ref];
+
+//     let subpass = voo::SubpassDescription::builder()
+//         .pipeline_bind_point(voo::PipelineBindPoint::Graphics)
+//         .color_attachments(&color_attachments[..])
+//         .depth_stencil_attachment(&depth_attachment_ref)
+//         .build();
+
+//     let dependency = voo::SubpassDependency::builder()
+//         .src_subpass(voo::SUBPASS_EXTERNAL)
+//         .dst_subpass(0)
+//         .src_stage_mask(voo::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT)
+//         .dst_stage_mask(voo::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT)
+//         .dst_access_mask(voo::AccessFlags::COLOR_ATTACHMENT_READ |
+//             voo::AccessFlags::COLOR_ATTACHMENT_WRITE)
+//         .build();
+
+//     // RenderPass::builder()
+//     //     .attachments(&[color_attachment, depth_attachment])
+//     //     .subpasses(&[subpass])
+//     //     .dependencies(&[dependency])
+//     //     // .build(device)
+
+//     // Ok(())
+
+//     let attachments = [color_attachment, depth_attachment];
+//     let subpasses = [subpass];
+//     let dependencies = [dependency];
+
+//     let mut bldr = RenderPass::builder();
+//     bldr.attachments(&attachments[..]);
+//     bldr.subpasses(&subpasses[..]);
+//     bldr.dependencies(&dependencies[..]);
+//     let rp = bldr.build(device).unwrap();
+
+//     println!("##### rp: {:?}", rp);
+
+//     Ok(rp)
+// }
 
 fn create_descriptor_set_layout(device: Device) -> VooResult<DescriptorSetLayout> {
     let ubo_layout_binding = voo::DescriptorSetLayoutBinding::builder()
@@ -631,7 +718,7 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         // .pSpecializationInfo(ptr::null())
         .build();
 
-    let binding_description = Vertex::binding_description();
+    let binding_descriptions = [Vertex::binding_description()];
     let attribute_descriptions = Vertex::attribute_descriptions();
 
     let vertex_input_info = voo::PipelineVertexInputStateCreateInfo::builder()
@@ -639,7 +726,7 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         // .pNext(ptr::null())
         // .flags(0)
         // .vertex_binding_description_count(1)
-        .vertex_binding_descriptions(&[binding_description])
+        .vertex_binding_descriptions(&binding_descriptions[..])
         // .vertex_attribute_description_count(attribute_descriptions.len() as u32)
         .vertex_attribute_descriptions(&attribute_descriptions[..])
         .build();
@@ -681,14 +768,17 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         .extent(swap_chain_extent)
         .build();
 
+    let viewports = [viewport];
+    let scissors = [scissor];
+
     let viewport_state = voo::PipelineViewportStateCreateInfo::builder()
         // .sType(voo::STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO)
         // .pNext(ptr::null())
         // .flags(0)
         // .viewport_count(1)
-        .viewports(&[viewport])
+        .viewports(&viewports[..])
         // .sissor_count(1)
-        .scissors(&[scissor])
+        .scissors(&scissors[..])
         .build();
 
     let rasterizer = voo::PipelineRasterizationStateCreateInfo::builder()
@@ -785,6 +875,8 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
     // }; ////////////////////////////////////////////
     // ///////////////////////////////////////////////
 
+    let attachments = [color_blend_attachment];
+
     let color_blending = voo::PipelineColorBlendStateCreateInfo::builder()
         // .sType(voo::STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO)
         // .pNext(ptr::null())
@@ -793,7 +885,7 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         // .logic_op(voo::LOGIC_OP_COPY)
         .logic_op(voo::LogicOp::Copy)
         // .attachment_count(1)
-        .attachments(&[color_blend_attachment])
+        .attachments(&attachments)
         .blend_constants([0.0f32; 4])
         .build();
 
@@ -1792,6 +1884,7 @@ impl App {
             self.device.queue(0), 1, submit_info.as_raw(), 0)); }
 
         let swapchains = [self.swapchain.as_ref().unwrap().handle()];
+        let image_indices = [image_index];
 
         let present_info = voo::PresentInfoKhr::builder()
             // sType(voo::StructureType::PRESENT_INFO_KHR,
@@ -1800,7 +1893,7 @@ impl App {
             .wait_semaphores(&signal_semaphores[..])
             // .swapchain_count(swapchains.len() as u32)
             .swapchains(&swapchains[..])
-            .image_indices(&[image_index])
+            .image_indices(&image_indices)
             // .p_results(ptr::null_mut())
             .build();
 
@@ -1856,78 +1949,80 @@ impl Drop for App {
 }
 
 
-// #[allow(unused_unsafe)]
-// pub unsafe fn make_everything() -> VooResult<()> {
-//     let instance = init_instance()?;
-//     let (window, events_loop) = init_window();
-//     let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
-//     // let queue_family_flags = voo::QUEUE_GRAPHICS_BIT;
-//     let queue_family_flags = QueueFlags::GRAPHICS;
-//     let physical_device = choose_physical_device(&instance, &surface,
-//         queue_family_flags)?;
-//     let device = create_device(instance.clone(), &surface, physical_device,
-//         queue_family_flags)?;
-//     let swapchain = create_swapchain_fake(surface.clone(), device.clone(), queue_family_flags,
-//         None, None)?;
-//     // let image_views = create_image_views(&swapchain)?;
-//     // let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;
-//     // let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
-//     // let pipeline_layout = create_pipeline_layout(device.clone(),
-//     //     Some(&descriptor_set_layout))?;
-//     // let vert_shader_code = util::read_file("/src/voodoo/shaders/vert.spv")?;
-//     // let frag_shader_code = util::read_file("/src/voodoo/shaders/frag.spv")?;
-//     // let graphics_pipeline = create_graphics_pipeline(device.clone(), &pipeline_layout,
-//     //     &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
-//     // let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;
-//     // let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(&device,
-//     //     &command_pool, swapchain.extent().clone())?;
-//     // let framebuffers = create_framebuffers(&device, &render_pass,
-//     //     &image_views, &depth_image_view, swapchain.extent().clone())?;
-//     // let (texture_image, texture_image_memory) = create_texture_image(&device,
-//     //     &command_pool)?;
-//     // let texture_image_view = create_texture_image_view(device.clone(),
-//     //     &texture_image)?;
-//     // let texture_sampler = create_texture_sampler(device.clone())?;
-//     // // let (vertices, indices) = load_model(&device)?;
-//     // let vertices = VERTICES[..].to_owned();
-//     // let indices = INDICES[..].to_owned();
-//     // let (vertex_buffer, vertex_buffer_memory) = create_vertex_buffer(&device, &command_pool,
-//     //     &vertices)?;
-//     // let (index_buffer, index_buffer_memory) = create_index_buffer(&device, &command_pool,
-//     //     &indices)?;
-//     // let (uniform_buffer, uniform_buffer_memory) = create_uniform_buffer(&device,
-//     //     &command_pool, swapchain.extent().clone())?;
-//     // let descriptor_pool = create_descriptor_pool(device.clone())?;
-//     // let descriptor_sets = create_descriptor_sets(&device, &descriptor_set_layout,
-//     //     &descriptor_pool, &uniform_buffer, &texture_image_view, &texture_sampler)?;
-//     // let command_buffers = create_command_buffers(&device, &command_pool, &render_pass,
-//     //     &graphics_pipeline, &framebuffers, swapchain.extent(),
-//     //     &vertex_buffer, &index_buffer,
-//     //     vertices.len() as u32, vertices.len() as u32, &pipeline_layout,
-//     //     descriptor_sets[0].clone())?;
-//     // let image_available_semaphore = Semaphore::new(device.clone())?;
-//     // let render_finished_semaphore = Semaphore::new(device.clone())?;
-//     // let start_time = time::Instant::now();
+#[allow(unused_unsafe)]
+pub unsafe fn make_everything() -> VooResult<()> {
+    let instance = init_instance()?;
+    let (window, events_loop) = init_window();
+    let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
+    let queue_family_flags = QueueFlags::GRAPHICS;
+    let physical_device = choose_physical_device(&instance, &surface,
+        queue_family_flags)?;
+    let device = create_device(instance.clone(), &surface, physical_device,
+        queue_family_flags)?;
+    let swapchain = create_swapchain(surface.clone(), device.clone(), queue_family_flags,
+        None, None)?;
+    // let image_views = create_image_views(&swapchain)?;
 
-//     // let swapchain_components = SwapchainComponents {
-//     //     image_views: image_views,
-//     //     render_pass: render_pass,
-//     //     graphics_pipeline: graphics_pipeline,
-//     //     depth_image,
-//     //     depth_image_memory,
-//     //     depth_image_view,
-//     //     framebuffers: framebuffers,
-//     // };
+    // let render_pass = create_render_pass_fake(device.clone(), swapchain.image_format())?;
+    let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;
 
-//     Ok(())
-// }
+    // let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
+    // let pipeline_layout = create_pipeline_layout(device.clone(),
+    //     Some(&descriptor_set_layout))?;
+    // let vert_shader_code = util::read_file("/src/voodoo/shaders/vert.spv")?;
+    // let frag_shader_code = util::read_file("/src/voodoo/shaders/frag.spv")?;
+    // let graphics_pipeline = create_graphics_pipeline(device.clone(), &pipeline_layout,
+    //     &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
+    // let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;
+    // let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(&device,
+    //     &command_pool, swapchain.extent().clone())?;
+    // let framebuffers = create_framebuffers(&device, &render_pass,
+    //     &image_views, &depth_image_view, swapchain.extent().clone())?;
+    // let (texture_image, texture_image_memory) = create_texture_image(&device,
+    //     &command_pool)?;
+    // let texture_image_view = create_texture_image_view(device.clone(),
+    //     &texture_image)?;
+    // let texture_sampler = create_texture_sampler(device.clone())?;
+    // // // let (vertices, indices) = load_model(&device)?;
+    // let vertices = VERTICES[..].to_owned();
+    // let indices = INDICES[..].to_owned();
+    // let (vertex_buffer, vertex_buffer_memory) = create_vertex_buffer(&device, &command_pool,
+    //     &vertices)?;
+    // let (index_buffer, index_buffer_memory) = create_index_buffer(&device, &command_pool,
+    //     &indices)?;
+    // let (uniform_buffer, uniform_buffer_memory) = create_uniform_buffer(&device,
+    //     &command_pool, swapchain.extent().clone())?;
+    // let descriptor_pool = create_descriptor_pool(device.clone())?;
+    // let descriptor_sets = create_descriptor_sets(&device, &descriptor_set_layout,
+    //     &descriptor_pool, &uniform_buffer, &texture_image_view, &texture_sampler)?;
+    // let command_buffers = create_command_buffers(&device, &command_pool, &render_pass,
+    //     &graphics_pipeline, &framebuffers, swapchain.extent(),
+    //     &vertex_buffer, &index_buffer,
+    //     vertices.len() as u32, vertices.len() as u32, &pipeline_layout,
+    //     descriptor_sets[0].clone())?;
+    // let image_available_semaphore = Semaphore::new(device.clone())?;
+    // let render_finished_semaphore = Semaphore::new(device.clone())?;
+    // let start_time = time::Instant::now();
+
+    // let swapchain_components = SwapchainComponents {
+    //     image_views: image_views,
+    //     render_pass: render_pass,
+    //     graphics_pipeline: graphics_pipeline,
+    //     depth_image,
+    //     depth_image_memory,
+    //     depth_image_view,
+    //     framebuffers: framebuffers,
+    // };
+
+    Ok(())
+}
 
 
 
 fn main() {
     println!("Hello triangle!");
     unsafe {
-        // make_everything().unwrap();
+        // main_debug::make_everything();
         let mut app = App::new().unwrap();
         app.main_loop().unwrap();
     }

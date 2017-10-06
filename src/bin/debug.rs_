@@ -1,0 +1,533 @@
+#![allow(unused_imports, dead_code, unused_variables)]
+
+extern crate voodoo as voo;
+extern crate cgmath;
+extern crate image;
+extern crate smallvec;
+extern crate libc;
+// extern crate tobj;
+
+
+use std::mem;
+use std::ptr;
+use std::time;
+use std::path::Path;
+use std::collections::HashMap;
+use std::ffi::{CStr, CString};
+use std::cmp;
+use libc::c_char;
+use smallvec::SmallVec;
+use image::{ImageFormat, DynamicImage};
+use cgmath::{SquareMatrix, One, Rotation, Rotation3, Basis3, Matrix3, Matrix4, Vector3};
+use voo::winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
+use voo::{voodoo_winit, vks, util, device, queue, Result as VooResult, Version, Instance, Device,
+    SurfaceKhr, SwapchainKhr,
+    ImageView, PipelineLayout, RenderPass, GraphicsPipeline, Framebuffer, CommandPool, Semaphore,
+    Buffer, DeviceMemory, Vertex, DescriptorSetLayout, UniformBufferObject, DescriptorPool,
+    Image, Sampler, Loader, SwapchainSupportDetails, PhysicalDevice, PhysicalDeviceFeatures,
+    ShaderModule, QueueFlags, Format};
+
+
+#[cfg(debug_assertions)]
+pub const ENABLE_VALIDATION_LAYERS: bool = true;
+#[cfg(not(debug_assertions))]
+pub const ENABLE_VALIDATION_LAYERS: bool = false;
+
+static REQUIRED_INSTANCE_EXTENSIONS: &[&[u8]] = &[
+    b"VK_KHR_surface\0",
+    b"VK_KHR_win32_surface\0",
+];
+
+static REQUIRED_DEVICE_EXTENSIONS: &[&[u8]] = &[
+    b"VK_KHR_swapchain\0",
+];
+
+
+static MODEL_PATH: &str = "/src/shared_assets/models/chalet.obj";
+// static TEXTURE_PATH: &str = "/src/shared_assets/textures/chalet.jpg";
+static TEXTURE_PATH: &str = "/src/shared_assets/textures/texture.jpg";
+
+const VERTICES: [Vertex; 8] =  [
+    Vertex { pos: [-0.5, -0.5, 0.25], color: [1.0, 0.0, 0.0], tex_coord: [1.0, 0.0]},
+    Vertex { pos: [0.5, -0.5, 0.25], color: [0.0, 1.0, 0.0], tex_coord: [0.0, 0.0] },
+    Vertex { pos: [0.5, 0.5, 0.25], color: [0.0, 0.0, 1.0], tex_coord: [0.0, 1.0] },
+    Vertex { pos: [-0.5, 0.5, 0.25], color: [1.0, 1.0, 1.0], tex_coord: [1.0, 1.0] },
+    Vertex { pos: [-0.5, -0.5, -0.25], color: [1.0, 0.0, 0.0], tex_coord: [1.0, 0.0]},
+    Vertex { pos: [0.5, -0.5, -0.25], color: [0.0, 1.0, 0.0], tex_coord: [0.0, 0.0] },
+    Vertex { pos: [0.5, 0.5, -0.25], color: [0.0, 0.0, 1.0], tex_coord: [0.0, 1.0] },
+    Vertex { pos: [-0.5, 0.5, -0.25], color: [1.0, 1.0, 1.0], tex_coord: [1.0, 1.0] },
+];
+
+const INDICES: [u32; 12] = [
+    0, 1, 2, 2, 3, 0,
+    4, 5, 6, 6, 7, 4
+];
+
+
+/// Returns the list of layer names to be enabled.
+fn enabled_layer_names<'ln>(loader: &Loader)
+        -> SmallVec<[&'ln CStr; 16]> {
+    if ENABLE_VALIDATION_LAYERS && !loader.check_validation_layer_support() {
+        panic!("Unable to enable validation layers.");
+    }
+    if ENABLE_VALIDATION_LAYERS {
+         (loader.validation_layer_names()).iter().map(|lyr_name|
+            unsafe { CStr::from_ptr(lyr_name.as_ptr() as *const c_char) }).collect()
+    } else {
+        SmallVec::new()
+    }
+}
+
+/// Returns true if the specified physical device has the required features,
+/// extensions, queue families and if the supported swap chain has the correct
+/// presentation modes.
+fn device_is_suitable(instance: &Instance, surface: &SurfaceKhr,
+        physical_device: &PhysicalDevice, queue_family_flags: QueueFlags) -> bool {
+    let device_features = physical_device.features();
+
+    let reqd_exts: SmallVec<[_; 16]> = (&REQUIRED_DEVICE_EXTENSIONS[..]).iter().map(|ext_name| {
+        CStr::from_bytes_with_nul(ext_name).expect("invalid required extension name")
+    }).collect();
+
+    let extensions_supported = physical_device.verify_extensions_support(&reqd_exts[..]);
+
+    let mut swap_chain_adequate = false;
+    if extensions_supported {
+        let swap_chain_details = SwapchainSupportDetails::new(instance, surface,
+            &physical_device);
+        swap_chain_adequate = !swap_chain_details.formats.is_empty() &&
+            !swap_chain_details.present_modes.is_empty()
+    }
+
+    queue::queue_families(instance, surface, &physical_device, queue_family_flags).is_complete() &&
+        extensions_supported &&
+        swap_chain_adequate &&
+        device_features.sampler_anisotropy()
+}
+
+fn choose_swap_surface_format(available_formats: &[voo::SurfaceFormatKhr])
+        -> voo::SurfaceFormatKhr {
+    if available_formats.len() == 1 && available_formats[0].format() == voo::Format::Undefined {
+        return voo::SurfaceFormatKhr::builder()
+            .format(voo::Format::B8G8R8A8Unorm)
+            .color_space(voo::ColorSpaceKhr::SrgbNonlinearKhr)
+            .build();
+    }
+    for available_format in available_formats {
+        if available_format.format() == Format::B8G8R8A8Unorm &&
+                available_format.color_space() == voo::ColorSpaceKhr::SrgbNonlinearKhr {
+            return voo::SurfaceFormatKhr::builder()
+                .format(voo::Format::B8G8R8A8Unorm)
+                .color_space(voo::ColorSpaceKhr::SrgbNonlinearKhr)
+                .build();
+        }
+    }
+    voo::SurfaceFormatKhr::builder()
+        .format(available_formats[0].format())
+        .color_space(available_formats[0].color_space())
+        .build()
+}
+
+fn choose_swap_present_mode(available_present_modes: &[voo::PresentModeKhr])
+        -> voo::PresentModeKhr {
+    let mut best_mode = voo::PresentModeKhr::MailboxKhr;
+    for &available_present_mode in available_present_modes {
+        if available_present_mode == voo::PresentModeKhr::FifoKhr {
+            return available_present_mode;
+        } else if available_present_mode == voo::PresentModeKhr::ImmediateKhr {
+            best_mode = available_present_mode;
+        }
+    }
+    best_mode
+}
+
+fn choose_swap_extent(capabilities: &voo::SurfaceCapabilitiesKhr,
+        window_size: Option<voo::Extent2d>) -> voo::Extent2d {
+    if capabilities.current_extent().width() != u32::max_value() {
+        return capabilities.current_extent().clone();
+    } else {
+
+        let mut actual_extent = window_size
+            .unwrap_or(voo::Extent2d::builder().width(1024).height(768).build());
+        let actual_extent_width = actual_extent.width();
+        let actual_extent_height = actual_extent.height();
+        actual_extent.set_width(cmp::max(capabilities.min_image_extent().width(),
+            cmp::min(capabilities.max_image_extent().width(), actual_extent_width)));
+        actual_extent.set_height(cmp::max(capabilities.min_image_extent().height(),
+            cmp::min(capabilities.max_image_extent().height(), actual_extent_height)));
+        return actual_extent
+    }
+}
+
+fn find_supported_format(device: &Device, candidates: &[voo::Format], tiling: voo::ImageTiling,
+        features: voo::FormatFeatureFlags) -> VooResult<voo::Format> {
+    for &format in candidates {
+        let props = device.instance().physical_device_format_properties(device.physical_device(),
+            format);
+
+        if tiling == voo::ImageTiling::Linear &&
+                props.linear_tiling_features().contains(features) {
+            return Ok(format);
+        } else if tiling == voo::ImageTiling::Optimal &&
+                props.optimal_tiling_features().contains(features) {
+            return Ok(format);
+        }
+    }
+
+    panic!("Failed to find supported format.")
+}
+
+fn find_depth_format(device: &Device) -> VooResult<voo::Format> {
+    find_supported_format(device, &[voo::Format::D32Sfloat, voo::Format::D32SfloatS8Uint,
+        voo::Format::D24UnormS8Uint], voo::ImageTiling::Optimal,
+        voo::FormatFeatureFlags::DEPTH_STENCIL_ATTACHMENT)
+}
+
+
+
+#[allow(unused_unsafe)]
+pub unsafe fn make_everything() -> VooResult<()> {
+    // ############################ INSTANCE ###############################
+    // let instance = init_instance()?;
+    let app_name = CString::new("Hello Triangle").unwrap();
+    let eng_name = CString::new("None").unwrap();
+
+    let app_info = voo::ApplicationInfo::builder()
+        .application_name(&app_name)
+        .application_version((1, 0, 0))
+        .engine_name(&eng_name)
+        .engine_version((1, 0, 0))
+        .api_version((1, 0, 0))
+        .build();
+
+    let loader = Loader::new()?;
+
+    let instance = Instance::builder()
+        .application_info(&app_info)
+        .enabled_layer_names(enabled_layer_names(&loader).as_slice())
+        .enabled_extensions(loader.instance_extensions().as_slice())
+        .build(loader, ENABLE_VALIDATION_LAYERS)?;
+
+    // ############################ WINDOW ###############################
+    // let (window, events_loop) = init_window();
+    let events_loop = EventsLoop::new();
+    let window = WindowBuilder::new()
+        .with_title("Voodoo - Hello Triangle")
+        .build(&events_loop).unwrap();
+
+    let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
+    let queue_family_flags = QueueFlags::GRAPHICS;
+
+    // ########################## PHYSICAL DEVICE #############################
+    // let physical_device = choose_physical_device(&instance, &surface,
+    //     queue_family_flags)?;
+    let mut preferred_device = None;
+
+    for device in instance.physical_devices() {
+        if device_is_suitable(&instance, &surface, &device, queue_family_flags) {
+            preferred_device = Some(device);
+            break;
+        }
+    }
+
+    let physical_device = if let Some(preferred_device) = preferred_device {
+        preferred_device
+    } else {
+        panic!("Failed to find a suitable device.");
+    };
+
+    // ############################ DEVICE ###############################
+    // let device = create_device(instance.clone(), &surface, physical_device,
+    //     queue_family_flags)?;
+    let queue_family_idx = queue::queue_families(&instance, &surface,
+        &physical_device, queue_family_flags).family_idxs()[0] as u32;
+
+    let queue_create_info = voo::DeviceQueueCreateInfo::builder()
+        .queue_family_index(queue_family_idx)
+        .queue_priorities(&[1.0])
+        .build();
+
+    let features = PhysicalDeviceFeatures::builder()
+        .sampler_anisotropy(true)
+        .build();
+
+    let device = Device::builder()
+        .queue_create_infos(&[queue_create_info.clone()])
+        .enabled_extension_names(REQUIRED_DEVICE_EXTENSIONS)
+        .enabled_features(&features)
+        .build(physical_device)?;
+
+    // ############################ SWAPCHAIN ###############################
+    // let swapchain = create_swapchain(surface.clone(), device.clone(), queue_family_flags,
+    //     None, None)?;
+    let swapchain_details: SwapchainSupportDetails = SwapchainSupportDetails::new(
+        device.instance(), &surface, device.physical_device());
+    let surface_format = choose_swap_surface_format(&swapchain_details.formats);
+    let present_mode = choose_swap_present_mode(&swapchain_details.present_modes);
+    let extent = choose_swap_extent(&swapchain_details.capabilities, None);
+
+    let mut image_count = swapchain_details.capabilities.min_image_count() + 1;
+    if swapchain_details.capabilities.max_image_count() > 0 &&
+            image_count > swapchain_details.capabilities.max_image_count() {
+        image_count = swapchain_details.capabilities.max_image_count();
+    }
+    let indices = queue::queue_families(device.instance(), &surface,
+        device.physical_device(), queue_family_flags);
+    let queue_family_indices = [indices.flag_idxs[0] as u32,
+        indices.presentation_support_idxs[0] as u32];
+
+    let mut bldr = SwapchainKhr::builder();
+    bldr.surface(&surface)
+        .min_image_count(image_count)
+        .image_format(surface_format.format())
+        .image_color_space(surface_format.color_space())
+        .image_extent(extent.clone())
+        .image_array_layers(1)
+        .image_usage(voo::ImageUsageFlags::COLOR_ATTACHMENT)
+        .pre_transform(swapchain_details.capabilities.current_transform())
+        .composite_alpha(voo::CompositeAlphaFlagsKhr::OPAQUE)
+        .present_mode(present_mode)
+        .clipped(true);
+
+    if queue_family_indices[0] != queue_family_indices[1] {
+        bldr.image_sharing_mode(voo::SharingMode::Concurrent);
+        bldr.queue_family_indices(&queue_family_indices[..]);
+    } else {
+        bldr.image_sharing_mode(voo::SharingMode::Exclusive);
+    }
+    let swapchain = bldr.build(device.clone())?;
+
+
+    // ############################ RENDER PASS ###############################
+    // let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+
+
+    let depth_image_format = find_depth_format(&device)?;
+
+    let color_attachment = voo::AttachmentDescription::builder()
+        .format(swapchain.image_format())
+        .samples(voo::SampleCountFlags::COUNT_1)
+        .load_op(voo::AttachmentLoadOp::Clear)
+        .store_op(voo::AttachmentStoreOp::Store)
+        .stencil_load_op(voo::AttachmentLoadOp::DontCare)
+        .stencil_store_op(voo::AttachmentStoreOp::DontCare)
+        .initial_layout(voo::ImageLayout::Undefined)
+        .final_layout(voo::ImageLayout::PresentSrcKhr)
+        .build();
+
+    let depth_attachment = voo::AttachmentDescription::builder()
+        .format(depth_image_format)
+        .samples(voo::SampleCountFlags::COUNT_1)
+        .load_op(voo::AttachmentLoadOp::Clear)
+        .store_op(voo::AttachmentStoreOp::DontCare)
+        .stencil_load_op(voo::AttachmentLoadOp::DontCare)
+        .stencil_store_op(voo::AttachmentStoreOp::DontCare)
+        .initial_layout(voo::ImageLayout::Undefined)
+        .final_layout(voo::ImageLayout::DepthStencilAttachmentOptimal)
+        .build();
+
+    let color_attachment_ref = voo::AttachmentReference::builder()
+        .attachment(0)
+        .layout(voo::ImageLayout::ColorAttachmentOptimal)
+        .build();
+
+    let depth_attachment_ref = voo::AttachmentReference::builder()
+        .attachment(1)
+        .layout(voo::ImageLayout::DepthStencilAttachmentOptimal)
+        .build();
+
+    let color_attachments = [color_attachment_ref];
+
+    let subpass = voo::SubpassDescription::builder()
+        .pipeline_bind_point(voo::PipelineBindPoint::Graphics)
+        .color_attachments(&color_attachments[..])
+        .depth_stencil_attachment(&depth_attachment_ref)
+        .build();
+
+    let dependency = voo::SubpassDependency::builder()
+        .src_subpass(voo::SUBPASS_EXTERNAL)
+        .dst_subpass(0)
+        .src_stage_mask(voo::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT)
+        .dst_stage_mask(voo::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT)
+        .dst_access_mask(voo::AccessFlags::COLOR_ATTACHMENT_READ |
+            voo::AccessFlags::COLOR_ATTACHMENT_WRITE)
+        .build();
+
+
+    let rp = RenderPass::builder()
+        .attachments(&[color_attachment, depth_attachment])
+        .subpasses(&[subpass])
+        .dependencies(&[dependency])
+        .build(device).unwrap();
+
+    // let attachments = [color_attachment, depth_attachment];
+    // let subpasses = [subpass];
+    // let dependencies = [dependency];
+
+    // let mut bldr = RenderPass::builder();
+    // bldr.attachments(&attachments[..]);
+    // bldr.subpasses(&subpasses[..]);
+    // bldr.dependencies(&dependencies[..]);
+    // let rp = bldr.build(device).unwrap();
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // let depth_image_format = find_depth_format(&device)?;
+
+    // let color_attachment = vks::VkAttachmentDescription {
+    //     flags: 0,
+    //     format: swapchain.image_format() as u32,
+    //     samples: vks::VK_SAMPLE_COUNT_1_BIT,
+    //     loadOp: vks::VK_ATTACHMENT_LOAD_OP_CLEAR,
+    //     storeOp: vks::VK_ATTACHMENT_STORE_OP_STORE,
+    //     stencilLoadOp: vks::VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+    //     stencilStoreOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
+    //     initialLayout: vks::VK_IMAGE_LAYOUT_UNDEFINED,
+    //     finalLayout: vks::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+    // };
+
+    // let depth_attachment = vks::VkAttachmentDescription {
+    //     flags: 0,
+    //     format: depth_image_format as u32,
+    //     samples: vks::VK_SAMPLE_COUNT_1_BIT,
+    //     loadOp: vks::VK_ATTACHMENT_LOAD_OP_CLEAR,
+    //     storeOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
+    //     stencilLoadOp: vks::VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+    //     stencilStoreOp: vks::VK_ATTACHMENT_STORE_OP_DONT_CARE,
+    //     initialLayout: vks::VK_IMAGE_LAYOUT_UNDEFINED,
+    //     finalLayout: vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+    // };
+
+    // let color_attachment_ref = vks::VkAttachmentReference {
+    //     attachment: 0,
+    //     layout: vks::VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+    // };
+
+    // let depth_attachment_ref = vks::VkAttachmentReference {
+    //     attachment: 1,
+    //     layout: vks::VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+    // };
+
+    // let subpass = vks::VkSubpassDescription {
+    //     flags: 0,
+    //     pipelineBindPoint: vks::VK_PIPELINE_BIND_POINT_GRAPHICS,
+    //     inputAttachmentCount: 0,
+    //     pInputAttachments: ptr::null(),
+    //     colorAttachmentCount: 1,
+    //     pColorAttachments: &color_attachment_ref,
+    //     pResolveAttachments: ptr::null(),
+    //     pDepthStencilAttachment: &depth_attachment_ref,
+    //     preserveAttachmentCount: 0,
+    //     pPreserveAttachments: ptr::null(),
+    // };
+
+    // let dependency = vks::VkSubpassDependency {
+    //     dependencyFlags: 0,
+    //     srcSubpass: vks::VK_SUBPASS_EXTERNAL,
+    //     dstSubpass: 0,
+    //     srcStageMask: vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+    //     srcAccessMask: 0,
+    //     dstStageMask: vks::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+    //     dstAccessMask: vks::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | vks::VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+    // };
+
+    // let attachments = [color_attachment, depth_attachment];
+
+    // let create_info = vks::VkRenderPassCreateInfo {
+    //         sType: vks::VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+    //         pNext: ptr::null(),
+    //         flags: 0,
+    //         attachmentCount: attachments.len() as u32,
+    //         pAttachments: attachments.as_ptr(),
+    //         subpassCount: 1,
+    //         pSubpasses: &subpass,
+    //         dependencyCount: 1,
+    //         pDependencies: &dependency,
+    //     };
+
+    // let mut handle = 0;
+    // unsafe {
+    //     device.proc_addr_loader().core.vkCreateRenderPass(device.handle().0,
+    //         &create_info, ptr::null(), &mut handle);
+    // }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // let image_views = create_image_views(&swapchain)?;
+    // let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
+    // let pipeline_layout = create_pipeline_layout(device.clone(),
+    //     Some(&descriptor_set_layout))?;
+    // let vert_shader_code = util::read_file("/src/voodoo/shaders/vert.spv")?;
+    // let frag_shader_code = util::read_file("/src/voodoo/shaders/frag.spv")?;
+    // let graphics_pipeline = create_graphics_pipeline(device.clone(), &pipeline_layout,
+    //     &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
+    // let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;
+    // let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(&device,
+    //     &command_pool, swapchain.extent().clone())?;
+    // let framebuffers = create_framebuffers(&device, &render_pass,
+    //     &image_views, &depth_image_view, swapchain.extent().clone())?;
+    // let (texture_image, texture_image_memory) = create_texture_image(&device,
+    //     &command_pool)?;
+    // let texture_image_view = create_texture_image_view(device.clone(),
+    //     &texture_image)?;
+    // let texture_sampler = create_texture_sampler(device.clone())?;
+    // // // let (vertices, indices) = load_model(&device)?;
+    // let vertices = VERTICES[..].to_owned();
+    // let indices = INDICES[..].to_owned();
+    // let (vertex_buffer, vertex_buffer_memory) = create_vertex_buffer(&device, &command_pool,
+    //     &vertices)?;
+    // let (index_buffer, index_buffer_memory) = create_index_buffer(&device, &command_pool,
+    //     &indices)?;
+    // let (uniform_buffer, uniform_buffer_memory) = create_uniform_buffer(&device,
+    //     &command_pool, swapchain.extent().clone())?;
+    // let descriptor_pool = create_descriptor_pool(device.clone())?;
+    // let descriptor_sets = create_descriptor_sets(&device, &descriptor_set_layout,
+    //     &descriptor_pool, &uniform_buffer, &texture_image_view, &texture_sampler)?;
+    // let command_buffers = create_command_buffers(&device, &command_pool, &render_pass,
+    //     &graphics_pipeline, &framebuffers, swapchain.extent(),
+    //     &vertex_buffer, &index_buffer,
+    //     vertices.len() as u32, vertices.len() as u32, &pipeline_layout,
+    //     descriptor_sets[0].clone())?;
+    // let image_available_semaphore = Semaphore::new(device.clone())?;
+    // let render_finished_semaphore = Semaphore::new(device.clone())?;
+    // let start_time = time::Instant::now();
+
+    // let swapchain_components = SwapchainComponents {
+    //     image_views: image_views,
+    //     render_pass: render_pass,
+    //     graphics_pipeline: graphics_pipeline,
+    //     depth_image,
+    //     depth_image_memory,
+    //     depth_image_view,
+    //     framebuffers: framebuffers,
+    // };
+
+    Ok(())
+}
+
+
+
+fn main() {
+    println!("Hello triangle!");
+    unsafe {
+        make_everything().unwrap();
+        // let mut app = App::new().unwrap();
+        // app.main_loop().unwrap();
+    }
+}

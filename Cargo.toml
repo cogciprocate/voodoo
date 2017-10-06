@@ -22,7 +22,8 @@ libloading = "*"
 # smallvec = "*"
 # smallvec = { git = "https://github.com/servo/rust-smallvec" }
 smallvec = { git = "https://github.com/c0gent/rust-smallvec" }
-vks = { path = "../vks" }
+vks = { git = "https://gitlab.com/dennis-hamester/vks.git" }
+# vks = { path = "../vks" }
 libc = "*"
 cgmath = "*"
 image = "*"

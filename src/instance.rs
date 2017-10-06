@@ -93,7 +93,7 @@ impl Instance {
             let mut props: FormatProperties = mem::uninitialized();
             self.proc_addr_loader().vkGetPhysicalDeviceFormatProperties(
                 physical_device.handle().0, format.into(),
-                &mut props as *mut FormatProperties as *mut _);
+                &mut props as *mut _ as *mut vks::VkFormatProperties);
             props
         }
     }
@@ -209,7 +209,7 @@ impl<'ib> InstanceBuilder<'ib> {
         if !self.create_info.ppEnabledExtensionNames.is_null() {
             panic!("Enabled extension names have already been set.");
         }
-        let enabled_extension_name_ptrs: SmallVec<[_; 8]> = enabled_extensions.iter().map(|eext| {
+        let enabled_extension_name_ptrs: Vec<_> = enabled_extensions.iter().map(|eext| {
             if PRINT { println!("Enabling instance extension: '{}' (version: {})",
                 unsafe { CStr::from_ptr(&eext.extensionName as *const c_char).to_str().unwrap() },
                     eext.specVersion); }

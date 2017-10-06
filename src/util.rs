@@ -76,8 +76,8 @@ impl<'cp> From<String> for CharStr<'cp> {
 pub enum CharStrs<'cs> {
     Ptr { ptr: *const *const c_char, len: usize },
     RefPtr { ptrs: &'cs [*const c_char] },
-    OwnedPtr { ptrs: SmallVec<[*const c_char; 8]> },
-    OwnedOwned { strings: SmallVec<[CString; 8]>, ptrs: SmallVec<[*const c_char; 8]> },
+    OwnedPtr { ptrs: Vec<*const c_char> },
+    OwnedOwned { strings: Vec<CString>, ptrs: Vec<*const c_char> },
 }
 
 impl<'cs> CharStrs<'cs> {
@@ -146,7 +146,7 @@ impl <'cs, 'p, 'q> From<&'p [&'q CStr]> for CharStrs<'cs> where 'q: 'p, 'p: 'cs,
 
 impl <'cs, 'p, 'q> From<&'p [&'q str]> for CharStrs<'cs> where 'q: 'p, 'p: 'cs, {
     fn from(slices: &'p [&'q str]) -> CharStrs<'cs> {
-        let strings: SmallVec<[CString; 8]> = slices.iter().map(|&s| {
+        let strings: Vec<CString> = slices.iter().map(|&s| {
             CString::new(s)
                 .expect(&format!("unable to convert '{:?}' to a valid C string", s))
         }).collect();

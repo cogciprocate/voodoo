@@ -343,62 +343,62 @@ impl Member {
 }
 
 
-/// A field that must be created within a generated struct to store referenced
-/// information for convenience. Structs containing special fields are no
-/// longer `repr(C)`.
-#[derive(Clone, Debug)]
-struct SpecialField {
-    name: String,
-    ty_struct: String,
-    ty_builder: String,
-    default_val: String,
-}
+// /// A field that must be created within a generated struct to store referenced
+// /// information for convenience. Structs containing special fields are no
+// /// longer `repr(C)`.
+// #[derive(Clone, Debug)]
+// struct SpecialField {
+//     name: String,
+//     ty_struct: String,
+//     ty_builder: String,
+//     default_val: String,
+// }
 
-fn special_field(m: &Member) -> Option<SpecialField> {
-    if member_is_excluded(&m.orig_name) { return None; }
+// fn special_field(m: &Member) -> Option<SpecialField> {
+//     if member_is_excluded(&m.orig_name) { return None; }
 
-    match m.voodoo_type.as_str() {
-         "i8" => {
-            if m.is_ptr {
-                return Some(SpecialField {
-                    name: m.voodoo_name.clone(),
-                    ty_struct: "Option<CharStr<'s>>".to_string(),
-                    ty_builder: "Option<CharStr<'b>>".to_string(),
-                    default_val: "None".to_string(),
-                });
-            } else if m.is_ptr_ptr {
-                return Some(SpecialField {
-                    name: m.voodoo_name.clone(),
-                    ty_struct: "Option<CharStrs<'s>>".to_string(),
-                    ty_builder: "Option<CharStrs<'b>>".to_string(),
-                    default_val: "None".to_string(),
-                });
-            }
-        },
-        "PipelineShaderStageCreateInfo" |
-        "DescriptorSetLayoutBinding" |
-        "PhysicalDevice" |
-        "DeviceMemory" |
-        "DescriptorSetLayout" |
-        "CommandBuffer" |
-        "ImageView" |
-        "Semaphore" |
-        "Swapchain" |
-        "Sampler" => {
-            assert!(!m.is_ptr_ptr);
-            if m.is_ptr {
-                return Some(SpecialField {
-                    name: m.voodoo_name.clone(),
-                    ty_struct: format!("Option<SmallVec<[{}{}; 8]>>", ORIG_PRE, m.orig_type),
-                    ty_builder: format!("Option<SmallVec<[{}{}; 8]>>", ORIG_PRE, m.orig_type),
-                    default_val: "None".to_string(),
-                });
-            }
-        },
-        _ => (),
-    }
-    None
-}
+//     match m.voodoo_type.as_str() {
+//          "i8" => {
+//             if m.is_ptr {
+//                 return Some(SpecialField {
+//                     name: m.voodoo_name.clone(),
+//                     ty_struct: "Option<CharStr<'s>>".to_string(),
+//                     ty_builder: "Option<CharStr<'b>>".to_string(),
+//                     default_val: "None".to_string(),
+//                 });
+//             } else if m.is_ptr_ptr {
+//                 return Some(SpecialField {
+//                     name: m.voodoo_name.clone(),
+//                     ty_struct: "Option<CharStrs<'s>>".to_string(),
+//                     ty_builder: "Option<CharStrs<'b>>".to_string(),
+//                     default_val: "None".to_string(),
+//                 });
+//             }
+//         },
+//         "PipelineShaderStageCreateInfo" |
+//         "DescriptorSetLayoutBinding" |
+//         "PhysicalDevice" |
+//         "DeviceMemory" |
+//         "DescriptorSetLayout" |
+//         "CommandBuffer" |
+//         "ImageView" |
+//         "Semaphore" |
+//         "Swapchain" |
+//         "Sampler" => {
+//             assert!(!m.is_ptr_ptr);
+//             if m.is_ptr {
+//                 return Some(SpecialField {
+//                     name: m.voodoo_name.clone(),
+//                     ty_struct: format!("Option<SmallVec<[{}{}; 8]>>", ORIG_PRE, m.orig_type),
+//                     ty_builder: format!("Option<SmallVec<[{}{}; 8]>>", ORIG_PRE, m.orig_type),
+//                     default_val: "None".to_string(),
+//                 });
+//             }
+//         },
+//         _ => (),
+//     }
+//     None
+// }
 
 
 /// A struct type parsed from the API spec. which will be generated anew.
@@ -413,7 +413,7 @@ struct Struct {
     members: Vec<Member>,
     contains_ptr: bool,
     is_handle_type: bool,
-    special_fields: HashMap<String, SpecialField>,
+    // special_fields: HashMap<String, SpecialField>,
 }
 
 impl Struct {
@@ -451,7 +451,7 @@ impl Struct {
             members: Vec::with_capacity(16),
             contains_ptr: false,
             is_handle_type,
-            special_fields: HashMap::new(),
+            // special_fields: HashMap::new(),
         }
     }
 
@@ -550,12 +550,13 @@ impl Struct {
         self.members.push(m);
     }
 
-    fn special_field(&self, member_voodoo_name: &str) -> Option<&SpecialField> {
-        self.special_fields.get(member_voodoo_name)
-    }
+    // fn special_field(&self, member_voodoo_name: &str) -> Option<&SpecialField> {
+    //     self.special_fields.get(member_voodoo_name)
+    // }
 
     fn is_repr_c(&self) -> bool {
-        self.special_fields.len() == 0
+        // self.special_fields.len() == 0
+        true
     }
 }
 
@@ -984,6 +985,7 @@ impl MemberSig {
             sig.arg_type.push_str(&m.voodoo_type);
             sig.return_type.push_str(&sig.arg_type);
         } else if sig.arg_is_slice {
+            sig.where_clause = format!("where {a}: {i}", a=sig.arg_lifetime, i=impl_type_param);
             sig.set_fn_type_params.push_str(", ");
             sig.set_fn_type_params.push_str(sig.arg_lifetime);
             sig.arg_type.push_str("&");
@@ -1003,7 +1005,6 @@ impl MemberSig {
             sig.arg_type.push_str(&m.voodoo_type);
             if m.is_handle_type {
                 sig.arg_type.push_str("Handle");
-                sig.where_clause = format!("where {a}: {i}", a=sig.arg_lifetime, i=impl_type_param);
             }
             sig.arg_type.push_str("]");
             if sig.arg_is_repr_c {
@@ -1136,10 +1137,10 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
                 if sig.arg_is_slice && sig.arg_is_repr_c {
                     if m.is_const {
                         write!(o, "{}.as_ptr() as *const ", sig.fn_name)?;
-                        write!(o, "{}{} as *const _", ORIG_PRE, m.orig_type)?;
+                        write!(o, "{}{}", ORIG_PRE, m.orig_type)?;
                     } else {
                         write!(o, "{}.as_mut_ptr() as *mut ", sig.fn_name)?;
-                        write!(o, "{}{} as *mut _", ORIG_PRE, m.orig_type)?;
+                        write!(o, "{}{}", ORIG_PRE, m.orig_type)?;
                     }
                 } else {
                     write!(o, "{}.as_raw()", sig.fn_name)?;
@@ -1418,10 +1419,10 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
 
         // Raw:
         writeln!(o, "{t}raw: {}{},", ORIG_PRE, s.orig_name, t=t)?;
-        // Special fields:
-        for (_, field) in &s.special_fields {
-            writeln!(o, "{t}{}: {},", field.name, field.ty_struct, t=t)?;
-        }
+        // // Special fields:
+        // for (_, field) in &s.special_fields {
+        //     writeln!(o, "{t}{}: {},", field.name, field.ty_struct, t=t)?;
+        // }
         // Phantom data:
         if s.contains_ptr {
             writeln!(o, "{t}_p: PhantomData<&'s ()>,", t=t)?;
@@ -1494,9 +1495,9 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
         writeln!(o, "{t}fn from(f: {}{}) -> {}{} {{", ORIG_PRE, s.orig_name,
             s.voodoo_name, struct_type_param_block, t=t)?;
         write!(o, "{t}{t}{} {{ raw: f, ", s.voodoo_name, t=t)?;
-        for (_, field) in &s.special_fields {
-            write!(o, "{}: {}, ", field.name, field.default_val)?;
-        }
+        // for (_, field) in &s.special_fields {
+        //     write!(o, "{}: {}, ", field.name, field.default_val)?;
+        // }
         if s.contains_ptr {
             write!(o, "_p: PhantomData ")?;
         }
@@ -1519,10 +1520,10 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
 
         // Raw:
         writeln!(o, "{t}raw: {}{},", ORIG_PRE, s.orig_name, t=t)?;
-        // Special fields:
-        for (_, field) in &s.special_fields {
-            writeln!(o, "{t}{}: {},", field.name, field.ty_builder, t=t)?;
-        }
+        // // Special fields:
+        // for (_, field) in &s.special_fields {
+        //     writeln!(o, "{t}{}: {},", field.name, field.ty_builder, t=t)?;
+        // }
         // Phantom data:
         if s.contains_ptr {
             writeln!(o, "{t}_p: PhantomData<&'b ()>, ", t=t)?;
@@ -1541,10 +1542,10 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
         writeln!(o, "{t}{t}{}Builder {{", s.voodoo_name, t=t)?;
         // Raw:
         writeln!(o, "{t}{t}{t}raw: {}{}::default(),", ORIG_PRE, s.orig_name, t=t)?;
-        // Special fields:
-        for (_, field) in &s.special_fields {
-            writeln!(o, "{t}{t}{t}{}: {},", field.name, field.default_val, t=t)?;
-        }
+        // // Special fields:
+        // for (_, field) in &s.special_fields {
+        //     writeln!(o, "{t}{t}{t}{}: {},", field.name, field.default_val, t=t)?;
+        // }
         // Phantom data:
         if s.contains_ptr {
             writeln!(o, "{t}{t}{t}_p: PhantomData,", t=t)?;
@@ -1568,10 +1569,10 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
         writeln!(o, "{t}{t}{} {{", s.voodoo_name, t=t)?;
         // Raw:
         writeln!(o, "{t}{t}{t}raw: self.raw,", t=t)?;
-        // Special fields:
-        for (_, field) in &s.special_fields {
-            writeln!(o, "{t}{t}{t}{fn}: self.{fn},", fn=field.name, t=t)?;
-        }
+        // // Special fields:
+        // for (_, field) in &s.special_fields {
+        //     writeln!(o, "{t}{t}{t}{fn}: self.{fn},", fn=field.name, t=t)?;
+        // }
         // Phantom data:
         if s.contains_ptr {
             writeln!(o, "{t}{t}{t}_p: PhantomData,", t=t)?;
