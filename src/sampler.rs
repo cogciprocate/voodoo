@@ -8,11 +8,19 @@ use ::{util, VooResult, Device, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct SamplerHandle(pub vks::VkSampler);
+pub struct SamplerHandle(pub(crate) vks::VkSampler);
+
+impl SamplerHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkSampler {
+        self.0
+    }
+}
 
 impl Handle for SamplerHandle {
     type Target = SamplerHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -87,6 +95,7 @@ impl Sampler {
 impl<'h> Handle for &'h Sampler {
     type Target = SamplerHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

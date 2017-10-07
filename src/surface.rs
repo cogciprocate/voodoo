@@ -9,9 +9,10 @@ use ::{VooResult, Instance, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct SurfaceKhrHandle(pub vks::VkSurfaceKHR);
+pub struct SurfaceKhrHandle(pub(crate) vks::VkSurfaceKHR);
 
 impl SurfaceKhrHandle {
+    #[inline(always)]
     pub fn raw(&self) -> vks::VkSurfaceKHR {
         self.0
     }
@@ -20,6 +21,7 @@ impl SurfaceKhrHandle {
 impl Handle for SurfaceKhrHandle {
     type Target = SurfaceKhrHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -61,6 +63,7 @@ impl SurfaceKhr {
 impl<'s> Handle for &'s SurfaceKhr {
     type Target = SurfaceKhrHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

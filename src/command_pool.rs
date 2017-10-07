@@ -10,11 +10,19 @@ use ::{util, VooResult, Device, Handle, CommandPoolCreateInfo, CommandPoolCreate
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct CommandPoolHandle(pub vks::VkCommandPool);
+pub struct CommandPoolHandle(pub(crate) vks::VkCommandPool);
+
+impl CommandPoolHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkCommandPool {
+        self.0
+    }
+}
 
 impl Handle for CommandPoolHandle {
     type Target = CommandPoolHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -81,6 +89,7 @@ impl CommandPool {
 impl<'h> Handle for &'h CommandPool {
     type Target = CommandPoolHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

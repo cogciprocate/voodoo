@@ -8,11 +8,19 @@ use ::{util, VooResult, Device, ShaderModule, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct RenderPassHandle(pub vks::VkRenderPass);
+pub struct RenderPassHandle(pub(crate) vks::VkRenderPass);
+
+impl RenderPassHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkRenderPass {
+        self.0
+    }
+}
 
 impl Handle for RenderPassHandle {
     type Target = RenderPassHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -50,6 +58,7 @@ impl RenderPass {
 impl<'h> Handle for &'h RenderPass {
     type Target = RenderPassHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

@@ -679,56 +679,31 @@ pub fn create_framebuffers(device: &Device, render_pass: &RenderPass,
 
 fn begin_single_time_commands(command_pool: &CommandPool)
         -> VooResult<voo::CommandBuffer> {
-    // let alloc_info = voo::CommandBufferAllocateInfo::builder()
-    //     .command_pool(command_pool)
-    //     .level(voo::CommandBufferLevel::Primary)
-    //     .command_buffer_count(1)
-    //     .build();
-
-    // let mut command_buffer = ptr::null_mut();
-    // unsafe {
-    //     voo::check(command_pool.device().proc_addr_loader().core.vkAllocateCommandBuffers(
-    //         command_pool.device().handle().0,
-    //         alloc_info.as_raw(), &mut command_buffer));
-    // }
-
     let command_buffer = command_pool.allocate_command_buffer(voo::CommandBufferLevel::Primary)?;
-
-
-    // let begin_info = voo::CommandBufferBeginInfo::builder()
-    //     .flags(voo::CommandBufferUsageFlags::ONE_TIME_SUBMIT)
-    //     .build();
-
-    // unsafe {
-    //     command_pool.device().proc_addr_loader().core.vkBeginCommandBuffer(command_buffer,
-    //         begin_info.as_raw());
-    // }
-
-    command_buffer.begin(voo::CommandBufferUsageFlags::ONE_TIME_SUBMIT);
-
-    // voo::CommandBuffer::from_parts(command_pool.clone(), voo::CommandBufferHandle(command_buffer))
+    command_buffer.begin(voo::CommandBufferUsageFlags::ONE_TIME_SUBMIT)?;
     Ok(command_buffer)
 }
 
 fn end_single_time_commands(device: &Device, command_pool: &CommandPool,
         command_buffer: voo::CommandBuffer) -> VooResult<()> {
-    unsafe {
-        voo::check(device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.handle().0));
-    }
+    // unsafe {
+    //     voo::check(device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.handle().raw()));
+    // }
+    command_buffer.end()?;
     let command_buffers = [command_buffer.handle()];
 
     let submit_info = voo::SubmitInfo::builder()
         .command_buffers(&command_buffers[..])
         .build();
 
-    let cmd_buf_handles = [command_buffer.handle().0];
+    let cmd_buf_handles = [command_buffer.handle().raw()];
 
     unsafe {
         voo::check(device.proc_addr_loader().core.vkQueueSubmit(device.queue(0), 1,
             submit_info.as_raw(), 0));
         voo::check(device.proc_addr_loader().core.vkQueueWaitIdle(device.queue(0)));
-        device.proc_addr_loader().core.vkFreeCommandBuffers(device.handle().0,
-            command_pool.handle().0, 1, cmd_buf_handles.as_ptr());
+        device.proc_addr_loader().core.vkFreeCommandBuffers(device.handle().raw(),
+            command_pool.handle().raw(), 1, cmd_buf_handles.as_ptr());
     }
 
     Ok(())
@@ -804,7 +779,7 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
 
     unsafe {
         device.proc_addr_loader().vkCmdPipelineBarrier(
-            command_buffer.handle().0,
+            command_buffer.handle().raw(),
             source_stage.bits(), destination_stage.bits(),
             0,
             0, ptr::null(),
@@ -838,9 +813,9 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
 
     unsafe {
         device.proc_addr_loader().vkCmdCopyBufferToImage(
-            command_buffer.handle().0,
-            buffer.handle().0,
-            image.handle().0,
+            command_buffer.handle().raw(),
+            buffer.handle().raw(),
+            image.handle().raw(),
             voo::ImageLayout::TransferDstOptimal as u32,
             1,
             &region as *const _ as *const vks::VkBufferImageCopy
@@ -863,8 +838,8 @@ fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
         .size(size)
         .build();
 
-    unsafe { device.proc_addr_loader().core.vkCmdCopyBuffer(command_buffer.handle().0,
-        src_buffer.handle().0, dst_buffer.handle().0, 1, &copy_region as *const _
+    unsafe { device.proc_addr_loader().core.vkCmdCopyBuffer(command_buffer.handle().raw(),
+        src_buffer.handle().raw(), dst_buffer.handle().raw(), 1, &copy_region as *const _
         as *const vks::VkBufferCopy); }
 
 
@@ -1187,7 +1162,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
         .build();
 
     unsafe {
-        voo::check(device.proc_addr_loader().vkAllocateCommandBuffers(device.handle().0,
+        voo::check(device.proc_addr_loader().vkAllocateCommandBuffers(device.handle().raw(),
             alloc_info.as_raw(), command_buffers.as_mut_ptr() as *mut _
             as *mut vks::VkCommandBuffer));
     }
@@ -1209,7 +1184,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
 
         unsafe {
             voo::check(device.proc_addr_loader().core.vkBeginCommandBuffer(
-                command_buffer_handle.0, begin_info.as_raw()));
+                command_buffer_handle.raw(), begin_info.as_raw()));
         }
 
         let clear_values = &[
@@ -1230,22 +1205,22 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             .build();
 
         unsafe {
-            device.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer_handle.0,
+            device.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer_handle.raw(),
                 render_pass_info.as_raw(), voo::SubpassContents::Inline.into());
-            device.proc_addr_loader().core.vkCmdBindPipeline(command_buffer_handle.0,
-                voo::PipelineBindPoint::Graphics as u32, graphics_pipeline.handle().0);
+            device.proc_addr_loader().core.vkCmdBindPipeline(command_buffer_handle.raw(),
+                voo::PipelineBindPoint::Graphics as u32, graphics_pipeline.handle().raw());
 
             let vertex_buffers = [vertex_buffer.handle()];
             let offsets = [0];
             device.proc_addr_loader().core.vkCmdBindVertexBuffers(
-                command_buffer_handle.0, 0, 1, vertex_buffers.as_ptr() as *const vks::VkBuffer,
+                command_buffer_handle.raw(), 0, 1, vertex_buffers.as_ptr() as *const vks::VkBuffer,
                 offsets.as_ptr());
-            device.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer_handle.0,
-                index_buffer.handle().0, 0, voo::IndexType::Uint32 as u32);
+            device.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer_handle.raw(),
+                index_buffer.handle().raw(), 0, voo::IndexType::Uint32 as u32);
 
-            device.proc_addr_loader().core.vkCmdBindDescriptorSets(command_buffer_handle.0,
-                voo::PipelineBindPoint::Graphics as u32, pipeline_layout.handle().0, 0, 1,
-                &descriptor_set.handle().0, 0, ptr::null());
+            device.proc_addr_loader().core.vkCmdBindDescriptorSets(command_buffer_handle.raw(),
+                voo::PipelineBindPoint::Graphics as u32, pipeline_layout.handle().raw(), 0, 1,
+                &descriptor_set.handle().raw(), 0, ptr::null());
 
             // // * vertexCount: Even though we don't have a vertex buffer, we
             // //   technically still have 3 vertices to draw.
@@ -1256,11 +1231,11 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             // // * firstInstance: Used as an offset for instanced rendering,
             // //   defines the lowest value of gl_InstanceIndex.
             // device.proc_addr_loader().core.vkCmdDraw(command_buffer, vertex_count, 1, 0, 0);
-            device.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer_handle.0, index_count,
+            device.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer_handle.raw(), index_count,
                 1, 0, 0, 0);
 
-            device.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer_handle.0);
-            device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer_handle.0);
+            device.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer_handle.raw());
+            device.proc_addr_loader().core.vkEndCommandBuffer(command_buffer_handle.raw());
         }
     }
     Ok(command_buffers)
@@ -1414,8 +1389,8 @@ impl App {
         self.swapchain = None;
         self.swapchain_components = None;
         unsafe {
-            self.device.proc_addr_loader().core.vkFreeCommandBuffers(self.device.handle().0,
-                self.command_pool.handle().0,
+            self.device.proc_addr_loader().core.vkFreeCommandBuffers(self.device.handle().raw(),
+                self.command_pool.handle().raw(),
                 self.command_buffers.as_ref().unwrap().len() as u32,
                 self.command_buffers.as_mut().unwrap().as_mut_ptr() as *mut _
                 as *mut vks::VkCommandBuffer);
@@ -1425,7 +1400,7 @@ impl App {
 
     fn recreate_swapchain(&mut self, current_extent: voo::Extent2d) -> VooResult<()> {
         unsafe { voo::check(self.device.proc_addr_loader().vkDeviceWaitIdle(
-            self.device.handle().0)); }
+            self.device.handle().raw())); }
 
         let swapchain = create_swapchain(self.surface.clone(), self.device.clone(),
             self.queue_family_flags, Some(current_extent), self.swapchain.as_ref().take())?;
@@ -1498,8 +1473,8 @@ impl App {
         let mut image_index = 0u32;
         let acq_res = unsafe {
             self.device.proc_addr_loader().khr_swapchain.vkAcquireNextImageKHR(
-                self.device.handle().0, self.swapchain.as_ref().unwrap().handle().0,
-                u64::max_value(), self.image_available_semaphore.handle().0, 0, &mut image_index)
+                self.device.handle().raw(), self.swapchain.as_ref().unwrap().handle().raw(),
+                u64::max_value(), self.image_available_semaphore.handle().raw(), 0, &mut image_index)
         };
         if acq_res == voo::ResultEnum::ErrorOutOfDateKhr as i32 {
             let dims = self.window.get_inner_size_pixels().unwrap();
@@ -1574,7 +1549,7 @@ impl App {
         }
 
         unsafe { voo::check(self.device.proc_addr_loader().core.vkDeviceWaitIdle(
-            self.device.handle().0)); }
+            self.device.handle().raw())); }
         Ok(())
     }
 }

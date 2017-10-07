@@ -8,11 +8,19 @@ use ::{util, VooResult, Device, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DescriptorSetLayoutHandle(pub vks::VkDescriptorSetLayout);
+pub struct DescriptorSetLayoutHandle(pub(crate) vks::VkDescriptorSetLayout);
+
+impl DescriptorSetLayoutHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkDescriptorSetLayout {
+        self.0
+    }
+}
 
 impl Handle for DescriptorSetLayoutHandle {
     type Target = DescriptorSetLayoutHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -90,6 +98,7 @@ impl DescriptorSetLayout {
 impl<'h> Handle for &'h DescriptorSetLayout {
     type Target = DescriptorSetLayoutHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

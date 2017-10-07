@@ -8,11 +8,19 @@ use ::{util, VooResult, Device, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct SemaphoreHandle(pub vks::VkSemaphore);
+pub struct SemaphoreHandle(pub(crate) vks::VkSemaphore);
+
+impl SemaphoreHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkSemaphore {
+        self.0
+    }
+}
 
 impl Handle for SemaphoreHandle {
     type Target = SemaphoreHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -65,6 +73,7 @@ impl Semaphore {
 impl<'h> Handle for &'h Semaphore {
     type Target = SemaphoreHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

@@ -8,14 +8,21 @@ use vks;
 use ::{VooResult, Device, Handle};
 
 
-
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct ShaderModuleHandle(pub vks::VkShaderModule);
+pub struct ShaderModuleHandle(pub(crate) vks::VkShaderModule);
+
+impl ShaderModuleHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkShaderModule {
+        self.0
+    }
+}
 
 impl Handle for ShaderModuleHandle {
     type Target = ShaderModuleHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -78,6 +85,7 @@ impl ShaderModule {
 impl<'h> Handle for &'h ShaderModule {
     type Target = ShaderModuleHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

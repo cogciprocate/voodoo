@@ -9,11 +9,19 @@ use ::{util, VooResult, Device, ShaderModule, DescriptorSetLayoutHandle, Descrip
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct PipelineLayoutHandle(pub vks::VkPipelineLayout);
+pub struct PipelineLayoutHandle(pub(crate) vks::VkPipelineLayout);
+
+impl PipelineLayoutHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkPipelineLayout {
+        self.0
+    }
+}
 
 impl Handle for PipelineLayoutHandle {
     type Target = PipelineLayoutHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -50,6 +58,7 @@ impl PipelineLayout {
 impl<'h> Handle for &'h PipelineLayout {
     type Target = PipelineLayoutHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

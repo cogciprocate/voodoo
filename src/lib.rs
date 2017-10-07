@@ -189,8 +189,6 @@ pub use structs::*;
 pub use enums::*;
 pub use bitflags::*;
 
-/////////////// TEMP /////////////////
-// pub type DescriptorSet = vks::VkDescriptorSet;
 
 pub trait Handle {
     type Target;
@@ -200,11 +198,16 @@ pub trait Handle {
 
 
 
-
-
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct FenceHandle(pub vks::VkFence);
+pub struct FenceHandle(pub(crate) vks::VkFence);
+
+impl FenceHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkFence {
+        self.0
+    }
+}
 
 impl Handle for FenceHandle {
     type Target = FenceHandle;
@@ -215,22 +218,16 @@ impl Handle for FenceHandle {
 }
 
 
-// #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-// #[repr(C)]
-// pub struct DeviceMemoryHandle(pub vks::VkDeviceMemory);
-
-// impl Handle for DeviceMemoryHandle {
-//     type Target = DeviceMemoryHandle;
-
-//     fn handle(&self) -> Self::Target {
-//         *self
-//     }
-// }
-
-
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct EventHandle(pub vks::VkEvent);
+pub struct EventHandle(pub(crate) vks::VkEvent);
+
+impl EventHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkEvent {
+        self.0
+    }
+}
 
 impl Handle for EventHandle {
     type Target = EventHandle;
@@ -243,7 +240,14 @@ impl Handle for EventHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct QueryPoolHandle(pub vks::VkQueryPool);
+pub struct QueryPoolHandle(pub(crate) vks::VkQueryPool);
+
+impl QueryPoolHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkQueryPool {
+        self.0
+    }
+}
 
 impl Handle for QueryPoolHandle {
     type Target = QueryPoolHandle;
@@ -256,7 +260,14 @@ impl Handle for QueryPoolHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct BufferViewHandle(pub vks::VkBufferView);
+pub struct BufferViewHandle(pub(crate) vks::VkBufferView);
+
+impl BufferViewHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkBufferView {
+        self.0
+    }
+}
 
 impl Handle for BufferViewHandle {
     type Target = BufferViewHandle;
@@ -269,7 +280,14 @@ impl Handle for BufferViewHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct PipelineCacheHandle(pub vks::VkPipelineCache);
+pub struct PipelineCacheHandle(pub(crate) vks::VkPipelineCache);
+
+impl PipelineCacheHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkPipelineCache {
+        self.0
+    }
+}
 
 impl Handle for PipelineCacheHandle {
     type Target = PipelineCacheHandle;
@@ -282,7 +300,14 @@ impl Handle for PipelineCacheHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct PipelineHandle(pub vks::VkPipeline);
+pub struct PipelineHandle(pub(crate) vks::VkPipeline);
+
+impl PipelineHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkPipeline {
+        self.0
+    }
+}
 
 impl Handle for PipelineHandle {
     type Target = PipelineHandle;
@@ -295,7 +320,14 @@ impl Handle for PipelineHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DescriptorSetHandle(pub vks::VkDescriptorSet);
+pub struct DescriptorSetHandle(pub(crate) vks::VkDescriptorSet);
+
+impl DescriptorSetHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkDescriptorSet {
+        self.0
+    }
+}
 
 impl Handle for DescriptorSetHandle {
     type Target = DescriptorSetHandle;
@@ -308,7 +340,14 @@ impl Handle for DescriptorSetHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DisplayKhrHandle(pub vks::VkDisplayKHR);
+pub struct DisplayKhrHandle(pub(crate) vks::VkDisplayKHR);
+
+impl DisplayKhrHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkDisplayKHR {
+        self.0
+    }
+}
 
 impl Handle for DisplayKhrHandle {
     type Target = DisplayKhrHandle;
@@ -321,7 +360,14 @@ impl Handle for DisplayKhrHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DisplayModeKhrHandle(pub vks::VkDisplayModeKHR);
+pub struct DisplayModeKhrHandle(pub(crate) vks::VkDisplayModeKHR);
+
+impl DisplayModeKhrHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkDisplayModeKHR {
+        self.0
+    }
+}
 
 impl Handle for DisplayModeKhrHandle {
     type Target = DisplayModeKhrHandle;
@@ -334,7 +380,14 @@ impl Handle for DisplayModeKhrHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DescriptorUpdateTemplateHandle(pub vks::VkDescriptorUpdateTemplateKHR);
+pub struct DescriptorUpdateTemplateHandle(pub(crate) vks::VkDescriptorUpdateTemplateKHR);
+
+impl DescriptorUpdateTemplateHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkDescriptorUpdateTemplateKHR {
+        self.0
+    }
+}
 
 impl Handle for DescriptorUpdateTemplateHandle {
     type Target = DescriptorUpdateTemplateHandle;
@@ -347,7 +400,14 @@ impl Handle for DescriptorUpdateTemplateHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DebugReportCallbackExtHandle(pub vks::VkDebugReportCallbackEXT);
+pub struct DebugReportCallbackExtHandle(pub(crate) vks::VkDebugReportCallbackEXT);
+
+impl DebugReportCallbackExtHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkDebugReportCallbackEXT {
+        self.0
+    }
+}
 
 impl Handle for DebugReportCallbackExtHandle {
     type Target = DebugReportCallbackExtHandle;
@@ -362,6 +422,13 @@ impl Handle for DebugReportCallbackExtHandle {
 #[repr(C)]
 pub struct SamplerYcbcrConversionKhrHandle(pub(crate) u64);
 
+impl SamplerYcbcrConversionKhrHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> u64 {
+        self.0
+    }
+}
+
 impl Handle for SamplerYcbcrConversionKhrHandle {
     type Target = SamplerYcbcrConversionKhrHandle;
 
@@ -374,6 +441,13 @@ impl Handle for SamplerYcbcrConversionKhrHandle {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct ObjectTableNvxHandle(pub(crate) u64);
+
+impl ObjectTableNvxHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> u64 {
+        self.0
+    }
+}
 
 impl Handle for ObjectTableNvxHandle {
     type Target = ObjectTableNvxHandle;
@@ -388,6 +462,13 @@ impl Handle for ObjectTableNvxHandle {
 #[repr(C)]
 pub struct IndirectCommandsLayoutNvxHandle(pub(crate) u64);
 
+impl IndirectCommandsLayoutNvxHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> u64 {
+        self.0
+    }
+}
+
 impl Handle for IndirectCommandsLayoutNvxHandle {
     type Target = IndirectCommandsLayoutNvxHandle;
 
@@ -400,6 +481,13 @@ impl Handle for IndirectCommandsLayoutNvxHandle {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct ValidationCacheExtHandle(pub(crate) u64);
+
+impl ValidationCacheExtHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> u64 {
+        self.0
+    }
+}
 
 impl Handle for ValidationCacheExtHandle {
     type Target = ValidationCacheExtHandle;
@@ -474,9 +562,6 @@ impl<'h> Handle for &'h Pipeline {
 }
 
 
-// impl From<vks::VkCommandBuffer> for CommandBuffer {
-//     fn from
-// }
 
 
 #[derive(Clone, Debug)]

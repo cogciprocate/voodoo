@@ -9,11 +9,19 @@ use ::{util, VooResult, Device, DescriptorSetLayout, DescriptorSetLayoutHandle, 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DescriptorPoolHandle(pub vks::VkDescriptorPool);
+pub struct DescriptorPoolHandle(pub(crate) vks::VkDescriptorPool);
+
+impl DescriptorPoolHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkDescriptorPool {
+        self.0
+    }
+}
 
 impl Handle for DescriptorPoolHandle {
     type Target = DescriptorPoolHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -92,6 +100,7 @@ impl DescriptorPool {
 impl<'d> Handle for &'d DescriptorPool {
     type Target = DescriptorPoolHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

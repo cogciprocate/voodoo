@@ -13,11 +13,19 @@ use instance;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct PhysicalDeviceHandle(pub vks::VkPhysicalDevice);
+pub struct PhysicalDeviceHandle(pub(crate) vks::VkPhysicalDevice);
+
+impl PhysicalDeviceHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkPhysicalDevice {
+        self.0
+    }
+}
 
 impl Handle for PhysicalDeviceHandle {
     type Target = PhysicalDeviceHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -189,6 +197,7 @@ impl PhysicalDevice {
 impl<'p> Handle for &'p PhysicalDevice {
     type Target = PhysicalDeviceHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.handle
     }

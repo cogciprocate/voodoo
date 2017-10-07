@@ -9,11 +9,19 @@ use ::{util, VooResult, Device, DeviceMemory, PRINT, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct ImageHandle(pub vks::VkImage);
+pub struct ImageHandle(pub(crate) vks::VkImage);
+
+impl ImageHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkImage {
+        self.0
+    }
+}
 
 impl Handle for ImageHandle {
     type Target = ImageHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -86,6 +94,7 @@ impl Image {
 impl<'i> Handle for &'i Image {
     type Target = ImageHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

@@ -1,13 +1,29 @@
 use std::ptr;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, PhysicalDevice, Device, SurfaceKhr, QueueFlags};
+use ::{VooResult, Instance, PhysicalDevice, Device, SurfaceKhr, QueueFlags, Handle};
 
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct QueueHandle(pub vks::VkQueue);
+pub struct QueueHandle(pub(crate) vks::VkQueue);
+
+impl QueueHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkQueue {
+        self.0
+    }
+}
+
+impl Handle for QueueHandle {
+    type Target = QueueHandle;
+
+    #[inline(always)]
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
 
 
 pub struct QueueFamilyIndices {
@@ -74,7 +90,8 @@ pub fn queue_families(instance: &Instance, surface: &SurfaceKhr, physical_device
 
 
 pub struct Queue {
-    handle: vks::VkQueue,
+    // handle: vks::VkQueue,
+    handle: QueueHandle,
     device: Device,
     family_idx: u32,
     idx: u32,
@@ -95,10 +112,19 @@ impl Queue {
         }
 
         Ok(Queue {
-            handle,
+            handle: QueueHandle(handle),
             device,
             family_idx: queue_family_index,
             idx: queue_index,
         })
+    }
+}
+
+impl Handle for Queue {
+    type Target = QueueHandle;
+
+    #[inline(always)]
+    fn handle(&self) -> Self::Target {
+        self.handle
     }
 }

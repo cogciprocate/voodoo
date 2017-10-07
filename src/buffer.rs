@@ -9,11 +9,18 @@ use ::{util, VooResult, Device, DeviceMemory, PRINT, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct BufferHandle(pub vks::VkBuffer);
+pub struct BufferHandle(pub(crate) vks::VkBuffer);
+
+impl BufferHandle {
+    pub fn raw(&self) -> vks::VkBuffer {
+        self.0
+    }
+}
 
 impl Handle for BufferHandle {
     type Target = BufferHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -69,6 +76,7 @@ impl Buffer {
 impl<'b> Handle for &'b Buffer {
     type Target = BufferHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

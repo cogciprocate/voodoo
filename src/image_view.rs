@@ -7,11 +7,19 @@ use ::{VooResult, SwapchainKhr, Device, ImageHandle, Handle};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct ImageViewHandle(pub vks::VkImageView);
+pub struct ImageViewHandle(pub(crate) vks::VkImageView);
+
+impl ImageViewHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkImageView {
+        self.0
+    }
+}
 
 impl Handle for ImageViewHandle {
     type Target = ImageViewHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -49,6 +57,7 @@ impl ImageView {
 impl<'i> Handle for &'i ImageView {
     type Target = ImageViewHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }

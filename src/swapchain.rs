@@ -12,11 +12,19 @@ use ::{queue, VooResult, Instance, SurfaceKhr, Device, PhysicalDevice, ImageHand
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct SwapchainKhrHandle(pub vks::VkSwapchainKHR);
+pub struct SwapchainKhrHandle(pub(crate) vks::VkSwapchainKHR);
+
+impl SwapchainKhrHandle {
+    #[inline(always)]
+    pub fn raw(&self) -> vks::VkSwapchainKHR {
+        self.0
+    }
+}
 
 impl Handle for SwapchainKhrHandle {
     type Target = SwapchainKhrHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -97,6 +105,7 @@ impl SwapchainKhr {
 impl<'s> Handle for &'s SwapchainKhr {
     type Target = SwapchainKhrHandle;
 
+    #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
     }
