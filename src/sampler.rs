@@ -12,7 +12,7 @@ pub struct SamplerHandle(pub(crate) vks::VkSampler);
 
 impl SamplerHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkSampler {
+    pub fn to_raw(&self) -> vks::VkSampler {
         self.0
     }
 }
@@ -104,36 +104,15 @@ impl<'h> Handle for &'h Sampler {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().vkDestroySampler(self.device.handle().0,
-                self.handle.0, ptr::null());
+            // self.device.proc_addr_loader().vkDestroySampler(self.device.handle().0,
+            //     self.handle.0, ptr::null());
+            self.device.destroy_sampler(self.handle, None);
         }
     }
 }
 
 
 /// A builder for `Sampler`.
-//
-// typedef struct VkSamplerCreateInfo {
-//     VkStructureType         sType;
-//     const void*             pNext;
-//     VkSamplerCreateFlags    flags;
-//     VkFilter                magFilter;
-//     VkFilter                minFilter;
-//     VkSamplerMipmapMode     mipmapMode;
-//     VkSamplerAddressMode    addressModeU;
-//     VkSamplerAddressMode    addressModeV;
-//     VkSamplerAddressMode    addressModeW;
-//     float                   mipLodBias;
-//     VkBool32                anisotropyEnable;
-//     float                   maxAnisotropy;
-//     VkBool32                compareEnable;
-//     VkCompareOp             compareOp;
-//     float                   minLod;
-//     float                   maxLod;
-//     VkBorderColor           borderColor;
-//     VkBool32                unnormalizedCoordinates;
-// } VkSamplerCreateInfo;
-//
 #[derive(Debug, Clone)]
 pub struct SamplerBuilder<'b> {
     create_info: ::SamplerCreateInfo<'b>,
@@ -307,15 +286,18 @@ impl<'b> SamplerBuilder<'b> {
 
     /// Creates and returns a new `Sampler`
     pub fn build(&self, device: Device) -> VooResult<Sampler> {
-        let mut handle = 0;
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateSampler(device.handle().0,
-                self.create_info.as_raw(), ptr::null(), &mut handle));
-        }
+        // let mut handle = 0;
+        // unsafe {
+        //     ::check(device.proc_addr_loader().core.vkCreateSampler(device.handle().0,
+        //         self.create_info.as_raw(), ptr::null(), &mut handle));
+        // }
+
+        let handle = unsafe { device.create_sampler(&self.create_info, None)? };
 
         Ok(Sampler {
             inner: Arc::new(Inner {
-                handle: SamplerHandle(handle),
+                // handle: SamplerHandle(handle),
+                handle,
                 device,
             })
         })

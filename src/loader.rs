@@ -7,15 +7,14 @@ use libc::{c_char, c_void};
 use lib;
 use smallvec::SmallVec;
 use vks::{self, PFN_vkGetInstanceProcAddr};
-use ::{VooResult};
+use ::{VooResult, Handle, InstanceHandle};
 
 const PRINT: bool = false;
 
 pub struct Loader {
     vk_lib: lib::Library,
     vk_get_instance_proc_addr: vks::PFN_vkGetInstanceProcAddr,
-    // entry_points: vks::VkEntryPoints,
-    loader: vks::InstanceProcAddrLoader,
+    instance_proc_addr_loader: vks::InstanceProcAddrLoader,
 }
 
 impl Loader {
@@ -37,12 +36,12 @@ impl Loader {
             *get_proc_addr
         };
 
-        let mut loader = vks::InstanceProcAddrLoader::from_get_instance_proc_addr(vk_get_instance_proc_addr);
+        let mut instance_proc_addr_loader = vks::InstanceProcAddrLoader::from_get_instance_proc_addr(vk_get_instance_proc_addr);
         unsafe {
-            loader.load_core_global();
+            instance_proc_addr_loader.load_core_global();
         }
 
-        Ok(Loader { vk_lib, vk_get_instance_proc_addr, loader })
+        Ok(Loader { vk_lib, vk_get_instance_proc_addr, instance_proc_addr_loader })
     }
 
     #[inline]
@@ -55,17 +54,17 @@ impl Loader {
 
     #[inline]
     pub fn core_global(&self) -> &vks::instance_proc_addr_loader::CoreGlobal {
-        &self.loader.core_global
+        &self.instance_proc_addr_loader.core_global
     }
 
     #[inline]
-    pub fn loader(&self) -> &vks::InstanceProcAddrLoader {
-        &self.loader
+    pub fn instance_proc_addr_loader(&self) -> &vks::InstanceProcAddrLoader {
+        &self.instance_proc_addr_loader
     }
 
     #[inline]
-    pub fn loader_mut(&mut self) -> &mut vks::InstanceProcAddrLoader {
-        &mut self.loader
+    pub fn instance_proc_addr_loader_mut(&mut self) -> &mut vks::InstanceProcAddrLoader {
+        &mut self.instance_proc_addr_loader
     }
 
     /// Returns all available instance extensions.
@@ -137,6 +136,37 @@ impl Loader {
 
     pub fn validation_layer_names(&self) -> &'static [&'static [u8]] {
         ::VALIDATION_LAYER_NAMES
+    }
+
+    // *PFN_vkEnumeratePhysicalDevices)(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
+    pub fn enumerate_physical_devices<I>(&self, instance: I)
+            -> SmallVec<[vks::VkPhysicalDevice; 16]>
+            where I: Handle<Target=InstanceHandle> {
+        let mut device_count = 0;
+        let mut devices_raw = SmallVec::new();
+        unsafe {
+            ::check(self.instance_proc_addr_loader.vkEnumeratePhysicalDevices(instance.handle().0,
+                &mut device_count, ptr::null_mut()));
+            if device_count == 0 { panic!("No physical devices found."); }
+            assert!(device_count as usize <= devices_raw.inline_size());
+            devices_raw.set_len(device_count as usize);
+            ::check(self. instance_proc_addr_loader.vkEnumeratePhysicalDevices(instance.handle().0,
+                &mut device_count, devices_raw.as_mut_ptr()));
+        }
+        if PRINT { println!("Available devices: {:?}", devices_raw); }
+        devices_raw
+    }
+
+                // *PFN_vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
+
+    pub fn create_instance(&self) {
+
+    }
+
+                // *PFN_vkDestroyInstance)(VkInstance instance, const VkAllocationCallbacks* pAllocator);
+
+    pub fn destroy_instance(&self) {
+
     }
 }
 

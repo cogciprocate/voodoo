@@ -1127,11 +1127,16 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
 
     let set_counts = |o: &mut BufWriter<File>, extra_indent: &str| -> io::Result<()> {
         if let Some(ref count_orig_name) = m.ptr_count_member_orig_name {
-            writeln!(o, "{t}{t}{x}assert!(self.raw.{c} == 0 || self.raw.{c} == {f}.len() as _, \n\
-                {t}{t}{t}{x}\"count inconsistency found when specifying `{s}::{f}`.\");",
-                c=count_orig_name, f=sig.fn_name, s=s.voodoo_name, t=t, x=extra_indent)?;
-            writeln!(o, "{t}{t}{x}self.raw.{c} = {f}.len() as _;", c=count_orig_name, f=sig.fn_name,
-                t=t, x=extra_indent)?;
+            if count_orig_name == "codeSize" {
+                writeln!(o, "{t}{t}{x}self.raw.{c} = {f}.len() * 4;", c=count_orig_name,
+                    f=sig.fn_name, t=t, x=extra_indent)?;
+            } else {
+                writeln!(o, "{t}{t}{x}assert!(self.raw.{c} == 0 || self.raw.{c} == {f}.len() as _, \n\
+                    {t}{t}{t}{x}\"count inconsistency found when specifying `{s}::{f}`.\");",
+                    c=count_orig_name, f=sig.fn_name, s=s.voodoo_name, t=t, x=extra_indent)?;
+                writeln!(o, "{t}{t}{x}self.raw.{c} = {f}.len() as _;", c=count_orig_name, f=sig.fn_name,
+                    t=t, x=extra_indent)?;
+            }
         }
         Ok(())
     };
@@ -1155,85 +1160,85 @@ fn write_set_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
     //     set_counts(o, t)?;
     //     writeln!(o, "{t}{t}}}", t=t)?;
     // } else {
-        set_counts(o, "")?;
-        write!(o, "{t}{t}self.raw.{} = ", m.orig_name, t=t)?;
-        if sig.arg_is_struct {
-            if m.is_ptr {
-                if sig.arg_is_slice && sig.arg_is_repr_c {
-                    if m.is_const {
-                        write!(o, "{}.as_ptr() as *const ", sig.fn_name)?;
-                        write!(o, "{}{}", ORIG_PRE, m.orig_type)?;
-                    } else {
-                        write!(o, "{}.as_mut_ptr() as *mut ", sig.fn_name)?;
-                        write!(o, "{}{}", ORIG_PRE, m.orig_type)?;
-                    }
+    set_counts(o, "")?;
+    write!(o, "{t}{t}self.raw.{} = ", m.orig_name, t=t)?;
+    if sig.arg_is_struct {
+        if m.is_ptr {
+            if sig.arg_is_slice && sig.arg_is_repr_c {
+                if m.is_const {
+                    write!(o, "{}.as_ptr() as *const ", sig.fn_name)?;
+                    write!(o, "{}{}", ORIG_PRE, m.orig_type)?;
                 } else {
-                    write!(o, "{}.as_raw()", sig.fn_name)?;
+                    write!(o, "{}.as_mut_ptr() as *mut ", sig.fn_name)?;
+                    write!(o, "{}{}", ORIG_PRE, m.orig_type)?;
                 }
             } else {
-                if let Some(ref len) = m.array_len {
-                    if sig.arg_is_repr_c {
-
-                    }
-                    match len.parse::<usize>() {
-                        Ok(len) => {
-                            // Numeric length:
-                            write!(o, "[")?;
-                            for idx in 0..len {
-                                write!(o, "{}[{}].raw, ", sig.fn_name, idx)?;
-                            }
-                            write!(o, "]")?;
-                        },
-                        Err(_) => {
-                            // Constant (macro) length:
-                            if sig.arg_is_repr_c {
-                                write!(o, "unsafe {{ *(&{} as *const [{}; {}{}] as *const _) }}",
-                                    sig.fn_name, m.voodoo_type, ORIG_PRE, len)?
-                            }
-                        },
-                    }
-                } else {
-                    write!(o, "{}.raw", sig.fn_name)?;
-                }
+                write!(o, "{}.as_raw()", sig.fn_name)?;
             }
         } else {
-            if m.is_handle_type {
-                if sig.arg_is_slice {
-                    // assert!(s.special_fields.contains_key(&m.voodoo_name),
-                    //     "\"{}\" is lacking a special field for {{ {}: {} }}",
-                    //     s.voodoo_name, sig.fn_name, sig.arg_type);
-                    write!(o, "{}.as_ptr() as *const {}{}", sig.fn_name, ORIG_PRE, m.orig_type)?;
-                } else {
-                    if m.is_ptr {
-                        write!(o, "&")?;
-                    }
-                    // write!(o, "{}.handle()", sig.fn_name)?;
-                    write!(o, "{}.handle().0", sig.fn_name)?;
+            if let Some(ref len) = m.array_len {
+                if sig.arg_is_repr_c {
+
                 }
-            } else if m.voodoo_type.as_str() == "bool" {
-                write!(o, "{} as u32", sig.fn_name)?;
-            } else if sig.convert_to_bits {
-                write!(o, "{}.bits()", sig.fn_name)?;
-            } else if sig.arg_is_slice {
-                if m.is_const {
-                    write!(o, "{}.as_ptr() as *const {} as *const _", sig.fn_name, m.voodoo_type)?;
-                } else {
-                    write!(o, "{}.as_mut_ptr() as *mut {} as *mut _", sig.fn_name, m.voodoo_type)?;
+                match len.parse::<usize>() {
+                    Ok(len) => {
+                        // Numeric length:
+                        write!(o, "[")?;
+                        for idx in 0..len {
+                            write!(o, "{}[{}].raw, ", sig.fn_name, idx)?;
+                        }
+                        write!(o, "]")?;
+                    },
+                    Err(_) => {
+                        // Constant (macro) length:
+                        if sig.arg_is_repr_c {
+                            write!(o, "unsafe {{ *(&{} as *const [{}; {}{}] as *const _) }}",
+                                sig.fn_name, m.voodoo_type, ORIG_PRE, len)?
+                        }
+                    },
                 }
-            } else if sig.convert_arg && !m.is_ptr {
-                write!(o, "{}.into()", sig.fn_name)?;
-                if sig.convert_arg_twice {
-                    write!(o, ".into()")?;
-                }
-            } else if m.voodoo_type == "PipelineStageFlags" && m.is_ptr {
-                write!(o, "{} as *const PipelineStageFlags as *const _", sig.fn_name)?;
-            } else if sig.arg_is_c_str {
-                write!(o, "{}.as_ptr()", sig.fn_name)?;
             } else {
-                write!(o, "{}", sig.fn_name)?;
+                write!(o, "{}.raw", sig.fn_name)?;
             }
         }
-        writeln!(o, ";")?;
+    } else {
+        if m.is_handle_type {
+            if sig.arg_is_slice {
+                // assert!(s.special_fields.contains_key(&m.voodoo_name),
+                //     "\"{}\" is lacking a special field for {{ {}: {} }}",
+                //     s.voodoo_name, sig.fn_name, sig.arg_type);
+                write!(o, "{}.as_ptr() as *const {}{}", sig.fn_name, ORIG_PRE, m.orig_type)?;
+            } else {
+                if m.is_ptr {
+                    write!(o, "&")?;
+                }
+                // write!(o, "{}.handle()", sig.fn_name)?;
+                write!(o, "{}.handle().0", sig.fn_name)?;
+            }
+        } else if m.voodoo_type.as_str() == "bool" {
+            write!(o, "{} as u32", sig.fn_name)?;
+        } else if sig.convert_to_bits {
+            write!(o, "{}.bits()", sig.fn_name)?;
+        } else if sig.arg_is_slice {
+            if m.is_const {
+                write!(o, "{}.as_ptr() as *const {} as *const _", sig.fn_name, m.voodoo_type)?;
+            } else {
+                write!(o, "{}.as_mut_ptr() as *mut {} as *mut _", sig.fn_name, m.voodoo_type)?;
+            }
+        } else if sig.convert_arg && !m.is_ptr {
+            write!(o, "{}.into()", sig.fn_name)?;
+            if sig.convert_arg_twice {
+                write!(o, ".into()")?;
+            }
+        } else if m.voodoo_type == "PipelineStageFlags" && m.is_ptr {
+            write!(o, "{} as *const PipelineStageFlags as *const _", sig.fn_name)?;
+        } else if sig.arg_is_c_str {
+            write!(o, "{}.as_ptr()", sig.fn_name)?;
+        } else {
+            write!(o, "{}", sig.fn_name)?;
+        }
+    }
+    writeln!(o, ";")?;
     // }
     if is_for_builder {
         writeln!(o, "{t}{t}self", t=t)?;
@@ -1281,14 +1286,15 @@ fn write_get_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_param
         if m.is_ptr {
             if sig.arg_is_slice {
                 if let Some(ref count_orig_name) = m.ptr_count_member_orig_name {
-                    if sig.arg_is_repr_c {
-                        write!(o, "{t}{t}", t=t)?;
-                        write!(o, "unsafe {{ slice::from_raw_parts(self.raw.{} as *const _, \
-                            self.raw.{} as usize) }}", m.orig_name, count_orig_name)?;
+                    if count_orig_name == "codeSize" {
+                        write!(o, "{t}{t}unsafe {{ slice::from_raw_parts(self.raw.{} as *const _, \
+                            self.raw.{} / 4) }}", m.orig_name, count_orig_name, t=t)?;
+                    // } else if sig.arg_is_repr_c {
+                    //     write!(o, "{t}{t}unsafe {{ slice::from_raw_parts(self.raw.{} as *const _, \
+                    //         self.raw.{} as usize) }}", m.orig_name, count_orig_name, t=t)?;
                     } else {
-                        write!(o, "{t}{t}", t=t)?;
-                        write!(o, "unsafe {{ slice::from_raw_parts(self.raw.{} as *const _, \
-                            self.raw.{} as usize) }}", m.orig_name, count_orig_name)?;
+                        write!(o, "{t}{t}unsafe {{ slice::from_raw_parts(self.raw.{} as *const _, \
+                            self.raw.{} as usize) }}", m.orig_name, count_orig_name, t=t)?;
                     }
                 } else {
                     // write!(o, "{t}{t}&*(self.raw.{} as *const {}{} as *const _)", m.orig_name,
@@ -1439,6 +1445,7 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
     // writeln!(o, "#![allow(unused_mut)]")?;
     write!(o, "\n")?;
     writeln!(o, "use std::ptr;")?;
+    writeln!(o, "use std::mem;")?;
     writeln!(o, "use std::ffi::{{CString, CStr}};")?;
     writeln!(o, "use std::marker::PhantomData;")?;
     writeln!(o, "use std::slice;")?;

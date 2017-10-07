@@ -1,6 +1,7 @@
 use std::sync::Arc;
 use std::ffi::{CStr, CString};
 use std::ptr;
+use std::mem;
 use std::path::Path;
 use std::fs::File;
 use std::io::{Read, BufReader};
@@ -155,6 +156,21 @@ impl <'cs, 'p, 'q> From<&'p [&'q str]> for CharStrs<'cs> where 'q: 'p, 'p: 'cs, 
     }
 }
 
+
+pub fn read_spir_v_file<P: AsRef<Path>>(file: P) -> VooResult<Vec<u32>> {
+    let mut contents = read_file(file)?;
+    assert!(contents.len() % 4 == 0);
+    assert!(mem::size_of_val(&contents[0]) == 1);
+    // TODO: Add some sort of basic verification that the file is actually
+    // spir-v.
+    unsafe {
+        let ptr = contents.as_mut_ptr() as *mut u32;
+        let new_len = contents.len() / 4;
+        mem::forget(contents);
+        let code = Vec::from_raw_parts(ptr, new_len, new_len);
+        Ok(code)
+    }
+}
 
 /// Reads a file into a byte Vec.
 pub fn read_file<P: AsRef<Path>>(file: P) -> VooResult<Vec<u8>> {

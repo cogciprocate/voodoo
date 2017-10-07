@@ -4,7 +4,8 @@ use std::ptr;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{util, VooResult, Device, DescriptorSetLayout, DescriptorSetLayoutHandle, Handle};
+use ::{util, VooResult, Device, DescriptorSetLayout, DescriptorSetLayoutHandle, Handle,
+    WriteDescriptorSet, CopyDescriptorSet};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -13,7 +14,7 @@ pub struct DescriptorPoolHandle(pub(crate) vks::VkDescriptorPool);
 
 impl DescriptorPoolHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkDescriptorPool {
+    pub fn to_raw(&self) -> vks::VkDescriptorPool {
         self.0
     }
 }
@@ -90,8 +91,8 @@ impl DescriptorPool {
         descriptor_sets
     }
 
-    pub fn update_descriptor_sets(&self, descriptor_writes: Option<&[::WriteDescriptorSet]>,
-            descriptor_copies: Option<&[::CopyDescriptorSet]>) {
+    pub fn update_descriptor_sets(&self, descriptor_writes: &[WriteDescriptorSet],
+            descriptor_copies: &[CopyDescriptorSet]) {
         self.inner.device.update_descriptor_sets(descriptor_writes, descriptor_copies)
     }
 
@@ -109,8 +110,9 @@ impl<'d> Handle for &'d DescriptorPool {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().vkDestroyDescriptorPool(self.device.handle().0,
-                self.handle.0, ptr::null());
+            // self.device.proc_addr_loader().vkDestroyDescriptorPool(self.device.handle().0,
+            //     self.handle.0, ptr::null());
+            self.device.destroy_descriptor_pool(self.handle, None);
         }
     }
 }
@@ -173,15 +175,18 @@ impl<'b> DescriptorPoolBuilder<'b> {
 
     /// Creates and returns a new `DescriptorPool`
     pub fn build(&self, device: Device) -> VooResult<DescriptorPool> {
-        let mut handle = 0;
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateDescriptorPool(device.handle().0,
-                self.create_info.as_raw(), ptr::null(), &mut handle));
-        }
+        // let mut handle = 0;
+        // unsafe {
+        //     ::check(device.proc_addr_loader().core.vkCreateDescriptorPool(device.handle().0,
+        //         self.create_info.as_raw(), ptr::null(), &mut handle));
+        // }
+
+        let handle = unsafe { device.create_descriptor_pool(&self.create_info, None)? };
 
         Ok(DescriptorPool {
             inner: Arc::new(Inner {
-                handle: DescriptorPoolHandle(handle),
+                // handle: DescriptorPoolHandle(handle),
+                handle,
                 device,
             })
         })

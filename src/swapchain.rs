@@ -16,7 +16,7 @@ pub struct SwapchainKhrHandle(pub(crate) vks::VkSwapchainKHR);
 
 impl SwapchainKhrHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkSwapchainKHR {
+    pub fn to_raw(&self) -> vks::VkSwapchainKHR {
         self.0
     }
 }
@@ -31,12 +31,6 @@ impl Handle for SwapchainKhrHandle {
 }
 
 
-// pub struct SwapchainSupportDetails {
-//     pub capabilities: vks::khr_surface::VkSurfaceCapabilitiesKHR,
-//     pub formats: SmallVec<[vks::khr_surface::VkSurfaceFormatKHR; 64]>,
-//     pub present_modes: SmallVec<[vks::khr_surface::VkPresentModeKHR; 16]>,
-// }
-
 pub struct SwapchainSupportDetails {
     pub capabilities: ::SurfaceCapabilitiesKhr,
     pub formats: SmallVec<[::SurfaceFormatKhr; 64]>,
@@ -45,16 +39,16 @@ pub struct SwapchainSupportDetails {
 
 impl SwapchainSupportDetails {
     pub fn new(instance: &Instance, surface: &SurfaceKhr, physical_device: &PhysicalDevice)
-            -> SwapchainSupportDetails {
-        let capabilities = physical_device.capabilities(surface);
-        let formats = physical_device.formats(surface);
-        let present_modes = physical_device.present_modes(surface);
+            -> VooResult<SwapchainSupportDetails> {
+        let capabilities = physical_device.surface_capabilities_khr(surface)?;
+        let formats = physical_device.surface_formats_khr(surface)?;
+        let present_modes = physical_device.surface_present_modes_khr(surface)?;
 
-        SwapchainSupportDetails {
+        Ok(SwapchainSupportDetails {
             capabilities,
             formats,
             present_modes,
-        }
+        })
     }
 }
 
@@ -65,7 +59,7 @@ struct Inner {
     device: Device,
     surface: SurfaceKhr,
     // TODO: Revisit whether we should simply store a handle.
-    images: SmallVec<[ImageHandle; 8]>,
+    images: SmallVec<[ImageHandle; 4]>,
     image_format: ::Format,
     extent: ::Extent2d,
 }
@@ -114,10 +108,7 @@ impl<'s> Handle for &'s SwapchainKhr {
 
 impl Drop for Inner {
     fn drop(&mut self) {
-        unsafe {
-            self.device.proc_addr_loader().vkDestroySwapchainKHR(self.device.handle().0,
-                self.handle.0, ptr::null());
-        }
+        unsafe { self.device.destroy_swapchain_khr(self.handle, None); }
     }
 }
 
@@ -125,28 +116,6 @@ unsafe impl Sync for SwapchainKhr {}
 
 
 /// A Swapchain builder.
-//
-// typedef struct VkSwapchainCreateInfoKHR {
-//     VkStructureType                  sType;
-//     const void*                      pNext;
-//     VkSwapchainCreateFlagsKHR        flags;
-//     VkSurfaceKHR                     surface;
-//     uint32_t                         minImageCount;
-//     VkFormat                         imageFormat;
-//     VkColorSpaceKHR                  imageColorSpace;
-//     VkExtent2D                       imageExtent;
-//     uint32_t                         imageArrayLayers;
-//     VkImageUsageFlags                imageUsage;
-//     VkSharingMode                    imageSharingMode;
-//     uint32_t                         queueFamilyIndexCount;
-//     const uint32_t*                  pQueueFamilyIndices;
-//     VkSurfaceTransformFlagBitsKHR    preTransform;
-//     VkCompositeAlphaFlagBitsKHR      compositeAlpha;
-//     VkPresentModeKHR                 presentMode;
-//     VkBool32                         clipped;
-//     VkSwapchainKHR                   oldSwapchain;
-// } VkSwapchainCreateInfoKHR;
-//
 #[derive(Debug, Clone)]
 pub struct SwapchainKhrBuilder<'b> {
     create_info: ::SwapchainCreateInfoKhr<'b>,
@@ -339,24 +308,28 @@ impl<'b> SwapchainKhrBuilder<'b> {
         let image_format = self.create_info.image_format().clone();
         let extent = self.create_info.image_extent().clone();
 
-        let mut handle = 0;
-        let res = unsafe { device.proc_addr_loader().vkCreateSwapchainKHR(device.handle().0,
-            self.create_info.as_raw(), ptr::null(), &mut handle) };
+        // let mut handle = 0;
+        // let res = unsafe { device.proc_addr_loader().vkCreateSwapchainKHR(device.handle().0,
+        //     self.create_info.as_raw(), ptr::null(), &mut handle) };
 
-        if res != vks::VK_SUCCESS {
-            panic!("failed to create swap chain!");
-        }
+        // if res != vks::VK_SUCCESS {
+        //     panic!("failed to create swap chain!");
+        // }
 
-        let mut image_count = 0;
-        let mut image_handles = SmallVec::<[ImageHandle; 8]>::new();
-        unsafe {
-            ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle().0, handle,
-                &mut image_count, ptr::null_mut()));
-            assert!(image_count as usize <= image_handles.inline_size());
-            image_handles.set_len(image_count as usize);
-            ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle().0, handle,
-                &mut image_count, image_handles.as_mut_ptr() as *mut vks::VkImage));
-        }
+        let handle = unsafe { device.create_swapchain_khr(&self.create_info, None)? };
+
+        // let mut image_count = 0;
+        // let mut image_handles = SmallVec::<[ImageHandle; 8]>::new();
+        // unsafe {
+        //     ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle().to_raw(), handle.to_raw(),
+        //         &mut image_count, ptr::null_mut()));
+        //     assert!(image_count as usize <= image_handles.inline_size());
+        //     image_handles.set_len(image_count as usize);
+        //     ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle().to_raw(), handle.to_raw(),
+        //         &mut image_count, image_handles.as_mut_ptr() as *mut vks::VkImage));
+        // }
+
+        let image_handles = unsafe { device.get_swapchain_images_khr(handle)? };
 
         // let images = image_handles.iter()
         // let images = image_handles.into_iter().map(|handle| Image::from_handle(device.clone(), handle))
@@ -364,7 +337,8 @@ impl<'b> SwapchainKhrBuilder<'b> {
 
         Ok(SwapchainKhr {
             inner: Arc::new(Inner {
-                handle: SwapchainKhrHandle(handle),
+                // handle: SwapchainKhrHandle(handle),
+                handle,
                 device,
                 surface: self.surface.cloned()
                     .expect("unable to create swapchain: no surface specified"),

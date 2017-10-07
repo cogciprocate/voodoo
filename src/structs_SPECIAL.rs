@@ -49,7 +49,7 @@ impl Offset2d {
         self.raw.y = y.into();
     }
 
-    pub fn raw(&self) -> &vks::VkOffset2D {
+    pub fn to_raw(&self) -> &vks::VkOffset2D {
         &self.raw
     }
 }
@@ -146,7 +146,7 @@ impl Offset3d {
         self.raw.z = z.into();
     }
 
-    pub fn raw(&self) -> &vks::VkOffset3D {
+    pub fn to_raw(&self) -> &vks::VkOffset3D {
         &self.raw
     }
 }
@@ -244,7 +244,7 @@ impl Extent2d {
         self.raw.height = height.into();
     }
 
-    pub fn raw(&self) -> &vks::VkExtent2D {
+    pub fn to_raw(&self) -> &vks::VkExtent2D {
         &self.raw
     }
 }
@@ -341,7 +341,7 @@ impl Extent3d {
         self.raw.depth = depth.into();
     }
 
-    pub fn raw(&self) -> &vks::VkExtent3D {
+    pub fn to_raw(&self) -> &vks::VkExtent3D {
         &self.raw
     }
 }
@@ -471,7 +471,7 @@ impl Viewport {
         self.raw.maxDepth = max_depth.into();
     }
 
-    pub fn raw(&self) -> &vks::VkViewport {
+    pub fn to_raw(&self) -> &vks::VkViewport {
         &self.raw
     }
 }
@@ -596,7 +596,7 @@ impl Rect2d {
         self.raw.extent = extent.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkRect2D {
+    pub fn to_raw(&self) -> &vks::VkRect2D {
         &self.raw
     }
 }
@@ -693,7 +693,7 @@ impl ClearRect {
         self.raw.layerCount = layer_count.into();
     }
 
-    pub fn raw(&self) -> &vks::VkClearRect {
+    pub fn to_raw(&self) -> &vks::VkClearRect {
         &self.raw
     }
 }
@@ -807,7 +807,7 @@ impl ComponentMapping {
         self.raw.a = a.into();
     }
 
-    pub fn raw(&self) -> &vks::VkComponentMapping {
+    pub fn to_raw(&self) -> &vks::VkComponentMapping {
         &self.raw
     }
 }
@@ -972,7 +972,7 @@ impl PhysicalDeviceProperties {
         self.raw.sparseProperties = sparse_properties.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceProperties {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceProperties {
         &self.raw
     }
 }
@@ -1127,7 +1127,7 @@ impl ExtensionProperties {
         self.raw.specVersion = spec_version.into().into();
     }
 
-    pub fn raw(&self) -> &vks::VkExtensionProperties {
+    pub fn to_raw(&self) -> &vks::VkExtensionProperties {
         &self.raw
     }
 }
@@ -1235,7 +1235,7 @@ impl LayerProperties {
         self.raw.description = description;
     }
 
-    pub fn raw(&self) -> &vks::VkLayerProperties {
+    pub fn to_raw(&self) -> &vks::VkLayerProperties {
         &self.raw
     }
 }
@@ -1391,7 +1391,7 @@ impl<'s> ApplicationInfo<'s> {
         self.raw.apiVersion = api_version.into().into();
     }
 
-    pub fn raw(&self) -> &vks::VkApplicationInfo {
+    pub fn to_raw(&self) -> &vks::VkApplicationInfo {
         &self.raw
     }
 }
@@ -1571,7 +1571,7 @@ impl<'s> AllocationCallbacks<'s> {
         self.raw.pfnInternalFree = pfn_internal_free.into();
     }
 
-    pub fn raw(&self) -> &vks::VkAllocationCallbacks {
+    pub fn to_raw(&self) -> &vks::VkAllocationCallbacks {
         &self.raw
     }
 }
@@ -1720,7 +1720,7 @@ impl<'s> DeviceQueueCreateInfo<'s> {
         self.raw.pQueuePriorities = queue_priorities.as_ptr() as *const f32 as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceQueueCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkDeviceQueueCreateInfo {
         &self.raw
     }
 }
@@ -1886,10 +1886,10 @@ impl<'s> DeviceCreateInfo<'s> {
 
     pub fn set_enabled_features<'m, 'a>(&mut self, enabled_features: &'a PhysicalDeviceFeatures)
             where 'a: 's {
-        self.raw.pEnabledFeatures = enabled_features.raw();
+        self.raw.pEnabledFeatures = enabled_features.to_raw();
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkDeviceCreateInfo {
         &self.raw
     }
 }
@@ -1974,7 +1974,7 @@ impl<'b> DeviceCreateInfoBuilder<'b> {
 
     pub fn enabled_features<'m, 'a>(mut self, enabled_features: &'a PhysicalDeviceFeatures) -> DeviceCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pEnabledFeatures = enabled_features.raw();
+        self.raw.pEnabledFeatures = enabled_features.to_raw();
         self
     }
 
@@ -2061,7 +2061,7 @@ impl<'s> InstanceCreateInfo<'s> {
 
     pub fn set_application_info<'m, 'a>(&mut self, application_info: &'a ApplicationInfo)
             where 'a: 's {
-        self.raw.pApplicationInfo = application_info.raw();
+        self.raw.pApplicationInfo = application_info.to_raw();
     }
 
     pub fn set_enabled_layer_names<'m, 'a, T>(&mut self, enabled_layer_names: T)
@@ -2088,7 +2088,7 @@ impl<'s> InstanceCreateInfo<'s> {
         }
     }
 
-    pub fn raw(&self) -> &vks::VkInstanceCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkInstanceCreateInfo {
         &self.raw
     }
 }
@@ -2139,7 +2139,7 @@ impl<'b> InstanceCreateInfoBuilder<'b> {
 
     pub fn application_info<'m, 'a>(mut self, application_info: &'a ApplicationInfo) -> InstanceCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pApplicationInfo = application_info.raw();
+        self.raw.pApplicationInfo = application_info.to_raw();
         self
     }
 
@@ -2248,7 +2248,7 @@ impl QueueFamilyProperties {
         self.raw.minImageTransferGranularity = min_image_transfer_granularity.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkQueueFamilyProperties {
+    pub fn to_raw(&self) -> &vks::VkQueueFamilyProperties {
         &self.raw
     }
 }
@@ -2372,7 +2372,7 @@ impl PhysicalDeviceMemoryProperties {
         self.raw.memoryHeaps = unsafe { *(&memory_heaps as *const [MemoryHeap; vks::VK_MAX_MEMORY_HEAPS] as *const _) };
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceMemoryProperties {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceMemoryProperties {
         &self.raw
     }
 }
@@ -2488,7 +2488,7 @@ impl<'s> MemoryAllocateInfo<'s> {
         self.raw.memoryTypeIndex = memory_type_index.into();
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryAllocateInfo {
+    pub fn to_raw(&self) -> &vks::VkMemoryAllocateInfo {
         &self.raw
     }
 }
@@ -2597,7 +2597,7 @@ impl MemoryRequirements {
         self.raw.memoryTypeBits = memory_type_bits.into();
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryRequirements {
+    pub fn to_raw(&self) -> &vks::VkMemoryRequirements {
         &self.raw
     }
 }
@@ -2705,7 +2705,7 @@ impl SparseImageFormatProperties {
         self.raw.flags = flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkSparseImageFormatProperties {
+    pub fn to_raw(&self) -> &vks::VkSparseImageFormatProperties {
         &self.raw
     }
 }
@@ -2829,7 +2829,7 @@ impl SparseImageMemoryRequirements {
         self.raw.imageMipTailStride = image_mip_tail_stride.into();
     }
 
-    pub fn raw(&self) -> &vks::VkSparseImageMemoryRequirements {
+    pub fn to_raw(&self) -> &vks::VkSparseImageMemoryRequirements {
         &self.raw
     }
 }
@@ -2946,7 +2946,7 @@ impl MemoryType {
         self.raw.heapIndex = heap_index.into();
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryType {
+    pub fn to_raw(&self) -> &vks::VkMemoryType {
         &self.raw
     }
 }
@@ -3037,7 +3037,7 @@ impl MemoryHeap {
         self.raw.flags = flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryHeap {
+    pub fn to_raw(&self) -> &vks::VkMemoryHeap {
         &self.raw
     }
 }
@@ -3144,7 +3144,7 @@ impl<'s> MappedMemoryRange<'s> {
         self.raw.size = size.into();
     }
 
-    pub fn raw(&self) -> &vks::VkMappedMemoryRange {
+    pub fn to_raw(&self) -> &vks::VkMappedMemoryRange {
         &self.raw
     }
 }
@@ -3265,7 +3265,7 @@ impl FormatProperties {
         self.raw.bufferFeatures = buffer_features.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkFormatProperties {
+    pub fn to_raw(&self) -> &vks::VkFormatProperties {
         &self.raw
     }
 }
@@ -3391,7 +3391,7 @@ impl ImageFormatProperties {
         self.raw.maxResourceSize = max_resource_size.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImageFormatProperties {
+    pub fn to_raw(&self) -> &vks::VkImageFormatProperties {
         &self.raw
     }
 }
@@ -3516,7 +3516,7 @@ impl DescriptorBufferInfo {
         self.raw.range = range.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDescriptorBufferInfo {
+    pub fn to_raw(&self) -> &vks::VkDescriptorBufferInfo {
         &self.raw
     }
 }
@@ -3622,7 +3622,7 @@ impl DescriptorImageInfo {
         self.raw.imageLayout = image_layout.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDescriptorImageInfo {
+    pub fn to_raw(&self) -> &vks::VkDescriptorImageInfo {
         &self.raw
     }
 }
@@ -3767,19 +3767,19 @@ impl<'s> WriteDescriptorSet<'s> {
 
     pub fn set_image_info<'m, 'a>(&mut self, image_info: &'a DescriptorImageInfo)
             where 'a: 's {
-        self.raw.pImageInfo = image_info.raw();
+        self.raw.pImageInfo = image_info.to_raw();
     }
 
     pub fn set_buffer_info<'m, 'a>(&mut self, buffer_info: &'a DescriptorBufferInfo)
             where 'a: 's {
-        self.raw.pBufferInfo = buffer_info.raw();
+        self.raw.pBufferInfo = buffer_info.to_raw();
     }
 
     pub fn set_texel_buffer_view<'m, 'a>(&mut self, texel_buffer_view: &'a BufferView) {
         self.raw.pTexelBufferView = &texel_buffer_view.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkWriteDescriptorSet {
+    pub fn to_raw(&self) -> &vks::VkWriteDescriptorSet {
         &self.raw
     }
 }
@@ -3846,13 +3846,13 @@ impl<'b> WriteDescriptorSetBuilder<'b> {
 
     pub fn image_info<'m, 'a>(mut self, image_info: &'a DescriptorImageInfo) -> WriteDescriptorSetBuilder<'b>
             where 'a: 'b {
-        self.raw.pImageInfo = image_info.raw();
+        self.raw.pImageInfo = image_info.to_raw();
         self
     }
 
     pub fn buffer_info<'m, 'a>(mut self, buffer_info: &'a DescriptorBufferInfo) -> WriteDescriptorSetBuilder<'b>
             where 'a: 'b {
-        self.raw.pBufferInfo = buffer_info.raw();
+        self.raw.pBufferInfo = buffer_info.to_raw();
         self
     }
 
@@ -3985,7 +3985,7 @@ impl<'s> CopyDescriptorSet<'s> {
         self.raw.descriptorCount = descriptor_count.into();
     }
 
-    pub fn raw(&self) -> &vks::VkCopyDescriptorSet {
+    pub fn to_raw(&self) -> &vks::VkCopyDescriptorSet {
         &self.raw
     }
 }
@@ -4169,7 +4169,7 @@ impl<'s> BufferCreateInfo<'s> {
         self.raw.pQueueFamilyIndices = queue_family_indices.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkBufferCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkBufferCreateInfo {
         &self.raw
     }
 }
@@ -4336,7 +4336,7 @@ impl<'s> BufferViewCreateInfo<'s> {
         self.raw.range = range.into();
     }
 
-    pub fn raw(&self) -> &vks::VkBufferViewCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkBufferViewCreateInfo {
         &self.raw
     }
 }
@@ -4474,7 +4474,7 @@ impl ImageSubresource {
         self.raw.arrayLayer = array_layer.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImageSubresource {
+    pub fn to_raw(&self) -> &vks::VkImageSubresource {
         &self.raw
     }
 }
@@ -4590,7 +4590,7 @@ impl ImageSubresourceLayers {
         self.raw.layerCount = layer_count.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImageSubresourceLayers {
+    pub fn to_raw(&self) -> &vks::VkImageSubresourceLayers {
         &self.raw
     }
 }
@@ -4723,7 +4723,7 @@ impl ImageSubresourceRange {
         self.raw.layerCount = layer_count.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImageSubresourceRange {
+    pub fn to_raw(&self) -> &vks::VkImageSubresourceRange {
         &self.raw
     }
 }
@@ -4851,7 +4851,7 @@ impl<'s> MemoryBarrier<'s> {
         self.raw.dstAccessMask = dst_access_mask.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryBarrier {
+    pub fn to_raw(&self) -> &vks::VkMemoryBarrier {
         &self.raw
     }
 }
@@ -5005,7 +5005,7 @@ impl<'s> BufferMemoryBarrier<'s> {
         self.raw.size = size.into();
     }
 
-    pub fn raw(&self) -> &vks::VkBufferMemoryBarrier {
+    pub fn to_raw(&self) -> &vks::VkBufferMemoryBarrier {
         &self.raw
     }
 }
@@ -5212,7 +5212,7 @@ impl<'s> ImageMemoryBarrier<'s> {
         self.raw.subresourceRange = subresource_range.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkImageMemoryBarrier {
+    pub fn to_raw(&self) -> &vks::VkImageMemoryBarrier {
         &self.raw
     }
 }
@@ -5464,7 +5464,7 @@ impl<'s> ImageCreateInfo<'s> {
         self.raw.initialLayout = initial_layout.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImageCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkImageCreateInfo {
         &self.raw
     }
 }
@@ -5685,7 +5685,7 @@ impl SubresourceLayout {
         self.raw.depthPitch = depth_pitch.into();
     }
 
-    pub fn raw(&self) -> &vks::VkSubresourceLayout {
+    pub fn to_raw(&self) -> &vks::VkSubresourceLayout {
         &self.raw
     }
 }
@@ -5843,7 +5843,7 @@ impl<'s> ImageViewCreateInfo<'s> {
         self.raw.subresourceRange = subresource_range.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkImageViewCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkImageViewCreateInfo {
         &self.raw
     }
 }
@@ -5989,7 +5989,7 @@ impl BufferCopy {
         self.raw.size = size.into();
     }
 
-    pub fn raw(&self) -> &vks::VkBufferCopy {
+    pub fn to_raw(&self) -> &vks::VkBufferCopy {
         &self.raw
     }
 }
@@ -6112,7 +6112,7 @@ impl SparseMemoryBind {
         self.raw.flags = flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkSparseMemoryBind {
+    pub fn to_raw(&self) -> &vks::VkSparseMemoryBind {
         &self.raw
     }
 }
@@ -6262,7 +6262,7 @@ impl SparseImageMemoryBind {
         self.raw.flags = flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkSparseImageMemoryBind {
+    pub fn to_raw(&self) -> &vks::VkSparseImageMemoryBind {
         &self.raw
     }
 }
@@ -6392,7 +6392,7 @@ impl<'s> SparseBufferMemoryBindInfo<'s> {
         self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkSparseBufferMemoryBindInfo {
+    pub fn to_raw(&self) -> &vks::VkSparseBufferMemoryBindInfo {
         &self.raw
     }
 }
@@ -6491,7 +6491,7 @@ impl<'s> SparseImageOpaqueMemoryBindInfo<'s> {
         self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseMemoryBind as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkSparseImageOpaqueMemoryBindInfo {
+    pub fn to_raw(&self) -> &vks::VkSparseImageOpaqueMemoryBindInfo {
         &self.raw
     }
 }
@@ -6590,7 +6590,7 @@ impl<'s> SparseImageMemoryBindInfo<'s> {
         self.raw.pBinds = binds.as_ptr() as *const vks::VkSparseImageMemoryBind as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkSparseImageMemoryBindInfo {
+    pub fn to_raw(&self) -> &vks::VkSparseImageMemoryBindInfo {
         &self.raw
     }
 }
@@ -6744,7 +6744,7 @@ impl<'s> BindSparseInfo<'s> {
         }
     }
 
-    pub fn raw(&self) -> &vks::VkBindSparseInfo {
+    pub fn to_raw(&self) -> &vks::VkBindSparseInfo {
         &self.raw
     }
 }
@@ -6927,7 +6927,7 @@ impl ImageCopy {
         self.raw.extent = extent.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkImageCopy {
+    pub fn to_raw(&self) -> &vks::VkImageCopy {
         &self.raw
     }
 }
@@ -7059,7 +7059,7 @@ impl ImageBlit {
         self.raw.dstOffsets = [dst_offsets[0].raw, dst_offsets[1].raw, ];
     }
 
-    pub fn raw(&self) -> &vks::VkImageBlit {
+    pub fn to_raw(&self) -> &vks::VkImageBlit {
         &self.raw
     }
 }
@@ -7198,7 +7198,7 @@ impl BufferImageCopy {
         self.raw.imageExtent = image_extent.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkBufferImageCopy {
+    pub fn to_raw(&self) -> &vks::VkBufferImageCopy {
         &self.raw
     }
 }
@@ -7347,7 +7347,7 @@ impl ImageResolve {
         self.raw.extent = extent.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkImageResolve {
+    pub fn to_raw(&self) -> &vks::VkImageResolve {
         &self.raw
     }
 }
@@ -7476,7 +7476,7 @@ impl<'s> ShaderModuleCreateInfo<'s> {
         self.raw.pCode = code.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkShaderModuleCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkShaderModuleCreateInfo {
         &self.raw
     }
 }
@@ -7612,7 +7612,7 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
         }
     }
 
-    pub fn raw(&self) -> &vks::VkDescriptorSetLayoutBinding {
+    pub fn to_raw(&self) -> &vks::VkDescriptorSetLayoutBinding {
         &self.raw
     }
 }
@@ -7757,7 +7757,7 @@ impl<'s> DescriptorSetLayoutCreateInfo<'s> {
         }
     }
 
-    pub fn raw(&self) -> &vks::VkDescriptorSetLayoutCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkDescriptorSetLayoutCreateInfo {
         &self.raw
     }
 }
@@ -7869,7 +7869,7 @@ impl DescriptorPoolSize {
         self.raw.descriptorCount = descriptor_count.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDescriptorPoolSize {
+    pub fn to_raw(&self) -> &vks::VkDescriptorPoolSize {
         &self.raw
     }
 }
@@ -7979,7 +7979,7 @@ impl<'s> DescriptorPoolCreateInfo<'s> {
         self.raw.pPoolSizes = pool_sizes.as_ptr() as *const vks::VkDescriptorPoolSize as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkDescriptorPoolCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkDescriptorPoolCreateInfo {
         &self.raw
     }
 }
@@ -8110,7 +8110,7 @@ impl<'s> DescriptorSetAllocateInfo<'s> {
         }
     }
 
-    pub fn raw(&self) -> &vks::VkDescriptorSetAllocateInfo {
+    pub fn to_raw(&self) -> &vks::VkDescriptorSetAllocateInfo {
         &self.raw
     }
 }
@@ -8230,7 +8230,7 @@ impl SpecializationMapEntry {
         self.raw.size = size.into();
     }
 
-    pub fn raw(&self) -> &vks::VkSpecializationMapEntry {
+    pub fn to_raw(&self) -> &vks::VkSpecializationMapEntry {
         &self.raw
     }
 }
@@ -8340,7 +8340,7 @@ impl<'s> SpecializationInfo<'s> {
         self.raw.pData = data;
     }
 
-    pub fn raw(&self) -> &vks::VkSpecializationInfo {
+    pub fn to_raw(&self) -> &vks::VkSpecializationInfo {
         &self.raw
     }
 }
@@ -8482,10 +8482,10 @@ impl<'s> PipelineShaderStageCreateInfo<'s> {
 
     pub fn set_specialization_info<'m, 'a>(&mut self, specialization_info: &'a SpecializationInfo)
             where 'a: 's {
-        self.raw.pSpecializationInfo = specialization_info.raw();
+        self.raw.pSpecializationInfo = specialization_info.to_raw();
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineShaderStageCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineShaderStageCreateInfo {
         &self.raw
     }
 }
@@ -8554,7 +8554,7 @@ impl<'b> PipelineShaderStageCreateInfoBuilder<'b> {
 
     pub fn specialization_info<'m, 'a>(mut self, specialization_info: &'a SpecializationInfo) -> PipelineShaderStageCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pSpecializationInfo = specialization_info.raw();
+        self.raw.pSpecializationInfo = specialization_info.to_raw();
         self
     }
 
@@ -8658,7 +8658,7 @@ impl<'s> ComputePipelineCreateInfo<'s> {
         self.raw.basePipelineIndex = base_pipeline_index.into();
     }
 
-    pub fn raw(&self) -> &vks::VkComputePipelineCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkComputePipelineCreateInfo {
         &self.raw
     }
 }
@@ -8795,7 +8795,7 @@ impl VertexInputBindingDescription {
         self.raw.inputRate = input_rate.into();
     }
 
-    pub fn raw(&self) -> &vks::VkVertexInputBindingDescription {
+    pub fn to_raw(&self) -> &vks::VkVertexInputBindingDescription {
         &self.raw
     }
 }
@@ -8909,7 +8909,7 @@ impl VertexInputAttributeDescription {
         self.raw.offset = offset.into();
     }
 
-    pub fn raw(&self) -> &vks::VkVertexInputAttributeDescription {
+    pub fn to_raw(&self) -> &vks::VkVertexInputAttributeDescription {
         &self.raw
     }
 }
@@ -9040,7 +9040,7 @@ impl<'s> PipelineVertexInputStateCreateInfo<'s> {
         self.raw.pVertexAttributeDescriptions = vertex_attribute_descriptions.as_ptr() as *const vks::VkVertexInputAttributeDescription as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineVertexInputStateCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineVertexInputStateCreateInfo {
         &self.raw
     }
 }
@@ -9175,7 +9175,7 @@ impl<'s> PipelineInputAssemblyStateCreateInfo<'s> {
         self.raw.primitiveRestartEnable = primitive_restart_enable as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineInputAssemblyStateCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineInputAssemblyStateCreateInfo {
         &self.raw
     }
 }
@@ -9296,7 +9296,7 @@ impl<'s> PipelineTessellationStateCreateInfo<'s> {
         self.raw.patchControlPoints = patch_control_points.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineTessellationStateCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineTessellationStateCreateInfo {
         &self.raw
     }
 }
@@ -9422,7 +9422,7 @@ impl<'s> PipelineViewportStateCreateInfo<'s> {
         self.raw.pScissors = scissors.as_ptr() as *const vks::VkRect2D as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineViewportStateCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineViewportStateCreateInfo {
         &self.raw
     }
 }
@@ -9622,7 +9622,7 @@ impl<'s> PipelineRasterizationStateCreateInfo<'s> {
         self.raw.lineWidth = line_width.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineRasterizationStateCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineRasterizationStateCreateInfo {
         &self.raw
     }
 }
@@ -9857,7 +9857,7 @@ impl<'s> PipelineMultisampleStateCreateInfo<'s> {
         self.raw.alphaToOneEnable = alpha_to_one_enable as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineMultisampleStateCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineMultisampleStateCreateInfo {
         &self.raw
     }
 }
@@ -10054,7 +10054,7 @@ impl PipelineColorBlendAttachmentState {
         self.raw.colorWriteMask = color_write_mask.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineColorBlendAttachmentState {
+    pub fn to_raw(&self) -> &vks::VkPipelineColorBlendAttachmentState {
         &self.raw
     }
 }
@@ -10235,7 +10235,7 @@ impl<'s> PipelineColorBlendStateCreateInfo<'s> {
         self.raw.blendConstants = blend_constants;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineColorBlendStateCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineColorBlendStateCreateInfo {
         &self.raw
     }
 }
@@ -10380,7 +10380,7 @@ impl<'s> PipelineDynamicStateCreateInfo<'s> {
         self.raw.pDynamicStates = dynamic_states.as_ptr() as *const DynamicState as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineDynamicStateCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineDynamicStateCreateInfo {
         &self.raw
     }
 }
@@ -10525,7 +10525,7 @@ impl StencilOpState {
         self.raw.reference = reference.into();
     }
 
-    pub fn raw(&self) -> &vks::VkStencilOpState {
+    pub fn to_raw(&self) -> &vks::VkStencilOpState {
         &self.raw
     }
 }
@@ -10733,7 +10733,7 @@ impl<'s> PipelineDepthStencilStateCreateInfo<'s> {
         self.raw.maxDepthBounds = max_depth_bounds.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineDepthStencilStateCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineDepthStencilStateCreateInfo {
         &self.raw
     }
 }
@@ -10982,47 +10982,47 @@ impl<'s> GraphicsPipelineCreateInfo<'s> {
 
     pub fn set_vertex_input_state<'m, 'a>(&mut self, vertex_input_state: &'a PipelineVertexInputStateCreateInfo)
             where 'a: 's {
-        self.raw.pVertexInputState = vertex_input_state.raw();
+        self.raw.pVertexInputState = vertex_input_state.to_raw();
     }
 
     pub fn set_input_assembly_state<'m, 'a>(&mut self, input_assembly_state: &'a PipelineInputAssemblyStateCreateInfo)
             where 'a: 's {
-        self.raw.pInputAssemblyState = input_assembly_state.raw();
+        self.raw.pInputAssemblyState = input_assembly_state.to_raw();
     }
 
     pub fn set_tessellation_state<'m, 'a>(&mut self, tessellation_state: &'a PipelineTessellationStateCreateInfo)
             where 'a: 's {
-        self.raw.pTessellationState = tessellation_state.raw();
+        self.raw.pTessellationState = tessellation_state.to_raw();
     }
 
     pub fn set_viewport_state<'m, 'a>(&mut self, viewport_state: &'a PipelineViewportStateCreateInfo)
             where 'a: 's {
-        self.raw.pViewportState = viewport_state.raw();
+        self.raw.pViewportState = viewport_state.to_raw();
     }
 
     pub fn set_rasterization_state<'m, 'a>(&mut self, rasterization_state: &'a PipelineRasterizationStateCreateInfo)
             where 'a: 's {
-        self.raw.pRasterizationState = rasterization_state.raw();
+        self.raw.pRasterizationState = rasterization_state.to_raw();
     }
 
     pub fn set_multisample_state<'m, 'a>(&mut self, multisample_state: &'a PipelineMultisampleStateCreateInfo)
             where 'a: 's {
-        self.raw.pMultisampleState = multisample_state.raw();
+        self.raw.pMultisampleState = multisample_state.to_raw();
     }
 
     pub fn set_depth_stencil_state<'m, 'a>(&mut self, depth_stencil_state: &'a PipelineDepthStencilStateCreateInfo)
             where 'a: 's {
-        self.raw.pDepthStencilState = depth_stencil_state.raw();
+        self.raw.pDepthStencilState = depth_stencil_state.to_raw();
     }
 
     pub fn set_color_blend_state<'m, 'a>(&mut self, color_blend_state: &'a PipelineColorBlendStateCreateInfo)
             where 'a: 's {
-        self.raw.pColorBlendState = color_blend_state.raw();
+        self.raw.pColorBlendState = color_blend_state.to_raw();
     }
 
     pub fn set_dynamic_state<'m, 'a>(&mut self, dynamic_state: &'a PipelineDynamicStateCreateInfo)
             where 'a: 's {
-        self.raw.pDynamicState = dynamic_state.raw();
+        self.raw.pDynamicState = dynamic_state.to_raw();
     }
 
     pub fn set_layout<'m, 'a>(&mut self, layout: &'a PipelineLayout) {
@@ -11045,7 +11045,7 @@ impl<'s> GraphicsPipelineCreateInfo<'s> {
         self.raw.basePipelineIndex = base_pipeline_index.into();
     }
 
-    pub fn raw(&self) -> &vks::VkGraphicsPipelineCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkGraphicsPipelineCreateInfo {
         &self.raw
     }
 }
@@ -11106,55 +11106,55 @@ impl<'b> GraphicsPipelineCreateInfoBuilder<'b> {
 
     pub fn vertex_input_state<'m, 'a>(mut self, vertex_input_state: &'a PipelineVertexInputStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pVertexInputState = vertex_input_state.raw();
+        self.raw.pVertexInputState = vertex_input_state.to_raw();
         self
     }
 
     pub fn input_assembly_state<'m, 'a>(mut self, input_assembly_state: &'a PipelineInputAssemblyStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pInputAssemblyState = input_assembly_state.raw();
+        self.raw.pInputAssemblyState = input_assembly_state.to_raw();
         self
     }
 
     pub fn tessellation_state<'m, 'a>(mut self, tessellation_state: &'a PipelineTessellationStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pTessellationState = tessellation_state.raw();
+        self.raw.pTessellationState = tessellation_state.to_raw();
         self
     }
 
     pub fn viewport_state<'m, 'a>(mut self, viewport_state: &'a PipelineViewportStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pViewportState = viewport_state.raw();
+        self.raw.pViewportState = viewport_state.to_raw();
         self
     }
 
     pub fn rasterization_state<'m, 'a>(mut self, rasterization_state: &'a PipelineRasterizationStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pRasterizationState = rasterization_state.raw();
+        self.raw.pRasterizationState = rasterization_state.to_raw();
         self
     }
 
     pub fn multisample_state<'m, 'a>(mut self, multisample_state: &'a PipelineMultisampleStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pMultisampleState = multisample_state.raw();
+        self.raw.pMultisampleState = multisample_state.to_raw();
         self
     }
 
     pub fn depth_stencil_state<'m, 'a>(mut self, depth_stencil_state: &'a PipelineDepthStencilStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pDepthStencilState = depth_stencil_state.raw();
+        self.raw.pDepthStencilState = depth_stencil_state.to_raw();
         self
     }
 
     pub fn color_blend_state<'m, 'a>(mut self, color_blend_state: &'a PipelineColorBlendStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pColorBlendState = color_blend_state.raw();
+        self.raw.pColorBlendState = color_blend_state.to_raw();
         self
     }
 
     pub fn dynamic_state<'m, 'a>(mut self, dynamic_state: &'a PipelineDynamicStateCreateInfo) -> GraphicsPipelineCreateInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pDynamicState = dynamic_state.raw();
+        self.raw.pDynamicState = dynamic_state.to_raw();
         self
     }
 
@@ -11310,7 +11310,7 @@ impl<'s> PipelineCacheCreateInfo<'s> {
         self.raw.pInitialData = initial_data;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineCacheCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineCacheCreateInfo {
         &self.raw
     }
 }
@@ -11430,7 +11430,7 @@ impl PushConstantRange {
         self.raw.size = size.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPushConstantRange {
+    pub fn to_raw(&self) -> &vks::VkPushConstantRange {
         &self.raw
     }
 }
@@ -11558,7 +11558,7 @@ impl<'s> PipelineLayoutCreateInfo<'s> {
         self.raw.pPushConstantRanges = push_constant_ranges.as_ptr() as *const vks::VkPushConstantRange as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineLayoutCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkPipelineLayoutCreateInfo {
         &self.raw
     }
 }
@@ -11805,7 +11805,7 @@ impl<'s> SamplerCreateInfo<'s> {
         self.raw.unnormalizedCoordinates = unnormalized_coordinates as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkSamplerCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkSamplerCreateInfo {
         &self.raw
     }
 }
@@ -12043,7 +12043,7 @@ impl<'s> CommandPoolCreateInfo<'s> {
         self.raw.queueFamilyIndex = queue_family_index.into();
     }
 
-    pub fn raw(&self) -> &vks::VkCommandPoolCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkCommandPoolCreateInfo {
         &self.raw
     }
 }
@@ -12162,7 +12162,7 @@ impl<'s> CommandBufferAllocateInfo<'s> {
         self.raw.commandBufferCount = command_buffer_count.into();
     }
 
-    pub fn raw(&self) -> &vks::VkCommandBufferAllocateInfo {
+    pub fn to_raw(&self) -> &vks::VkCommandBufferAllocateInfo {
         &self.raw
     }
 }
@@ -12315,7 +12315,7 @@ impl<'s> CommandBufferInheritanceInfo<'s> {
         self.raw.pipelineStatistics = pipeline_statistics.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkCommandBufferInheritanceInfo {
+    pub fn to_raw(&self) -> &vks::VkCommandBufferInheritanceInfo {
         &self.raw
     }
 }
@@ -12462,10 +12462,10 @@ impl<'s> CommandBufferBeginInfo<'s> {
 
     pub fn set_inheritance_info<'m, 'a>(&mut self, inheritance_info: &'a CommandBufferInheritanceInfo)
             where 'a: 's {
-        self.raw.pInheritanceInfo = inheritance_info.raw();
+        self.raw.pInheritanceInfo = inheritance_info.to_raw();
     }
 
-    pub fn raw(&self) -> &vks::VkCommandBufferBeginInfo {
+    pub fn to_raw(&self) -> &vks::VkCommandBufferBeginInfo {
         &self.raw
     }
 }
@@ -12512,7 +12512,7 @@ impl<'b> CommandBufferBeginInfoBuilder<'b> {
 
     pub fn inheritance_info<'m, 'a>(mut self, inheritance_info: &'a CommandBufferInheritanceInfo) -> CommandBufferBeginInfoBuilder<'b>
             where 'a: 'b {
-        self.raw.pInheritanceInfo = inheritance_info.raw();
+        self.raw.pInheritanceInfo = inheritance_info.to_raw();
         self
     }
 
@@ -12596,7 +12596,7 @@ impl<'s> RenderPassBeginInfo<'s> {
         self.raw.pClearValues = clear_values.as_ptr() as *const ClearValue as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkRenderPassBeginInfo {
+    pub fn to_raw(&self) -> &vks::VkRenderPassBeginInfo {
         &self.raw
     }
 }
@@ -12718,7 +12718,7 @@ impl ClearDepthStencilValue {
         self.raw.stencil = stencil.into();
     }
 
-    pub fn raw(&self) -> &vks::VkClearDepthStencilValue {
+    pub fn to_raw(&self) -> &vks::VkClearDepthStencilValue {
         &self.raw
     }
 }
@@ -12816,7 +12816,7 @@ impl ClearAttachment {
         self.raw.clearValue = clear_value.into();
     }
 
-    pub fn raw(&self) -> &vks::VkClearAttachment {
+    pub fn to_raw(&self) -> &vks::VkClearAttachment {
         &self.raw
     }
 }
@@ -12973,7 +12973,7 @@ impl AttachmentDescription {
         self.raw.finalLayout = final_layout.into();
     }
 
-    pub fn raw(&self) -> &vks::VkAttachmentDescription {
+    pub fn to_raw(&self) -> &vks::VkAttachmentDescription {
         &self.raw
     }
 }
@@ -13127,7 +13127,7 @@ impl AttachmentReference {
         self.raw.layout = layout.into();
     }
 
-    pub fn raw(&self) -> &vks::VkAttachmentReference {
+    pub fn to_raw(&self) -> &vks::VkAttachmentReference {
         &self.raw
     }
 }
@@ -13261,7 +13261,7 @@ impl<'s> SubpassDescription<'s> {
 
     pub fn set_depth_stencil_attachment<'m, 'a>(&mut self, depth_stencil_attachment: &'a AttachmentReference)
             where 'a: 's {
-        self.raw.pDepthStencilAttachment = depth_stencil_attachment.raw();
+        self.raw.pDepthStencilAttachment = depth_stencil_attachment.to_raw();
     }
 
     pub fn set_preserve_attachments<'m, 'a>(&mut self, preserve_attachments: &'a [u32]) {
@@ -13271,7 +13271,7 @@ impl<'s> SubpassDescription<'s> {
         self.raw.pPreserveAttachments = preserve_attachments.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkSubpassDescription {
+    pub fn to_raw(&self) -> &vks::VkSubpassDescription {
         &self.raw
     }
 }
@@ -13342,7 +13342,7 @@ impl<'b> SubpassDescriptionBuilder<'b> {
 
     pub fn depth_stencil_attachment<'m, 'a>(mut self, depth_stencil_attachment: &'a AttachmentReference) -> SubpassDescriptionBuilder<'b>
             where 'a: 'b {
-        self.raw.pDepthStencilAttachment = depth_stencil_attachment.raw();
+        self.raw.pDepthStencilAttachment = depth_stencil_attachment.to_raw();
         self
     }
 
@@ -13467,7 +13467,7 @@ impl SubpassDependency {
         self.raw.dependencyFlags = dependency_flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkSubpassDependency {
+    pub fn to_raw(&self) -> &vks::VkSubpassDependency {
         &self.raw
     }
 }
@@ -13641,7 +13641,7 @@ impl<'s> RenderPassCreateInfo<'s> {
         self.raw.pDependencies = dependencies.as_ptr() as *const vks::VkSubpassDependency as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkRenderPassCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkRenderPassCreateInfo {
         &self.raw
     }
 }
@@ -13772,7 +13772,7 @@ impl<'s> EventCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkEventCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkEventCreateInfo {
         &self.raw
     }
 }
@@ -13867,7 +13867,7 @@ impl<'s> FenceCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkFenceCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkFenceCreateInfo {
         &self.raw
     }
 }
@@ -14384,7 +14384,7 @@ impl PhysicalDeviceFeatures {
         self.raw.inheritedQueries = inherited_queries as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceFeatures {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceFeatures {
         &self.raw
     }
 }
@@ -14974,7 +14974,7 @@ impl PhysicalDeviceSparseProperties {
         self.raw.residencyNonResidentStrict = residency_non_resident_strict as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceSparseProperties {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceSparseProperties {
         &self.raw
     }
 }
@@ -15931,7 +15931,7 @@ impl PhysicalDeviceLimits {
         self.raw.nonCoherentAtomSize = non_coherent_atom_size.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceLimits {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceLimits {
         &self.raw
     }
 }
@@ -16967,7 +16967,7 @@ impl<'s> SemaphoreCreateInfo<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkSemaphoreCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkSemaphoreCreateInfo {
         &self.raw
     }
 }
@@ -17087,7 +17087,7 @@ impl<'s> QueryPoolCreateInfo<'s> {
         self.raw.pipelineStatistics = pipeline_statistics.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkQueryPoolCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkQueryPoolCreateInfo {
         &self.raw
     }
 }
@@ -17258,7 +17258,7 @@ impl<'s> FramebufferCreateInfo<'s> {
         self.raw.layers = layers.into();
     }
 
-    pub fn raw(&self) -> &vks::VkFramebufferCreateInfo {
+    pub fn to_raw(&self) -> &vks::VkFramebufferCreateInfo {
         &self.raw
     }
 }
@@ -17423,7 +17423,7 @@ impl DrawIndirectCommand {
         self.raw.firstInstance = first_instance.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDrawIndirectCommand {
+    pub fn to_raw(&self) -> &vks::VkDrawIndirectCommand {
         &self.raw
     }
 }
@@ -17554,7 +17554,7 @@ impl DrawIndexedIndirectCommand {
         self.raw.firstInstance = first_instance.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDrawIndexedIndirectCommand {
+    pub fn to_raw(&self) -> &vks::VkDrawIndexedIndirectCommand {
         &self.raw
     }
 }
@@ -17678,7 +17678,7 @@ impl DispatchIndirectCommand {
         self.raw.z = z.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDispatchIndirectCommand {
+    pub fn to_raw(&self) -> &vks::VkDispatchIndirectCommand {
         &self.raw
     }
 }
@@ -17827,7 +17827,7 @@ impl<'s> SubmitInfo<'s> {
         }
     }
 
-    pub fn raw(&self) -> &vks::VkSubmitInfo {
+    pub fn to_raw(&self) -> &vks::VkSubmitInfo {
         &self.raw
     }
 }
@@ -18026,7 +18026,7 @@ impl<'s> DisplayPropertiesKhr<'s> {
         self.raw.persistentContent = persistent_content as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkDisplayPropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkDisplayPropertiesKHR {
         &self.raw
     }
 }
@@ -18172,7 +18172,7 @@ impl DisplayPlanePropertiesKhr {
         self.raw.currentStackIndex = current_stack_index.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDisplayPlanePropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkDisplayPlanePropertiesKHR {
         &self.raw
     }
 }
@@ -18261,7 +18261,7 @@ impl DisplayModeParametersKhr {
         self.raw.refreshRate = refresh_rate.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDisplayModeParametersKHR {
+    pub fn to_raw(&self) -> &vks::VkDisplayModeParametersKHR {
         &self.raw
     }
 }
@@ -18350,7 +18350,7 @@ impl DisplayModePropertiesKhr {
         self.raw.parameters = parameters.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkDisplayModePropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkDisplayModePropertiesKHR {
         &self.raw
     }
 }
@@ -18449,7 +18449,7 @@ impl<'s> DisplayModeCreateInfoKhr<'s> {
         self.raw.parameters = parameters.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkDisplayModeCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkDisplayModeCreateInfoKHR {
         &self.raw
     }
 }
@@ -18608,7 +18608,7 @@ impl DisplayPlaneCapabilitiesKhr {
         self.raw.maxDstExtent = max_dst_extent.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkDisplayPlaneCapabilitiesKHR {
+    pub fn to_raw(&self) -> &vks::VkDisplayPlaneCapabilitiesKHR {
         &self.raw
     }
 }
@@ -18821,7 +18821,7 @@ impl<'s> DisplaySurfaceCreateInfoKhr<'s> {
         self.raw.imageExtent = image_extent.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkDisplaySurfaceCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkDisplaySurfaceCreateInfoKHR {
         &self.raw
     }
 }
@@ -18996,7 +18996,7 @@ impl<'s> DisplayPresentInfoKhr<'s> {
         self.raw.persistent = persistent as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkDisplayPresentInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkDisplayPresentInfoKHR {
         &self.raw
     }
 }
@@ -19174,7 +19174,7 @@ impl SurfaceCapabilitiesKhr {
         self.raw.supportedUsageFlags = supported_usage_flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkSurfaceCapabilitiesKHR {
+    pub fn to_raw(&self) -> &vks::VkSurfaceCapabilitiesKHR {
         &self.raw
     }
 }
@@ -19349,7 +19349,7 @@ impl<'s> AndroidSurfaceCreateInfoKhr<'s> {
         self.raw.window = window;
     }
 
-    pub fn raw(&self) -> &vks::VkAndroidSurfaceCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkAndroidSurfaceCreateInfoKHR {
         &self.raw
     }
 }
@@ -19469,7 +19469,7 @@ impl<'s> MirSurfaceCreateInfoKhr<'s> {
         self.raw.mirSurface = mir_surface;
     }
 
-    pub fn raw(&self) -> &vks::VkMirSurfaceCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkMirSurfaceCreateInfoKHR {
         &self.raw
     }
 }
@@ -19590,7 +19590,7 @@ impl<'s> ViSurfaceCreateInfoNn<'s> {
         self.raw.window = window;
     }
 
-    pub fn raw(&self) -> &vks::VkViSurfaceCreateInfoNN {
+    pub fn to_raw(&self) -> &vks::VkViSurfaceCreateInfoNN {
         &self.raw
     }
 }
@@ -19710,7 +19710,7 @@ impl<'s> WaylandSurfaceCreateInfoKhr<'s> {
         self.raw.surface = surface;
     }
 
-    pub fn raw(&self) -> &vks::VkWaylandSurfaceCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkWaylandSurfaceCreateInfoKHR {
         &self.raw
     }
 }
@@ -19839,7 +19839,7 @@ impl<'s> Win32SurfaceCreateInfoKhr<'s> {
         self.raw.hwnd = hwnd.into();
     }
 
-    pub fn raw(&self) -> &vks::VkWin32SurfaceCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkWin32SurfaceCreateInfoKHR {
         &self.raw
     }
 }
@@ -19968,7 +19968,7 @@ impl<'s> XlibSurfaceCreateInfoKhr<'s> {
         self.raw.window = window.into();
     }
 
-    pub fn raw(&self) -> &vks::VkXlibSurfaceCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkXlibSurfaceCreateInfoKHR {
         &self.raw
     }
 }
@@ -20097,7 +20097,7 @@ impl<'s> XcbSurfaceCreateInfoKhr<'s> {
         self.raw.window = window.into();
     }
 
-    pub fn raw(&self) -> &vks::VkXcbSurfaceCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkXcbSurfaceCreateInfoKHR {
         &self.raw
     }
 }
@@ -20208,7 +20208,7 @@ impl SurfaceFormatKhr {
         self.raw.colorSpace = color_space.into();
     }
 
-    pub fn raw(&self) -> &vks::VkSurfaceFormatKHR {
+    pub fn to_raw(&self) -> &vks::VkSurfaceFormatKHR {
         &self.raw
     }
 }
@@ -20417,7 +20417,7 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
         self.raw.oldSwapchain = old_swapchain.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkSwapchainCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkSwapchainCreateInfoKHR {
         &self.raw
     }
 }
@@ -20690,7 +20690,7 @@ impl<'s> PresentInfoKhr<'s> {
         self.raw.pResults = results.as_mut_ptr() as *mut ResultEnum as *mut _;
     }
 
-    pub fn raw(&self) -> &vks::VkPresentInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkPresentInfoKHR {
         &self.raw
     }
 }
@@ -20855,7 +20855,7 @@ impl<'s> DebugReportCallbackCreateInfoExt<'s> {
         self.raw.pUserData = user_data;
     }
 
-    pub fn raw(&self) -> &vks::VkDebugReportCallbackCreateInfoEXT {
+    pub fn to_raw(&self) -> &vks::VkDebugReportCallbackCreateInfoEXT {
         &self.raw
     }
 }
@@ -20970,7 +20970,7 @@ impl<'s> ValidationFlagsExt<'s> {
         self.raw.pDisabledValidationChecks = disabled_validation_checks.as_mut_ptr() as *mut ValidationCheckExt as *mut _;
     }
 
-    pub fn raw(&self) -> &vks::VkValidationFlagsEXT {
+    pub fn to_raw(&self) -> &vks::VkValidationFlagsEXT {
         &self.raw
     }
 }
@@ -21066,7 +21066,7 @@ impl<'s> PipelineRasterizationStateRasterizationOrderAmd<'s> {
         self.raw.rasterizationOrder = rasterization_order.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineRasterizationStateRasterizationOrderAMD {
+    pub fn to_raw(&self) -> &vks::VkPipelineRasterizationStateRasterizationOrderAMD {
         &self.raw
     }
 }
@@ -21180,7 +21180,7 @@ impl<'s> DebugMarkerObjectNameInfoExt<'s> {
         }
     }
 
-    pub fn raw(&self) -> &vks::VkDebugMarkerObjectNameInfoEXT {
+    pub fn to_raw(&self) -> &vks::VkDebugMarkerObjectNameInfoEXT {
         &self.raw
     }
 }
@@ -21331,7 +21331,7 @@ impl<'s> DebugMarkerObjectTagInfoExt<'s> {
         self.raw.pTag = tag;
     }
 
-    pub fn raw(&self) -> &vks::VkDebugMarkerObjectTagInfoEXT {
+    pub fn to_raw(&self) -> &vks::VkDebugMarkerObjectTagInfoEXT {
         &self.raw
     }
 }
@@ -21473,7 +21473,7 @@ impl<'s> DebugMarkerMarkerInfoExt<'s> {
         self.raw.color = color;
     }
 
-    pub fn raw(&self) -> &vks::VkDebugMarkerMarkerInfoEXT {
+    pub fn to_raw(&self) -> &vks::VkDebugMarkerMarkerInfoEXT {
         &self.raw
     }
 }
@@ -21583,7 +21583,7 @@ impl<'s> DedicatedAllocationImageCreateInfoNv<'s> {
         self.raw.dedicatedAllocation = dedicated_allocation as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkDedicatedAllocationImageCreateInfoNV {
+    pub fn to_raw(&self) -> &vks::VkDedicatedAllocationImageCreateInfoNV {
         &self.raw
     }
 }
@@ -21676,7 +21676,7 @@ impl<'s> DedicatedAllocationBufferCreateInfoNv<'s> {
         self.raw.dedicatedAllocation = dedicated_allocation as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkDedicatedAllocationBufferCreateInfoNV {
+    pub fn to_raw(&self) -> &vks::VkDedicatedAllocationBufferCreateInfoNV {
         &self.raw
     }
 }
@@ -21777,7 +21777,7 @@ impl<'s> DedicatedAllocationMemoryAllocateInfoNv<'s> {
         self.raw.buffer = buffer.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkDedicatedAllocationMemoryAllocateInfoNV {
+    pub fn to_raw(&self) -> &vks::VkDedicatedAllocationMemoryAllocateInfoNV {
         &self.raw
     }
 }
@@ -21897,7 +21897,7 @@ impl ExternalImageFormatPropertiesNv {
         self.raw.compatibleHandleTypes = compatible_handle_types.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkExternalImageFormatPropertiesNV {
+    pub fn to_raw(&self) -> &vks::VkExternalImageFormatPropertiesNV {
         &self.raw
     }
 }
@@ -22009,7 +22009,7 @@ impl<'s> ExternalMemoryImageCreateInfoNv<'s> {
         self.raw.handleTypes = handle_types.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkExternalMemoryImageCreateInfoNV {
+    pub fn to_raw(&self) -> &vks::VkExternalMemoryImageCreateInfoNV {
         &self.raw
     }
 }
@@ -22104,7 +22104,7 @@ impl<'s> ExportMemoryAllocateInfoNv<'s> {
         self.raw.handleTypes = handle_types.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkExportMemoryAllocateInfoNV {
+    pub fn to_raw(&self) -> &vks::VkExportMemoryAllocateInfoNV {
         &self.raw
     }
 }
@@ -22207,7 +22207,7 @@ impl<'s> ImportMemoryWin32HandleInfoNv<'s> {
         self.raw.handle = handle.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImportMemoryWin32HandleInfoNV {
+    pub fn to_raw(&self) -> &vks::VkImportMemoryWin32HandleInfoNV {
         &self.raw
     }
 }
@@ -22318,7 +22318,7 @@ impl<'s> ExportMemoryWin32HandleInfoNv<'s> {
         self.raw.dwAccess = dw_access.into();
     }
 
-    pub fn raw(&self) -> &vks::VkExportMemoryWin32HandleInfoNV {
+    pub fn to_raw(&self) -> &vks::VkExportMemoryWin32HandleInfoNV {
         &self.raw
     }
 }
@@ -22478,7 +22478,7 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
         self.raw.pReleaseKeys = release_keys.as_ptr() as *const u64 as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkWin32KeyedMutexAcquireReleaseInfoNV {
+    pub fn to_raw(&self) -> &vks::VkWin32KeyedMutexAcquireReleaseInfoNV {
         &self.raw
     }
 }
@@ -22640,7 +22640,7 @@ impl<'s> DeviceGeneratedCommandsFeaturesNvx<'s> {
         self.raw.computeBindingPointSupport = compute_binding_point_support as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceGeneratedCommandsFeaturesNVX {
+    pub fn to_raw(&self) -> &vks::VkDeviceGeneratedCommandsFeaturesNVX {
         &self.raw
     }
 }
@@ -22771,7 +22771,7 @@ impl<'s> DeviceGeneratedCommandsLimitsNvx<'s> {
         self.raw.minCommandsTokenBufferOffsetAlignment = min_commands_token_buffer_offset_alignment.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceGeneratedCommandsLimitsNVX {
+    pub fn to_raw(&self) -> &vks::VkDeviceGeneratedCommandsLimitsNVX {
         &self.raw
     }
 }
@@ -22913,7 +22913,7 @@ impl IndirectCommandsTokenNvx {
         self.raw.offset = offset.into();
     }
 
-    pub fn raw(&self) -> &vks::VkIndirectCommandsTokenNVX {
+    pub fn to_raw(&self) -> &vks::VkIndirectCommandsTokenNVX {
         &self.raw
     }
 }
@@ -23033,7 +23033,7 @@ impl IndirectCommandsLayoutTokenNvx {
         self.raw.divisor = divisor.into();
     }
 
-    pub fn raw(&self) -> &vks::VkIndirectCommandsLayoutTokenNVX {
+    pub fn to_raw(&self) -> &vks::VkIndirectCommandsLayoutTokenNVX {
         &self.raw
     }
 }
@@ -23167,7 +23167,7 @@ impl<'s> IndirectCommandsLayoutCreateInfoNvx<'s> {
         self.raw.pTokens = tokens.as_ptr() as *const vks::VkIndirectCommandsLayoutTokenNVX as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkIndirectCommandsLayoutCreateInfoNVX {
+    pub fn to_raw(&self) -> &vks::VkIndirectCommandsLayoutCreateInfoNVX {
         &self.raw
     }
 }
@@ -23355,7 +23355,7 @@ impl<'s> CmdProcessCommandsInfoNvx<'s> {
         self.raw.sequencesIndexOffset = sequences_index_offset.into();
     }
 
-    pub fn raw(&self) -> &vks::VkCmdProcessCommandsInfoNVX {
+    pub fn to_raw(&self) -> &vks::VkCmdProcessCommandsInfoNVX {
         &self.raw
     }
 }
@@ -23545,7 +23545,7 @@ impl<'s> CmdReserveSpaceForCommandsInfoNvx<'s> {
         self.raw.maxSequencesCount = max_sequences_count.into();
     }
 
-    pub fn raw(&self) -> &vks::VkCmdReserveSpaceForCommandsInfoNVX {
+    pub fn to_raw(&self) -> &vks::VkCmdReserveSpaceForCommandsInfoNVX {
         &self.raw
     }
 }
@@ -23727,7 +23727,7 @@ impl<'s> ObjectTableCreateInfoNvx<'s> {
         self.raw.maxPipelineLayouts = max_pipeline_layouts.into();
     }
 
-    pub fn raw(&self) -> &vks::VkObjectTableCreateInfoNVX {
+    pub fn to_raw(&self) -> &vks::VkObjectTableCreateInfoNVX {
         &self.raw
     }
 }
@@ -23898,7 +23898,7 @@ impl ObjectTableEntryNvx {
         self.raw.flags = flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkObjectTableEntryNVX {
+    pub fn to_raw(&self) -> &vks::VkObjectTableEntryNVX {
         &self.raw
     }
 }
@@ -24003,7 +24003,7 @@ impl ObjectTablePipelineEntryNvx {
         self.raw.pipeline = pipeline.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkObjectTablePipelineEntryNVX {
+    pub fn to_raw(&self) -> &vks::VkObjectTablePipelineEntryNVX {
         &self.raw
     }
 }
@@ -24125,7 +24125,7 @@ impl ObjectTableDescriptorSetEntryNvx {
         self.raw.descriptorSet = descriptor_set.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkObjectTableDescriptorSetEntryNVX {
+    pub fn to_raw(&self) -> &vks::VkObjectTableDescriptorSetEntryNVX {
         &self.raw
     }
 }
@@ -24248,7 +24248,7 @@ impl ObjectTableVertexBufferEntryNvx {
         self.raw.buffer = buffer.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkObjectTableVertexBufferEntryNVX {
+    pub fn to_raw(&self) -> &vks::VkObjectTableVertexBufferEntryNVX {
         &self.raw
     }
 }
@@ -24370,7 +24370,7 @@ impl ObjectTableIndexBufferEntryNvx {
         self.raw.indexType = index_type.into();
     }
 
-    pub fn raw(&self) -> &vks::VkObjectTableIndexBufferEntryNVX {
+    pub fn to_raw(&self) -> &vks::VkObjectTableIndexBufferEntryNVX {
         &self.raw
     }
 }
@@ -24502,7 +24502,7 @@ impl ObjectTablePushConstantEntryNvx {
         self.raw.stageFlags = stage_flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkObjectTablePushConstantEntryNVX {
+    pub fn to_raw(&self) -> &vks::VkObjectTablePushConstantEntryNVX {
         &self.raw
     }
 }
@@ -24616,7 +24616,7 @@ impl<'s> PhysicalDeviceFeatures2Khr<'s> {
         self.raw.features = features.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceFeatures2KHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceFeatures2KHR {
         &self.raw
     }
 }
@@ -24709,7 +24709,7 @@ impl<'s> PhysicalDeviceProperties2Khr<'s> {
         self.raw.properties = properties.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceProperties2KHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceProperties2KHR {
         &self.raw
     }
 }
@@ -24802,7 +24802,7 @@ impl<'s> FormatProperties2Khr<'s> {
         self.raw.formatProperties = format_properties.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkFormatProperties2KHR {
+    pub fn to_raw(&self) -> &vks::VkFormatProperties2KHR {
         &self.raw
     }
 }
@@ -24895,7 +24895,7 @@ impl<'s> ImageFormatProperties2Khr<'s> {
         self.raw.imageFormatProperties = image_format_properties.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkImageFormatProperties2KHR {
+    pub fn to_raw(&self) -> &vks::VkImageFormatProperties2KHR {
         &self.raw
     }
 }
@@ -25022,7 +25022,7 @@ impl<'s> PhysicalDeviceImageFormatInfo2Khr<'s> {
         self.raw.flags = flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceImageFormatInfo2KHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceImageFormatInfo2KHR {
         &self.raw
     }
 }
@@ -25153,7 +25153,7 @@ impl<'s> QueueFamilyProperties2Khr<'s> {
         self.raw.queueFamilyProperties = queue_family_properties.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkQueueFamilyProperties2KHR {
+    pub fn to_raw(&self) -> &vks::VkQueueFamilyProperties2KHR {
         &self.raw
     }
 }
@@ -25246,7 +25246,7 @@ impl<'s> PhysicalDeviceMemoryProperties2Khr<'s> {
         self.raw.memoryProperties = memory_properties.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceMemoryProperties2KHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceMemoryProperties2KHR {
         &self.raw
     }
 }
@@ -25339,7 +25339,7 @@ impl<'s> SparseImageFormatProperties2Khr<'s> {
         self.raw.properties = properties.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkSparseImageFormatProperties2KHR {
+    pub fn to_raw(&self) -> &vks::VkSparseImageFormatProperties2KHR {
         &self.raw
     }
 }
@@ -25466,7 +25466,7 @@ impl<'s> PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
         self.raw.tiling = tiling.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceSparseImageFormatInfo2KHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceSparseImageFormatInfo2KHR {
         &self.raw
     }
 }
@@ -25597,7 +25597,7 @@ impl<'s> PhysicalDevicePushDescriptorPropertiesKhr<'s> {
         self.raw.maxPushDescriptors = max_push_descriptors.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDevicePushDescriptorPropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDevicePushDescriptorPropertiesKHR {
         &self.raw
     }
 }
@@ -25693,7 +25693,7 @@ impl<'s> PresentRegionsKhr<'s> {
         self.raw.pRegions = regions.as_ptr() as *const vks::VkPresentRegionKHR as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkPresentRegionsKHR {
+    pub fn to_raw(&self) -> &vks::VkPresentRegionsKHR {
         &self.raw
     }
 }
@@ -25784,7 +25784,7 @@ impl<'s> PresentRegionKhr<'s> {
         self.raw.pRectangles = rectangles.as_ptr() as *const vks::VkRectLayerKHR as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkPresentRegionKHR {
+    pub fn to_raw(&self) -> &vks::VkPresentRegionKHR {
         &self.raw
     }
 }
@@ -25878,7 +25878,7 @@ impl RectLayerKhr {
         self.raw.layer = layer.into();
     }
 
-    pub fn raw(&self) -> &vks::VkRectLayerKHR {
+    pub fn to_raw(&self) -> &vks::VkRectLayerKHR {
         &self.raw
     }
 }
@@ -25985,7 +25985,7 @@ impl<'s> PhysicalDeviceVariablePointerFeaturesKhr<'s> {
         self.raw.variablePointers = variable_pointers as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceVariablePointerFeaturesKHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceVariablePointerFeaturesKHR {
         &self.raw
     }
 }
@@ -26097,7 +26097,7 @@ impl ExternalMemoryPropertiesKhr {
         self.raw.compatibleHandleTypes = compatible_handle_types.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkExternalMemoryPropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkExternalMemoryPropertiesKHR {
         &self.raw
     }
 }
@@ -26200,7 +26200,7 @@ impl<'s> PhysicalDeviceExternalImageFormatInfoKhr<'s> {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceExternalImageFormatInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceExternalImageFormatInfoKHR {
         &self.raw
     }
 }
@@ -26294,7 +26294,7 @@ impl<'s> ExternalImageFormatPropertiesKhr<'s> {
         self.raw.externalMemoryProperties = external_memory_properties.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkExternalImageFormatPropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkExternalImageFormatPropertiesKHR {
         &self.raw
     }
 }
@@ -26406,7 +26406,7 @@ impl<'s> PhysicalDeviceExternalBufferInfoKhr<'s> {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceExternalBufferInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceExternalBufferInfoKHR {
         &self.raw
     }
 }
@@ -26520,7 +26520,7 @@ impl<'s> ExternalBufferPropertiesKhr<'s> {
         self.raw.externalMemoryProperties = external_memory_properties.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkExternalBufferPropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkExternalBufferPropertiesKHR {
         &self.raw
     }
 }
@@ -26645,7 +26645,7 @@ impl<'s> PhysicalDeviceIDPropertiesKhr<'s> {
         self.raw.deviceLUIDValid = device_lu_id_valid as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceIDPropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceIDPropertiesKHR {
         &self.raw
     }
 }
@@ -26775,7 +26775,7 @@ impl<'s> ExternalMemoryImageCreateInfoKhr<'s> {
         self.raw.handleTypes = handle_types.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkExternalMemoryImageCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkExternalMemoryImageCreateInfoKHR {
         &self.raw
     }
 }
@@ -26870,7 +26870,7 @@ impl<'s> ExternalMemoryBufferCreateInfoKhr<'s> {
         self.raw.handleTypes = handle_types.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkExternalMemoryBufferCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkExternalMemoryBufferCreateInfoKHR {
         &self.raw
     }
 }
@@ -26965,7 +26965,7 @@ impl<'s> ExportMemoryAllocateInfoKhr<'s> {
         self.raw.handleTypes = handle_types.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkExportMemoryAllocateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkExportMemoryAllocateInfoKHR {
         &self.raw
     }
 }
@@ -27076,7 +27076,7 @@ impl<'s> ImportMemoryWin32HandleInfoKhr<'s> {
         self.raw.name = name.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImportMemoryWin32HandleInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkImportMemoryWin32HandleInfoKHR {
         &self.raw
     }
 }
@@ -27204,7 +27204,7 @@ impl<'s> ExportMemoryWin32HandleInfoKhr<'s> {
         self.raw.name = name.into();
     }
 
-    pub fn raw(&self) -> &vks::VkExportMemoryWin32HandleInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkExportMemoryWin32HandleInfoKHR {
         &self.raw
     }
 }
@@ -27315,7 +27315,7 @@ impl<'s> MemoryWin32HandlePropertiesKhr<'s> {
         self.raw.memoryTypeBits = memory_type_bits.into();
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryWin32HandlePropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkMemoryWin32HandlePropertiesKHR {
         &self.raw
     }
 }
@@ -27417,7 +27417,7 @@ impl<'s> MemoryGetWin32HandleInfoKhr<'s> {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryGetWin32HandleInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkMemoryGetWin32HandleInfoKHR {
         &self.raw
     }
 }
@@ -27529,7 +27529,7 @@ impl<'s> ImportMemoryFdInfoKhr<'s> {
         self.raw.fd = fd.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImportMemoryFdInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkImportMemoryFdInfoKHR {
         &self.raw
     }
 }
@@ -27632,7 +27632,7 @@ impl<'s> MemoryFdPropertiesKhr<'s> {
         self.raw.memoryTypeBits = memory_type_bits.into();
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryFdPropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkMemoryFdPropertiesKHR {
         &self.raw
     }
 }
@@ -27734,7 +27734,7 @@ impl<'s> MemoryGetFdInfoKhr<'s> {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryGetFdInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkMemoryGetFdInfoKHR {
         &self.raw
     }
 }
@@ -27895,7 +27895,7 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
         self.raw.pReleaseKeys = release_keys.as_ptr() as *const u64 as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkWin32KeyedMutexAcquireReleaseInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkWin32KeyedMutexAcquireReleaseInfoKHR {
         &self.raw
     }
 }
@@ -28056,7 +28056,7 @@ impl<'s> PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceExternalSemaphoreInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceExternalSemaphoreInfoKHR {
         &self.raw
     }
 }
@@ -28169,7 +28169,7 @@ impl<'s> ExternalSemaphorePropertiesKhr<'s> {
         self.raw.externalSemaphoreFeatures = external_semaphore_features.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkExternalSemaphorePropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkExternalSemaphorePropertiesKHR {
         &self.raw
     }
 }
@@ -28284,7 +28284,7 @@ impl<'s> ExportSemaphoreCreateInfoKhr<'s> {
         self.raw.handleTypes = handle_types.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkExportSemaphoreCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkExportSemaphoreCreateInfoKHR {
         &self.raw
     }
 }
@@ -28412,7 +28412,7 @@ impl<'s> ImportSemaphoreWin32HandleInfoKhr<'s> {
         self.raw.name = name.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImportSemaphoreWin32HandleInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkImportSemaphoreWin32HandleInfoKHR {
         &self.raw
     }
 }
@@ -28559,7 +28559,7 @@ impl<'s> ExportSemaphoreWin32HandleInfoKhr<'s> {
         self.raw.name = name.into();
     }
 
-    pub fn raw(&self) -> &vks::VkExportSemaphoreWin32HandleInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkExportSemaphoreWin32HandleInfoKHR {
         &self.raw
     }
 }
@@ -28684,7 +28684,7 @@ impl<'s> D3d12FenceSubmitInfoKHR<'s> {
         self.raw.pSignalSemaphoreValues = signal_semaphore_values.as_ptr() as *const u64 as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkD3D12FenceSubmitInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkD3D12FenceSubmitInfoKHR {
         &self.raw
     }
 }
@@ -28801,7 +28801,7 @@ impl<'s> SemaphoreGetWin32HandleInfoKhr<'s> {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkSemaphoreGetWin32HandleInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkSemaphoreGetWin32HandleInfoKHR {
         &self.raw
     }
 }
@@ -28930,7 +28930,7 @@ impl<'s> ImportSemaphoreFdInfoKhr<'s> {
         self.raw.fd = fd.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImportSemaphoreFdInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkImportSemaphoreFdInfoKHR {
         &self.raw
     }
 }
@@ -29061,7 +29061,7 @@ impl<'s> SemaphoreGetFdInfoKhr<'s> {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkSemaphoreGetFdInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkSemaphoreGetFdInfoKHR {
         &self.raw
     }
 }
@@ -29165,7 +29165,7 @@ impl<'s> PhysicalDeviceExternalFenceInfoKhr<'s> {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceExternalFenceInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceExternalFenceInfoKHR {
         &self.raw
     }
 }
@@ -29278,7 +29278,7 @@ impl<'s> ExternalFencePropertiesKhr<'s> {
         self.raw.externalFenceFeatures = external_fence_features.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkExternalFencePropertiesKHR {
+    pub fn to_raw(&self) -> &vks::VkExternalFencePropertiesKHR {
         &self.raw
     }
 }
@@ -29393,7 +29393,7 @@ impl<'s> ExportFenceCreateInfoKhr<'s> {
         self.raw.handleTypes = handle_types.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkExportFenceCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkExportFenceCreateInfoKHR {
         &self.raw
     }
 }
@@ -29521,7 +29521,7 @@ impl<'s> ImportFenceWin32HandleInfoKhr<'s> {
         self.raw.name = name.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImportFenceWin32HandleInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkImportFenceWin32HandleInfoKHR {
         &self.raw
     }
 }
@@ -29668,7 +29668,7 @@ impl<'s> ExportFenceWin32HandleInfoKhr<'s> {
         self.raw.name = name.into();
     }
 
-    pub fn raw(&self) -> &vks::VkExportFenceWin32HandleInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkExportFenceWin32HandleInfoKHR {
         &self.raw
     }
 }
@@ -29788,7 +29788,7 @@ impl<'s> FenceGetWin32HandleInfoKhr<'s> {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkFenceGetWin32HandleInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkFenceGetWin32HandleInfoKHR {
         &self.raw
     }
 }
@@ -29917,7 +29917,7 @@ impl<'s> ImportFenceFdInfoKhr<'s> {
         self.raw.fd = fd.into();
     }
 
-    pub fn raw(&self) -> &vks::VkImportFenceFdInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkImportFenceFdInfoKHR {
         &self.raw
     }
 }
@@ -30048,7 +30048,7 @@ impl<'s> FenceGetFdInfoKhr<'s> {
         self.raw.handleType = handle_type.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkFenceGetFdInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkFenceGetFdInfoKHR {
         &self.raw
     }
 }
@@ -30169,7 +30169,7 @@ impl<'s> PhysicalDeviceMultiviewFeaturesKhx<'s> {
         self.raw.multiviewTessellationShader = multiview_tessellation_shader as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceMultiviewFeaturesKHX {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceMultiviewFeaturesKHX {
         &self.raw
     }
 }
@@ -30294,7 +30294,7 @@ impl<'s> PhysicalDeviceMultiviewPropertiesKhx<'s> {
         self.raw.maxMultiviewInstanceIndex = max_multiview_instance_index.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceMultiviewPropertiesKHX {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceMultiviewPropertiesKHX {
         &self.raw
     }
 }
@@ -30437,7 +30437,7 @@ impl<'s> RenderPassMultiviewCreateInfoKhx<'s> {
         self.raw.pCorrelationMasks = correlation_masks.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkRenderPassMultiviewCreateInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkRenderPassMultiviewCreateInfoKHX {
         &self.raw
     }
 }
@@ -30658,7 +30658,7 @@ impl<'s> SurfaceCapabilities2Ext<'s> {
         self.raw.supportedSurfaceCounters = supported_surface_counters.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkSurfaceCapabilities2EXT {
+    pub fn to_raw(&self) -> &vks::VkSurfaceCapabilities2EXT {
         &self.raw
     }
 }
@@ -30846,7 +30846,7 @@ impl<'s> DisplayPowerInfoExt<'s> {
         self.raw.powerState = power_state.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDisplayPowerInfoEXT {
+    pub fn to_raw(&self) -> &vks::VkDisplayPowerInfoEXT {
         &self.raw
     }
 }
@@ -30939,7 +30939,7 @@ impl<'s> DeviceEventInfoExt<'s> {
         self.raw.deviceEvent = device_event.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceEventInfoEXT {
+    pub fn to_raw(&self) -> &vks::VkDeviceEventInfoEXT {
         &self.raw
     }
 }
@@ -31032,7 +31032,7 @@ impl<'s> DisplayEventInfoExt<'s> {
         self.raw.displayEvent = display_event.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDisplayEventInfoEXT {
+    pub fn to_raw(&self) -> &vks::VkDisplayEventInfoEXT {
         &self.raw
     }
 }
@@ -31126,7 +31126,7 @@ impl<'s> SwapchainCounterCreateInfoExt<'s> {
         self.raw.surfaceCounters = surface_counters.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkSwapchainCounterCreateInfoEXT {
+    pub fn to_raw(&self) -> &vks::VkSwapchainCounterCreateInfoEXT {
         &self.raw
     }
 }
@@ -31238,7 +31238,7 @@ impl<'s> PhysicalDeviceGroupPropertiesKhx<'s> {
         self.raw.subsetAllocation = subset_allocation as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceGroupPropertiesKHX {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceGroupPropertiesKHX {
         &self.raw
     }
 }
@@ -31364,7 +31364,7 @@ impl<'s> MemoryAllocateFlagsInfoKhx<'s> {
         self.raw.deviceMask = device_mask.into();
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryAllocateFlagsInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkMemoryAllocateFlagsInfoKHX {
         &self.raw
     }
 }
@@ -31476,7 +31476,7 @@ impl<'s> BindBufferMemoryDeviceGroupInfoKhx<'s> {
         self.raw.pDeviceIndices = device_indices.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkBindBufferMemoryDeviceGroupInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkBindBufferMemoryDeviceGroupInfoKHX {
         &self.raw
     }
 }
@@ -31592,7 +31592,7 @@ impl<'s> BindImageMemoryDeviceGroupInfoKhx<'s> {
         self.raw.pSFRRects = s_fr_rects.as_ptr() as *const vks::VkRect2D as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkBindImageMemoryDeviceGroupInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkBindImageMemoryDeviceGroupInfoKHX {
         &self.raw
     }
 }
@@ -31717,7 +31717,7 @@ impl<'s> DeviceGroupRenderPassBeginInfoKhx<'s> {
         self.raw.pDeviceRenderAreas = device_render_areas.as_ptr() as *const vks::VkRect2D as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceGroupRenderPassBeginInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkDeviceGroupRenderPassBeginInfoKHX {
         &self.raw
     }
 }
@@ -31828,7 +31828,7 @@ impl<'s> DeviceGroupCommandBufferBeginInfoKhx<'s> {
         self.raw.deviceMask = device_mask.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceGroupCommandBufferBeginInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkDeviceGroupCommandBufferBeginInfoKHX {
         &self.raw
     }
 }
@@ -31952,7 +31952,7 @@ impl<'s> DeviceGroupSubmitInfoKhx<'s> {
         self.raw.pSignalSemaphoreDeviceIndices = signal_semaphore_device_indices.as_ptr() as *const u32 as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceGroupSubmitInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkDeviceGroupSubmitInfoKHX {
         &self.raw
     }
 }
@@ -32086,7 +32086,7 @@ impl<'s> DeviceGroupBindSparseInfoKhx<'s> {
         self.raw.memoryDeviceIndex = memory_device_index.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceGroupBindSparseInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkDeviceGroupBindSparseInfoKHX {
         &self.raw
     }
 }
@@ -32203,7 +32203,7 @@ impl<'s> DeviceGroupPresentCapabilitiesKhx<'s> {
         self.raw.modes = modes.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceGroupPresentCapabilitiesKHX {
+    pub fn to_raw(&self) -> &vks::VkDeviceGroupPresentCapabilitiesKHX {
         &self.raw
     }
 }
@@ -32312,7 +32312,7 @@ impl<'s> ImageSwapchainCreateInfoKhx<'s> {
         self.raw.swapchain = swapchain.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkImageSwapchainCreateInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkImageSwapchainCreateInfoKHX {
         &self.raw
     }
 }
@@ -32419,7 +32419,7 @@ impl<'s> BindImageMemorySwapchainInfoKhx<'s> {
         self.raw.imageIndex = image_index.into();
     }
 
-    pub fn raw(&self) -> &vks::VkBindImageMemorySwapchainInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkBindImageMemorySwapchainInfoKHX {
         &self.raw
     }
 }
@@ -32559,7 +32559,7 @@ impl<'s> AcquireNextImageInfoKhx<'s> {
         self.raw.deviceMask = device_mask.into();
     }
 
-    pub fn raw(&self) -> &vks::VkAcquireNextImageInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkAcquireNextImageInfoKHX {
         &self.raw
     }
 }
@@ -32711,7 +32711,7 @@ impl<'s> DeviceGroupPresentInfoKhx<'s> {
         self.raw.mode = mode.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceGroupPresentInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkDeviceGroupPresentInfoKHX {
         &self.raw
     }
 }
@@ -32837,7 +32837,7 @@ impl<'s> DeviceGroupDeviceCreateInfoKhx<'s> {
         }
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceGroupDeviceCreateInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkDeviceGroupDeviceCreateInfoKHX {
         &self.raw
     }
 }
@@ -32948,7 +32948,7 @@ impl<'s> DeviceGroupSwapchainCreateInfoKhx<'s> {
         self.raw.modes = modes.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkDeviceGroupSwapchainCreateInfoKHX {
+    pub fn to_raw(&self) -> &vks::VkDeviceGroupSwapchainCreateInfoKHX {
         &self.raw
     }
 }
@@ -33077,7 +33077,7 @@ impl DescriptorUpdateTemplateEntryKhr {
         self.raw.stride = stride.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDescriptorUpdateTemplateEntryKHR {
+    pub fn to_raw(&self) -> &vks::VkDescriptorUpdateTemplateEntryKHR {
         &self.raw
     }
 }
@@ -33255,7 +33255,7 @@ impl<'s> DescriptorUpdateTemplateCreateInfoKhr<'s> {
         self.raw.set = set.into();
     }
 
-    pub fn raw(&self) -> &vks::VkDescriptorUpdateTemplateCreateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkDescriptorUpdateTemplateCreateInfoKHR {
         &self.raw
     }
 }
@@ -33405,7 +33405,7 @@ impl XYColorExt {
         self.raw.y = y.into();
     }
 
-    pub fn raw(&self) -> &vks::VkXYColorEXT {
+    pub fn to_raw(&self) -> &vks::VkXYColorEXT {
         &self.raw
     }
 }
@@ -33551,7 +33551,7 @@ impl<'s> HdrMetadataExt<'s> {
         self.raw.maxFrameAverageLightLevel = max_frame_average_light_level.into();
     }
 
-    pub fn raw(&self) -> &vks::VkHdrMetadataEXT {
+    pub fn to_raw(&self) -> &vks::VkHdrMetadataEXT {
         &self.raw
     }
 }
@@ -33698,7 +33698,7 @@ impl RefreshCycleDurationGoogle {
         self.raw.refreshDuration = refresh_duration.into();
     }
 
-    pub fn raw(&self) -> &vks::VkRefreshCycleDurationGOOGLE {
+    pub fn to_raw(&self) -> &vks::VkRefreshCycleDurationGOOGLE {
         &self.raw
     }
 }
@@ -33802,7 +33802,7 @@ impl PastPresentationTimingGoogle {
         self.raw.presentMargin = present_margin.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPastPresentationTimingGOOGLE {
+    pub fn to_raw(&self) -> &vks::VkPastPresentationTimingGOOGLE {
         &self.raw
     }
 }
@@ -33922,7 +33922,7 @@ impl<'s> PresentTimesInfoGoogle<'s> {
         self.raw.pTimes = times.as_ptr() as *const vks::VkPresentTimeGOOGLE as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkPresentTimesInfoGOOGLE {
+    pub fn to_raw(&self) -> &vks::VkPresentTimesInfoGOOGLE {
         &self.raw
     }
 }
@@ -34017,7 +34017,7 @@ impl PresentTimeGoogle {
         self.raw.desiredPresentTime = desired_present_time.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPresentTimeGOOGLE {
+    pub fn to_raw(&self) -> &vks::VkPresentTimeGOOGLE {
         &self.raw
     }
 }
@@ -34116,7 +34116,7 @@ impl<'s> IosSurfaceCreateInfoMvk<'s> {
         self.raw.pView = view;
     }
 
-    pub fn raw(&self) -> &vks::VkIOSSurfaceCreateInfoMVK {
+    pub fn to_raw(&self) -> &vks::VkIOSSurfaceCreateInfoMVK {
         &self.raw
     }
 }
@@ -34228,7 +34228,7 @@ impl<'s> MacOsSurfaceCreateInfoMvk<'s> {
         self.raw.pView = view;
     }
 
-    pub fn raw(&self) -> &vks::VkMacOSSurfaceCreateInfoMVK {
+    pub fn to_raw(&self) -> &vks::VkMacOSSurfaceCreateInfoMVK {
         &self.raw
     }
 }
@@ -34330,7 +34330,7 @@ impl ViewportWScalingNv {
         self.raw.ycoeff = ycoeff.into();
     }
 
-    pub fn raw(&self) -> &vks::VkViewportWScalingNV {
+    pub fn to_raw(&self) -> &vks::VkViewportWScalingNV {
         &self.raw
     }
 }
@@ -34431,7 +34431,7 @@ impl<'s> PipelineViewportWScalingStateCreateInfoNv<'s> {
         self.raw.pViewportWScalings = viewport_wscalings.as_ptr() as *const vks::VkViewportWScalingNV as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineViewportWScalingStateCreateInfoNV {
+    pub fn to_raw(&self) -> &vks::VkPipelineViewportWScalingStateCreateInfoNV {
         &self.raw
     }
 }
@@ -34551,7 +34551,7 @@ impl ViewportSwizzleNv {
         self.raw.w = w.into();
     }
 
-    pub fn raw(&self) -> &vks::VkViewportSwizzleNV {
+    pub fn to_raw(&self) -> &vks::VkViewportSwizzleNV {
         &self.raw
     }
 }
@@ -34671,7 +34671,7 @@ impl<'s> PipelineViewportSwizzleStateCreateInfoNv<'s> {
         self.raw.pViewportSwizzles = viewport_swizzles.as_ptr() as *const vks::VkViewportSwizzleNV as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineViewportSwizzleStateCreateInfoNV {
+    pub fn to_raw(&self) -> &vks::VkPipelineViewportSwizzleStateCreateInfoNV {
         &self.raw
     }
 }
@@ -34777,7 +34777,7 @@ impl<'s> PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
         self.raw.maxDiscardRectangles = max_discard_rectangles.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT {
         &self.raw
     }
 }
@@ -34890,7 +34890,7 @@ impl<'s> PipelineDiscardRectangleStateCreateInfoExt<'s> {
         self.raw.pDiscardRectangles = discard_rectangles.as_ptr() as *const vks::VkRect2D as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineDiscardRectangleStateCreateInfoEXT {
+    pub fn to_raw(&self) -> &vks::VkPipelineDiscardRectangleStateCreateInfoEXT {
         &self.raw
     }
 }
@@ -35007,7 +35007,7 @@ impl<'s> PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
         self.raw.perViewPositionAllComponents = per_view_position_all_components as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
         &self.raw
     }
 }
@@ -35104,7 +35104,7 @@ impl<'s> PhysicalDeviceSurfaceInfo2Khr<'s> {
         self.raw.surface = surface.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceSurfaceInfo2KHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceSurfaceInfo2KHR {
         &self.raw
     }
 }
@@ -35197,7 +35197,7 @@ impl<'s> SurfaceCapabilities2Khr<'s> {
         self.raw.surfaceCapabilities = surface_capabilities.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkSurfaceCapabilities2KHR {
+    pub fn to_raw(&self) -> &vks::VkSurfaceCapabilities2KHR {
         &self.raw
     }
 }
@@ -35290,7 +35290,7 @@ impl<'s> SurfaceFormat2Khr<'s> {
         self.raw.surfaceFormat = surface_format.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkSurfaceFormat2KHR {
+    pub fn to_raw(&self) -> &vks::VkSurfaceFormat2KHR {
         &self.raw
     }
 }
@@ -35384,7 +35384,7 @@ impl<'s> SharedPresentSurfaceCapabilitiesKhr<'s> {
         self.raw.sharedPresentSupportedUsageFlags = shared_present_supported_usage_flags.bits();
     }
 
-    pub fn raw(&self) -> &vks::VkSharedPresentSurfaceCapabilitiesKHR {
+    pub fn to_raw(&self) -> &vks::VkSharedPresentSurfaceCapabilitiesKHR {
         &self.raw
     }
 }
@@ -35502,7 +35502,7 @@ impl<'s> PhysicalDevice16BitStorageFeaturesKhr<'s> {
         self.raw.storageInputOutput16 = storage_input_output_16 as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDevice16BitStorageFeaturesKHR {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDevice16BitStorageFeaturesKHR {
         &self.raw
     }
 }
@@ -35622,7 +35622,7 @@ impl<'s> BufferMemoryRequirementsInfo2Khr<'s> {
         self.raw.buffer = buffer.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkBufferMemoryRequirementsInfo2KHR {
+    pub fn to_raw(&self) -> &vks::VkBufferMemoryRequirementsInfo2KHR {
         &self.raw
     }
 }
@@ -35715,7 +35715,7 @@ impl<'s> ImageMemoryRequirementsInfo2Khr<'s> {
         self.raw.image = image.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkImageMemoryRequirementsInfo2KHR {
+    pub fn to_raw(&self) -> &vks::VkImageMemoryRequirementsInfo2KHR {
         &self.raw
     }
 }
@@ -35808,7 +35808,7 @@ impl<'s> ImageSparseMemoryRequirementsInfo2Khr<'s> {
         self.raw.image = image.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkImageSparseMemoryRequirementsInfo2KHR {
+    pub fn to_raw(&self) -> &vks::VkImageSparseMemoryRequirementsInfo2KHR {
         &self.raw
     }
 }
@@ -35901,7 +35901,7 @@ impl<'s> MemoryRequirements2Khr<'s> {
         self.raw.memoryRequirements = memory_requirements.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryRequirements2KHR {
+    pub fn to_raw(&self) -> &vks::VkMemoryRequirements2KHR {
         &self.raw
     }
 }
@@ -35994,7 +35994,7 @@ impl<'s> SparseImageMemoryRequirements2Khr<'s> {
         self.raw.memoryRequirements = memory_requirements.raw;
     }
 
-    pub fn raw(&self) -> &vks::VkSparseImageMemoryRequirements2KHR {
+    pub fn to_raw(&self) -> &vks::VkSparseImageMemoryRequirements2KHR {
         &self.raw
     }
 }
@@ -36095,7 +36095,7 @@ impl<'s> MemoryDedicatedRequirementsKhr<'s> {
         self.raw.requiresDedicatedAllocation = requires_dedicated_allocation as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryDedicatedRequirementsKHR {
+    pub fn to_raw(&self) -> &vks::VkMemoryDedicatedRequirementsKHR {
         &self.raw
     }
 }
@@ -36205,7 +36205,7 @@ impl<'s> MemoryDedicatedAllocateInfoKhr<'s> {
         self.raw.buffer = buffer.handle();
     }
 
-    pub fn raw(&self) -> &vks::VkMemoryDedicatedAllocateInfoKHR {
+    pub fn to_raw(&self) -> &vks::VkMemoryDedicatedAllocateInfoKHR {
         &self.raw
     }
 }
@@ -36307,7 +36307,7 @@ impl<'s> TextureLODGatherFormatPropertiesAmd<'s> {
         self.raw.supportsTextureGatherLODBiasAMD = supports_texture_gather_lo_dbias_am_d as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkTextureLODGatherFormatPropertiesAMD {
+    pub fn to_raw(&self) -> &vks::VkTextureLODGatherFormatPropertiesAMD {
         &self.raw
     }
 }
@@ -36417,7 +36417,7 @@ impl<'s> PipelineCoverageToColorStateCreateInfoNv<'s> {
         self.raw.coverageToColorLocation = coverage_to_color_location.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineCoverageToColorStateCreateInfoNV {
+    pub fn to_raw(&self) -> &vks::VkPipelineCoverageToColorStateCreateInfoNV {
         &self.raw
     }
 }
@@ -36537,7 +36537,7 @@ impl<'s> PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
         self.raw.filterMinmaxImageComponentMapping = filter_minmax_image_component_mapping as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
         &self.raw
     }
 }
@@ -36639,7 +36639,7 @@ impl<'s> SamplerReductionModeCreateInfoExt<'s> {
         self.raw.reductionMode = reduction_mode.into();
     }
 
-    pub fn raw(&self) -> &vks::VkSamplerReductionModeCreateInfoEXT {
+    pub fn to_raw(&self) -> &vks::VkSamplerReductionModeCreateInfoEXT {
         &self.raw
     }
 }
@@ -36732,7 +36732,7 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
         self.raw.advancedBlendCoherentOperations = advanced_blend_coherent_operations as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT {
         &self.raw
     }
 }
@@ -36865,7 +36865,7 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
         self.raw.advancedBlendAllOperations = advanced_blend_all_operations as u32;
     }
 
-    pub fn raw(&self) -> &vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
+    pub fn to_raw(&self) -> &vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
         &self.raw
     }
 }
@@ -37019,7 +37019,7 @@ impl<'s> PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
         self.raw.blendOverlap = blend_overlap.into();
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT {
+    pub fn to_raw(&self) -> &vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT {
         &self.raw
     }
 }
@@ -37158,7 +37158,7 @@ impl<'s> PipelineCoverageModulationStateCreateInfoNv<'s> {
         self.raw.pCoverageModulationTable = coverage_modulation_table.as_ptr() as *const f32 as *const _;
     }
 
-    pub fn raw(&self) -> &vks::VkPipelineCoverageModulationStateCreateInfoNV {
+    pub fn to_raw(&self) -> &vks::VkPipelineCoverageModulationStateCreateInfoNV {
         &self.raw
     }
 }

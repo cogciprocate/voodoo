@@ -12,7 +12,7 @@ use ::{util, VooResult, Device, DeviceMemory, PRINT, Handle};
 pub struct BufferHandle(pub(crate) vks::VkBuffer);
 
 impl BufferHandle {
-    pub fn raw(&self) -> vks::VkBuffer {
+    pub fn to_raw(&self) -> vks::VkBuffer {
         self.0
     }
 }
@@ -58,13 +58,13 @@ impl Buffer {
     /// region of memory which is to be bound. The number of bytes returned in
     /// the VkMemoryRequirements::size member in memory, starting from
     /// memoryOffset bytes, will be bound to the specified buffer.
-    pub fn bind_memory(&self, device_memory: &DeviceMemory, offset: ::DeviceSize)
+    pub fn bind_memory(&self, memory: &DeviceMemory, offset: ::DeviceSize)
             -> VooResult<()> {
         unsafe {
-            ::check(self.inner.device.proc_addr_loader().vkBindBufferMemory(
-                self.inner.device.handle().0, self.inner.handle.0, device_memory.handle().0, offset));
+            // ::check(self.inner.device.proc_addr_loader().vkBindBufferMemory(
+            //     self.inner.device.handle().0, self.inner.handle.0, device_memory.handle().0, offset));
+            self.inner.device.bind_buffer_memory(self.inner.handle, memory.handle(), offset)
         }
-        Ok(())
     }
 
     /// Returns a reference to the associated device.
@@ -85,8 +85,9 @@ impl<'b> Handle for &'b Buffer {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyBuffer(self.device.handle().0,
-                self.handle.0, ptr::null());
+            // self.device.proc_addr_loader().core.vkDestroyBuffer(self.device.handle().0,
+            //     self.handle.0, ptr::null());
+            self.device.destroy_buffer(self.handle, None);
         }
     }
 }
@@ -161,25 +162,31 @@ impl<'b> BufferBuilder<'b> {
 
     /// Creates and returns a new `Buffer`
     pub fn build(&self, device: Device) -> VooResult<Buffer> {
-        let mut handle = 0;
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateBuffer(device.handle().0,
-                self.create_info.as_raw(), ptr::null(), &mut handle));
-        }
+        // let mut handle = 0;
+        // unsafe {
+        //     ::check(device.proc_addr_loader().core.vkCreateBuffer(device.handle().0,
+        //         self.create_info.as_raw(), ptr::null(), &mut handle));
+        // }
 
-        // Memory Requirements:
-        let mut memory_requirements: vks::VkMemoryRequirements;
-        unsafe {
-            memory_requirements = mem::uninitialized();
-            device.proc_addr_loader().core.vkGetBufferMemoryRequirements(device.handle().0,
-                handle, &mut memory_requirements);
-        }
+        let handle = unsafe { device.create_buffer(&self.create_info, None)? };
+
+        // // Memory Requirements:
+        // let mut memory_requirements: vks::VkMemoryRequirements;
+        // unsafe {
+        //     memory_requirements = mem::uninitialized();
+        //     device.proc_addr_loader().core.vkGetBufferMemoryRequirements(device.handle().0,
+        //         handle, &mut memory_requirements);
+        // }
+
+        let memory_requirements = unsafe { device.get_buffer_memory_requirements(handle) };
 
         Ok(Buffer {
             inner: Arc::new(Inner {
-                handle: BufferHandle(handle),
+                // handle: BufferHandle(handle),
+                handle,
                 device,
-                memory_requirements: memory_requirements.into(),
+                // memory_requirements: memory_requirements.into(),
+                memory_requirements,
             })
         })
     }

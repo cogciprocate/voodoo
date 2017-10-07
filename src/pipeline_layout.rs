@@ -4,7 +4,8 @@ use std::ptr;
 use std::marker::PhantomData;
 use vks;
 use smallvec::SmallVec;
-use ::{util, VooResult, Device, ShaderModule, DescriptorSetLayoutHandle, DescriptorSetLayout, Handle};
+use ::{util, VooResult, Device, ShaderModule, DescriptorSetLayoutHandle, DescriptorSetLayout, Handle,
+    PipelineLayoutCreateInfo, PushConstantRange};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -13,7 +14,7 @@ pub struct PipelineLayoutHandle(pub(crate) vks::VkPipelineLayout);
 
 impl PipelineLayoutHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkPipelineLayout {
+    pub fn to_raw(&self) -> vks::VkPipelineLayout {
         self.0
     }
 }
@@ -67,8 +68,9 @@ impl<'h> Handle for &'h PipelineLayout {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyPipelineLayout(self.device.handle().0,
-                self.handle.0, ptr::null());
+            // self.device.proc_addr_loader().core.vkDestroyPipelineLayout(self.device.handle().0,
+            //     self.handle.0, ptr::null());
+            self.device.destroy_pipeline_layout(self.handle, None);
         }
     }
 }
@@ -88,7 +90,7 @@ impl Drop for Inner {
 //
 #[derive(Debug, Clone)]
 pub struct PipelineLayoutBuilder<'b> {
-    create_info: vks::VkPipelineLayoutCreateInfo,
+    create_info: PipelineLayoutCreateInfo<'b>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -96,7 +98,7 @@ impl<'b> PipelineLayoutBuilder<'b> {
     /// Returns a new render pass builder.
     pub fn new() -> PipelineLayoutBuilder<'b> {
         PipelineLayoutBuilder {
-            create_info: vks::VkPipelineLayoutCreateInfo::default(),
+            create_info: PipelineLayoutCreateInfo::default(),
             _p: PhantomData,
         }
     }
@@ -106,8 +108,9 @@ impl<'b> PipelineLayoutBuilder<'b> {
             set_layouts: &'p [DescriptorSetLayoutHandle])
             -> &'s mut PipelineLayoutBuilder<'b>
             where 'p: 'b {
-        self.create_info.setLayoutCount = set_layouts.len() as u32;
-        self.create_info.pSetLayouts = set_layouts.as_ptr() as *const vks::VkDescriptorSetLayout;
+        // self.create_info.setLayoutCount = set_layouts.len() as u32;
+        // self.create_info.pSetLayouts = set_layouts.as_ptr() as *const vks::VkDescriptorSetLayout;
+        self.create_info.set_set_layouts(set_layouts);
         self
     }
 
@@ -117,25 +120,29 @@ impl<'b> PipelineLayoutBuilder<'b> {
     /// push constants can be accessed by each stage of the pipeline.
     /// Specifies a list of VkDescriptorSetLayout objects.
     pub fn push_constant_ranges<'s, 'p>(&'s mut self,
-            push_constant_ranges: &'p [vks::VkPushConstantRange])
+            push_constant_ranges: &'p [PushConstantRange])
             -> &'s mut PipelineLayoutBuilder<'b>
             where 'p: 'b {
-        self.create_info.pushConstantRangeCount = push_constant_ranges.len() as u32;
-        self.create_info.pPushConstantRanges = push_constant_ranges.as_ptr();
+        // self.create_info.pushConstantRangeCount = push_constant_ranges.len() as u32;
+        // self.create_info.pPushConstantRanges = push_constant_ranges.as_ptr();
+        self.create_info.set_push_constant_ranges(push_constant_ranges);
         self
     }
 
     /// Creates and returns a new `PipelineLayout`
     pub fn build(&self, device: Device) -> VooResult<PipelineLayout> {
-        let mut handle = 0;
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkCreatePipelineLayout(device.handle().0,
-                &self.create_info, ptr::null(), &mut handle));
-        }
+        // let mut handle = 0;
+        // unsafe {
+        //     ::check(device.proc_addr_loader().core.vkCreatePipelineLayout(device.handle().0,
+        //         &self.create_info, ptr::null(), &mut handle));
+        // }
+
+        let handle = unsafe { device.create_pipeline_layout(&self.create_info, None)? };
 
         Ok(PipelineLayout {
             inner: Arc::new(Inner {
-                handle: PipelineLayoutHandle(handle),
+                // handle: PipelineLayoutHandle(handle),
+                handle,
                 device,
             })
         })

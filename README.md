@@ -17,7 +17,7 @@
 
 #### Status
 
-Stability ~= 40%.
+Completion ~= 50%.
 
 
 #### Other Vulkan libraries in Rust
@@ -25,8 +25,7 @@ Stability ~= 40%.
 For a higher level, more opinionated Vulkan API (that does more for you) see
 the [Vulkano] project.
 
-Other similar libraries include [dacite] (by the author of [vks], which this
-library is also built on) and [ash].
+Other similar libraries include [dacite] and [ash].
 
 [Vulkano]: https://github.com/vulkano-rs/vulkano
 [dacite]: https://gitlab.com/dennis-hamester/dacite/tree/master/dacite

@@ -7,7 +7,7 @@ use std::slice;
 use std::marker::PhantomData;
 use libc::c_void;
 use vks;
-use ::{util, VooResult, Device, Handle};
+use ::{util, VooResult, Device, Handle, MemoryAllocateInfo, MemoryMapFlags};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -15,7 +15,7 @@ use ::{util, VooResult, Device, Handle};
 pub struct DeviceMemoryHandle(pub(crate) vks::VkDeviceMemory);
 
 impl DeviceMemoryHandle {
-    pub fn raw(&self) -> vks::VkDeviceMemory {
+    pub fn to_raw(&self) -> vks::VkDeviceMemory {
         self.0
     }
 }
@@ -76,7 +76,7 @@ pub struct DeviceMemory {
 
 impl DeviceMemory {
     /// Returns a new `DeviceMemoryBuilder`.
-    pub fn builder() -> DeviceMemoryBuilder {
+    pub fn builder<'b>() -> DeviceMemoryBuilder<'b> {
         DeviceMemoryBuilder::new()
     }
 
@@ -93,12 +93,13 @@ impl DeviceMemory {
     ///
     /// The `flags` argument is reserved for future use and is ignored.
     pub unsafe fn map_to_ptr<T>(&self, offset_bytes: u64, size_bytes: u64,
-            flags: vks::VkMemoryMapFlags)
+            flags: MemoryMapFlags)
             -> VooResult<*mut T> {
-        let mut data = ptr::null_mut();
-        ::check(self.inner.device.proc_addr_loader().vkMapMemory(self.inner.device.handle().0,
-            self.inner.handle.0, offset_bytes, size_bytes, flags, &mut data));
-        Ok(data as *mut T)
+        // let mut data = ptr::null_mut();
+        // ::check(self.inner.device.proc_addr_loader().vkMapMemory(self.inner.device.handle().0,
+        //     self.inner.handle.0, offset_bytes, size_bytes, flags, &mut data));
+        // Ok(data as *mut T)
+        self.inner.device.map_memory(self.inner.handle, offset_bytes, size_bytes, flags)
     }
 
     /// Unmaps memory.
@@ -107,8 +108,9 @@ impl DeviceMemory {
     ///
     /// Use `::unmap` to unmap memory mapped by `::map`.
     pub unsafe fn unmap_ptr(&self) {
-        self.inner.device.proc_addr_loader().core.vkUnmapMemory(self.inner.device.handle().0,
-            self.inner.handle.0);
+        // self.inner.device.proc_addr_loader().core.vkUnmapMemory(self.inner.device.handle().0,
+        //     self.inner.handle.0);
+        self.inner.device.unmap_memory(self.inner.handle);
     }
 
     /// Maps a region of memory and returns a mutable reference to it.
@@ -126,13 +128,13 @@ impl DeviceMemory {
     /// self.uniform_buffer_memory.unmap(mem);
     /// ```
     ///
-    /// Note/Reminder: This example uses a dedicated buffer and memory
+    /// Note/Reminder: The above example uses a dedicated buffer and memory
     /// allocation for demonstration purposes. It is best practice to allocate
     /// all memory from one large buffer and use offsets to specify particular
     /// parts.
     ///
     /// The `flags` argument is reserved for future use and is ignored.
-    pub fn map<'m, T>(&'m self, offset_bytes: u64, size_bytes: u64, flags: vks::VkMemoryMapFlags)
+    pub fn map<'m, T>(&'m self, offset_bytes: u64, size_bytes: u64, flags: MemoryMapFlags)
             -> VooResult<MemoryMapping<'m, T>> {
         let ptr = unsafe { self.map_to_ptr(offset_bytes, size_bytes, flags)? };
         let len = size_bytes as usize / mem::size_of::<T>();
@@ -167,65 +169,50 @@ impl<'h> Handle for &'h DeviceMemory {
 
 impl Drop for Inner {
     fn drop(&mut self) {
-        unsafe {
-            self.device.proc_addr_loader().core.vkFreeMemory(self.device.handle().0,
-                self.handle.0, ptr::null());
-        }
+        unsafe { self.device.free_memory(self.handle, None); }
     }
 }
 
 
 /// A builder for `DeviceMemory`.
-//
-// typedef struct VkMemoryAllocateInfo {
-//     VkStructureType    sType;
-//     const void*        pNext;
-//     VkDeviceSize       allocationSize;
-//     uint32_t           memoryTypeIndex;
-// } VkMemoryAllocateInfo;
-//
 #[derive(Debug, Clone)]
-pub struct DeviceMemoryBuilder {
-    allocate_info: vks::VkMemoryAllocateInfo,
+pub struct DeviceMemoryBuilder<'b> {
+    allocate_info: MemoryAllocateInfo<'b>,
 }
 
-impl DeviceMemoryBuilder {
+impl<'b> DeviceMemoryBuilder<'b> {
     /// Returns a new render pass builder.
-    pub fn new() -> DeviceMemoryBuilder {
+    pub fn new() -> DeviceMemoryBuilder<'b> {
         DeviceMemoryBuilder {
-            allocate_info: vks::VkMemoryAllocateInfo::default(),
+            allocate_info: MemoryAllocateInfo::default(),
         }
     }
 
     /// Specifies the size of the allocation in bytes
     pub fn allocation_size<'s>(&'s mut self, allocation_size: vks::VkDeviceSize)
-            -> &'s mut DeviceMemoryBuilder {
-        self.allocate_info.allocationSize = allocation_size;
+            -> &'s mut DeviceMemoryBuilder<'b> {
+        self.allocate_info.set_allocation_size(allocation_size);
         self
     }
 
     /// Specifies the memory type index, which selects the properties of the
     /// memory to be allocated, as well as the heap the memory will come from.
     pub fn memory_type_index<'s>(&'s mut self, memory_type_index: u32)
-            -> &'s mut DeviceMemoryBuilder {
-        self.allocate_info.memoryTypeIndex = memory_type_index;
+            -> &'s mut DeviceMemoryBuilder<'b> {
+        self.allocate_info.set_memory_type_index(memory_type_index);
         self
     }
 
     /// Creates and returns a new `DeviceMemory`
     pub fn build(&self, device: Device) -> VooResult<DeviceMemory> {
-        let mut handle = 0;
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkAllocateMemory(device.handle().0,
-                &self.allocate_info, ptr::null(), &mut handle));
-        }
+        let handle = unsafe { device.allocate_memory(&self.allocate_info, None)? };
 
         Ok(DeviceMemory {
             inner: Arc::new(Inner {
-                handle: DeviceMemoryHandle(handle),
+                handle,
                 device,
-                allocation_size: self.allocate_info.allocationSize,
-                memory_type_index: self.allocate_info.memoryTypeIndex,
+                allocation_size: self.allocate_info.allocation_size(),
+                memory_type_index: self.allocate_info.memory_type_index(),
             })
         })
     }

@@ -12,7 +12,7 @@ pub struct RenderPassHandle(pub(crate) vks::VkRenderPass);
 
 impl RenderPassHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkRenderPass {
+    pub fn to_raw(&self) -> vks::VkRenderPass {
         self.0
     }
 }
@@ -67,8 +67,9 @@ impl<'h> Handle for &'h RenderPass {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyRenderPass(self.device.handle().0,
-                self.handle.0, ptr::null());
+            // self.device.proc_addr_loader().core.vkDestroyRenderPass(self.device.handle().0,
+            //     self.handle.0, ptr::null());
+            self.device.destroy_render_pass(self.handle, None);
         }
     }
 }
@@ -124,15 +125,18 @@ impl<'b> RenderPassBuilder<'b> {
 
     /// Builds and returns a new `RenderPass`
     pub fn build(&self, device: Device) -> VooResult<RenderPass> {
-        let mut handle = 0;
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateRenderPass(device.handle().0,
-                self.create_info.as_raw(), ptr::null(), &mut handle));
-        }
+        // let mut handle = 0;
+        // unsafe {
+        //     ::check(device.proc_addr_loader().core.vkCreateRenderPass(device.handle().0,
+        //         self.create_info.as_raw(), ptr::null(), &mut handle));
+        // }
+
+        let handle = unsafe { device.create_render_pass(&self.create_info, None)? };
 
         Ok(RenderPass {
             inner: Arc::new(Inner {
-                handle: RenderPassHandle(handle),
+                // handle: RenderPassHandle(handle),
+                handle,
                 device,
             })
         })

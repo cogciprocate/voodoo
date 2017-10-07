@@ -4,8 +4,10 @@ use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
 use winit;
 use vks;
-use ::{VooResult, Instance, Handle};
-
+use ::{VooResult, Instance, Handle, XlibSurfaceCreateInfoKhr, XcbSurfaceCreateInfoKhr,
+    WaylandSurfaceCreateInfoKhr, MirSurfaceCreateInfoKhr, Win32SurfaceCreateInfoKhr,
+    AndroidSurfaceCreateInfoKhr, IosSurfaceCreateInfoMvk, MacOsSurfaceCreateInfoMvk,
+    ViSurfaceCreateInfoNn};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
@@ -13,7 +15,7 @@ pub struct SurfaceKhrHandle(pub(crate) vks::VkSurfaceKHR);
 
 impl SurfaceKhrHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkSurfaceKHR {
+    pub fn to_raw(&self) -> vks::VkSurfaceKHR {
         self.0
     }
 }
@@ -41,7 +43,7 @@ pub struct SurfaceKhr {
 }
 
 impl SurfaceKhr {
-    pub fn builder() -> SurfaceKhrBuilder {
+    pub fn builder<'b>() -> SurfaceKhrBuilder<'b> {
         SurfaceKhrBuilder::new()
     }
 
@@ -71,39 +73,49 @@ impl<'s> Handle for &'s SurfaceKhr {
 
 impl Drop for Inner {
     fn drop(&mut self) {
-        unsafe {
-            self.instance.proc_addr_loader().khr_surface.vkDestroySurfaceKHR(self.instance.handle().0,
-                self.handle.0, ptr::null());
-        }
+        // unsafe {
+        //     self.instance.proc_addr_loader().khr_surface.vkDestroySurfaceKHR(self.instance.handle().0,
+        //         self.handle.0, ptr::null());
+        // }
+        unsafe { self.instance.destroy_surface_khr(self.handle, None); }
     }
 }
 
 
-enum CreateInfo {
-    Xlib(vks::VkXlibSurfaceCreateInfoKHR),
-    Xcb(vks::VkXcbSurfaceCreateInfoKHR),
-    Wayland(vks::VkWaylandSurfaceCreateInfoKHR),
-    Mir(vks::VkMirSurfaceCreateInfoKHR),
-    Win32(vks::VkWin32SurfaceCreateInfoKHR),
-    Android(vks::VkAndroidSurfaceCreateInfoKHR),
-    Ios(vks::VkIOSSurfaceCreateInfoMVK),
-    MacOs(vks::VkMacOSSurfaceCreateInfoMVK),
-    Vi(vks::VkViSurfaceCreateInfoNN),
+// enum CreateInfo {
+//     Xlib(vks::VkXlibSurfaceCreateInfoKHR),
+//     Xcb(vks::VkXcbSurfaceCreateInfoKHR),
+//     Wayland(vks::VkWaylandSurfaceCreateInfoKHR),
+//     Mir(vks::VkMirSurfaceCreateInfoKHR),
+//     Win32(vks::VkWin32SurfaceCreateInfoKHR),
+//     Android(vks::VkAndroidSurfaceCreateInfoKHR),
+//     Ios(vks::VkIOSSurfaceCreateInfoMVK),
+//     MacOs(vks::VkMacOSSurfaceCreateInfoMVK),
+//     Vi(vks::VkViSurfaceCreateInfoNN),
+//     None,
+// }
+
+enum CreateInfo<'c> {
+    Xlib(XlibSurfaceCreateInfoKhr<'c>),
+    Xcb(XcbSurfaceCreateInfoKhr<'c>),
+    Wayland(WaylandSurfaceCreateInfoKhr<'c>),
+    Mir(MirSurfaceCreateInfoKhr<'c>),
+    Win32(Win32SurfaceCreateInfoKhr<'c>),
+    Android(AndroidSurfaceCreateInfoKhr<'c>),
+    Ios(IosSurfaceCreateInfoMvk<'c>),
+    MacOs(MacOsSurfaceCreateInfoMvk<'c>),
+    Vi(ViSurfaceCreateInfoNn<'c>),
     None,
 }
 
 /// A builder used to create a `Surface`.
-pub struct SurfaceKhrBuilder {
-    // create_info: vks::VkWin32SurfaceCreateInfoKHR,
-    create_info: CreateInfo,
-    // enabled_layer_name_ptrs: SmallVec<[*const c_char; 128]>,
-    // enabled_extension_name_ptrs: SmallVec<[*const c_char; 128]>,
-    // _p: PhantomData<&'ib ()>,
+pub struct SurfaceKhrBuilder<'b> {
+    create_info: CreateInfo<'b>,
 }
 
-impl SurfaceKhrBuilder {
+impl<'b> SurfaceKhrBuilder<'b> {
     /// Returns a new surface builder.
-    pub fn new() -> SurfaceKhrBuilder {
+    pub fn new() -> SurfaceKhrBuilder<'b> {
         SurfaceKhrBuilder {
             create_info: CreateInfo::None,
             // _p: PhantomData,
@@ -112,20 +124,20 @@ impl SurfaceKhrBuilder {
 
     #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
     pub unsafe fn xlib<'s>(&'s mut self, dpy: *mut vks::Display, window: vks::Window)
-            -> &'s mut SurfaceKhrBuilder {
+            -> &'s mut SurfaceKhrBuilder<'b> {
         let mut ci = vks::VkXlibSurfaceCreateInfoKHR::default();
-        ci.dpy = dpy;
-        ci.window = window;
+        ci.set_dpy(dpy);
+        ci.set_window(window);
         self.create_info = CreateInfo::Xlib(ci);
         self
     }
 
     #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
     pub unsafe fn xcb<'s>(&'s mut self, connection: *mut vks::xcb_connection_t,
-            window: vks::xcb_window_t) -> &'s mut SurfaceKhrBuilder {
+            window: vks::xcb_window_t) -> &'s mut SurfaceKhrBuilder<'b> {
         let mut ci = vks::VkXcbSurfaceCreateInfoKHR::default();
-        ci.connection = connection;
-        ci.window = window;
+        ci.set_connection(connection);
+        ci.set_window(window);
         self.create_info = CreateInfo::Xcb(ci);
         self
     }
@@ -134,18 +146,18 @@ impl SurfaceKhrBuilder {
     pub unsafe fn wayland<'s>(&'s mut self, display: *mut vks::wl_display, surface: *mut vks::wl_surface)
             -> &'s mut SurfaceKhrBuilder {
         let mut ci = vks::VkWaylandSurfaceCreateInfoKHR::default();
-        ci.display = display;
-        ci.surface = surface;
+        ci.set_display(display);
+        ci.set_surface(surface);
         self.create_info = CreateInfo::Wayland(ci);
         self
     }
 
     #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
     pub unsafe fn mir<'s>(&'s mut self, connection: *mut vks::MirConnection,
-            mir_surface: *mut vks::MirSurface) -> &'s mut SurfaceKhrBuilder {
+            mir_surface: *mut vks::MirSurface) -> &'s mut SurfaceKhrBuilder<'b> {
         let mut ci = vks::VkMirSurfaceCreateInfoKHR::default();
-        ci.connection = connection;
-        ci.mirSurface = mir_surface;
+        ci.set_connection(connection);
+        ci.set_mir_surface(mir_surface);
         self.create_info = CreateInfo::Mir(ci);
         self
     }
@@ -153,60 +165,63 @@ impl SurfaceKhrBuilder {
 
     #[cfg(target_os = "windows")]
     pub unsafe fn win32<'s>(&'s mut self, hinstance: *mut vks::HINSTANCE_T, hwnd: *mut vks::HWND_T)
-            -> &'s mut SurfaceKhrBuilder {
-        let mut ci = vks::VkWin32SurfaceCreateInfoKHR::default();
-        ci.hinstance = hinstance;
-        ci.hwnd = hwnd;
+            -> &'s mut SurfaceKhrBuilder<'b> {
+        let mut ci = Win32SurfaceCreateInfoKhr::default();
+        ci.set_hinstance(hinstance);
+        ci.set_hwnd(hwnd);
         self.create_info = CreateInfo::Win32(ci);
         self
     }
 
     #[cfg(target_os = "android")]
     pub unsafe fn android<'s>(&'s mut self, flags: vks::VkAndroidSurfaceCreateFlagsKHR,
-            window: *mut vks::ANativeWindow) -> &'s mut SurfaceKhrBuilder {
+            window: *mut vks::ANativeWindow) -> &'s mut SurfaceKhrBuilder<'b> {
         let mut ci = vks::VkAndroidSurfaceCreateInfoKHR::default();
-        ci.flags = flags;
-        ci.window = window;
+        ci.set_flags(flags);
+        ci.set_window(window);
         self.create_info = CreateInfo::Android(ci);
         self
     }
 
     #[cfg(target_os = "macos")]
     pub unsafe fn ios<'s>(&'s mut self, view: *const c_void)
-            -> &'s mut SurfaceKhrBuilder {
+            -> &'s mut SurfaceKhrBuilder<'b> {
         let mut ci = vks::VkIOSSurfaceCreateInfoMVK::default();
-        ci.view = view;
+        ci.set_view(view);
         self.create_info = CreateInfo::Ios(ci);
         self
     }
 
     #[cfg(target_os = "macos")]
     pub unsafe fn macos<'s>(&'s mut self, view: *const c_void)
-            -> &'s mut SurfaceKhrBuilder {
+            -> &'s mut SurfaceKhrBuilder<'b> {
         let mut ci = vks::VkMacOSSurfaceCreateInfoMVK::default();
-        ci.view = view;
+        ci.set_view(view);
         self.create_info = CreateInfo::MacOs(ci);
         self
     }
 
     /// Builds and returns a new `SurfaceKhr`.
     pub fn build(&self, instance: Instance) -> VooResult<SurfaceKhr> {
-        let mut handle = 0;
+        // let mut handle = 0;
 
-        unsafe {
+        let handle = unsafe {
             match self.create_info {
                 CreateInfo::Win32(ref ci) => {
-                    ::check(instance.proc_addr_loader().khr_win32_surface.vkCreateWin32SurfaceKHR(
-                        instance.handle().0, ci, ptr::null(), &mut handle));
+                    // ::check(instance.proc_addr_loader().khr_win32_surface.vkCreateWin32SurfaceKHR(
+                    //     instance.handle().0, ci, ptr::null(), &mut handle));
+                    instance.create_win32_surface_khr(ci, None)?
                 },
                 CreateInfo::None => panic!("no surface window information provided"),
-                _ => unimplemented!(),
+                _ => unimplemented!("unable to create surface: non-windows surfaces not yet \
+                    implemented (it's easy!)"),
             }
-        }
+        };
 
         Ok(SurfaceKhr {
             inner: Arc::new(Inner {
-                handle: SurfaceKhrHandle(handle),
+                // handle: SurfaceKhrHandle(handle),
+                handle,
                 instance: instance,
                 active: AtomicBool::new(false),
             })

@@ -1,6 +1,6 @@
 //! vkc - Vulkan Compute
 
-#![allow(unused_extern_crates, unused_imports, dead_code, unused_variables)]
+#![allow(unused_extern_crates, /*unused_imports,*/ dead_code, unused_variables)]
 
 extern crate libloading as lib;
 extern crate smallvec;
@@ -156,7 +156,6 @@ use std::hash::{Hash, Hasher};
 use libc::c_void;
 use std::mem;
 use std::ptr;
-use winit::{EventsLoop, WindowBuilder, Window as WinitWindow, CreationError, ControlFlow, Event, WindowEvent};
 use ordered_float::OrderedFloat;
 use error::Result as VooResult;
 pub use util::{CharStr, CharStrs};
@@ -196,6 +195,8 @@ pub trait Handle {
     fn handle(&self) -> Self::Target;
 }
 
+pub trait AnyPipelineHandle: Handle<Target=PipelineHandle> {}
+
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -204,7 +205,7 @@ pub struct FenceHandle(pub(crate) vks::VkFence);
 
 impl FenceHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkFence {
+    pub fn to_raw(&self) -> vks::VkFence {
         self.0
     }
 }
@@ -224,7 +225,7 @@ pub struct EventHandle(pub(crate) vks::VkEvent);
 
 impl EventHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkEvent {
+    pub fn to_raw(&self) -> vks::VkEvent {
         self.0
     }
 }
@@ -244,7 +245,7 @@ pub struct QueryPoolHandle(pub(crate) vks::VkQueryPool);
 
 impl QueryPoolHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkQueryPool {
+    pub fn to_raw(&self) -> vks::VkQueryPool {
         self.0
     }
 }
@@ -264,7 +265,7 @@ pub struct BufferViewHandle(pub(crate) vks::VkBufferView);
 
 impl BufferViewHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkBufferView {
+    pub fn to_raw(&self) -> vks::VkBufferView {
         self.0
     }
 }
@@ -284,7 +285,7 @@ pub struct PipelineCacheHandle(pub(crate) vks::VkPipelineCache);
 
 impl PipelineCacheHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkPipelineCache {
+    pub fn to_raw(&self) -> vks::VkPipelineCache {
         self.0
     }
 }
@@ -304,7 +305,7 @@ pub struct PipelineHandle(pub(crate) vks::VkPipeline);
 
 impl PipelineHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkPipeline {
+    pub fn to_raw(&self) -> vks::VkPipeline {
         self.0
     }
 }
@@ -324,7 +325,7 @@ pub struct DescriptorSetHandle(pub(crate) vks::VkDescriptorSet);
 
 impl DescriptorSetHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkDescriptorSet {
+    pub fn to_raw(&self) -> vks::VkDescriptorSet {
         self.0
     }
 }
@@ -344,7 +345,7 @@ pub struct DisplayKhrHandle(pub(crate) vks::VkDisplayKHR);
 
 impl DisplayKhrHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkDisplayKHR {
+    pub fn to_raw(&self) -> vks::VkDisplayKHR {
         self.0
     }
 }
@@ -364,7 +365,7 @@ pub struct DisplayModeKhrHandle(pub(crate) vks::VkDisplayModeKHR);
 
 impl DisplayModeKhrHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkDisplayModeKHR {
+    pub fn to_raw(&self) -> vks::VkDisplayModeKHR {
         self.0
     }
 }
@@ -384,7 +385,7 @@ pub struct DescriptorUpdateTemplateHandle(pub(crate) vks::VkDescriptorUpdateTemp
 
 impl DescriptorUpdateTemplateHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkDescriptorUpdateTemplateKHR {
+    pub fn to_raw(&self) -> vks::VkDescriptorUpdateTemplateKHR {
         self.0
     }
 }
@@ -404,7 +405,7 @@ pub struct DebugReportCallbackExtHandle(pub(crate) vks::VkDebugReportCallbackEXT
 
 impl DebugReportCallbackExtHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkDebugReportCallbackEXT {
+    pub fn to_raw(&self) -> vks::VkDebugReportCallbackEXT {
         self.0
     }
 }
@@ -424,7 +425,7 @@ pub struct SamplerYcbcrConversionKhrHandle(pub(crate) u64);
 
 impl SamplerYcbcrConversionKhrHandle {
     #[inline(always)]
-    pub fn raw(&self) -> u64 {
+    pub fn to_raw(&self) -> u64 {
         self.0
     }
 }
@@ -444,7 +445,7 @@ pub struct ObjectTableNvxHandle(pub(crate) u64);
 
 impl ObjectTableNvxHandle {
     #[inline(always)]
-    pub fn raw(&self) -> u64 {
+    pub fn to_raw(&self) -> u64 {
         self.0
     }
 }
@@ -464,7 +465,7 @@ pub struct IndirectCommandsLayoutNvxHandle(pub(crate) u64);
 
 impl IndirectCommandsLayoutNvxHandle {
     #[inline(always)]
-    pub fn raw(&self) -> u64 {
+    pub fn to_raw(&self) -> u64 {
         self.0
     }
 }
@@ -484,7 +485,7 @@ pub struct ValidationCacheExtHandle(pub(crate) u64);
 
 impl ValidationCacheExtHandle {
     #[inline(always)]
-    pub fn raw(&self) -> u64 {
+    pub fn to_raw(&self) -> u64 {
         self.0
     }
 }
@@ -562,6 +563,22 @@ impl<'h> Handle for &'h Pipeline {
 }
 
 
+#[derive(Clone, Debug)]
+pub struct QueryPool(QueryPoolHandle);
+
+impl QueryPool {
+    pub fn handle(&self) -> QueryPoolHandle {
+        self.0
+    }
+}
+
+impl<'h> Handle for &'h QueryPool {
+    type Target = QueryPoolHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.0
+    }
+}
 
 
 #[derive(Clone, Debug)]
@@ -575,6 +592,24 @@ impl Fence {
 
 impl<'h> Handle for &'h Fence {
     type Target = FenceHandle;
+
+    fn handle(&self) -> Self::Target {
+        self.0
+    }
+}
+
+
+#[derive(Clone, Debug)]
+pub struct Event(EventHandle);
+
+impl Event {
+    pub fn handle(&self) -> EventHandle {
+        self.0
+    }
+}
+
+impl<'h> Handle for &'h Event {
+    type Target = EventHandle;
 
     fn handle(&self) -> Self::Target {
         self.0

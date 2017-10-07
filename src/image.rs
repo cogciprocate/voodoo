@@ -13,7 +13,7 @@ pub struct ImageHandle(pub(crate) vks::VkImage);
 
 impl ImageHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkImage {
+    pub fn to_raw(&self) -> vks::VkImage {
         self.0
     }
 }
@@ -47,13 +47,15 @@ impl Image {
     }
 
     pub fn from_handle(device: Device, handle: ImageHandle) -> VooResult<Image> {
-        // Memory Requirements:
-        let mut memory_requirements: vks::VkMemoryRequirements;
-        unsafe {
-            memory_requirements = mem::uninitialized();
-            device.proc_addr_loader().core.vkGetImageMemoryRequirements(device.handle().0,
-                handle.0, &mut memory_requirements);
-        }
+        // // Memory Requirements:
+        // let mut memory_requirements: vks::VkMemoryRequirements;
+        // unsafe {
+        //     memory_requirements = mem::uninitialized();
+        //     device.proc_addr_loader().core.vkGetImageMemoryRequirements(device.handle().0,
+        //         handle.0, &mut memory_requirements);
+        // }
+
+        let memory_requirements = unsafe { device.get_image_memory_requirements(handle) };
 
         Ok(Image {
             inner: Arc::new(Inner {
@@ -76,13 +78,14 @@ impl Image {
     /// region of memory which is to be bound. The number of bytes returned in
     /// the VkMemoryRequirements::size member in memory, starting from
     /// memoryOffset bytes, will be bound to the specified image.
-    pub fn bind_memory(&self, device_memory: &DeviceMemory, offset: ::DeviceSize)
+    pub fn bind_memory(&self, memory: &DeviceMemory, offset: ::DeviceSize)
             -> VooResult<()> {
         unsafe {
-            ::check(self.inner.device.proc_addr_loader().vkBindImageMemory(
-                self.inner.device.handle().0, self.inner.handle.0, device_memory.handle().0, offset));
+            // ::check(self.inner.device.proc_addr_loader().vkBindImageMemory(
+            //     self.inner.device.handle().0, self.inner.handle.0, device_memory.handle().0, offset));
+            self.inner.device.bind_image_memory(self.inner.handle, memory.handle(), offset)
         }
-        Ok(())
+        // Ok(())
     }
 
     /// Returns a reference to the associated device.
@@ -103,7 +106,8 @@ impl<'i> Handle for &'i Image {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().vkDestroyImage(self.device.handle().0, self.handle.0, ptr::null());
+            // self.device.proc_addr_loader().vkDestroyImage(self.device.handle().0, self.handle.0, ptr::null());
+            self.device.destroy_image(self.handle, None);
         }
     }
 }
@@ -249,11 +253,13 @@ impl<'b> ImageBuilder<'b> {
 
     //// Creates and returns a new `Image`
     pub fn build(&self, device: Device) -> VooResult<Image> {
-        let mut handle = 0;
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateImage(device.handle().0,
-                self.create_info.as_raw(), ptr::null(), &mut handle));
-        }
+        // let mut handle = 0;
+        // unsafe {
+        //     ::check(device.proc_addr_loader().core.vkCreateImage(device.handle().0,
+        //         self.create_info.as_raw(), ptr::null(), &mut handle));
+        // }
+
+        let handle = unsafe { device.create_image(&self.create_info, None)? };
 
         // // Memory Requirements:
         // let mut memory_requirements: vks::VkMemoryRequirements;
@@ -270,6 +276,6 @@ impl<'b> ImageBuilder<'b> {
         //         device,
         //     })
         // })
-        Image::from_handle(device, ImageHandle(handle))
+        Image::from_handle(device, handle)
     }
 }

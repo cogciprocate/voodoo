@@ -5,7 +5,7 @@ use std::path::Path;
 use std::fs::File;
 use std::io::{Read, BufReader};
 use vks;
-use ::{VooResult, Device, Handle};
+use ::{VooResult, Device, Handle, ShaderModuleCreateInfo};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -14,7 +14,7 @@ pub struct ShaderModuleHandle(pub(crate) vks::VkShaderModule);
 
 impl ShaderModuleHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkShaderModule {
+    pub fn to_raw(&self) -> vks::VkShaderModule {
         self.0
     }
 }
@@ -49,24 +49,30 @@ pub struct ShaderModule {
 }
 
 impl ShaderModule {
-    pub fn new(device: Device, code: &[u8]) -> VooResult<ShaderModule> {
-        let create_info = vks::VkShaderModuleCreateInfo {
-            sType: vks::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-            pNext: ptr::null(),
-            flags: 0,
-            codeSize: code.len(),
-            pCode: code.as_ptr() as *const u32,
-        };
+    pub fn new(device: Device, code: &[u32]) -> VooResult<ShaderModule> {
+        // let create_info = vks::VkShaderModuleCreateInfo {
+        //     sType: vks::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+        //     pNext: ptr::null(),
+        //     flags: 0,
+        //     codeSize: code.len(),
+        //     pCode: code.as_ptr() as *const u32,
+        // };
 
-        let mut handle = 0;
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateShaderModule(device.handle().0, &create_info,
-                ptr::null(), &mut handle));
-        }
+        let create_info = ShaderModuleCreateInfo::builder()
+            .code(code)
+            .build();
+
+        // let mut handle = 0;
+        // unsafe {
+        //     ::check(device.proc_addr_loader().core.vkCreateShaderModule(device.handle().0, &create_info,
+        //         ptr::null(), &mut handle));
+        // }
+        let handle = unsafe { device.create_shader_module(&create_info, None)? };
 
         Ok(ShaderModule {
             inner: Arc::new(Inner {
-                handle: ShaderModuleHandle(handle),
+                // handle: ShaderModuleHandle(handle),
+                handle,
                 device,
             })
         })
@@ -94,8 +100,9 @@ impl<'h> Handle for &'h ShaderModule {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyShaderModule(self.device.handle().0,
-                self.handle.0, ptr::null());
+            // self.device.proc_addr_loader().core.vkDestroyShaderModule(self.device.handle().0,
+            //     self.handle.0, ptr::null());
+            self.device.destroy_shader_module(self.handle, None);
         }
     }
 }

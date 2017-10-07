@@ -14,7 +14,7 @@ pub struct CommandPoolHandle(pub(crate) vks::VkCommandPool);
 
 impl CommandPoolHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkCommandPool {
+    pub fn to_raw(&self) -> vks::VkCommandPool {
         self.0
     }
 }
@@ -46,7 +46,7 @@ impl CommandPool {
         CommandPoolBuilder::new()
     }
 
-    pub fn allocate_command_buffer_handles(&self, level: CommandBufferLevel, count: u32)
+    fn allocate_command_buffer_handles(&self, level: CommandBufferLevel, count: u32)
             -> VooResult<SmallVec<[CommandBufferHandle; 16]>> {
         let alloc_info = CommandBufferAllocateInfo::builder()
             .command_pool(self.handle())
@@ -54,15 +54,16 @@ impl CommandPool {
             .command_buffer_count(count)
             .build();
 
-        let mut command_buffers: SmallVec<[CommandBufferHandle; 16]> = SmallVec::new();
-        command_buffers.reserve_exact(count as usize);
-        unsafe {
-            command_buffers.set_len(count as usize);
-            ::check(self.inner.device.proc_addr_loader().core.vkAllocateCommandBuffers(
-                self.inner.device.handle().0, alloc_info.as_raw(),
-                command_buffers.as_mut_ptr() as *mut vks::VkCommandBuffer));
-        }
-        Ok(command_buffers)
+        // let mut command_buffers: SmallVec<[CommandBufferHandle; 16]> = SmallVec::new();
+        // command_buffers.reserve_exact(count as usize);
+        // unsafe {
+        //     command_buffers.set_len(count as usize);
+        //     ::check(self.inner.device.proc_addr_loader().core.vkAllocateCommandBuffers(
+        //         self.inner.device.handle().0, alloc_info.as_raw(),
+        //         command_buffers.as_mut_ptr() as *mut vks::VkCommandBuffer));
+        // }
+        // Ok(command_buffers)
+        unsafe { self.inner.device.allocate_command_buffers(&alloc_info) }
     }
 
     pub fn allocate_command_buffers(&self, level: CommandBufferLevel, count: u32)
@@ -98,8 +99,9 @@ impl<'h> Handle for &'h CommandPool {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyCommandPool(self.device.handle().0,
-                self.handle.0, ptr::null());
+            // self.device.proc_addr_loader().core.vkDestroyCommandPool(self.device.handle().0,
+            //     self.handle.0, ptr::null());
+            self.device.destroy_command_pool(self.handle, None);
         }
     }
 }
@@ -141,15 +143,18 @@ impl<'b> CommandPoolBuilder<'b> {
 
     /// Creates and returns a new `CommandPool`
     pub fn build(&self, device: Device) -> VooResult<CommandPool> {
-        let mut handle = 0;
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateCommandPool(device.handle().0,
-                self.create_info.as_raw(), ptr::null(), &mut handle));
-        }
+        // let mut handle = 0;
+        // unsafe {
+        //     ::check(device.proc_addr_loader().core.vkCreateCommandPool(device.handle().0,
+        //         self.create_info.as_raw(), ptr::null(), &mut handle));
+        // }
+
+        let handle = unsafe { device.create_command_pool(&self.create_info, None)? };
 
         Ok(CommandPool {
             inner: Arc::new(Inner {
-                handle: CommandPoolHandle(handle),
+                // handle: CommandPoolHandle(handle),
+                handle,
                 device,
             })
         })

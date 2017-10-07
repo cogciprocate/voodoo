@@ -6,7 +6,8 @@ use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
 use ::{util, VooResult, Device, ShaderModule, PipelineLayoutHandle, PipelineLayout,
-    PipelineHandle, RenderPassHandle, RenderPass, Handle};
+    PipelineHandle, RenderPassHandle, RenderPass, Handle, GraphicsPipelineCreateInfo,
+    AnyPipelineHandle};
 
 
 
@@ -28,26 +29,29 @@ impl GraphicsPipeline {
     }
 
     /// Creates several graphics pipelines at once.
+    #[deprecated(note = "use `Device::create_graphics_pipelines`")]
     pub fn create<'b, Gpb>(device: &Device, builders: &[Gpb])
             -> VooResult<SmallVec<[GraphicsPipeline; 8]>>
             where Gpb: AsRef<::GraphicsPipelineCreateInfo<'b>> {
-        let mut create_infos = SmallVec::<[vks::VkGraphicsPipelineCreateInfo; 8]>::new();
-        let mut pipeline_handles = SmallVec::<[PipelineHandle; 8]>::new();
+        let mut create_infos = SmallVec::<[GraphicsPipelineCreateInfo; 8]>::new();
+        // let mut pipeline_handles = SmallVec::<[PipelineHandle; 8]>::new();
         let mut pipelines = SmallVec::<[GraphicsPipeline; 8]>::new();
         create_infos.reserve_exact(builders.len());
-        pipeline_handles.reserve_exact(builders.len());
+        // pipeline_handles.reserve_exact(builders.len());
         pipelines.reserve_exact(builders.len());
 
         for builder in builders {
-            create_infos.push(builder.as_ref().as_raw().clone());
+            create_infos.push(builder.as_ref().clone());
         }
 
-        unsafe {
-            pipeline_handles.set_len(builders.len());
-            ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle().0,
-                0, create_infos.len() as u32, create_infos.as_ptr(), ptr::null(),
-                pipeline_handles.as_mut_ptr() as *mut vks::VkPipeline));
-        }
+        // unsafe {
+        //     pipeline_handles.set_len(builders.len());
+        //     ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle().0,
+        //         0, create_infos.len() as u32, create_infos.as_ptr(), ptr::null(),
+        //         pipeline_handles.as_mut_ptr() as *mut vks::VkPipeline));
+        // }
+
+        let pipeline_handles = unsafe { device.create_graphics_pipelines(None, &create_infos, None)? };
 
         for handle in pipeline_handles {
             pipelines.push(
@@ -81,43 +85,32 @@ impl<'g> Handle for &'g GraphicsPipeline {
     }
 }
 
+// impl<'g> AnyPipelineHandle for &'g GraphicsPipeline {
+//     type Target = PipelineHandle;
+
+//     fn handle(&self) -> Self::Target {
+//         self.inner.handle
+//     }
+// }
+impl<'g> AnyPipelineHandle for &'g GraphicsPipeline {}
+
+
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyPipeline(self.device.handle().0,
-                self.handle.0, ptr::null());
+            // self.device.proc_addr_loader().core.vkDestroyPipeline(self.device.handle().0,
+            //     self.handle.0, ptr::null());
+            self.device.destroy_pipeline(self.handle, None);
         }
     }
 }
 
 
 /// A builder for `GraphicsPipeline`.
-//
-// typedef struct VkGraphicsPipelineCreateInfo {
-//     VkStructureType                                  sType;
-//     const void*                                      pNext;
-//     VkPipelineCreateFlags                            flags;
-//     uint32_t                                         stageCount;
-//     const VkPipelineShaderStageCreateInfo*           pStages;
-//     const VkPipelineVertexInputStateCreateInfo*      pVertexInputState;
-//     const VkPipelineInputAssemblyStateCreateInfo*    pInputAssemblyState;
-//     const VkPipelineTessellationStateCreateInfo*     pTessellationState;
-//     const VkPipelineViewportStateCreateInfo*         pViewportState;
-//     const VkPipelineRasterizationStateCreateInfo*    pRasterizationState;
-//     const VkPipelineMultisampleStateCreateInfo*      pMultisampleState;
-//     const VkPipelineDepthStencilStateCreateInfo*     pDepthStencilState;
-//     const VkPipelineColorBlendStateCreateInfo*       pColorBlendState;
-//     const VkPipelineDynamicStateCreateInfo*          pDynamicState;
-//     VkPipelineLayout                                 layout;
-//     VkRenderPass                                     renderPass;
-//     uint32_t                                         subpass;
-//     VkPipeline                                       basePipelineHandle;
-//     int32_t                                          basePipelineIndex;
-// } VkGraphicsPipelineCreateInfo;
-//
 #[derive(Debug, Clone)]
+#[repr(C)]
 pub struct GraphicsPipelineBuilder<'b> {
-    create_info: ::GraphicsPipelineCreateInfo<'b>,
+    create_info: GraphicsPipelineCreateInfo<'b>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -125,7 +118,7 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// Returns a new render pass builder.
     pub fn new() -> GraphicsPipelineBuilder<'b> {
         GraphicsPipelineBuilder {
-            create_info: ::GraphicsPipelineCreateInfo::default(),
+            create_info: GraphicsPipelineCreateInfo::default(),
             _p: PhantomData,
         }
     }
@@ -286,15 +279,14 @@ impl<'b> GraphicsPipelineBuilder<'b> {
     /// Creates and returns a new `GraphicsPipeline`. Use
     /// `GraphicsPipeline::create` to create multiple pipelines in one call.
     pub fn build(&self, device: Device) -> VooResult<GraphicsPipeline> {
-        let mut handle = 0;
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle().0,
-                0, 1, self.create_info.as_raw(), ptr::null(), &mut handle));
-        }
+        let handle = unsafe {
+            let create_infos = ::std::slice::from_raw_parts(&self.create_info, 1);
+            *device.create_graphics_pipelines(None, create_infos, None)?.get_unchecked(0)
+        };
 
         Ok(GraphicsPipeline {
             inner: Arc::new(Inner {
-                handle: PipelineHandle(handle),
+                handle,
                 device,
             })
         })

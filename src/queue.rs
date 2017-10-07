@@ -11,7 +11,7 @@ pub struct QueueHandle(pub(crate) vks::VkQueue);
 
 impl QueueHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkQueue {
+    pub fn to_raw(&self) -> vks::VkQueue {
         self.0
     }
 }
@@ -65,9 +65,9 @@ impl QueueFamilyIndices {
 }
 
 pub fn queue_families(instance: &Instance, surface: &SurfaceKhr, physical_device: &PhysicalDevice,
-        queue_flags: QueueFlags) -> QueueFamilyIndices {
+        queue_flags: QueueFlags) -> VooResult<QueueFamilyIndices> {
     let mut indices = QueueFamilyIndices::new(physical_device.clone(), queue_flags);
-    let queue_families = physical_device.queue_families();
+    let queue_families = physical_device.queue_family_properties()?;
 
     let mut i = 0i32;
     for queue_family in &queue_families {
@@ -75,7 +75,7 @@ pub fn queue_families(instance: &Instance, surface: &SurfaceKhr, physical_device
             indices.flag_idxs.push(i);
         }
 
-        let presentation_support = physical_device.surface_support_khr(i as u32, surface);
+        let presentation_support = physical_device.surface_support_khr(i as u32, surface)?;
         if queue_family.queue_count() > 0 && presentation_support {
             indices.presentation_support_idxs.push(i);
         }
@@ -85,7 +85,7 @@ pub fn queue_families(instance: &Instance, surface: &SurfaceKhr, physical_device
         }
         i += 1;
     }
-    indices
+    Ok(indices)
 }
 
 
@@ -105,14 +105,17 @@ impl Queue {
     // QUEUE_SPARSE_BINDING_BIT
     // QUEUE_TRANSFER_BIT
     pub fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VooResult<Queue> {
-        let mut handle = ptr::null_mut();
-        unsafe {
-            device.proc_addr_loader().core.vkGetDeviceQueue(device.handle().0, queue_family_index,
-                queue_index, &mut handle);
-        }
+        // let mut handle = ptr::null_mut();
+        // unsafe {
+        //     device.proc_addr_loader().core.vkGetDeviceQueue(device.handle().0, queue_family_index,
+        //         queue_index, &mut handle);
+        // }
+
+        let handle = device.get_device_queue(queue_family_index, queue_index)?;
 
         Ok(Queue {
-            handle: QueueHandle(handle),
+            // handle: QueueHandle(handle),
+            handle,
             device,
             family_idx: queue_family_index,
             idx: queue_index,

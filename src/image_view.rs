@@ -11,7 +11,7 @@ pub struct ImageViewHandle(pub(crate) vks::VkImageView);
 
 impl ImageViewHandle {
     #[inline(always)]
-    pub fn raw(&self) -> vks::VkImageView {
+    pub fn to_raw(&self) -> vks::VkImageView {
         self.0
     }
 }
@@ -66,8 +66,9 @@ impl<'i> Handle for &'i ImageView {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.proc_addr_loader().core.vkDestroyImageView(self.device.handle().0,
-                self.handle.0, ptr::null());
+            // self.device.proc_addr_loader().core.vkDestroyImageView(self.device.handle().0,
+            //     self.handle.0, ptr::null());
+            self.device.destroy_image_view(self.handle, None);
         }
     }
 }
@@ -121,16 +122,19 @@ impl<'b> ImageViewBuilder<'b> {
     }
 
     pub fn build(&self, device: Device, swapchain: Option<SwapchainKhr>) -> VooResult<ImageView> {
-        let mut handle = 0;
+        // let mut handle = 0;
 
-        unsafe {
-            ::check(device.proc_addr_loader().core.vkCreateImageView(device.handle().0,
-                self.create_info.as_raw(), ptr::null(), &mut handle));
-        }
+        // unsafe {
+        //     ::check(device.proc_addr_loader().core.vkCreateImageView(device.handle().0,
+        //         self.create_info.as_raw(), ptr::null(), &mut handle));
+        // }
+
+        let handle = unsafe { device.create_image_view(&self.create_info, None)? };
 
         Ok(ImageView {
             inner: Arc::new(Inner {
-                handle: ImageViewHandle(handle),
+                // handle: ImageViewHandle(handle),
+                handle,
                 device,
                 swapchain,
             })

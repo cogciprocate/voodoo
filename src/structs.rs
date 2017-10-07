@@ -5,6 +5,7 @@
 
 
 use std::ptr;
+use std::mem;
 use std::ffi::{CString, CStr};
 use std::marker::PhantomData;
 use std::slice;
@@ -7681,9 +7682,7 @@ impl<'s> ShaderModuleCreateInfo<'s> {
 
     pub fn set_code<'m, 'a>(&mut self, code: &'a [u32])
             where 'a: 's {
-        assert!(self.raw.codeSize == 0 || self.raw.codeSize == code.len() as _, 
-            "count inconsistency found when specifying `ShaderModuleCreateInfo::code`.");
-        self.raw.codeSize = code.len() as _;
+        self.raw.codeSize = code.len() * 4;
         self.raw.pCode = code.as_ptr() as *const u32 as *const _;
     }
 
@@ -7734,9 +7733,7 @@ impl<'b> ShaderModuleCreateInfoBuilder<'b> {
 
     pub fn code<'m, 'a>(mut self, code: &'a [u32]) -> ShaderModuleCreateInfoBuilder<'b>
             where 'a: 'b {
-        assert!(self.raw.codeSize == 0 || self.raw.codeSize == code.len() as _, 
-            "count inconsistency found when specifying `ShaderModuleCreateInfo::code`.");
-        self.raw.codeSize = code.len() as _;
+        self.raw.codeSize = code.len() * 4;
         self.raw.pCode = code.as_ptr() as *const u32 as *const _;
         self
     }

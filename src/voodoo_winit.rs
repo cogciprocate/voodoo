@@ -2,6 +2,8 @@ use std::ptr;
 use winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
 use ::{VooResult, Instance, SurfaceKhr};
 
+pub use winit;
+
 
 #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
 pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
