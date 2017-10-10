@@ -1,8 +1,7 @@
 
 use std::sync::Arc;
-use std::ptr;
 use vks;
-use ::{util, VooResult, Device, Handle, SemaphoreCreateFlags, SemaphoreCreateInfo};
+use ::{VooResult, Device, Handle, SemaphoreCreateFlags, SemaphoreCreateInfo};
 
 
 

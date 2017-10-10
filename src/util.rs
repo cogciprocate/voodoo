@@ -1,6 +1,4 @@
-use std::sync::Arc;
 use std::ffi::{CStr, CString};
-use std::ptr;
 use std::mem;
 use std::path::Path;
 use std::fs::File;
@@ -8,9 +6,7 @@ use std::io::{Read, BufReader};
 use std::ops::Deref;
 use std::slice;
 use libc::c_char;
-use smallvec::SmallVec;
-use vks;
-use ::{VooResult, Device, PRINT};
+use ::{VooResult, PRINT};
 
 /// An owned or borrowed C string representable as a pointer.
 #[derive(Debug, Clone)]

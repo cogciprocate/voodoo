@@ -1,10 +1,10 @@
 use std::sync::Arc;
-use std::ffi::CStr;
-use std::ptr;
+// use std::ffi::CStr;
+// use std::ptr;
 use std::marker::PhantomData;
 use vks;
-use smallvec::SmallVec;
-use ::{util, VooResult, Device, ShaderModule, DescriptorSetLayoutHandle, DescriptorSetLayout, Handle,
+// use smallvec::SmallVec;
+use ::{VooResult, Device,  DescriptorSetLayoutHandle, Handle,
     PipelineLayoutCreateInfo, PushConstantRange};
 
 

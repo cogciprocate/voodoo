@@ -1,13 +1,12 @@
 use std::sync::Arc;
-use std::mem;
-use std::ptr;
-use std::cmp;
-use std::fmt;
+// use std::mem;
+// use std::ptr;
+// use std::cmp;
+// use std::fmt;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{queue, VooResult, Instance, SurfaceKhr, Device, PhysicalDevice, ImageHandle,
-    Image, SurfaceKhrHandle, Handle};
+use ::{VooResult, Instance, SurfaceKhr, Device, PhysicalDevice, ImageHandle, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

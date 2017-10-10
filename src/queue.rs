@@ -1,4 +1,4 @@
-use std::ptr;
+// use std::ptr;
 use smallvec::SmallVec;
 use vks;
 use ::{VooResult, Instance, PhysicalDevice, Device, SurfaceKhr, QueueFlags, Handle};

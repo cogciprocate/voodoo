@@ -1,15 +1,14 @@
 use std::sync::Arc;
 use std::mem;
 use std::ptr;
-use std::ffi::CStr;
 use std::marker::PhantomData;
-use libc::{c_char, c_void};
+use libc::{c_void};
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, PhysicalDevice, SwapchainSupportDetails, DeviceQueueCreateInfo,
+use ::{VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo,
     CharStrs, PhysicalDeviceFeatures, PRINT, Handle, SubmitInfo, QueueHandle, MemoryAllocateInfo,
     DeviceMemoryHandle, MemoryMapFlags, SwapchainKhrHandle, SwapchainCreateInfoKhr,
-    ShaderModuleCreateInfo, ShaderModuleHandle, ShaderModule, SemaphoreCreateInfo, SemaphoreHandle,
+    ShaderModuleCreateInfo, ShaderModuleHandle, SemaphoreCreateInfo, SemaphoreHandle,
     SamplerCreateInfo, SamplerHandle, RenderPassCreateInfo, RenderPassHandle, BufferCreateInfo,
     BufferHandle, BufferViewCreateInfo, BufferViewHandle, ImageViewCreateInfo, ImageViewHandle,
     ImageCreateInfo, ImageHandle, FramebufferCreateInfo, FramebufferHandle,
@@ -33,8 +32,7 @@ use ::{QuerypoolCreateInfo, QuerypoolHandle, DescriptorUpdateTemplateKhrCreateIn
     IndirectCommandsLayoutNvxHandle, ObjectTableNvxCreateInfo, ObjectTableNvxHandle,
     ValidationCacheExtCreateInfo, ValidationCacheExtHandle, };
 
-use queue::{self, Queue};
-use instance;
+
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

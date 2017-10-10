@@ -1,10 +1,8 @@
 
 use std::sync::Arc;
-use std::ptr;
-use std::mem;
 use std::marker::PhantomData;
 use vks;
-use ::{util, VooResult, Device, DeviceMemory, PRINT, Handle};
+use ::{VooResult, Device, DeviceMemory, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

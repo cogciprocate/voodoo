@@ -1,20 +1,16 @@
 
 use std::sync::Arc;
-use std::ptr;
-use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{util, VooResult, Device, Handle, CommandPoolCreateInfo, CommandPoolCreateFlags,
-    CommandBufferAllocateInfo, CommandPool, CommandBufferUsageFlags, CommandBufferBeginInfo,
-    MemoryRequirements, BufferMemoryRequirementsInfo2Khr, DeviceSize, GraphicsPipelineCreateInfo,
-    PipelineHandle, ComputePipelineCreateInfo, PipelineStageFlags, DependencyFlags, MemoryBarrier,
-    BufferMemoryBarrier, ImageMemoryBarrier, WriteDescriptorSet, CopyDescriptorSet,
+use ::{VooResult, Device, Handle, CommandPool, CommandBufferUsageFlags, CommandBufferBeginInfo,
+    DeviceSize, PipelineStageFlags, DependencyFlags, MemoryBarrier,
+    BufferMemoryBarrier, ImageMemoryBarrier,
     BufferImageCopy, ImageLayout, BufferCopy, CommandBufferResetFlags, PipelineBindPoint, Viewport,
-    Rect2d, StencilFaceFlags, DebugMarkerMarkerInfoExt, DescriptorSetHandle, QueryPoolHandle,
+    Rect2d, StencilFaceFlags, DebugMarkerMarkerInfoExt, DescriptorSetHandle,
     QueryResultFlags, ShaderStageFlags, RenderPassBeginInfo, SubpassContents, ImageCopy, IndexType,
     ImageBlit, Filter, ClearColorValue, ImageSubresourceRange, ClearDepthStencilValue,
-    ClearAttachment, ImageResolve, QueryControlFlags, ClearRect, BufferHandle, ImageHandle,
-    EventHandle, PipelineLayoutHandle, Pipeline, Buffer, Image, Event, QueryPool, PipelineLayout,
+    ClearAttachment, ImageResolve, QueryControlFlags, ClearRect, BufferHandle,
+    EventHandle,Buffer, Image, Event, QueryPool, PipelineLayout,
     AnyPipelineHandle, DescriptorSet,
 };
 

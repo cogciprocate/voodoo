@@ -1,13 +1,12 @@
 
 use std::sync::Arc;
-use std::ptr;
-use std::ffi::CStr;
+// use std::ptr;
+// use std::ffi::CStr;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
-use vks;
-use ::{util, VooResult, Device, ShaderModule, PipelineLayoutHandle, PipelineLayout,
-    PipelineHandle, RenderPassHandle, RenderPass, Handle, GraphicsPipelineCreateInfo,
-    AnyPipelineHandle};
+// use vks;
+use ::{VooResult, Device, PipelineLayoutHandle, PipelineHandle, RenderPassHandle,
+    Handle, GraphicsPipelineCreateInfo, AnyPipelineHandle};
 
 
 

@@ -1,5 +1,5 @@
 use std::sync::Arc;
-use std::ffi::{self, CStr};
+use std::ffi::CStr;
 use std::ptr;
 use std::mem;
 use std::marker::PhantomData;
@@ -7,9 +7,9 @@ use smallvec::SmallVec;
 use libc::{c_char, c_void};
 use vks;
 use ::{VooResult, Loader, ApplicationInfo, PhysicalDeviceHandle, PhysicalDevice, CharStrs, PRINT,
-    FormatProperties, Format, Handle, SurfaceKhrHandle, SurfaceKhr, SurfaceFormatKhr, PhysicalDeviceFeatures,
+    FormatProperties, Format, Handle, SurfaceKhrHandle, SurfaceFormatKhr, PhysicalDeviceFeatures,
     PhysicalDeviceProperties, QueueFamilyProperties, PhysicalDeviceMemoryProperties,
-    ExtensionProperties, SurfaceCapabilitiesKhr, PresentModeKhr, Win32SurfaceCreateInfoKhr};
+    ExtensionProperties, SurfaceCapabilitiesKhr, Win32SurfaceCreateInfoKhr};
 
 
 unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,

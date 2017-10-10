@@ -1,13 +1,11 @@
 
 use std::sync::Arc;
-use std::ptr;
 use std::mem;
 use std::ops::{Deref, DerefMut};
 use std::slice;
 use std::marker::PhantomData;
-use libc::c_void;
 use vks;
-use ::{util, VooResult, Device, Handle, MemoryAllocateInfo, MemoryMapFlags};
+use ::{VooResult, Device, Handle, MemoryAllocateInfo, MemoryMapFlags};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

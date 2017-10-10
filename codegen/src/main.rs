@@ -1444,14 +1444,14 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
     write!(o, "\n")?;
     // writeln!(o, "#![allow(unused_mut)]")?;
     write!(o, "\n")?;
-    writeln!(o, "use std::ptr;")?;
-    writeln!(o, "use std::mem;")?;
-    writeln!(o, "use std::ffi::{{CString, CStr}};")?;
+    // writeln!(o, "use std::ptr;")?;
+    // writeln!(o, "use std::mem;")?;
+    writeln!(o, "use std::ffi::{{CStr}};")?;
     writeln!(o, "use std::marker::PhantomData;")?;
     writeln!(o, "use std::slice;")?;
     writeln!(o, "use libc::{{c_void, c_char}};")?;
-    writeln!(o, "use num_traits::ToPrimitive;")?;
-    writeln!(o, "use smallvec::SmallVec;")?;
+    // writeln!(o, "use num_traits::ToPrimitive;")?;
+    // writeln!(o, "use smallvec::SmallVec;")?;
     writeln!(o, "use ::*;")?;
     writeln!(o, "use {};", ORIG_USE)?;
     writeln!(o, "use {}::{{PFN_vkAllocationFunction, PFN_vkReallocationFunction, \

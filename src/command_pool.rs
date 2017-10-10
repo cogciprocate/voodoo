@@ -1,10 +1,10 @@
 
 use std::sync::Arc;
-use std::ptr;
+// use std::ptr;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{util, VooResult, Device, Handle, CommandPoolCreateInfo, CommandPoolCreateFlags,
+use ::{ VooResult, Device, Handle, CommandPoolCreateInfo, CommandPoolCreateFlags,
     CommandBufferAllocateInfo, CommandBufferHandle, CommandBufferLevel, CommandBuffer};
 
 

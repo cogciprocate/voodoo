@@ -1,16 +1,16 @@
-use std::sync::Arc;
-use std::mem;
-use std::ptr;
+// use std::sync::Arc;
+// use std::mem;
+// use std::ptr;
 use std::ffi::CStr;
 use libc::c_char;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, SurfaceKhrHandle, SurfaceKhr, SwapchainSupportDetails, PRINT, Handle, SurfaceFormatKhr,
+use ::{VooResult, Instance, SurfaceKhrHandle, PRINT, Handle, SurfaceFormatKhr,
     PhysicalDeviceFeatures, PhysicalDeviceProperties, QueueFamilyProperties,
     PhysicalDeviceMemoryProperties, ExtensionProperties, SurfaceCapabilitiesKhr, PresentModeKhr,
     FormatProperties, Format};
-use queue::{self, Queue};
-use instance;
+// use queue::Queue;
+// use instance;
 
 
 

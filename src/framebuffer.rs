@@ -1,11 +1,11 @@
 
 use std::sync::Arc;
-use std::ptr;
+// use std::ptr;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{util, VooResult, Device, RenderPass, ImageViewHandle, ImageView, Handle, RenderPassHandle,
-    FramebufferCreateInfo, FramebufferCreateFlags};
+use ::{VooResult, Device, RenderPass, ImageView, Handle, FramebufferCreateInfo,
+    FramebufferCreateFlags};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

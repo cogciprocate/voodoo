@@ -1,5 +1,5 @@
 use std::ptr;
-use winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
+use winit::Window;
 use ::{VooResult, Instance, SurfaceKhr};
 
 pub use winit;

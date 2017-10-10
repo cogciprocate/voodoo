@@ -1,6 +1,6 @@
 
 use std::sync::Arc;
-use std::ptr;
+// use std::ptr;
 use vks;
 use ::{VooResult, SwapchainKhr, Device, ImageHandle, Handle};
 

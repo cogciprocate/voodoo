@@ -151,11 +151,11 @@ pub mod device;
 pub mod util;
 pub mod voodoo_winit;
 
-use std::ffi::OsStr;
+// use std::ffi::OsStr;
 use std::hash::{Hash, Hasher};
-use libc::c_void;
+// use libc::c_void;
 use std::mem;
-use std::ptr;
+// use std::ptr;
 use ordered_float::OrderedFloat;
 use error::Result as VooResult;
 pub use util::{CharStr, CharStrs};

@@ -8,7 +8,6 @@ extern crate libc;
 extern crate tobj;
 
 use std::mem;
-use std::ptr;
 use std::time;
 use std::path::Path;
 use std::collections::HashMap;
@@ -16,13 +15,12 @@ use std::ffi::{CStr, CString};
 use std::cmp;
 use libc::c_char;
 use smallvec::SmallVec;
-use image::{ImageFormat, DynamicImage};
-use cgmath::{SquareMatrix, One, Rotation, Rotation3, Basis3, Matrix3, Matrix4, Vector3};
-use voo::{voodoo_winit, vks, util, device, queue, check, Result as VooResult, Version, Instance,
-    Device, SurfaceKhr, SwapchainKhr, ImageView, PipelineLayout, RenderPass, GraphicsPipeline,
-    Framebuffer, CommandPool, Semaphore, Buffer, DeviceMemory, Vertex, DescriptorSetLayout,
-    UniformBufferObject, DescriptorPool, Image, Sampler, Loader, SwapchainSupportDetails,
-    PhysicalDevice, PhysicalDeviceFeatures, ShaderModule, QueueFlags, Format, ApplicationInfo,
+use cgmath::{Matrix3, Matrix4};
+use voo::{voodoo_winit, vks, util, queue, Result as VooResult, Instance, Device, SurfaceKhr,
+    SwapchainKhr, ImageView, PipelineLayout, RenderPass, GraphicsPipeline, Framebuffer,
+    CommandPool, Semaphore, Buffer, DeviceMemory, Vertex, DescriptorSetLayout, UniformBufferObject,
+    DescriptorPool, Image, Sampler, Loader, SwapchainSupportDetails, PhysicalDevice,
+    PhysicalDeviceFeatures, ShaderModule, QueueFlags, Format, ApplicationInfo,
     DeviceQueueCreateInfo, SurfaceFormatKhr, ColorSpaceKhr, PresentModeKhr, SurfaceCapabilitiesKhr,
     Extent2d, ImageUsageFlags, CompositeAlphaFlagsKhr, SharingMode, ImageViewType,
     ComponentMapping, ImageSubresourceRange, ImageAspectFlags, ImageTiling, FormatFeatureFlags,
@@ -35,12 +33,11 @@ use voo::{voodoo_winit, vks, util, device, queue, check, Result as VooResult, Ve
     PipelineViewportStateCreateInfo, PipelineRasterizationStateCreateInfo, PolygonMode,
     CullModeFlags, FrontFace, PipelineMultisampleStateCreateInfo, StencilOpState, StencilOp,
     CompareOp, PipelineDepthStencilStateCreateInfo, PipelineColorBlendAttachmentState, BlendFactor,
-    BlendOp, ColorComponentFlags, PipelineColorBlendStateCreateInfo, LogicOp,
-    PipelineDynamicStateCreateInfo, CommandBuffer, CommandBufferLevel, CommandBufferUsageFlags,
-    SubmitInfo, ImageMemoryBarrier, DependencyFlags, ImageSubresourceLayers, BufferImageCopy,
-    Offset3d, Extent3d, DeviceSize, BufferCopy, BufferUsageFlags, MemoryPropertyFlags,
-    MemoryMapFlags, ImageType, Filter, SamplerMipmapMode, SamplerAddressMode, BorderColor,
-    CommandBufferHandle, CommandBufferAllocateInfo, CommandBufferBeginInfo, ClearValue,
+    BlendOp, ColorComponentFlags, PipelineColorBlendStateCreateInfo, LogicOp, CommandBuffer,
+    CommandBufferLevel, CommandBufferUsageFlags, SubmitInfo, ImageMemoryBarrier, DependencyFlags,
+    ImageSubresourceLayers, BufferImageCopy, Offset3d, Extent3d, DeviceSize, BufferCopy,
+    BufferUsageFlags, MemoryPropertyFlags, MemoryMapFlags, ImageType, Filter, SamplerMipmapMode,
+    SamplerAddressMode, BorderColor, CommandBufferHandle, CommandBufferBeginInfo, ClearValue,
     ClearColorValue, RenderPassBeginInfo, SubpassContents, IndexType, SemaphoreCreateFlags,
     ResultEnum, PresentInfoKhr};
 use voodoo_winit::winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};

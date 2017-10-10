@@ -1,12 +1,12 @@
-use std::ffi::OsStr;
-use std::mem;
+// use std::ffi::OsStr;
+// use std::mem;
 use std::ptr;
 use std::fmt;
 use std::ffi::CStr;
-use libc::{c_char, c_void};
+use libc::{c_char};
 use lib;
 use smallvec::SmallVec;
-use vks::{self, PFN_vkGetInstanceProcAddr};
+use vks::{self};
 use ::{VooResult, Handle, InstanceHandle};
 
 const PRINT: bool = false;

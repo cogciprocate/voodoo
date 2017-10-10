@@ -1,8 +1,8 @@
-use libc::c_void;
-use std::ptr;
+// use libc::c_void;
+// use std::ptr;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
-use winit;
+// use winit;
 use vks;
 use ::{VooResult, Instance, Handle, XlibSurfaceCreateInfoKhr, XcbSurfaceCreateInfoKhr,
     WaylandSurfaceCreateInfoKhr, MirSurfaceCreateInfoKhr, Win32SurfaceCreateInfoKhr,
