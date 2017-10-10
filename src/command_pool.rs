@@ -19,7 +19,7 @@ impl CommandPoolHandle {
     }
 }
 
-impl Handle for CommandPoolHandle {
+unsafe impl Handle for CommandPoolHandle {
     type Target = CommandPoolHandle;
 
     #[inline(always)]
@@ -87,7 +87,7 @@ impl CommandPool {
     }
 }
 
-impl<'h> Handle for &'h CommandPool {
+unsafe impl<'h> Handle for &'h CommandPool {
     type Target = CommandPoolHandle;
 
     #[inline(always)]

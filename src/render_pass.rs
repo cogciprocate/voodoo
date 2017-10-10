@@ -17,7 +17,7 @@ impl RenderPassHandle {
     }
 }
 
-impl Handle for RenderPassHandle {
+unsafe impl Handle for RenderPassHandle {
     type Target = RenderPassHandle;
 
     #[inline(always)]
@@ -55,7 +55,7 @@ impl RenderPass {
     }
 }
 
-impl<'h> Handle for &'h RenderPass {
+unsafe impl<'h> Handle for &'h RenderPass {
     type Target = RenderPassHandle;
 
     #[inline(always)]

@@ -18,7 +18,7 @@ impl DeviceMemoryHandle {
     }
 }
 
-impl Handle for DeviceMemoryHandle {
+unsafe impl Handle for DeviceMemoryHandle {
     type Target = DeviceMemoryHandle;
 
     fn handle(&self) -> Self::Target {
@@ -157,7 +157,7 @@ impl DeviceMemory {
     }
 }
 
-impl<'h> Handle for &'h DeviceMemory {
+unsafe impl<'h> Handle for &'h DeviceMemory {
     type Target = DeviceMemoryHandle;
 
     fn handle(&self) -> Self::Target {

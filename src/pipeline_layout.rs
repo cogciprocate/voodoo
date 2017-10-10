@@ -19,7 +19,7 @@ impl PipelineLayoutHandle {
     }
 }
 
-impl Handle for PipelineLayoutHandle {
+unsafe impl Handle for PipelineLayoutHandle {
     type Target = PipelineLayoutHandle;
 
     #[inline(always)]
@@ -56,7 +56,7 @@ impl PipelineLayout {
     }
 }
 
-impl<'h> Handle for &'h PipelineLayout {
+unsafe impl<'h> Handle for &'h PipelineLayout {
     type Target = PipelineLayoutHandle;
 
     #[inline(always)]

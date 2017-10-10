@@ -20,7 +20,7 @@ impl SurfaceKhrHandle {
     }
 }
 
-impl Handle for SurfaceKhrHandle {
+unsafe impl Handle for SurfaceKhrHandle {
     type Target = SurfaceKhrHandle;
 
     #[inline(always)]
@@ -62,7 +62,7 @@ impl SurfaceKhr {
     }
 }
 
-impl<'s> Handle for &'s SurfaceKhr {
+unsafe impl<'s> Handle for &'s SurfaceKhr {
     type Target = SurfaceKhrHandle;
 
     #[inline(always)]

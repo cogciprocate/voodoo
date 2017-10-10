@@ -20,7 +20,7 @@ impl SwapchainKhrHandle {
     }
 }
 
-impl Handle for SwapchainKhrHandle {
+unsafe impl Handle for SwapchainKhrHandle {
     type Target = SwapchainKhrHandle;
 
     #[inline(always)]
@@ -95,7 +95,7 @@ impl SwapchainKhr {
     }
 }
 
-impl<'s> Handle for &'s SwapchainKhr {
+unsafe impl<'s> Handle for &'s SwapchainKhr {
     type Target = SwapchainKhrHandle;
 
     #[inline(always)]

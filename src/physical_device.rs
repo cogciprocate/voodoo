@@ -5,10 +5,10 @@ use std::ffi::CStr;
 use libc::c_char;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, SurfaceKhrHandle, PRINT, Handle, SurfaceFormatKhr,
-    PhysicalDeviceFeatures, PhysicalDeviceProperties, QueueFamilyProperties,
-    PhysicalDeviceMemoryProperties, ExtensionProperties, SurfaceCapabilitiesKhr, PresentModeKhr,
-    FormatProperties, Format};
+use ::{PRINT, VooResult, Instance, Handle, SurfaceFormatKhr, PhysicalDeviceFeatures,
+    PhysicalDeviceProperties, QueueFamilyProperties, PhysicalDeviceMemoryProperties,
+    ExtensionProperties, SurfaceCapabilitiesKhr, PresentModeKhr, FormatProperties, Format,
+    SurfaceKhr};
 // use queue::Queue;
 // use instance;
 
@@ -25,7 +25,7 @@ impl PhysicalDeviceHandle {
     }
 }
 
-impl Handle for PhysicalDeviceHandle {
+unsafe impl Handle for PhysicalDeviceHandle {
     type Target = PhysicalDeviceHandle;
 
     #[inline(always)]
@@ -42,7 +42,7 @@ pub struct PhysicalDevice {
 }
 
 impl PhysicalDevice {
-    pub fn new(instance: Instance, handle: PhysicalDeviceHandle) -> PhysicalDevice {
+    pub fn from_parts(instance: Instance, handle: PhysicalDeviceHandle) -> PhysicalDevice {
         PhysicalDevice {
             handle,
             instance,
@@ -92,27 +92,24 @@ impl PhysicalDevice {
     }
 
     #[inline]
-    pub fn surface_support_khr<Sk>(&self, queue_family_index: u32, surface: Sk) -> VooResult<bool>
-            where Sk: Handle<Target=SurfaceKhrHandle> {
-        self.instance().get_physical_device_surface_support_khr(self, queue_family_index, surface)
+    pub fn surface_support_khr(&self, queue_family_index: u32, surface: &SurfaceKhr)
+            -> VooResult<bool> {
+        unsafe { self.instance().get_physical_device_surface_support_khr(self, queue_family_index, surface) }
     }
 
     #[inline]
-    pub fn surface_capabilities_khr<Sk>(&self, surface: Sk) -> VooResult<SurfaceCapabilitiesKhr>
-            where Sk: Handle<Target=SurfaceKhrHandle> {
-        self.instance().get_physical_device_surface_capabilities_khr(self, surface)
+    pub fn surface_capabilities_khr(&self, surface: &SurfaceKhr) -> VooResult<SurfaceCapabilitiesKhr> {
+        unsafe { self.instance().get_physical_device_surface_capabilities_khr(self, surface) }
     }
 
     #[inline]
-    pub fn surface_formats_khr<Sk>(&self, surface: Sk) -> VooResult<SmallVec<[SurfaceFormatKhr; 64]>>
-            where Sk: Handle<Target=SurfaceKhrHandle> {
-        self.instance().get_physical_device_surface_formats_khr(self, surface)
+    pub fn surface_formats_khr(&self, surface: &SurfaceKhr) -> VooResult<SmallVec<[SurfaceFormatKhr; 64]>> {
+        unsafe { self.instance().get_physical_device_surface_formats_khr(self, surface) }
     }
 
     #[inline]
-    pub fn surface_present_modes_khr<Sk>(&self, surface: Sk) -> VooResult<SmallVec<[PresentModeKhr; 16]>>
-            where Sk: Handle<Target=SurfaceKhrHandle> {
-        self.instance().get_physical_device_surface_present_modes_khr(self, surface)
+    pub fn surface_present_modes_khr(&self, surface: &SurfaceKhr) -> VooResult<SmallVec<[PresentModeKhr; 16]>> {
+        unsafe { self.instance().get_physical_device_surface_present_modes_khr(self, surface) }
     }
 
 
@@ -145,7 +142,7 @@ impl PhysicalDevice {
 
 }
 
-impl<'p> Handle for &'p PhysicalDevice {
+unsafe impl<'p> Handle for &'p PhysicalDevice {
     type Target = PhysicalDeviceHandle;
 
     #[inline(always)]

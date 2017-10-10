@@ -9,6 +9,7 @@
   * No intermediate structs or extra copying
   * Builders compile to direct assignment
 * Thread-safe allocation / destruction
+  * Safety escape hatches available everywhere
 * A minimum of boilerplate
 * Non-opinionated and nothing hidden
 * Complete API coverage

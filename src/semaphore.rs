@@ -16,7 +16,7 @@ impl SemaphoreHandle {
     }
 }
 
-impl Handle for SemaphoreHandle {
+unsafe impl Handle for SemaphoreHandle {
     type Target = SemaphoreHandle;
 
     #[inline(always)]
@@ -76,7 +76,7 @@ impl Semaphore {
     }
 }
 
-impl<'h> Handle for &'h Semaphore {
+unsafe impl<'h> Handle for &'h Semaphore {
     type Target = SemaphoreHandle;
 
     #[inline(always)]

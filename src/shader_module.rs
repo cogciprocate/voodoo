@@ -19,7 +19,7 @@ impl ShaderModuleHandle {
     }
 }
 
-impl Handle for ShaderModuleHandle {
+unsafe impl Handle for ShaderModuleHandle {
     type Target = ShaderModuleHandle;
 
     #[inline(always)]
@@ -88,7 +88,7 @@ impl ShaderModule {
     }
 }
 
-impl<'h> Handle for &'h ShaderModule {
+unsafe impl<'h> Handle for &'h ShaderModule {
     type Target = ShaderModuleHandle;
 
     #[inline(always)]

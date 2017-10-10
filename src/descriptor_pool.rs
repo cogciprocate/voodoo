@@ -18,7 +18,7 @@ impl DescriptorPoolHandle {
     }
 }
 
-impl Handle for DescriptorPoolHandle {
+unsafe impl Handle for DescriptorPoolHandle {
     type Target = DescriptorPoolHandle;
 
     #[inline(always)]
@@ -97,7 +97,7 @@ impl DescriptorPool {
 
 }
 
-impl<'d> Handle for &'d DescriptorPool {
+unsafe impl<'d> Handle for &'d DescriptorPool {
     type Target = DescriptorPoolHandle;
 
     #[inline(always)]

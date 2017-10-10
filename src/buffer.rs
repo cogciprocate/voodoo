@@ -15,7 +15,7 @@ impl BufferHandle {
     }
 }
 
-impl Handle for BufferHandle {
+unsafe impl Handle for BufferHandle {
     type Target = BufferHandle;
 
     #[inline(always)]
@@ -71,7 +71,7 @@ impl Buffer {
     }
 }
 
-impl<'b> Handle for &'b Buffer {
+unsafe impl<'b> Handle for &'b Buffer {
     type Target = BufferHandle;
 
     #[inline(always)]

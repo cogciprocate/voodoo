@@ -76,7 +76,7 @@ impl GraphicsPipeline {
     }
 }
 
-impl<'g> Handle for &'g GraphicsPipeline {
+unsafe impl<'g> Handle for &'g GraphicsPipeline {
     type Target = PipelineHandle;
 
     fn handle(&self) -> Self::Target {
@@ -91,7 +91,7 @@ impl<'g> Handle for &'g GraphicsPipeline {
 //         self.inner.handle
 //     }
 // }
-impl<'g> AnyPipelineHandle for &'g GraphicsPipeline {}
+unsafe impl<'g> AnyPipelineHandle for &'g GraphicsPipeline {}
 
 
 impl Drop for Inner {

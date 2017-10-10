@@ -16,7 +16,7 @@ impl ImageHandle {
     }
 }
 
-impl Handle for ImageHandle {
+unsafe impl Handle for ImageHandle {
     type Target = ImageHandle;
 
     #[inline(always)]
@@ -92,7 +92,7 @@ impl Image {
     }
 }
 
-impl<'i> Handle for &'i Image {
+unsafe impl<'i> Handle for &'i Image {
     type Target = ImageHandle;
 
     #[inline(always)]

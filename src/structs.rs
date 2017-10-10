@@ -30,6 +30,10 @@ impl Offset2d {
         Offset2dBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkOffset2D) -> Offset2d {
+        Offset2d { raw, }
+    }
+
     pub fn x<'a>(&'a self) -> i32 {
         self.raw.x.into()
     }
@@ -54,12 +58,6 @@ impl Offset2d {
 impl From<Offset2d> for vks::VkOffset2D {
     fn from(f: Offset2d) -> vks::VkOffset2D {
         f.raw
-    }
-}
-
-impl From<vks::VkOffset2D> for Offset2d {
-    fn from(f: vks::VkOffset2D) -> Offset2d {
-        Offset2d { raw: f, }
     }
 }
 
@@ -119,6 +117,10 @@ impl Offset3d {
         Offset3dBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkOffset3D) -> Offset3d {
+        Offset3d { raw, }
+    }
+
     pub fn x<'a>(&'a self) -> i32 {
         self.raw.x.into()
     }
@@ -151,12 +153,6 @@ impl Offset3d {
 impl From<Offset3d> for vks::VkOffset3D {
     fn from(f: Offset3d) -> vks::VkOffset3D {
         f.raw
-    }
-}
-
-impl From<vks::VkOffset3D> for Offset3d {
-    fn from(f: vks::VkOffset3D) -> Offset3d {
-        Offset3d { raw: f, }
     }
 }
 
@@ -225,6 +221,10 @@ impl Extent2d {
         Extent2dBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExtent2D) -> Extent2d {
+        Extent2d { raw, }
+    }
+
     pub fn width<'a>(&'a self) -> u32 {
         self.raw.width.into()
     }
@@ -249,12 +249,6 @@ impl Extent2d {
 impl From<Extent2d> for vks::VkExtent2D {
     fn from(f: Extent2d) -> vks::VkExtent2D {
         f.raw
-    }
-}
-
-impl From<vks::VkExtent2D> for Extent2d {
-    fn from(f: vks::VkExtent2D) -> Extent2d {
-        Extent2d { raw: f, }
     }
 }
 
@@ -314,6 +308,10 @@ impl Extent3d {
         Extent3dBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExtent3D) -> Extent3d {
+        Extent3d { raw, }
+    }
+
     pub fn width<'a>(&'a self) -> u32 {
         self.raw.width.into()
     }
@@ -346,12 +344,6 @@ impl Extent3d {
 impl From<Extent3d> for vks::VkExtent3D {
     fn from(f: Extent3d) -> vks::VkExtent3D {
         f.raw
-    }
-}
-
-impl From<vks::VkExtent3D> for Extent3d {
-    fn from(f: vks::VkExtent3D) -> Extent3d {
-        Extent3d { raw: f, }
     }
 }
 
@@ -420,6 +412,10 @@ impl Viewport {
         ViewportBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkViewport) -> Viewport {
+        Viewport { raw, }
+    }
+
     pub fn x<'a>(&'a self) -> f32 {
         self.raw.x.into()
     }
@@ -476,12 +472,6 @@ impl Viewport {
 impl From<Viewport> for vks::VkViewport {
     fn from(f: Viewport) -> vks::VkViewport {
         f.raw
-    }
-}
-
-impl From<vks::VkViewport> for Viewport {
-    fn from(f: vks::VkViewport) -> Viewport {
-        Viewport { raw: f, }
     }
 }
 
@@ -577,6 +567,10 @@ impl Rect2d {
         Rect2dBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkRect2D) -> Rect2d {
+        Rect2d { raw, }
+    }
+
     pub fn offset<'a>(&'a self) -> &'a Offset2d {
         unsafe { &*(&self.raw.offset as *const vks::VkOffset2D as *const Offset2d) }
     }
@@ -609,12 +603,6 @@ impl Rect2d {
 impl From<Rect2d> for vks::VkRect2D {
     fn from(f: Rect2d) -> vks::VkRect2D {
         f.raw
-    }
-}
-
-impl From<vks::VkRect2D> for Rect2d {
-    fn from(f: vks::VkRect2D) -> Rect2d {
-        Rect2d { raw: f, }
     }
 }
 
@@ -682,6 +670,10 @@ impl ClearRect {
         ClearRectBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkClearRect) -> ClearRect {
+        ClearRect { raw, }
+    }
+
     pub fn rect<'a>(&'a self) -> &'a Rect2d {
         unsafe { &*(&self.raw.rect as *const vks::VkRect2D as *const Rect2d) }
     }
@@ -718,12 +710,6 @@ impl ClearRect {
 impl From<ClearRect> for vks::VkClearRect {
     fn from(f: ClearRect) -> vks::VkClearRect {
         f.raw
-    }
-}
-
-impl From<vks::VkClearRect> for ClearRect {
-    fn from(f: vks::VkClearRect) -> ClearRect {
-        ClearRect { raw: f, }
     }
 }
 
@@ -796,6 +782,10 @@ impl ComponentMapping {
         ComponentMappingBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkComponentMapping) -> ComponentMapping {
+        ComponentMapping { raw, }
+    }
+
     pub fn r<'a>(&'a self) -> ComponentSwizzle {
         self.raw.r.into()
     }
@@ -836,12 +826,6 @@ impl ComponentMapping {
 impl From<ComponentMapping> for vks::VkComponentMapping {
     fn from(f: ComponentMapping) -> vks::VkComponentMapping {
         f.raw
-    }
-}
-
-impl From<vks::VkComponentMapping> for ComponentMapping {
-    fn from(f: vks::VkComponentMapping) -> ComponentMapping {
-        ComponentMapping { raw: f, }
     }
 }
 
@@ -917,6 +901,10 @@ pub struct PhysicalDeviceProperties {
 impl PhysicalDeviceProperties {
     pub fn builder() -> PhysicalDevicePropertiesBuilder {
         PhysicalDevicePropertiesBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceProperties) -> PhysicalDeviceProperties {
+        PhysicalDeviceProperties { raw, }
     }
 
     pub fn api_version<'a>(&'a self) -> Version {
@@ -1009,12 +997,6 @@ impl PhysicalDeviceProperties {
 impl From<PhysicalDeviceProperties> for vks::VkPhysicalDeviceProperties {
     fn from(f: PhysicalDeviceProperties) -> vks::VkPhysicalDeviceProperties {
         f.raw
-    }
-}
-
-impl From<vks::VkPhysicalDeviceProperties> for PhysicalDeviceProperties {
-    fn from(f: vks::VkPhysicalDeviceProperties) -> PhysicalDeviceProperties {
-        PhysicalDeviceProperties { raw: f, }
     }
 }
 
@@ -1147,6 +1129,10 @@ impl ExtensionProperties {
         ExtensionPropertiesBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExtensionProperties) -> ExtensionProperties {
+        ExtensionProperties { raw, }
+    }
+
     pub fn extension_name<'a>(&'a self) -> &'a CStr {
         unsafe { CStr::from_ptr(&self.raw.extensionName as *const _) }
     }
@@ -1172,12 +1158,6 @@ impl ExtensionProperties {
 impl From<ExtensionProperties> for vks::VkExtensionProperties {
     fn from(f: ExtensionProperties) -> vks::VkExtensionProperties {
         f.raw
-    }
-}
-
-impl From<vks::VkExtensionProperties> for ExtensionProperties {
-    fn from(f: vks::VkExtensionProperties) -> ExtensionProperties {
-        ExtensionProperties { raw: f, }
     }
 }
 
@@ -1238,6 +1218,10 @@ impl LayerProperties {
         LayerPropertiesBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkLayerProperties) -> LayerProperties {
+        LayerProperties { raw, }
+    }
+
     pub fn layer_name<'a>(&'a self) -> &'a CStr {
         unsafe { CStr::from_ptr(&self.raw.layerName as *const _) }
     }
@@ -1280,12 +1264,6 @@ impl LayerProperties {
 impl From<LayerProperties> for vks::VkLayerProperties {
     fn from(f: LayerProperties) -> vks::VkLayerProperties {
         f.raw
-    }
-}
-
-impl From<vks::VkLayerProperties> for LayerProperties {
-    fn from(f: vks::VkLayerProperties) -> LayerProperties {
-        LayerProperties { raw: f, }
     }
 }
 
@@ -1366,6 +1344,10 @@ impl<'s> ApplicationInfo<'s> {
         ApplicationInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkApplicationInfo) -> ApplicationInfo<'s> {
+        ApplicationInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -1427,12 +1409,6 @@ impl<'s> ApplicationInfo<'s> {
 impl<'s> From<ApplicationInfo<'s>> for vks::VkApplicationInfo {
     fn from(f: ApplicationInfo<'s>) -> vks::VkApplicationInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkApplicationInfo> for ApplicationInfo<'s> {
-    fn from(f: vks::VkApplicationInfo) -> ApplicationInfo<'s> {
-        ApplicationInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -1537,6 +1513,10 @@ impl<'s> AllocationCallbacks<'s> {
         AllocationCallbacksBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkAllocationCallbacks) -> AllocationCallbacks<'s> {
+        AllocationCallbacks { raw, _p: PhantomData }
+    }
+
     pub fn user_data<'a>(&'a self) -> *mut c_void {
         self.raw.pUserData
     }
@@ -1593,12 +1573,6 @@ impl<'s> AllocationCallbacks<'s> {
 impl<'s> From<AllocationCallbacks<'s>> for vks::VkAllocationCallbacks {
     fn from(f: AllocationCallbacks<'s>) -> vks::VkAllocationCallbacks {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkAllocationCallbacks> for AllocationCallbacks<'s> {
-    fn from(f: vks::VkAllocationCallbacks) -> AllocationCallbacks<'s> {
-        AllocationCallbacks { raw: f, _p: PhantomData }
     }
 }
 
@@ -1698,6 +1672,10 @@ impl<'s> DeviceQueueCreateInfo<'s> {
         DeviceQueueCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceQueueCreateInfo) -> DeviceQueueCreateInfo<'s> {
+        DeviceQueueCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -1743,12 +1721,6 @@ impl<'s> DeviceQueueCreateInfo<'s> {
 impl<'s> From<DeviceQueueCreateInfo<'s>> for vks::VkDeviceQueueCreateInfo {
     fn from(f: DeviceQueueCreateInfo<'s>) -> vks::VkDeviceQueueCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDeviceQueueCreateInfo> for DeviceQueueCreateInfo<'s> {
-    fn from(f: vks::VkDeviceQueueCreateInfo) -> DeviceQueueCreateInfo<'s> {
-        DeviceQueueCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -1835,6 +1807,10 @@ impl<'s> DeviceCreateInfo<'s> {
         DeviceCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceCreateInfo) -> DeviceCreateInfo<'s> {
+        DeviceCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -1905,12 +1881,6 @@ impl<'s> DeviceCreateInfo<'s> {
 impl<'s> From<DeviceCreateInfo<'s>> for vks::VkDeviceCreateInfo {
     fn from(f: DeviceCreateInfo<'s>) -> vks::VkDeviceCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDeviceCreateInfo> for DeviceCreateInfo<'s> {
-    fn from(f: vks::VkDeviceCreateInfo) -> DeviceCreateInfo<'s> {
-        DeviceCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -2024,6 +1994,10 @@ impl<'s> InstanceCreateInfo<'s> {
         InstanceCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkInstanceCreateInfo) -> InstanceCreateInfo<'s> {
+        InstanceCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -2082,12 +2056,6 @@ impl<'s> InstanceCreateInfo<'s> {
 impl<'s> From<InstanceCreateInfo<'s>> for vks::VkInstanceCreateInfo {
     fn from(f: InstanceCreateInfo<'s>) -> vks::VkInstanceCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkInstanceCreateInfo> for InstanceCreateInfo<'s> {
-    fn from(f: vks::VkInstanceCreateInfo) -> InstanceCreateInfo<'s> {
-        InstanceCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -2187,6 +2155,10 @@ impl QueueFamilyProperties {
         QueueFamilyPropertiesBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkQueueFamilyProperties) -> QueueFamilyProperties {
+        QueueFamilyProperties { raw, }
+    }
+
     pub fn queue_flags<'a>(&'a self) -> QueueFlags {
         QueueFlags::from_bits(self.raw.queueFlags)
             .expect("QueueFamilyProperties::queue_flags: error converting flags")
@@ -2232,12 +2204,6 @@ impl QueueFamilyProperties {
 impl From<QueueFamilyProperties> for vks::VkQueueFamilyProperties {
     fn from(f: QueueFamilyProperties) -> vks::VkQueueFamilyProperties {
         f.raw
-    }
-}
-
-impl From<vks::VkQueueFamilyProperties> for QueueFamilyProperties {
-    fn from(f: vks::VkQueueFamilyProperties) -> QueueFamilyProperties {
-        QueueFamilyProperties { raw: f, }
     }
 }
 
@@ -2320,6 +2286,10 @@ impl PhysicalDeviceMemoryProperties {
         PhysicalDeviceMemoryPropertiesBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceMemoryProperties) -> PhysicalDeviceMemoryProperties {
+        PhysicalDeviceMemoryProperties { raw, }
+    }
+
     pub fn memory_type_count<'a>(&'a self) -> u32 {
         self.raw.memoryTypeCount.into()
     }
@@ -2360,12 +2330,6 @@ impl PhysicalDeviceMemoryProperties {
 impl From<PhysicalDeviceMemoryProperties> for vks::VkPhysicalDeviceMemoryProperties {
     fn from(f: PhysicalDeviceMemoryProperties) -> vks::VkPhysicalDeviceMemoryProperties {
         f.raw
-    }
-}
-
-impl From<vks::VkPhysicalDeviceMemoryProperties> for PhysicalDeviceMemoryProperties {
-    fn from(f: vks::VkPhysicalDeviceMemoryProperties) -> PhysicalDeviceMemoryProperties {
-        PhysicalDeviceMemoryProperties { raw: f, }
     }
 }
 
@@ -2444,6 +2408,10 @@ impl<'s> MemoryAllocateInfo<'s> {
         MemoryAllocateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryAllocateInfo) -> MemoryAllocateInfo<'s> {
+        MemoryAllocateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -2476,12 +2444,6 @@ impl<'s> MemoryAllocateInfo<'s> {
 impl<'s> From<MemoryAllocateInfo<'s>> for vks::VkMemoryAllocateInfo {
     fn from(f: MemoryAllocateInfo<'s>) -> vks::VkMemoryAllocateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMemoryAllocateInfo> for MemoryAllocateInfo<'s> {
-    fn from(f: vks::VkMemoryAllocateInfo) -> MemoryAllocateInfo<'s> {
-        MemoryAllocateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -2553,6 +2515,10 @@ impl MemoryRequirements {
         MemoryRequirementsBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryRequirements) -> MemoryRequirements {
+        MemoryRequirements { raw, }
+    }
+
     pub fn size<'a>(&'a self) -> u64 {
         self.raw.size.into()
     }
@@ -2585,12 +2551,6 @@ impl MemoryRequirements {
 impl From<MemoryRequirements> for vks::VkMemoryRequirements {
     fn from(f: MemoryRequirements) -> vks::VkMemoryRequirements {
         f.raw
-    }
-}
-
-impl From<vks::VkMemoryRequirements> for MemoryRequirements {
-    fn from(f: vks::VkMemoryRequirements) -> MemoryRequirements {
-        MemoryRequirements { raw: f, }
     }
 }
 
@@ -2659,6 +2619,10 @@ impl SparseImageFormatProperties {
         SparseImageFormatPropertiesBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSparseImageFormatProperties) -> SparseImageFormatProperties {
+        SparseImageFormatProperties { raw, }
+    }
+
     pub fn aspect_mask<'a>(&'a self) -> ImageAspectFlags {
         ImageAspectFlags::from_bits(self.raw.aspectMask)
             .expect("SparseImageFormatProperties::aspect_mask: error converting flags")
@@ -2697,12 +2661,6 @@ impl SparseImageFormatProperties {
 impl From<SparseImageFormatProperties> for vks::VkSparseImageFormatProperties {
     fn from(f: SparseImageFormatProperties) -> vks::VkSparseImageFormatProperties {
         f.raw
-    }
-}
-
-impl From<vks::VkSparseImageFormatProperties> for SparseImageFormatProperties {
-    fn from(f: vks::VkSparseImageFormatProperties) -> SparseImageFormatProperties {
-        SparseImageFormatProperties { raw: f, }
     }
 }
 
@@ -2777,6 +2735,10 @@ impl SparseImageMemoryRequirements {
         SparseImageMemoryRequirementsBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSparseImageMemoryRequirements) -> SparseImageMemoryRequirements {
+        SparseImageMemoryRequirements { raw, }
+    }
+
     pub fn format_properties<'a>(&'a self) -> &'a SparseImageFormatProperties {
         unsafe { &*(&self.raw.formatProperties as *const vks::VkSparseImageFormatProperties as *const SparseImageFormatProperties) }
     }
@@ -2829,12 +2791,6 @@ impl SparseImageMemoryRequirements {
 impl From<SparseImageMemoryRequirements> for vks::VkSparseImageMemoryRequirements {
     fn from(f: SparseImageMemoryRequirements) -> vks::VkSparseImageMemoryRequirements {
         f.raw
-    }
-}
-
-impl From<vks::VkSparseImageMemoryRequirements> for SparseImageMemoryRequirements {
-    fn from(f: vks::VkSparseImageMemoryRequirements) -> SparseImageMemoryRequirements {
-        SparseImageMemoryRequirements { raw: f, }
     }
 }
 
@@ -2925,6 +2881,10 @@ impl MemoryType {
         MemoryTypeBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryType) -> MemoryType {
+        MemoryType { raw, }
+    }
+
     pub fn property_flags<'a>(&'a self) -> MemoryPropertyFlags {
         MemoryPropertyFlags::from_bits(self.raw.propertyFlags)
             .expect("MemoryType::property_flags: error converting flags")
@@ -2950,12 +2910,6 @@ impl MemoryType {
 impl From<MemoryType> for vks::VkMemoryType {
     fn from(f: MemoryType) -> vks::VkMemoryType {
         f.raw
-    }
-}
-
-impl From<vks::VkMemoryType> for MemoryType {
-    fn from(f: vks::VkMemoryType) -> MemoryType {
-        MemoryType { raw: f, }
     }
 }
 
@@ -3016,6 +2970,10 @@ impl MemoryHeap {
         MemoryHeapBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryHeap) -> MemoryHeap {
+        MemoryHeap { raw, }
+    }
+
     pub fn size<'a>(&'a self) -> u64 {
         self.raw.size.into()
     }
@@ -3041,12 +2999,6 @@ impl MemoryHeap {
 impl From<MemoryHeap> for vks::VkMemoryHeap {
     fn from(f: MemoryHeap) -> vks::VkMemoryHeap {
         f.raw
-    }
-}
-
-impl From<vks::VkMemoryHeap> for MemoryHeap {
-    fn from(f: vks::VkMemoryHeap) -> MemoryHeap {
-        MemoryHeap { raw: f, }
     }
 }
 
@@ -3108,6 +3060,10 @@ impl<'s> MappedMemoryRange<'s> {
         MappedMemoryRangeBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMappedMemoryRange) -> MappedMemoryRange<'s> {
+        MappedMemoryRange { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -3149,12 +3105,6 @@ impl<'s> MappedMemoryRange<'s> {
 impl<'s> From<MappedMemoryRange<'s>> for vks::VkMappedMemoryRange {
     fn from(f: MappedMemoryRange<'s>) -> vks::VkMappedMemoryRange {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMappedMemoryRange> for MappedMemoryRange<'s> {
-    fn from(f: vks::VkMappedMemoryRange) -> MappedMemoryRange<'s> {
-        MappedMemoryRange { raw: f, _p: PhantomData }
     }
 }
 
@@ -3236,6 +3186,10 @@ impl FormatProperties {
         FormatPropertiesBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkFormatProperties) -> FormatProperties {
+        FormatProperties { raw, }
+    }
+
     pub fn linear_tiling_features<'a>(&'a self) -> FormatFeatureFlags {
         FormatFeatureFlags::from_bits(self.raw.linearTilingFeatures)
             .expect("FormatProperties::linear_tiling_features: error converting flags")
@@ -3271,12 +3225,6 @@ impl FormatProperties {
 impl From<FormatProperties> for vks::VkFormatProperties {
     fn from(f: FormatProperties) -> vks::VkFormatProperties {
         f.raw
-    }
-}
-
-impl From<vks::VkFormatProperties> for FormatProperties {
-    fn from(f: vks::VkFormatProperties) -> FormatProperties {
-        FormatProperties { raw: f, }
     }
 }
 
@@ -3348,6 +3296,10 @@ impl ImageFormatProperties {
         ImageFormatPropertiesBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageFormatProperties) -> ImageFormatProperties {
+        ImageFormatProperties { raw, }
+    }
+
     pub fn max_extent<'a>(&'a self) -> &'a Extent3d {
         unsafe { &*(&self.raw.maxExtent as *const vks::VkExtent3D as *const Extent3d) }
     }
@@ -3401,12 +3353,6 @@ impl ImageFormatProperties {
 impl From<ImageFormatProperties> for vks::VkImageFormatProperties {
     fn from(f: ImageFormatProperties) -> vks::VkImageFormatProperties {
         f.raw
-    }
-}
-
-impl From<vks::VkImageFormatProperties> for ImageFormatProperties {
-    fn from(f: vks::VkImageFormatProperties) -> ImageFormatProperties {
-        ImageFormatProperties { raw: f, }
     }
 }
 
@@ -3498,6 +3444,10 @@ impl DescriptorBufferInfo {
         DescriptorBufferInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDescriptorBufferInfo) -> DescriptorBufferInfo {
+        DescriptorBufferInfo { raw, }
+    }
+
     pub fn buffer<'a>(&'a self) -> vks::VkBuffer {
         self.raw.buffer
     }
@@ -3531,12 +3481,6 @@ impl DescriptorBufferInfo {
 impl From<DescriptorBufferInfo> for vks::VkDescriptorBufferInfo {
     fn from(f: DescriptorBufferInfo) -> vks::VkDescriptorBufferInfo {
         f.raw
-    }
-}
-
-impl From<vks::VkDescriptorBufferInfo> for DescriptorBufferInfo {
-    fn from(f: vks::VkDescriptorBufferInfo) -> DescriptorBufferInfo {
-        DescriptorBufferInfo { raw: f, }
     }
 }
 
@@ -3606,6 +3550,10 @@ impl DescriptorImageInfo {
         DescriptorImageInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDescriptorImageInfo) -> DescriptorImageInfo {
+        DescriptorImageInfo { raw, }
+    }
+
     pub fn sampler<'a>(&'a self) -> vks::VkSampler {
         self.raw.sampler
     }
@@ -3640,12 +3588,6 @@ impl DescriptorImageInfo {
 impl From<DescriptorImageInfo> for vks::VkDescriptorImageInfo {
     fn from(f: DescriptorImageInfo) -> vks::VkDescriptorImageInfo {
         f.raw
-    }
-}
-
-impl From<vks::VkDescriptorImageInfo> for DescriptorImageInfo {
-    fn from(f: vks::VkDescriptorImageInfo) -> DescriptorImageInfo {
-        DescriptorImageInfo { raw: f, }
     }
 }
 
@@ -3715,6 +3657,10 @@ pub struct WriteDescriptorSet<'s> {
 impl<'s> WriteDescriptorSet<'s> {
     pub fn builder<'b>() -> WriteDescriptorSetBuilder<'b> {
         WriteDescriptorSetBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkWriteDescriptorSet) -> WriteDescriptorSet<'s> {
+        WriteDescriptorSet { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -3801,12 +3747,6 @@ impl<'s> WriteDescriptorSet<'s> {
 impl<'s> From<WriteDescriptorSet<'s>> for vks::VkWriteDescriptorSet {
     fn from(f: WriteDescriptorSet<'s>) -> vks::VkWriteDescriptorSet {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkWriteDescriptorSet> for WriteDescriptorSet<'s> {
-    fn from(f: vks::VkWriteDescriptorSet) -> WriteDescriptorSet<'s> {
-        WriteDescriptorSet { raw: f, _p: PhantomData }
     }
 }
 
@@ -3937,6 +3877,10 @@ impl<'s> CopyDescriptorSet<'s> {
         CopyDescriptorSetBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkCopyDescriptorSet) -> CopyDescriptorSet<'s> {
+        CopyDescriptorSet { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -4011,12 +3955,6 @@ impl<'s> CopyDescriptorSet<'s> {
 impl<'s> From<CopyDescriptorSet<'s>> for vks::VkCopyDescriptorSet {
     fn from(f: CopyDescriptorSet<'s>) -> vks::VkCopyDescriptorSet {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkCopyDescriptorSet> for CopyDescriptorSet<'s> {
-    fn from(f: vks::VkCopyDescriptorSet) -> CopyDescriptorSet<'s> {
-        CopyDescriptorSet { raw: f, _p: PhantomData }
     }
 }
 
@@ -4136,6 +4074,10 @@ impl<'s> BufferCreateInfo<'s> {
         BufferCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkBufferCreateInfo) -> BufferCreateInfo<'s> {
+        BufferCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -4198,12 +4140,6 @@ impl<'s> BufferCreateInfo<'s> {
 impl<'s> From<BufferCreateInfo<'s>> for vks::VkBufferCreateInfo {
     fn from(f: BufferCreateInfo<'s>) -> vks::VkBufferCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkBufferCreateInfo> for BufferCreateInfo<'s> {
-    fn from(f: vks::VkBufferCreateInfo) -> BufferCreateInfo<'s> {
-        BufferCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -4309,6 +4245,10 @@ impl<'s> BufferViewCreateInfo<'s> {
         BufferViewCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkBufferViewCreateInfo) -> BufferViewCreateInfo<'s> {
+        BufferViewCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -4367,12 +4307,6 @@ impl<'s> BufferViewCreateInfo<'s> {
 impl<'s> From<BufferViewCreateInfo<'s>> for vks::VkBufferViewCreateInfo {
     fn from(f: BufferViewCreateInfo<'s>) -> vks::VkBufferViewCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkBufferViewCreateInfo> for BufferViewCreateInfo<'s> {
-    fn from(f: vks::VkBufferViewCreateInfo) -> BufferViewCreateInfo<'s> {
-        BufferViewCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -4473,6 +4407,10 @@ impl ImageSubresource {
         ImageSubresourceBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageSubresource) -> ImageSubresource {
+        ImageSubresource { raw, }
+    }
+
     pub fn aspect_mask<'a>(&'a self) -> ImageAspectFlags {
         ImageAspectFlags::from_bits(self.raw.aspectMask)
             .expect("ImageSubresource::aspect_mask: error converting flags")
@@ -4506,12 +4444,6 @@ impl ImageSubresource {
 impl From<ImageSubresource> for vks::VkImageSubresource {
     fn from(f: ImageSubresource) -> vks::VkImageSubresource {
         f.raw
-    }
-}
-
-impl From<vks::VkImageSubresource> for ImageSubresource {
-    fn from(f: vks::VkImageSubresource) -> ImageSubresource {
-        ImageSubresource { raw: f, }
     }
 }
 
@@ -4581,6 +4513,10 @@ impl ImageSubresourceLayers {
         ImageSubresourceLayersBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageSubresourceLayers) -> ImageSubresourceLayers {
+        ImageSubresourceLayers { raw, }
+    }
+
     pub fn aspect_mask<'a>(&'a self) -> ImageAspectFlags {
         ImageAspectFlags::from_bits(self.raw.aspectMask)
             .expect("ImageSubresourceLayers::aspect_mask: error converting flags")
@@ -4622,12 +4558,6 @@ impl ImageSubresourceLayers {
 impl From<ImageSubresourceLayers> for vks::VkImageSubresourceLayers {
     fn from(f: ImageSubresourceLayers) -> vks::VkImageSubresourceLayers {
         f.raw
-    }
-}
-
-impl From<vks::VkImageSubresourceLayers> for ImageSubresourceLayers {
-    fn from(f: vks::VkImageSubresourceLayers) -> ImageSubresourceLayers {
-        ImageSubresourceLayers { raw: f, }
     }
 }
 
@@ -4706,6 +4636,10 @@ impl ImageSubresourceRange {
         ImageSubresourceRangeBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageSubresourceRange) -> ImageSubresourceRange {
+        ImageSubresourceRange { raw, }
+    }
+
     pub fn aspect_mask<'a>(&'a self) -> ImageAspectFlags {
         ImageAspectFlags::from_bits(self.raw.aspectMask)
             .expect("ImageSubresourceRange::aspect_mask: error converting flags")
@@ -4755,12 +4689,6 @@ impl ImageSubresourceRange {
 impl From<ImageSubresourceRange> for vks::VkImageSubresourceRange {
     fn from(f: ImageSubresourceRange) -> vks::VkImageSubresourceRange {
         f.raw
-    }
-}
-
-impl From<vks::VkImageSubresourceRange> for ImageSubresourceRange {
-    fn from(f: vks::VkImageSubresourceRange) -> ImageSubresourceRange {
-        ImageSubresourceRange { raw: f, }
     }
 }
 
@@ -4849,6 +4777,10 @@ impl<'s> MemoryBarrier<'s> {
         MemoryBarrierBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryBarrier) -> MemoryBarrier<'s> {
+        MemoryBarrier { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -4883,12 +4815,6 @@ impl<'s> MemoryBarrier<'s> {
 impl<'s> From<MemoryBarrier<'s>> for vks::VkMemoryBarrier {
     fn from(f: MemoryBarrier<'s>) -> vks::VkMemoryBarrier {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMemoryBarrier> for MemoryBarrier<'s> {
-    fn from(f: vks::VkMemoryBarrier) -> MemoryBarrier<'s> {
-        MemoryBarrier { raw: f, _p: PhantomData }
     }
 }
 
@@ -4961,6 +4887,10 @@ pub struct BufferMemoryBarrier<'s> {
 impl<'s> BufferMemoryBarrier<'s> {
     pub fn builder<'b>() -> BufferMemoryBarrierBuilder<'b> {
         BufferMemoryBarrierBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkBufferMemoryBarrier) -> BufferMemoryBarrier<'s> {
+        BufferMemoryBarrier { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -5038,12 +4968,6 @@ impl<'s> BufferMemoryBarrier<'s> {
 impl<'s> From<BufferMemoryBarrier<'s>> for vks::VkBufferMemoryBarrier {
     fn from(f: BufferMemoryBarrier<'s>) -> vks::VkBufferMemoryBarrier {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkBufferMemoryBarrier> for BufferMemoryBarrier<'s> {
-    fn from(f: vks::VkBufferMemoryBarrier) -> BufferMemoryBarrier<'s> {
-        BufferMemoryBarrier { raw: f, _p: PhantomData }
     }
 }
 
@@ -5164,6 +5088,10 @@ impl<'s> ImageMemoryBarrier<'s> {
         ImageMemoryBarrierBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageMemoryBarrier) -> ImageMemoryBarrier<'s> {
+        ImageMemoryBarrier { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -5251,12 +5179,6 @@ impl<'s> ImageMemoryBarrier<'s> {
 impl<'s> From<ImageMemoryBarrier<'s>> for vks::VkImageMemoryBarrier {
     fn from(f: ImageMemoryBarrier<'s>) -> vks::VkImageMemoryBarrier {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImageMemoryBarrier> for ImageMemoryBarrier<'s> {
-    fn from(f: vks::VkImageMemoryBarrier) -> ImageMemoryBarrier<'s> {
-        ImageMemoryBarrier { raw: f, _p: PhantomData }
     }
 }
 
@@ -5390,6 +5312,10 @@ impl<'s> ImageCreateInfo<'s> {
         ImageCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageCreateInfo) -> ImageCreateInfo<'s> {
+        ImageCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -5513,12 +5439,6 @@ impl<'s> ImageCreateInfo<'s> {
 impl<'s> From<ImageCreateInfo<'s>> for vks::VkImageCreateInfo {
     fn from(f: ImageCreateInfo<'s>) -> vks::VkImageCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImageCreateInfo> for ImageCreateInfo<'s> {
-    fn from(f: vks::VkImageCreateInfo) -> ImageCreateInfo<'s> {
-        ImageCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -5691,6 +5611,10 @@ impl SubresourceLayout {
         SubresourceLayoutBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSubresourceLayout) -> SubresourceLayout {
+        SubresourceLayout { raw, }
+    }
+
     pub fn offset<'a>(&'a self) -> u64 {
         self.raw.offset.into()
     }
@@ -5739,12 +5663,6 @@ impl SubresourceLayout {
 impl From<SubresourceLayout> for vks::VkSubresourceLayout {
     fn from(f: SubresourceLayout) -> vks::VkSubresourceLayout {
         f.raw
-    }
-}
-
-impl From<vks::VkSubresourceLayout> for SubresourceLayout {
-    fn from(f: vks::VkSubresourceLayout) -> SubresourceLayout {
-        SubresourceLayout { raw: f, }
     }
 }
 
@@ -5832,6 +5750,10 @@ impl<'s> ImageViewCreateInfo<'s> {
         ImageViewCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageViewCreateInfo) -> ImageViewCreateInfo<'s> {
+        ImageViewCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -5906,12 +5828,6 @@ impl<'s> ImageViewCreateInfo<'s> {
 impl<'s> From<ImageViewCreateInfo<'s>> for vks::VkImageViewCreateInfo {
     fn from(f: ImageViewCreateInfo<'s>) -> vks::VkImageViewCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImageViewCreateInfo> for ImageViewCreateInfo<'s> {
-    fn from(f: vks::VkImageViewCreateInfo) -> ImageViewCreateInfo<'s> {
-        ImageViewCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -6029,6 +5945,10 @@ impl BufferCopy {
         BufferCopyBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkBufferCopy) -> BufferCopy {
+        BufferCopy { raw, }
+    }
+
     pub fn src_offset<'a>(&'a self) -> u64 {
         self.raw.srcOffset.into()
     }
@@ -6061,12 +5981,6 @@ impl BufferCopy {
 impl From<BufferCopy> for vks::VkBufferCopy {
     fn from(f: BufferCopy) -> vks::VkBufferCopy {
         f.raw
-    }
-}
-
-impl From<vks::VkBufferCopy> for BufferCopy {
-    fn from(f: vks::VkBufferCopy) -> BufferCopy {
-        BufferCopy { raw: f, }
     }
 }
 
@@ -6135,6 +6049,10 @@ impl SparseMemoryBind {
         SparseMemoryBindBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSparseMemoryBind) -> SparseMemoryBind {
+        SparseMemoryBind { raw, }
+    }
+
     pub fn resource_offset<'a>(&'a self) -> u64 {
         self.raw.resourceOffset.into()
     }
@@ -6185,12 +6103,6 @@ impl SparseMemoryBind {
 impl From<SparseMemoryBind> for vks::VkSparseMemoryBind {
     fn from(f: SparseMemoryBind) -> vks::VkSparseMemoryBind {
         f.raw
-    }
-}
-
-impl From<vks::VkSparseMemoryBind> for SparseMemoryBind {
-    fn from(f: vks::VkSparseMemoryBind) -> SparseMemoryBind {
-        SparseMemoryBind { raw: f, }
     }
 }
 
@@ -6279,6 +6191,10 @@ impl SparseImageMemoryBind {
         SparseImageMemoryBindBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSparseImageMemoryBind) -> SparseImageMemoryBind {
+        SparseImageMemoryBind { raw, }
+    }
+
     pub fn subresource<'a>(&'a self) -> &'a ImageSubresource {
         unsafe { &*(&self.raw.subresource as *const vks::VkImageSubresource as *const ImageSubresource) }
     }
@@ -6349,12 +6265,6 @@ impl SparseImageMemoryBind {
 impl From<SparseImageMemoryBind> for vks::VkSparseImageMemoryBind {
     fn from(f: SparseImageMemoryBind) -> vks::VkSparseImageMemoryBind {
         f.raw
-    }
-}
-
-impl From<vks::VkSparseImageMemoryBind> for SparseImageMemoryBind {
-    fn from(f: vks::VkSparseImageMemoryBind) -> SparseImageMemoryBind {
-        SparseImageMemoryBind { raw: f, }
     }
 }
 
@@ -6465,6 +6375,10 @@ impl<'s> SparseBufferMemoryBindInfo<'s> {
         SparseBufferMemoryBindInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSparseBufferMemoryBindInfo) -> SparseBufferMemoryBindInfo<'s> {
+        SparseBufferMemoryBindInfo { raw, _p: PhantomData }
+    }
+
     pub fn buffer<'a>(&'a self) -> vks::VkBuffer {
         self.raw.buffer
     }
@@ -6494,12 +6408,6 @@ impl<'s> SparseBufferMemoryBindInfo<'s> {
 impl<'s> From<SparseBufferMemoryBindInfo<'s>> for vks::VkSparseBufferMemoryBindInfo {
     fn from(f: SparseBufferMemoryBindInfo<'s>) -> vks::VkSparseBufferMemoryBindInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSparseBufferMemoryBindInfo> for SparseBufferMemoryBindInfo<'s> {
-    fn from(f: vks::VkSparseBufferMemoryBindInfo) -> SparseBufferMemoryBindInfo<'s> {
-        SparseBufferMemoryBindInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -6568,6 +6476,10 @@ impl<'s> SparseImageOpaqueMemoryBindInfo<'s> {
         SparseImageOpaqueMemoryBindInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSparseImageOpaqueMemoryBindInfo) -> SparseImageOpaqueMemoryBindInfo<'s> {
+        SparseImageOpaqueMemoryBindInfo { raw, _p: PhantomData }
+    }
+
     pub fn image<'a>(&'a self) -> vks::VkImage {
         self.raw.image
     }
@@ -6597,12 +6509,6 @@ impl<'s> SparseImageOpaqueMemoryBindInfo<'s> {
 impl<'s> From<SparseImageOpaqueMemoryBindInfo<'s>> for vks::VkSparseImageOpaqueMemoryBindInfo {
     fn from(f: SparseImageOpaqueMemoryBindInfo<'s>) -> vks::VkSparseImageOpaqueMemoryBindInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSparseImageOpaqueMemoryBindInfo> for SparseImageOpaqueMemoryBindInfo<'s> {
-    fn from(f: vks::VkSparseImageOpaqueMemoryBindInfo) -> SparseImageOpaqueMemoryBindInfo<'s> {
-        SparseImageOpaqueMemoryBindInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -6671,6 +6577,10 @@ impl<'s> SparseImageMemoryBindInfo<'s> {
         SparseImageMemoryBindInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSparseImageMemoryBindInfo) -> SparseImageMemoryBindInfo<'s> {
+        SparseImageMemoryBindInfo { raw, _p: PhantomData }
+    }
+
     pub fn image<'a>(&'a self) -> vks::VkImage {
         self.raw.image
     }
@@ -6700,12 +6610,6 @@ impl<'s> SparseImageMemoryBindInfo<'s> {
 impl<'s> From<SparseImageMemoryBindInfo<'s>> for vks::VkSparseImageMemoryBindInfo {
     fn from(f: SparseImageMemoryBindInfo<'s>) -> vks::VkSparseImageMemoryBindInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSparseImageMemoryBindInfo> for SparseImageMemoryBindInfo<'s> {
-    fn from(f: vks::VkSparseImageMemoryBindInfo) -> SparseImageMemoryBindInfo<'s> {
-        SparseImageMemoryBindInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -6772,6 +6676,10 @@ pub struct BindSparseInfo<'s> {
 impl<'s> BindSparseInfo<'s> {
     pub fn builder<'b>() -> BindSparseInfoBuilder<'b> {
         BindSparseInfoBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkBindSparseInfo) -> BindSparseInfo<'s> {
+        BindSparseInfo { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -6850,12 +6758,6 @@ impl<'s> BindSparseInfo<'s> {
 impl<'s> From<BindSparseInfo<'s>> for vks::VkBindSparseInfo {
     fn from(f: BindSparseInfo<'s>) -> vks::VkBindSparseInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkBindSparseInfo> for BindSparseInfo<'s> {
-    fn from(f: vks::VkBindSparseInfo) -> BindSparseInfo<'s> {
-        BindSparseInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -6974,6 +6876,10 @@ impl ImageCopy {
         ImageCopyBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageCopy) -> ImageCopy {
+        ImageCopy { raw, }
+    }
+
     pub fn src_subresource<'a>(&'a self) -> &'a ImageSubresourceLayers {
         unsafe { &*(&self.raw.srcSubresource as *const vks::VkImageSubresourceLayers as *const ImageSubresourceLayers) }
     }
@@ -7042,12 +6948,6 @@ impl ImageCopy {
 impl From<ImageCopy> for vks::VkImageCopy {
     fn from(f: ImageCopy) -> vks::VkImageCopy {
         f.raw
-    }
-}
-
-impl From<vks::VkImageCopy> for ImageCopy {
-    fn from(f: vks::VkImageCopy) -> ImageCopy {
-        ImageCopy { raw: f, }
     }
 }
 
@@ -7154,6 +7054,10 @@ impl ImageBlit {
         ImageBlitBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageBlit) -> ImageBlit {
+        ImageBlit { raw, }
+    }
+
     pub fn src_subresource<'a>(&'a self) -> &'a ImageSubresourceLayers {
         unsafe { &*(&self.raw.srcSubresource as *const vks::VkImageSubresourceLayers as *const ImageSubresourceLayers) }
     }
@@ -7202,12 +7106,6 @@ impl ImageBlit {
 impl From<ImageBlit> for vks::VkImageBlit {
     fn from(f: ImageBlit) -> vks::VkImageBlit {
         f.raw
-    }
-}
-
-impl From<vks::VkImageBlit> for ImageBlit {
-    fn from(f: vks::VkImageBlit) -> ImageBlit {
-        ImageBlit { raw: f, }
     }
 }
 
@@ -7293,6 +7191,10 @@ impl BufferImageCopy {
         BufferImageCopyBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkBufferImageCopy) -> BufferImageCopy {
+        BufferImageCopy { raw, }
+    }
+
     pub fn buffer_offset<'a>(&'a self) -> u64 {
         self.raw.bufferOffset.into()
     }
@@ -7361,12 +7263,6 @@ impl BufferImageCopy {
 impl From<BufferImageCopy> for vks::VkBufferImageCopy {
     fn from(f: BufferImageCopy) -> vks::VkBufferImageCopy {
         f.raw
-    }
-}
-
-impl From<vks::VkBufferImageCopy> for BufferImageCopy {
-    fn from(f: vks::VkBufferImageCopy) -> BufferImageCopy {
-        BufferImageCopy { raw: f, }
     }
 }
 
@@ -7474,6 +7370,10 @@ impl ImageResolve {
         ImageResolveBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageResolve) -> ImageResolve {
+        ImageResolve { raw, }
+    }
+
     pub fn src_subresource<'a>(&'a self) -> &'a ImageSubresourceLayers {
         unsafe { &*(&self.raw.srcSubresource as *const vks::VkImageSubresourceLayers as *const ImageSubresourceLayers) }
     }
@@ -7542,12 +7442,6 @@ impl ImageResolve {
 impl From<ImageResolve> for vks::VkImageResolve {
     fn from(f: ImageResolve) -> vks::VkImageResolve {
         f.raw
-    }
-}
-
-impl From<vks::VkImageResolve> for ImageResolve {
-    fn from(f: vks::VkImageResolve) -> ImageResolve {
-        ImageResolve { raw: f, }
     }
 }
 
@@ -7655,6 +7549,10 @@ impl<'s> ShaderModuleCreateInfo<'s> {
         ShaderModuleCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkShaderModuleCreateInfo) -> ShaderModuleCreateInfo<'s> {
+        ShaderModuleCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -7690,12 +7588,6 @@ impl<'s> ShaderModuleCreateInfo<'s> {
 impl<'s> From<ShaderModuleCreateInfo<'s>> for vks::VkShaderModuleCreateInfo {
     fn from(f: ShaderModuleCreateInfo<'s>) -> vks::VkShaderModuleCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkShaderModuleCreateInfo> for ShaderModuleCreateInfo<'s> {
-    fn from(f: vks::VkShaderModuleCreateInfo) -> ShaderModuleCreateInfo<'s> {
-        ShaderModuleCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -7771,6 +7663,10 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
         DescriptorSetLayoutBindingBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDescriptorSetLayoutBinding) -> DescriptorSetLayoutBinding<'s> {
+        DescriptorSetLayoutBinding { raw, _p: PhantomData }
+    }
+
     pub fn binding<'a>(&'a self) -> u32 {
         self.raw.binding.into()
     }
@@ -7821,12 +7717,6 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
 impl<'s> From<DescriptorSetLayoutBinding<'s>> for vks::VkDescriptorSetLayoutBinding {
     fn from(f: DescriptorSetLayoutBinding<'s>) -> vks::VkDescriptorSetLayoutBinding {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDescriptorSetLayoutBinding> for DescriptorSetLayoutBinding<'s> {
-    fn from(f: vks::VkDescriptorSetLayoutBinding) -> DescriptorSetLayoutBinding<'s> {
-        DescriptorSetLayoutBinding { raw: f, _p: PhantomData }
     }
 }
 
@@ -7919,6 +7809,10 @@ impl<'s> DescriptorSetLayoutCreateInfo<'s> {
         DescriptorSetLayoutCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDescriptorSetLayoutCreateInfo) -> DescriptorSetLayoutCreateInfo<'s> {
+        DescriptorSetLayoutCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -7956,12 +7850,6 @@ impl<'s> DescriptorSetLayoutCreateInfo<'s> {
 impl<'s> From<DescriptorSetLayoutCreateInfo<'s>> for vks::VkDescriptorSetLayoutCreateInfo {
     fn from(f: DescriptorSetLayoutCreateInfo<'s>) -> vks::VkDescriptorSetLayoutCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDescriptorSetLayoutCreateInfo> for DescriptorSetLayoutCreateInfo<'s> {
-    fn from(f: vks::VkDescriptorSetLayoutCreateInfo) -> DescriptorSetLayoutCreateInfo<'s> {
-        DescriptorSetLayoutCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -8038,6 +7926,10 @@ impl DescriptorPoolSize {
         DescriptorPoolSizeBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDescriptorPoolSize) -> DescriptorPoolSize {
+        DescriptorPoolSize { raw, }
+    }
+
     pub fn type_of<'a>(&'a self) -> DescriptorType {
         self.raw.type_.into()
     }
@@ -8062,12 +7954,6 @@ impl DescriptorPoolSize {
 impl From<DescriptorPoolSize> for vks::VkDescriptorPoolSize {
     fn from(f: DescriptorPoolSize) -> vks::VkDescriptorPoolSize {
         f.raw
-    }
-}
-
-impl From<vks::VkDescriptorPoolSize> for DescriptorPoolSize {
-    fn from(f: vks::VkDescriptorPoolSize) -> DescriptorPoolSize {
-        DescriptorPoolSize { raw: f, }
     }
 }
 
@@ -8128,6 +8014,10 @@ impl<'s> DescriptorPoolCreateInfo<'s> {
         DescriptorPoolCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDescriptorPoolCreateInfo) -> DescriptorPoolCreateInfo<'s> {
+        DescriptorPoolCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -8173,12 +8063,6 @@ impl<'s> DescriptorPoolCreateInfo<'s> {
 impl<'s> From<DescriptorPoolCreateInfo<'s>> for vks::VkDescriptorPoolCreateInfo {
     fn from(f: DescriptorPoolCreateInfo<'s>) -> vks::VkDescriptorPoolCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDescriptorPoolCreateInfo> for DescriptorPoolCreateInfo<'s> {
-    fn from(f: vks::VkDescriptorPoolCreateInfo) -> DescriptorPoolCreateInfo<'s> {
-        DescriptorPoolCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -8265,6 +8149,10 @@ impl<'s> DescriptorSetAllocateInfo<'s> {
         DescriptorSetAllocateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDescriptorSetAllocateInfo) -> DescriptorSetAllocateInfo<'s> {
+        DescriptorSetAllocateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -8302,12 +8190,6 @@ impl<'s> DescriptorSetAllocateInfo<'s> {
 impl<'s> From<DescriptorSetAllocateInfo<'s>> for vks::VkDescriptorSetAllocateInfo {
     fn from(f: DescriptorSetAllocateInfo<'s>) -> vks::VkDescriptorSetAllocateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDescriptorSetAllocateInfo> for DescriptorSetAllocateInfo<'s> {
-    fn from(f: vks::VkDescriptorSetAllocateInfo) -> DescriptorSetAllocateInfo<'s> {
-        DescriptorSetAllocateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -8384,6 +8266,10 @@ impl SpecializationMapEntry {
         SpecializationMapEntryBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSpecializationMapEntry) -> SpecializationMapEntry {
+        SpecializationMapEntry { raw, }
+    }
+
     pub fn constant_id<'a>(&'a self) -> u32 {
         self.raw.constantID.into()
     }
@@ -8416,12 +8302,6 @@ impl SpecializationMapEntry {
 impl From<SpecializationMapEntry> for vks::VkSpecializationMapEntry {
     fn from(f: SpecializationMapEntry) -> vks::VkSpecializationMapEntry {
         f.raw
-    }
-}
-
-impl From<vks::VkSpecializationMapEntry> for SpecializationMapEntry {
-    fn from(f: vks::VkSpecializationMapEntry) -> SpecializationMapEntry {
-        SpecializationMapEntry { raw: f, }
     }
 }
 
@@ -8491,6 +8371,10 @@ impl<'s> SpecializationInfo<'s> {
         SpecializationInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSpecializationInfo) -> SpecializationInfo<'s> {
+        SpecializationInfo { raw, _p: PhantomData }
+    }
+
     pub fn map_entries<'a>(&'a self) -> &'a [SpecializationMapEntry] {
         unsafe { slice::from_raw_parts(self.raw.pMapEntries as *const _, self.raw.mapEntryCount as usize) }
     }
@@ -8527,12 +8411,6 @@ impl<'s> SpecializationInfo<'s> {
 impl<'s> From<SpecializationInfo<'s>> for vks::VkSpecializationInfo {
     fn from(f: SpecializationInfo<'s>) -> vks::VkSpecializationInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSpecializationInfo> for SpecializationInfo<'s> {
-    fn from(f: vks::VkSpecializationInfo) -> SpecializationInfo<'s> {
-        SpecializationInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -8609,6 +8487,10 @@ impl<'s> PipelineShaderStageCreateInfo<'s> {
         PipelineShaderStageCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineShaderStageCreateInfo) -> PipelineShaderStageCreateInfo<'s> {
+        PipelineShaderStageCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -8670,12 +8552,6 @@ impl<'s> PipelineShaderStageCreateInfo<'s> {
 impl<'s> From<PipelineShaderStageCreateInfo<'s>> for vks::VkPipelineShaderStageCreateInfo {
     fn from(f: PipelineShaderStageCreateInfo<'s>) -> vks::VkPipelineShaderStageCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineShaderStageCreateInfo> for PipelineShaderStageCreateInfo<'s> {
-    fn from(f: vks::VkPipelineShaderStageCreateInfo) -> PipelineShaderStageCreateInfo<'s> {
-        PipelineShaderStageCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -8780,6 +8656,10 @@ impl<'s> ComputePipelineCreateInfo<'s> {
         ComputePipelineCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkComputePipelineCreateInfo) -> ComputePipelineCreateInfo<'s> {
+        ComputePipelineCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -8843,12 +8723,6 @@ impl<'s> ComputePipelineCreateInfo<'s> {
 impl<'s> From<ComputePipelineCreateInfo<'s>> for vks::VkComputePipelineCreateInfo {
     fn from(f: ComputePipelineCreateInfo<'s>) -> vks::VkComputePipelineCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkComputePipelineCreateInfo> for ComputePipelineCreateInfo<'s> {
-    fn from(f: vks::VkComputePipelineCreateInfo) -> ComputePipelineCreateInfo<'s> {
-        ComputePipelineCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -8954,6 +8828,10 @@ impl VertexInputBindingDescription {
         VertexInputBindingDescriptionBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkVertexInputBindingDescription) -> VertexInputBindingDescription {
+        VertexInputBindingDescription { raw, }
+    }
+
     pub fn binding<'a>(&'a self) -> u32 {
         self.raw.binding.into()
     }
@@ -8986,12 +8864,6 @@ impl VertexInputBindingDescription {
 impl From<VertexInputBindingDescription> for vks::VkVertexInputBindingDescription {
     fn from(f: VertexInputBindingDescription) -> vks::VkVertexInputBindingDescription {
         f.raw
-    }
-}
-
-impl From<vks::VkVertexInputBindingDescription> for VertexInputBindingDescription {
-    fn from(f: vks::VkVertexInputBindingDescription) -> VertexInputBindingDescription {
-        VertexInputBindingDescription { raw: f, }
     }
 }
 
@@ -9060,6 +8932,10 @@ impl VertexInputAttributeDescription {
         VertexInputAttributeDescriptionBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkVertexInputAttributeDescription) -> VertexInputAttributeDescription {
+        VertexInputAttributeDescription { raw, }
+    }
+
     pub fn location<'a>(&'a self) -> u32 {
         self.raw.location.into()
     }
@@ -9100,12 +8976,6 @@ impl VertexInputAttributeDescription {
 impl From<VertexInputAttributeDescription> for vks::VkVertexInputAttributeDescription {
     fn from(f: VertexInputAttributeDescription) -> vks::VkVertexInputAttributeDescription {
         f.raw
-    }
-}
-
-impl From<vks::VkVertexInputAttributeDescription> for VertexInputAttributeDescription {
-    fn from(f: vks::VkVertexInputAttributeDescription) -> VertexInputAttributeDescription {
-        VertexInputAttributeDescription { raw: f, }
     }
 }
 
@@ -9184,6 +9054,10 @@ impl<'s> PipelineVertexInputStateCreateInfo<'s> {
         PipelineVertexInputStateCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineVertexInputStateCreateInfo) -> PipelineVertexInputStateCreateInfo<'s> {
+        PipelineVertexInputStateCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -9233,12 +9107,6 @@ impl<'s> PipelineVertexInputStateCreateInfo<'s> {
 impl<'s> From<PipelineVertexInputStateCreateInfo<'s>> for vks::VkPipelineVertexInputStateCreateInfo {
     fn from(f: PipelineVertexInputStateCreateInfo<'s>) -> vks::VkPipelineVertexInputStateCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineVertexInputStateCreateInfo> for PipelineVertexInputStateCreateInfo<'s> {
-    fn from(f: vks::VkPipelineVertexInputStateCreateInfo) -> PipelineVertexInputStateCreateInfo<'s> {
-        PipelineVertexInputStateCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -9329,6 +9197,10 @@ impl<'s> PipelineInputAssemblyStateCreateInfo<'s> {
         PipelineInputAssemblyStateCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineInputAssemblyStateCreateInfo) -> PipelineInputAssemblyStateCreateInfo<'s> {
+        PipelineInputAssemblyStateCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -9370,12 +9242,6 @@ impl<'s> PipelineInputAssemblyStateCreateInfo<'s> {
 impl<'s> From<PipelineInputAssemblyStateCreateInfo<'s>> for vks::VkPipelineInputAssemblyStateCreateInfo {
     fn from(f: PipelineInputAssemblyStateCreateInfo<'s>) -> vks::VkPipelineInputAssemblyStateCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineInputAssemblyStateCreateInfo> for PipelineInputAssemblyStateCreateInfo<'s> {
-    fn from(f: vks::VkPipelineInputAssemblyStateCreateInfo) -> PipelineInputAssemblyStateCreateInfo<'s> {
-        PipelineInputAssemblyStateCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -9458,6 +9324,10 @@ impl<'s> PipelineTessellationStateCreateInfo<'s> {
         PipelineTessellationStateCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineTessellationStateCreateInfo) -> PipelineTessellationStateCreateInfo<'s> {
+        PipelineTessellationStateCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -9491,12 +9361,6 @@ impl<'s> PipelineTessellationStateCreateInfo<'s> {
 impl<'s> From<PipelineTessellationStateCreateInfo<'s>> for vks::VkPipelineTessellationStateCreateInfo {
     fn from(f: PipelineTessellationStateCreateInfo<'s>) -> vks::VkPipelineTessellationStateCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineTessellationStateCreateInfo> for PipelineTessellationStateCreateInfo<'s> {
-    fn from(f: vks::VkPipelineTessellationStateCreateInfo) -> PipelineTessellationStateCreateInfo<'s> {
-        PipelineTessellationStateCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -9570,6 +9434,10 @@ impl<'s> PipelineViewportStateCreateInfo<'s> {
         PipelineViewportStateCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineViewportStateCreateInfo) -> PipelineViewportStateCreateInfo<'s> {
+        PipelineViewportStateCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -9619,12 +9487,6 @@ impl<'s> PipelineViewportStateCreateInfo<'s> {
 impl<'s> From<PipelineViewportStateCreateInfo<'s>> for vks::VkPipelineViewportStateCreateInfo {
     fn from(f: PipelineViewportStateCreateInfo<'s>) -> vks::VkPipelineViewportStateCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineViewportStateCreateInfo> for PipelineViewportStateCreateInfo<'s> {
-    fn from(f: vks::VkPipelineViewportStateCreateInfo) -> PipelineViewportStateCreateInfo<'s> {
-        PipelineViewportStateCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -9713,6 +9575,10 @@ pub struct PipelineRasterizationStateCreateInfo<'s> {
 impl<'s> PipelineRasterizationStateCreateInfo<'s> {
     pub fn builder<'b>() -> PipelineRasterizationStateCreateInfoBuilder<'b> {
         PipelineRasterizationStateCreateInfoBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkPipelineRasterizationStateCreateInfo) -> PipelineRasterizationStateCreateInfo<'s> {
+        PipelineRasterizationStateCreateInfo { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -9821,12 +9687,6 @@ impl<'s> PipelineRasterizationStateCreateInfo<'s> {
 impl<'s> From<PipelineRasterizationStateCreateInfo<'s>> for vks::VkPipelineRasterizationStateCreateInfo {
     fn from(f: PipelineRasterizationStateCreateInfo<'s>) -> vks::VkPipelineRasterizationStateCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineRasterizationStateCreateInfo> for PipelineRasterizationStateCreateInfo<'s> {
-    fn from(f: vks::VkPipelineRasterizationStateCreateInfo) -> PipelineRasterizationStateCreateInfo<'s> {
-        PipelineRasterizationStateCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -9982,6 +9842,10 @@ impl<'s> PipelineMultisampleStateCreateInfo<'s> {
         PipelineMultisampleStateCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineMultisampleStateCreateInfo) -> PipelineMultisampleStateCreateInfo<'s> {
+        PipelineMultisampleStateCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -10056,12 +9920,6 @@ impl<'s> PipelineMultisampleStateCreateInfo<'s> {
 impl<'s> From<PipelineMultisampleStateCreateInfo<'s>> for vks::VkPipelineMultisampleStateCreateInfo {
     fn from(f: PipelineMultisampleStateCreateInfo<'s>) -> vks::VkPipelineMultisampleStateCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineMultisampleStateCreateInfo> for PipelineMultisampleStateCreateInfo<'s> {
-    fn from(f: vks::VkPipelineMultisampleStateCreateInfo) -> PipelineMultisampleStateCreateInfo<'s> {
-        PipelineMultisampleStateCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -10180,6 +10038,10 @@ impl PipelineColorBlendAttachmentState {
         PipelineColorBlendAttachmentStateBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineColorBlendAttachmentState) -> PipelineColorBlendAttachmentState {
+        PipelineColorBlendAttachmentState { raw, }
+    }
+
     pub fn blend_enable<'a>(&'a self) -> bool {
         self.raw.blendEnable != 0
     }
@@ -10253,12 +10115,6 @@ impl PipelineColorBlendAttachmentState {
 impl From<PipelineColorBlendAttachmentState> for vks::VkPipelineColorBlendAttachmentState {
     fn from(f: PipelineColorBlendAttachmentState) -> vks::VkPipelineColorBlendAttachmentState {
         f.raw
-    }
-}
-
-impl From<vks::VkPipelineColorBlendAttachmentState> for PipelineColorBlendAttachmentState {
-    fn from(f: vks::VkPipelineColorBlendAttachmentState) -> PipelineColorBlendAttachmentState {
-        PipelineColorBlendAttachmentState { raw: f, }
     }
 }
 
@@ -10374,6 +10230,10 @@ impl<'s> PipelineColorBlendStateCreateInfo<'s> {
         PipelineColorBlendStateCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineColorBlendStateCreateInfo) -> PipelineColorBlendStateCreateInfo<'s> {
+        PipelineColorBlendStateCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -10435,12 +10295,6 @@ impl<'s> PipelineColorBlendStateCreateInfo<'s> {
 impl<'s> From<PipelineColorBlendStateCreateInfo<'s>> for vks::VkPipelineColorBlendStateCreateInfo {
     fn from(f: PipelineColorBlendStateCreateInfo<'s>) -> vks::VkPipelineColorBlendStateCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineColorBlendStateCreateInfo> for PipelineColorBlendStateCreateInfo<'s> {
-    fn from(f: vks::VkPipelineColorBlendStateCreateInfo) -> PipelineColorBlendStateCreateInfo<'s> {
-        PipelineColorBlendStateCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -10545,6 +10399,10 @@ impl<'s> PipelineDynamicStateCreateInfo<'s> {
         PipelineDynamicStateCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineDynamicStateCreateInfo) -> PipelineDynamicStateCreateInfo<'s> {
+        PipelineDynamicStateCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -10582,12 +10440,6 @@ impl<'s> PipelineDynamicStateCreateInfo<'s> {
 impl<'s> From<PipelineDynamicStateCreateInfo<'s>> for vks::VkPipelineDynamicStateCreateInfo {
     fn from(f: PipelineDynamicStateCreateInfo<'s>) -> vks::VkPipelineDynamicStateCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineDynamicStateCreateInfo> for PipelineDynamicStateCreateInfo<'s> {
-    fn from(f: vks::VkPipelineDynamicStateCreateInfo) -> PipelineDynamicStateCreateInfo<'s> {
-        PipelineDynamicStateCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -10664,6 +10516,10 @@ impl StencilOpState {
         StencilOpStateBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkStencilOpState) -> StencilOpState {
+        StencilOpState { raw, }
+    }
+
     pub fn fail_op<'a>(&'a self) -> StencilOp {
         self.raw.failOp.into()
     }
@@ -10728,12 +10584,6 @@ impl StencilOpState {
 impl From<StencilOpState> for vks::VkStencilOpState {
     fn from(f: StencilOpState) -> vks::VkStencilOpState {
         f.raw
-    }
-}
-
-impl From<vks::VkStencilOpState> for StencilOpState {
-    fn from(f: vks::VkStencilOpState) -> StencilOpState {
-        StencilOpState { raw: f, }
     }
 }
 
@@ -10837,6 +10687,10 @@ pub struct PipelineDepthStencilStateCreateInfo<'s> {
 impl<'s> PipelineDepthStencilStateCreateInfo<'s> {
     pub fn builder<'b>() -> PipelineDepthStencilStateCreateInfoBuilder<'b> {
         PipelineDepthStencilStateCreateInfoBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkPipelineDepthStencilStateCreateInfo) -> PipelineDepthStencilStateCreateInfo<'s> {
+        PipelineDepthStencilStateCreateInfo { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -10944,12 +10798,6 @@ impl<'s> PipelineDepthStencilStateCreateInfo<'s> {
 impl<'s> From<PipelineDepthStencilStateCreateInfo<'s>> for vks::VkPipelineDepthStencilStateCreateInfo {
     fn from(f: PipelineDepthStencilStateCreateInfo<'s>) -> vks::VkPipelineDepthStencilStateCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineDepthStencilStateCreateInfo> for PipelineDepthStencilStateCreateInfo<'s> {
-    fn from(f: vks::VkPipelineDepthStencilStateCreateInfo) -> PipelineDepthStencilStateCreateInfo<'s> {
-        PipelineDepthStencilStateCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -11101,6 +10949,10 @@ pub struct GraphicsPipelineCreateInfo<'s> {
 impl<'s> GraphicsPipelineCreateInfo<'s> {
     pub fn builder<'b>() -> GraphicsPipelineCreateInfoBuilder<'b> {
         GraphicsPipelineCreateInfoBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkGraphicsPipelineCreateInfo) -> GraphicsPipelineCreateInfo<'s> {
+        GraphicsPipelineCreateInfo { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -11264,12 +11116,6 @@ impl<'s> GraphicsPipelineCreateInfo<'s> {
 impl<'s> From<GraphicsPipelineCreateInfo<'s>> for vks::VkGraphicsPipelineCreateInfo {
     fn from(f: GraphicsPipelineCreateInfo<'s>) -> vks::VkGraphicsPipelineCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkGraphicsPipelineCreateInfo> for GraphicsPipelineCreateInfo<'s> {
-    fn from(f: vks::VkGraphicsPipelineCreateInfo) -> GraphicsPipelineCreateInfo<'s> {
-        GraphicsPipelineCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -11485,6 +11331,10 @@ impl<'s> PipelineCacheCreateInfo<'s> {
         PipelineCacheCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineCacheCreateInfo) -> PipelineCacheCreateInfo<'s> {
+        PipelineCacheCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -11526,12 +11376,6 @@ impl<'s> PipelineCacheCreateInfo<'s> {
 impl<'s> From<PipelineCacheCreateInfo<'s>> for vks::VkPipelineCacheCreateInfo {
     fn from(f: PipelineCacheCreateInfo<'s>) -> vks::VkPipelineCacheCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineCacheCreateInfo> for PipelineCacheCreateInfo<'s> {
-    fn from(f: vks::VkPipelineCacheCreateInfo) -> PipelineCacheCreateInfo<'s> {
-        PipelineCacheCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -11613,6 +11457,10 @@ impl PushConstantRange {
         PushConstantRangeBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPushConstantRange) -> PushConstantRange {
+        PushConstantRange { raw, }
+    }
+
     pub fn stage_flags<'a>(&'a self) -> ShaderStageFlags {
         ShaderStageFlags::from_bits(self.raw.stageFlags)
             .expect("PushConstantRange::stage_flags: error converting flags")
@@ -11646,12 +11494,6 @@ impl PushConstantRange {
 impl From<PushConstantRange> for vks::VkPushConstantRange {
     fn from(f: PushConstantRange) -> vks::VkPushConstantRange {
         f.raw
-    }
-}
-
-impl From<vks::VkPushConstantRange> for PushConstantRange {
-    fn from(f: vks::VkPushConstantRange) -> PushConstantRange {
-        PushConstantRange { raw: f, }
     }
 }
 
@@ -11722,6 +11564,10 @@ impl<'s> PipelineLayoutCreateInfo<'s> {
         PipelineLayoutCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineLayoutCreateInfo) -> PipelineLayoutCreateInfo<'s> {
+        PipelineLayoutCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -11771,12 +11617,6 @@ impl<'s> PipelineLayoutCreateInfo<'s> {
 impl<'s> From<PipelineLayoutCreateInfo<'s>> for vks::VkPipelineLayoutCreateInfo {
     fn from(f: PipelineLayoutCreateInfo<'s>) -> vks::VkPipelineLayoutCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineLayoutCreateInfo> for PipelineLayoutCreateInfo<'s> {
-    fn from(f: vks::VkPipelineLayoutCreateInfo) -> PipelineLayoutCreateInfo<'s> {
-        PipelineLayoutCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -11865,6 +11705,10 @@ pub struct SamplerCreateInfo<'s> {
 impl<'s> SamplerCreateInfo<'s> {
     pub fn builder<'b>() -> SamplerCreateInfoBuilder<'b> {
         SamplerCreateInfoBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkSamplerCreateInfo) -> SamplerCreateInfo<'s> {
+        SamplerCreateInfo { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -12012,12 +11856,6 @@ impl<'s> SamplerCreateInfo<'s> {
 impl<'s> From<SamplerCreateInfo<'s>> for vks::VkSamplerCreateInfo {
     fn from(f: SamplerCreateInfo<'s>) -> vks::VkSamplerCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSamplerCreateInfo> for SamplerCreateInfo<'s> {
-    fn from(f: vks::VkSamplerCreateInfo) -> SamplerCreateInfo<'s> {
-        SamplerCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -12217,6 +12055,10 @@ impl<'s> CommandPoolCreateInfo<'s> {
         CommandPoolCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkCommandPoolCreateInfo) -> CommandPoolCreateInfo<'s> {
+        CommandPoolCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -12250,12 +12092,6 @@ impl<'s> CommandPoolCreateInfo<'s> {
 impl<'s> From<CommandPoolCreateInfo<'s>> for vks::VkCommandPoolCreateInfo {
     fn from(f: CommandPoolCreateInfo<'s>) -> vks::VkCommandPoolCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkCommandPoolCreateInfo> for CommandPoolCreateInfo<'s> {
-    fn from(f: vks::VkCommandPoolCreateInfo) -> CommandPoolCreateInfo<'s> {
-        CommandPoolCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -12329,6 +12165,10 @@ impl<'s> CommandBufferAllocateInfo<'s> {
         CommandBufferAllocateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkCommandBufferAllocateInfo) -> CommandBufferAllocateInfo<'s> {
+        CommandBufferAllocateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -12370,12 +12210,6 @@ impl<'s> CommandBufferAllocateInfo<'s> {
 impl<'s> From<CommandBufferAllocateInfo<'s>> for vks::VkCommandBufferAllocateInfo {
     fn from(f: CommandBufferAllocateInfo<'s>) -> vks::VkCommandBufferAllocateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkCommandBufferAllocateInfo> for CommandBufferAllocateInfo<'s> {
-    fn from(f: vks::VkCommandBufferAllocateInfo) -> CommandBufferAllocateInfo<'s> {
-        CommandBufferAllocateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -12458,6 +12292,10 @@ impl<'s> CommandBufferInheritanceInfo<'s> {
         CommandBufferInheritanceInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkCommandBufferInheritanceInfo) -> CommandBufferInheritanceInfo<'s> {
+        CommandBufferInheritanceInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -12526,12 +12364,6 @@ impl<'s> CommandBufferInheritanceInfo<'s> {
 impl<'s> From<CommandBufferInheritanceInfo<'s>> for vks::VkCommandBufferInheritanceInfo {
     fn from(f: CommandBufferInheritanceInfo<'s>) -> vks::VkCommandBufferInheritanceInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkCommandBufferInheritanceInfo> for CommandBufferInheritanceInfo<'s> {
-    fn from(f: vks::VkCommandBufferInheritanceInfo) -> CommandBufferInheritanceInfo<'s> {
-        CommandBufferInheritanceInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -12644,6 +12476,10 @@ impl<'s> CommandBufferBeginInfo<'s> {
         CommandBufferBeginInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkCommandBufferBeginInfo) -> CommandBufferBeginInfo<'s> {
+        CommandBufferBeginInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -12678,12 +12514,6 @@ impl<'s> CommandBufferBeginInfo<'s> {
 impl<'s> From<CommandBufferBeginInfo<'s>> for vks::VkCommandBufferBeginInfo {
     fn from(f: CommandBufferBeginInfo<'s>) -> vks::VkCommandBufferBeginInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkCommandBufferBeginInfo> for CommandBufferBeginInfo<'s> {
-    fn from(f: vks::VkCommandBufferBeginInfo) -> CommandBufferBeginInfo<'s> {
-        CommandBufferBeginInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -12758,6 +12588,10 @@ impl<'s> RenderPassBeginInfo<'s> {
         RenderPassBeginInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkRenderPassBeginInfo) -> RenderPassBeginInfo<'s> {
+        RenderPassBeginInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -12816,12 +12650,6 @@ impl<'s> RenderPassBeginInfo<'s> {
 impl<'s> From<RenderPassBeginInfo<'s>> for vks::VkRenderPassBeginInfo {
     fn from(f: RenderPassBeginInfo<'s>) -> vks::VkRenderPassBeginInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkRenderPassBeginInfo> for RenderPassBeginInfo<'s> {
-    fn from(f: vks::VkRenderPassBeginInfo) -> RenderPassBeginInfo<'s> {
-        RenderPassBeginInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -12921,6 +12749,10 @@ impl ClearDepthStencilValue {
         ClearDepthStencilValueBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkClearDepthStencilValue) -> ClearDepthStencilValue {
+        ClearDepthStencilValue { raw, }
+    }
+
     pub fn depth<'a>(&'a self) -> f32 {
         self.raw.depth.into()
     }
@@ -12945,12 +12777,6 @@ impl ClearDepthStencilValue {
 impl From<ClearDepthStencilValue> for vks::VkClearDepthStencilValue {
     fn from(f: ClearDepthStencilValue) -> vks::VkClearDepthStencilValue {
         f.raw
-    }
-}
-
-impl From<vks::VkClearDepthStencilValue> for ClearDepthStencilValue {
-    fn from(f: vks::VkClearDepthStencilValue) -> ClearDepthStencilValue {
-        ClearDepthStencilValue { raw: f, }
     }
 }
 
@@ -13010,6 +12836,10 @@ impl ClearAttachment {
         ClearAttachmentBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkClearAttachment) -> ClearAttachment {
+        ClearAttachment { raw, }
+    }
+
     pub fn aspect_mask<'a>(&'a self) -> ImageAspectFlags {
         ImageAspectFlags::from_bits(self.raw.aspectMask)
             .expect("ClearAttachment::aspect_mask: error converting flags")
@@ -13043,12 +12873,6 @@ impl ClearAttachment {
 impl From<ClearAttachment> for vks::VkClearAttachment {
     fn from(f: ClearAttachment) -> vks::VkClearAttachment {
         f.raw
-    }
-}
-
-impl From<vks::VkClearAttachment> for ClearAttachment {
-    fn from(f: vks::VkClearAttachment) -> ClearAttachment {
-        ClearAttachment { raw: f, }
     }
 }
 
@@ -13116,6 +12940,10 @@ pub struct AttachmentDescription {
 impl AttachmentDescription {
     pub fn builder() -> AttachmentDescriptionBuilder {
         AttachmentDescriptionBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkAttachmentDescription) -> AttachmentDescription {
+        AttachmentDescription { raw, }
     }
 
     pub fn flags<'a>(&'a self) -> AttachmentDescriptionFlags {
@@ -13200,12 +13028,6 @@ impl AttachmentDescription {
 impl From<AttachmentDescription> for vks::VkAttachmentDescription {
     fn from(f: AttachmentDescription) -> vks::VkAttachmentDescription {
         f.raw
-    }
-}
-
-impl From<vks::VkAttachmentDescription> for AttachmentDescription {
-    fn from(f: vks::VkAttachmentDescription) -> AttachmentDescription {
-        AttachmentDescription { raw: f, }
     }
 }
 
@@ -13330,6 +13152,10 @@ impl AttachmentReference {
         AttachmentReferenceBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkAttachmentReference) -> AttachmentReference {
+        AttachmentReference { raw, }
+    }
+
     pub fn attachment<'a>(&'a self) -> u32 {
         self.raw.attachment.into()
     }
@@ -13354,12 +13180,6 @@ impl AttachmentReference {
 impl From<AttachmentReference> for vks::VkAttachmentReference {
     fn from(f: AttachmentReference) -> vks::VkAttachmentReference {
         f.raw
-    }
-}
-
-impl From<vks::VkAttachmentReference> for AttachmentReference {
-    fn from(f: vks::VkAttachmentReference) -> AttachmentReference {
-        AttachmentReference { raw: f, }
     }
 }
 
@@ -13418,6 +13238,10 @@ pub struct SubpassDescription<'s> {
 impl<'s> SubpassDescription<'s> {
     pub fn builder<'b>() -> SubpassDescriptionBuilder<'b> {
         SubpassDescriptionBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkSubpassDescription) -> SubpassDescription<'s> {
+        SubpassDescription { raw, _p: PhantomData }
     }
 
     pub fn flags<'a>(&'a self) -> SubpassDescriptionFlags {
@@ -13502,12 +13326,6 @@ impl<'s> SubpassDescription<'s> {
 impl<'s> From<SubpassDescription<'s>> for vks::VkSubpassDescription {
     fn from(f: SubpassDescription<'s>) -> vks::VkSubpassDescription {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSubpassDescription> for SubpassDescription<'s> {
-    fn from(f: vks::VkSubpassDescription) -> SubpassDescription<'s> {
-        SubpassDescription { raw: f, _p: PhantomData }
     }
 }
 
@@ -13633,6 +13451,10 @@ impl SubpassDependency {
         SubpassDependencyBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSubpassDependency) -> SubpassDependency {
+        SubpassDependency { raw, }
+    }
+
     pub fn src_subpass<'a>(&'a self) -> u32 {
         self.raw.srcSubpass.into()
     }
@@ -13702,12 +13524,6 @@ impl SubpassDependency {
 impl From<SubpassDependency> for vks::VkSubpassDependency {
     fn from(f: SubpassDependency) -> vks::VkSubpassDependency {
         f.raw
-    }
-}
-
-impl From<vks::VkSubpassDependency> for SubpassDependency {
-    fn from(f: vks::VkSubpassDependency) -> SubpassDependency {
-        SubpassDependency { raw: f, }
     }
 }
 
@@ -13818,6 +13634,10 @@ impl<'s> RenderPassCreateInfo<'s> {
         RenderPassCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkRenderPassCreateInfo) -> RenderPassCreateInfo<'s> {
+        RenderPassCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -13879,12 +13699,6 @@ impl<'s> RenderPassCreateInfo<'s> {
 impl<'s> From<RenderPassCreateInfo<'s>> for vks::VkRenderPassCreateInfo {
     fn from(f: RenderPassCreateInfo<'s>) -> vks::VkRenderPassCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkRenderPassCreateInfo> for RenderPassCreateInfo<'s> {
-    fn from(f: vks::VkRenderPassCreateInfo) -> RenderPassCreateInfo<'s> {
-        RenderPassCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -13988,6 +13802,10 @@ impl<'s> EventCreateInfo<'s> {
         EventCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkEventCreateInfo) -> EventCreateInfo<'s> {
+        EventCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -14013,12 +13831,6 @@ impl<'s> EventCreateInfo<'s> {
 impl<'s> From<EventCreateInfo<'s>> for vks::VkEventCreateInfo {
     fn from(f: EventCreateInfo<'s>) -> vks::VkEventCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkEventCreateInfo> for EventCreateInfo<'s> {
-    fn from(f: vks::VkEventCreateInfo) -> EventCreateInfo<'s> {
-        EventCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -14083,6 +13895,10 @@ impl<'s> FenceCreateInfo<'s> {
         FenceCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkFenceCreateInfo) -> FenceCreateInfo<'s> {
+        FenceCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -14108,12 +13924,6 @@ impl<'s> FenceCreateInfo<'s> {
 impl<'s> From<FenceCreateInfo<'s>> for vks::VkFenceCreateInfo {
     fn from(f: FenceCreateInfo<'s>) -> vks::VkFenceCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkFenceCreateInfo> for FenceCreateInfo<'s> {
-    fn from(f: vks::VkFenceCreateInfo) -> FenceCreateInfo<'s> {
-        FenceCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -14175,6 +13985,10 @@ pub struct PhysicalDeviceFeatures {
 impl PhysicalDeviceFeatures {
     pub fn builder() -> PhysicalDeviceFeaturesBuilder {
         PhysicalDeviceFeaturesBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceFeatures) -> PhysicalDeviceFeatures {
+        PhysicalDeviceFeatures { raw, }
     }
 
     pub fn robust_buffer_access<'a>(&'a self) -> bool {
@@ -14625,12 +14439,6 @@ impl PhysicalDeviceFeatures {
 impl From<PhysicalDeviceFeatures> for vks::VkPhysicalDeviceFeatures {
     fn from(f: PhysicalDeviceFeatures) -> vks::VkPhysicalDeviceFeatures {
         f.raw
-    }
-}
-
-impl From<vks::VkPhysicalDeviceFeatures> for PhysicalDeviceFeatures {
-    fn from(f: vks::VkPhysicalDeviceFeatures) -> PhysicalDeviceFeatures {
-        PhysicalDeviceFeatures { raw: f, }
     }
 }
 
@@ -15167,6 +14975,10 @@ impl PhysicalDeviceSparseProperties {
         PhysicalDeviceSparsePropertiesBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceSparseProperties) -> PhysicalDeviceSparseProperties {
+        PhysicalDeviceSparseProperties { raw, }
+    }
+
     pub fn residency_standard_2d_block_shape<'a>(&'a self) -> bool {
         self.raw.residencyStandard2DBlockShape != 0
     }
@@ -15215,12 +15027,6 @@ impl PhysicalDeviceSparseProperties {
 impl From<PhysicalDeviceSparseProperties> for vks::VkPhysicalDeviceSparseProperties {
     fn from(f: PhysicalDeviceSparseProperties) -> vks::VkPhysicalDeviceSparseProperties {
         f.raw
-    }
-}
-
-impl From<vks::VkPhysicalDeviceSparseProperties> for PhysicalDeviceSparseProperties {
-    fn from(f: vks::VkPhysicalDeviceSparseProperties) -> PhysicalDeviceSparseProperties {
-        PhysicalDeviceSparseProperties { raw: f, }
     }
 }
 
@@ -15305,6 +15111,10 @@ pub struct PhysicalDeviceLimits {
 impl PhysicalDeviceLimits {
     pub fn builder() -> PhysicalDeviceLimitsBuilder {
         PhysicalDeviceLimitsBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceLimits) -> PhysicalDeviceLimits {
+        PhysicalDeviceLimits { raw, }
     }
 
     pub fn max_image_dimension_1d<'a>(&'a self) -> u32 {
@@ -16172,12 +15982,6 @@ impl PhysicalDeviceLimits {
 impl From<PhysicalDeviceLimits> for vks::VkPhysicalDeviceLimits {
     fn from(f: PhysicalDeviceLimits) -> vks::VkPhysicalDeviceLimits {
         f.raw
-    }
-}
-
-impl From<vks::VkPhysicalDeviceLimits> for PhysicalDeviceLimits {
-    fn from(f: vks::VkPhysicalDeviceLimits) -> PhysicalDeviceLimits {
-        PhysicalDeviceLimits { raw: f, }
     }
 }
 
@@ -17183,6 +16987,10 @@ impl<'s> SemaphoreCreateInfo<'s> {
         SemaphoreCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSemaphoreCreateInfo) -> SemaphoreCreateInfo<'s> {
+        SemaphoreCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -17208,12 +17016,6 @@ impl<'s> SemaphoreCreateInfo<'s> {
 impl<'s> From<SemaphoreCreateInfo<'s>> for vks::VkSemaphoreCreateInfo {
     fn from(f: SemaphoreCreateInfo<'s>) -> vks::VkSemaphoreCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSemaphoreCreateInfo> for SemaphoreCreateInfo<'s> {
-    fn from(f: vks::VkSemaphoreCreateInfo) -> SemaphoreCreateInfo<'s> {
-        SemaphoreCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -17278,6 +17080,10 @@ impl<'s> QueryPoolCreateInfo<'s> {
         QueryPoolCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkQueryPoolCreateInfo) -> QueryPoolCreateInfo<'s> {
+        QueryPoolCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -17328,12 +17134,6 @@ impl<'s> QueryPoolCreateInfo<'s> {
 impl<'s> From<QueryPoolCreateInfo<'s>> for vks::VkQueryPoolCreateInfo {
     fn from(f: QueryPoolCreateInfo<'s>) -> vks::VkQueryPoolCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkQueryPoolCreateInfo> for QueryPoolCreateInfo<'s> {
-    fn from(f: vks::VkQueryPoolCreateInfo) -> QueryPoolCreateInfo<'s> {
-        QueryPoolCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -17426,6 +17226,10 @@ impl<'s> FramebufferCreateInfo<'s> {
         FramebufferCreateInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkFramebufferCreateInfo) -> FramebufferCreateInfo<'s> {
+        FramebufferCreateInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -17496,12 +17300,6 @@ impl<'s> FramebufferCreateInfo<'s> {
 impl<'s> From<FramebufferCreateInfo<'s>> for vks::VkFramebufferCreateInfo {
     fn from(f: FramebufferCreateInfo<'s>) -> vks::VkFramebufferCreateInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkFramebufferCreateInfo> for FramebufferCreateInfo<'s> {
-    fn from(f: vks::VkFramebufferCreateInfo) -> FramebufferCreateInfo<'s> {
-        FramebufferCreateInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -17615,6 +17413,10 @@ impl DrawIndirectCommand {
         DrawIndirectCommandBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDrawIndirectCommand) -> DrawIndirectCommand {
+        DrawIndirectCommand { raw, }
+    }
+
     pub fn vertex_count<'a>(&'a self) -> u32 {
         self.raw.vertexCount.into()
     }
@@ -17655,12 +17457,6 @@ impl DrawIndirectCommand {
 impl From<DrawIndirectCommand> for vks::VkDrawIndirectCommand {
     fn from(f: DrawIndirectCommand) -> vks::VkDrawIndirectCommand {
         f.raw
-    }
-}
-
-impl From<vks::VkDrawIndirectCommand> for DrawIndirectCommand {
-    fn from(f: vks::VkDrawIndirectCommand) -> DrawIndirectCommand {
-        DrawIndirectCommand { raw: f, }
     }
 }
 
@@ -17738,6 +17534,10 @@ impl DrawIndexedIndirectCommand {
         DrawIndexedIndirectCommandBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDrawIndexedIndirectCommand) -> DrawIndexedIndirectCommand {
+        DrawIndexedIndirectCommand { raw, }
+    }
+
     pub fn index_count<'a>(&'a self) -> u32 {
         self.raw.indexCount.into()
     }
@@ -17786,12 +17586,6 @@ impl DrawIndexedIndirectCommand {
 impl From<DrawIndexedIndirectCommand> for vks::VkDrawIndexedIndirectCommand {
     fn from(f: DrawIndexedIndirectCommand) -> vks::VkDrawIndexedIndirectCommand {
         f.raw
-    }
-}
-
-impl From<vks::VkDrawIndexedIndirectCommand> for DrawIndexedIndirectCommand {
-    fn from(f: vks::VkDrawIndexedIndirectCommand) -> DrawIndexedIndirectCommand {
-        DrawIndexedIndirectCommand { raw: f, }
     }
 }
 
@@ -17878,6 +17672,10 @@ impl DispatchIndirectCommand {
         DispatchIndirectCommandBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDispatchIndirectCommand) -> DispatchIndirectCommand {
+        DispatchIndirectCommand { raw, }
+    }
+
     pub fn x<'a>(&'a self) -> u32 {
         self.raw.x.into()
     }
@@ -17910,12 +17708,6 @@ impl DispatchIndirectCommand {
 impl From<DispatchIndirectCommand> for vks::VkDispatchIndirectCommand {
     fn from(f: DispatchIndirectCommand) -> vks::VkDispatchIndirectCommand {
         f.raw
-    }
-}
-
-impl From<vks::VkDispatchIndirectCommand> for DispatchIndirectCommand {
-    fn from(f: vks::VkDispatchIndirectCommand) -> DispatchIndirectCommand {
-        DispatchIndirectCommand { raw: f, }
     }
 }
 
@@ -17985,6 +17777,10 @@ impl<'s> SubmitInfo<'s> {
         SubmitInfoBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSubmitInfo) -> SubmitInfo<'s> {
+        SubmitInfo { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -18045,12 +17841,6 @@ impl<'s> SubmitInfo<'s> {
 impl<'s> From<SubmitInfo<'s>> for vks::VkSubmitInfo {
     fn from(f: SubmitInfo<'s>) -> vks::VkSubmitInfo {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSubmitInfo> for SubmitInfo<'s> {
-    fn from(f: vks::VkSubmitInfo) -> SubmitInfo<'s> {
-        SubmitInfo { raw: f, _p: PhantomData }
     }
 }
 
@@ -18153,6 +17943,10 @@ impl<'s> DisplayPropertiesKhr<'s> {
         DisplayPropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDisplayPropertiesKHR) -> DisplayPropertiesKhr<'s> {
+        DisplayPropertiesKhr { raw, _p: PhantomData }
+    }
+
     pub fn display<'a>(&'a self) -> vks::VkDisplayKHR {
         self.raw.display
     }
@@ -18228,12 +18022,6 @@ impl<'s> DisplayPropertiesKhr<'s> {
 impl<'s> From<DisplayPropertiesKhr<'s>> for vks::VkDisplayPropertiesKHR {
     fn from(f: DisplayPropertiesKhr<'s>) -> vks::VkDisplayPropertiesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDisplayPropertiesKHR> for DisplayPropertiesKhr<'s> {
-    fn from(f: vks::VkDisplayPropertiesKHR) -> DisplayPropertiesKhr<'s> {
-        DisplayPropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -18352,6 +18140,10 @@ impl DisplayPlanePropertiesKhr {
         DisplayPlanePropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDisplayPlanePropertiesKHR) -> DisplayPlanePropertiesKhr {
+        DisplayPlanePropertiesKhr { raw, }
+    }
+
     pub fn current_display<'a>(&'a self) -> vks::VkDisplayKHR {
         self.raw.currentDisplay
     }
@@ -18377,12 +18169,6 @@ impl DisplayPlanePropertiesKhr {
 impl From<DisplayPlanePropertiesKhr> for vks::VkDisplayPlanePropertiesKHR {
     fn from(f: DisplayPlanePropertiesKhr) -> vks::VkDisplayPlanePropertiesKHR {
         f.raw
-    }
-}
-
-impl From<vks::VkDisplayPlanePropertiesKHR> for DisplayPlanePropertiesKhr {
-    fn from(f: vks::VkDisplayPlanePropertiesKHR) -> DisplayPlanePropertiesKhr {
-        DisplayPlanePropertiesKhr { raw: f, }
     }
 }
 
@@ -18443,6 +18229,10 @@ impl DisplayModeParametersKhr {
         DisplayModeParametersKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDisplayModeParametersKHR) -> DisplayModeParametersKhr {
+        DisplayModeParametersKhr { raw, }
+    }
+
     pub fn visible_region<'a>(&'a self) -> &'a Extent2d {
         unsafe { &*(&self.raw.visibleRegion as *const vks::VkExtent2D as *const Extent2d) }
     }
@@ -18471,12 +18261,6 @@ impl DisplayModeParametersKhr {
 impl From<DisplayModeParametersKhr> for vks::VkDisplayModeParametersKHR {
     fn from(f: DisplayModeParametersKhr) -> vks::VkDisplayModeParametersKHR {
         f.raw
-    }
-}
-
-impl From<vks::VkDisplayModeParametersKHR> for DisplayModeParametersKhr {
-    fn from(f: vks::VkDisplayModeParametersKHR) -> DisplayModeParametersKhr {
-        DisplayModeParametersKhr { raw: f, }
     }
 }
 
@@ -18540,6 +18324,10 @@ impl DisplayModePropertiesKhr {
         DisplayModePropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDisplayModePropertiesKHR) -> DisplayModePropertiesKhr {
+        DisplayModePropertiesKhr { raw, }
+    }
+
     pub fn display_mode<'a>(&'a self) -> vks::VkDisplayModeKHR {
         self.raw.displayMode
     }
@@ -18569,12 +18357,6 @@ impl DisplayModePropertiesKhr {
 impl From<DisplayModePropertiesKhr> for vks::VkDisplayModePropertiesKHR {
     fn from(f: DisplayModePropertiesKhr) -> vks::VkDisplayModePropertiesKHR {
         f.raw
-    }
-}
-
-impl From<vks::VkDisplayModePropertiesKHR> for DisplayModePropertiesKhr {
-    fn from(f: vks::VkDisplayModePropertiesKHR) -> DisplayModePropertiesKhr {
-        DisplayModePropertiesKhr { raw: f, }
     }
 }
 
@@ -18640,6 +18422,10 @@ impl<'s> DisplayModeCreateInfoKhr<'s> {
         DisplayModeCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDisplayModeCreateInfoKHR) -> DisplayModeCreateInfoKhr<'s> {
+        DisplayModeCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -18677,12 +18463,6 @@ impl<'s> DisplayModeCreateInfoKhr<'s> {
 impl<'s> From<DisplayModeCreateInfoKhr<'s>> for vks::VkDisplayModeCreateInfoKHR {
     fn from(f: DisplayModeCreateInfoKhr<'s>) -> vks::VkDisplayModeCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDisplayModeCreateInfoKHR> for DisplayModeCreateInfoKhr<'s> {
-    fn from(f: vks::VkDisplayModeCreateInfoKHR) -> DisplayModeCreateInfoKhr<'s> {
-        DisplayModeCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -18757,6 +18537,10 @@ pub struct DisplayPlaneCapabilitiesKhr {
 impl DisplayPlaneCapabilitiesKhr {
     pub fn builder() -> DisplayPlaneCapabilitiesKhrBuilder {
         DisplayPlaneCapabilitiesKhrBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkDisplayPlaneCapabilitiesKHR) -> DisplayPlaneCapabilitiesKhr {
+        DisplayPlaneCapabilitiesKhr { raw, }
     }
 
     pub fn supported_alpha<'a>(&'a self) -> DisplayPlaneAlphaFlagsKhr {
@@ -18872,12 +18656,6 @@ impl DisplayPlaneCapabilitiesKhr {
 impl From<DisplayPlaneCapabilitiesKhr> for vks::VkDisplayPlaneCapabilitiesKHR {
     fn from(f: DisplayPlaneCapabilitiesKhr) -> vks::VkDisplayPlaneCapabilitiesKHR {
         f.raw
-    }
-}
-
-impl From<vks::VkDisplayPlaneCapabilitiesKHR> for DisplayPlaneCapabilitiesKhr {
-    fn from(f: vks::VkDisplayPlaneCapabilitiesKHR) -> DisplayPlaneCapabilitiesKhr {
-        DisplayPlaneCapabilitiesKhr { raw: f, }
     }
 }
 
@@ -19034,6 +18812,10 @@ impl<'s> DisplaySurfaceCreateInfoKhr<'s> {
         DisplaySurfaceCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDisplaySurfaceCreateInfoKHR) -> DisplaySurfaceCreateInfoKhr<'s> {
+        DisplaySurfaceCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -19122,12 +18904,6 @@ impl<'s> DisplaySurfaceCreateInfoKhr<'s> {
 impl<'s> From<DisplaySurfaceCreateInfoKhr<'s>> for vks::VkDisplaySurfaceCreateInfoKHR {
     fn from(f: DisplaySurfaceCreateInfoKhr<'s>) -> vks::VkDisplaySurfaceCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDisplaySurfaceCreateInfoKHR> for DisplaySurfaceCreateInfoKhr<'s> {
-    fn from(f: vks::VkDisplaySurfaceCreateInfoKHR) -> DisplaySurfaceCreateInfoKhr<'s> {
-        DisplaySurfaceCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -19262,6 +19038,10 @@ impl<'s> DisplayPresentInfoKhr<'s> {
         DisplayPresentInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDisplayPresentInfoKHR) -> DisplayPresentInfoKhr<'s> {
+        DisplayPresentInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -19310,12 +19090,6 @@ impl<'s> DisplayPresentInfoKhr<'s> {
 impl<'s> From<DisplayPresentInfoKhr<'s>> for vks::VkDisplayPresentInfoKHR {
     fn from(f: DisplayPresentInfoKhr<'s>) -> vks::VkDisplayPresentInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDisplayPresentInfoKHR> for DisplayPresentInfoKhr<'s> {
-    fn from(f: vks::VkDisplayPresentInfoKHR) -> DisplayPresentInfoKhr<'s> {
-        DisplayPresentInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -19402,6 +19176,10 @@ pub struct SurfaceCapabilitiesKhr {
 impl SurfaceCapabilitiesKhr {
     pub fn builder() -> SurfaceCapabilitiesKhrBuilder {
         SurfaceCapabilitiesKhrBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkSurfaceCapabilitiesKHR) -> SurfaceCapabilitiesKhr {
+        SurfaceCapabilitiesKhr { raw, }
     }
 
     pub fn min_image_count<'a>(&'a self) -> u32 {
@@ -19508,12 +19286,6 @@ impl SurfaceCapabilitiesKhr {
 impl From<SurfaceCapabilitiesKhr> for vks::VkSurfaceCapabilitiesKHR {
     fn from(f: SurfaceCapabilitiesKhr) -> vks::VkSurfaceCapabilitiesKHR {
         f.raw
-    }
-}
-
-impl From<vks::VkSurfaceCapabilitiesKHR> for SurfaceCapabilitiesKhr {
-    fn from(f: vks::VkSurfaceCapabilitiesKHR) -> SurfaceCapabilitiesKhr {
-        SurfaceCapabilitiesKhr { raw: f, }
     }
 }
 
@@ -19662,6 +19434,10 @@ impl<'s> AndroidSurfaceCreateInfoKhr<'s> {
         AndroidSurfaceCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkAndroidSurfaceCreateInfoKHR) -> AndroidSurfaceCreateInfoKhr<'s> {
+        AndroidSurfaceCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -19695,12 +19471,6 @@ impl<'s> AndroidSurfaceCreateInfoKhr<'s> {
 impl<'s> From<AndroidSurfaceCreateInfoKhr<'s>> for vks::VkAndroidSurfaceCreateInfoKHR {
     fn from(f: AndroidSurfaceCreateInfoKhr<'s>) -> vks::VkAndroidSurfaceCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkAndroidSurfaceCreateInfoKHR> for AndroidSurfaceCreateInfoKhr<'s> {
-    fn from(f: vks::VkAndroidSurfaceCreateInfoKHR) -> AndroidSurfaceCreateInfoKhr<'s> {
-        AndroidSurfaceCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -19774,6 +19544,10 @@ impl<'s> MirSurfaceCreateInfoKhr<'s> {
         MirSurfaceCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMirSurfaceCreateInfoKHR) -> MirSurfaceCreateInfoKhr<'s> {
+        MirSurfaceCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -19815,12 +19589,6 @@ impl<'s> MirSurfaceCreateInfoKhr<'s> {
 impl<'s> From<MirSurfaceCreateInfoKhr<'s>> for vks::VkMirSurfaceCreateInfoKHR {
     fn from(f: MirSurfaceCreateInfoKhr<'s>) -> vks::VkMirSurfaceCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMirSurfaceCreateInfoKHR> for MirSurfaceCreateInfoKhr<'s> {
-    fn from(f: vks::VkMirSurfaceCreateInfoKHR) -> MirSurfaceCreateInfoKhr<'s> {
-        MirSurfaceCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -19903,6 +19671,10 @@ impl<'s> ViSurfaceCreateInfoNn<'s> {
         ViSurfaceCreateInfoNnBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkViSurfaceCreateInfoNN) -> ViSurfaceCreateInfoNn<'s> {
+        ViSurfaceCreateInfoNn { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -19936,12 +19708,6 @@ impl<'s> ViSurfaceCreateInfoNn<'s> {
 impl<'s> From<ViSurfaceCreateInfoNn<'s>> for vks::VkViSurfaceCreateInfoNN {
     fn from(f: ViSurfaceCreateInfoNn<'s>) -> vks::VkViSurfaceCreateInfoNN {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkViSurfaceCreateInfoNN> for ViSurfaceCreateInfoNn<'s> {
-    fn from(f: vks::VkViSurfaceCreateInfoNN) -> ViSurfaceCreateInfoNn<'s> {
-        ViSurfaceCreateInfoNn { raw: f, _p: PhantomData }
     }
 }
 
@@ -20015,6 +19781,10 @@ impl<'s> WaylandSurfaceCreateInfoKhr<'s> {
         WaylandSurfaceCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkWaylandSurfaceCreateInfoKHR) -> WaylandSurfaceCreateInfoKhr<'s> {
+        WaylandSurfaceCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -20056,12 +19826,6 @@ impl<'s> WaylandSurfaceCreateInfoKhr<'s> {
 impl<'s> From<WaylandSurfaceCreateInfoKhr<'s>> for vks::VkWaylandSurfaceCreateInfoKHR {
     fn from(f: WaylandSurfaceCreateInfoKhr<'s>) -> vks::VkWaylandSurfaceCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkWaylandSurfaceCreateInfoKHR> for WaylandSurfaceCreateInfoKhr<'s> {
-    fn from(f: vks::VkWaylandSurfaceCreateInfoKHR) -> WaylandSurfaceCreateInfoKhr<'s> {
-        WaylandSurfaceCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -20144,6 +19908,10 @@ impl<'s> Win32SurfaceCreateInfoKhr<'s> {
         Win32SurfaceCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkWin32SurfaceCreateInfoKHR) -> Win32SurfaceCreateInfoKhr<'s> {
+        Win32SurfaceCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -20185,12 +19953,6 @@ impl<'s> Win32SurfaceCreateInfoKhr<'s> {
 impl<'s> From<Win32SurfaceCreateInfoKhr<'s>> for vks::VkWin32SurfaceCreateInfoKHR {
     fn from(f: Win32SurfaceCreateInfoKhr<'s>) -> vks::VkWin32SurfaceCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkWin32SurfaceCreateInfoKHR> for Win32SurfaceCreateInfoKhr<'s> {
-    fn from(f: vks::VkWin32SurfaceCreateInfoKHR) -> Win32SurfaceCreateInfoKhr<'s> {
-        Win32SurfaceCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -20273,6 +20035,10 @@ impl<'s> XlibSurfaceCreateInfoKhr<'s> {
         XlibSurfaceCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkXlibSurfaceCreateInfoKHR) -> XlibSurfaceCreateInfoKhr<'s> {
+        XlibSurfaceCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -20314,12 +20080,6 @@ impl<'s> XlibSurfaceCreateInfoKhr<'s> {
 impl<'s> From<XlibSurfaceCreateInfoKhr<'s>> for vks::VkXlibSurfaceCreateInfoKHR {
     fn from(f: XlibSurfaceCreateInfoKhr<'s>) -> vks::VkXlibSurfaceCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkXlibSurfaceCreateInfoKHR> for XlibSurfaceCreateInfoKhr<'s> {
-    fn from(f: vks::VkXlibSurfaceCreateInfoKHR) -> XlibSurfaceCreateInfoKhr<'s> {
-        XlibSurfaceCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -20402,6 +20162,10 @@ impl<'s> XcbSurfaceCreateInfoKhr<'s> {
         XcbSurfaceCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkXcbSurfaceCreateInfoKHR) -> XcbSurfaceCreateInfoKhr<'s> {
+        XcbSurfaceCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -20443,12 +20207,6 @@ impl<'s> XcbSurfaceCreateInfoKhr<'s> {
 impl<'s> From<XcbSurfaceCreateInfoKhr<'s>> for vks::VkXcbSurfaceCreateInfoKHR {
     fn from(f: XcbSurfaceCreateInfoKhr<'s>) -> vks::VkXcbSurfaceCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkXcbSurfaceCreateInfoKHR> for XcbSurfaceCreateInfoKhr<'s> {
-    fn from(f: vks::VkXcbSurfaceCreateInfoKHR) -> XcbSurfaceCreateInfoKhr<'s> {
-        XcbSurfaceCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -20530,6 +20288,10 @@ impl SurfaceFormatKhr {
         SurfaceFormatKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSurfaceFormatKHR) -> SurfaceFormatKhr {
+        SurfaceFormatKhr { raw, }
+    }
+
     pub fn format<'a>(&'a self) -> Format {
         self.raw.format.into()
     }
@@ -20554,12 +20316,6 @@ impl SurfaceFormatKhr {
 impl From<SurfaceFormatKhr> for vks::VkSurfaceFormatKHR {
     fn from(f: SurfaceFormatKhr) -> vks::VkSurfaceFormatKHR {
         f.raw
-    }
-}
-
-impl From<vks::VkSurfaceFormatKHR> for SurfaceFormatKhr {
-    fn from(f: vks::VkSurfaceFormatKHR) -> SurfaceFormatKhr {
-        SurfaceFormatKhr { raw: f, }
     }
 }
 
@@ -20618,6 +20374,10 @@ pub struct SwapchainCreateInfoKhr<'s> {
 impl<'s> SwapchainCreateInfoKhr<'s> {
     pub fn builder<'b>() -> SwapchainCreateInfoKhrBuilder<'b> {
         SwapchainCreateInfoKhrBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkSwapchainCreateInfoKHR) -> SwapchainCreateInfoKhr<'s> {
+        SwapchainCreateInfoKhr { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -20770,12 +20530,6 @@ impl<'s> SwapchainCreateInfoKhr<'s> {
 impl<'s> From<SwapchainCreateInfoKhr<'s>> for vks::VkSwapchainCreateInfoKHR {
     fn from(f: SwapchainCreateInfoKhr<'s>) -> vks::VkSwapchainCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSwapchainCreateInfoKHR> for SwapchainCreateInfoKhr<'s> {
-    fn from(f: vks::VkSwapchainCreateInfoKHR) -> SwapchainCreateInfoKhr<'s> {
-        SwapchainCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -20979,6 +20733,10 @@ impl<'s> PresentInfoKhr<'s> {
         PresentInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPresentInfoKHR) -> PresentInfoKhr<'s> {
+        PresentInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -21043,12 +20801,6 @@ impl<'s> PresentInfoKhr<'s> {
 impl<'s> From<PresentInfoKhr<'s>> for vks::VkPresentInfoKHR {
     fn from(f: PresentInfoKhr<'s>) -> vks::VkPresentInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPresentInfoKHR> for PresentInfoKhr<'s> {
-    fn from(f: vks::VkPresentInfoKHR) -> PresentInfoKhr<'s> {
-        PresentInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -21155,6 +20907,10 @@ impl<'s> DebugReportCallbackCreateInfoExt<'s> {
         DebugReportCallbackCreateInfoExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDebugReportCallbackCreateInfoEXT) -> DebugReportCallbackCreateInfoExt<'s> {
+        DebugReportCallbackCreateInfoExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -21196,12 +20952,6 @@ impl<'s> DebugReportCallbackCreateInfoExt<'s> {
 impl<'s> From<DebugReportCallbackCreateInfoExt<'s>> for vks::VkDebugReportCallbackCreateInfoEXT {
     fn from(f: DebugReportCallbackCreateInfoExt<'s>) -> vks::VkDebugReportCallbackCreateInfoEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDebugReportCallbackCreateInfoEXT> for DebugReportCallbackCreateInfoExt<'s> {
-    fn from(f: vks::VkDebugReportCallbackCreateInfoEXT) -> DebugReportCallbackCreateInfoExt<'s> {
-        DebugReportCallbackCreateInfoExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -21284,6 +21034,10 @@ impl<'s> ValidationFlagsExt<'s> {
         ValidationFlagsExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkValidationFlagsEXT) -> ValidationFlagsExt<'s> {
+        ValidationFlagsExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -21312,12 +21066,6 @@ impl<'s> ValidationFlagsExt<'s> {
 impl<'s> From<ValidationFlagsExt<'s>> for vks::VkValidationFlagsEXT {
     fn from(f: ValidationFlagsExt<'s>) -> vks::VkValidationFlagsEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkValidationFlagsEXT> for ValidationFlagsExt<'s> {
-    fn from(f: vks::VkValidationFlagsEXT) -> ValidationFlagsExt<'s> {
-        ValidationFlagsExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -21385,6 +21133,10 @@ impl<'s> PipelineRasterizationStateRasterizationOrderAmd<'s> {
         PipelineRasterizationStateRasterizationOrderAmdBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineRasterizationStateRasterizationOrderAMD) -> PipelineRasterizationStateRasterizationOrderAmd<'s> {
+        PipelineRasterizationStateRasterizationOrderAmd { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -21409,12 +21161,6 @@ impl<'s> PipelineRasterizationStateRasterizationOrderAmd<'s> {
 impl<'s> From<PipelineRasterizationStateRasterizationOrderAmd<'s>> for vks::VkPipelineRasterizationStateRasterizationOrderAMD {
     fn from(f: PipelineRasterizationStateRasterizationOrderAmd<'s>) -> vks::VkPipelineRasterizationStateRasterizationOrderAMD {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineRasterizationStateRasterizationOrderAMD> for PipelineRasterizationStateRasterizationOrderAmd<'s> {
-    fn from(f: vks::VkPipelineRasterizationStateRasterizationOrderAMD) -> PipelineRasterizationStateRasterizationOrderAmd<'s> {
-        PipelineRasterizationStateRasterizationOrderAmd { raw: f, _p: PhantomData }
     }
 }
 
@@ -21478,6 +21224,10 @@ impl<'s> DebugMarkerObjectNameInfoExt<'s> {
         DebugMarkerObjectNameInfoExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDebugMarkerObjectNameInfoEXT) -> DebugMarkerObjectNameInfoExt<'s> {
+        DebugMarkerObjectNameInfoExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -21519,12 +21269,6 @@ impl<'s> DebugMarkerObjectNameInfoExt<'s> {
 impl<'s> From<DebugMarkerObjectNameInfoExt<'s>> for vks::VkDebugMarkerObjectNameInfoEXT {
     fn from(f: DebugMarkerObjectNameInfoExt<'s>) -> vks::VkDebugMarkerObjectNameInfoEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDebugMarkerObjectNameInfoEXT> for DebugMarkerObjectNameInfoExt<'s> {
-    fn from(f: vks::VkDebugMarkerObjectNameInfoEXT) -> DebugMarkerObjectNameInfoExt<'s> {
-        DebugMarkerObjectNameInfoExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -21607,6 +21351,10 @@ impl<'s> DebugMarkerObjectTagInfoExt<'s> {
         DebugMarkerObjectTagInfoExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDebugMarkerObjectTagInfoEXT) -> DebugMarkerObjectTagInfoExt<'s> {
+        DebugMarkerObjectTagInfoExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -21663,12 +21411,6 @@ impl<'s> DebugMarkerObjectTagInfoExt<'s> {
 impl<'s> From<DebugMarkerObjectTagInfoExt<'s>> for vks::VkDebugMarkerObjectTagInfoEXT {
     fn from(f: DebugMarkerObjectTagInfoExt<'s>) -> vks::VkDebugMarkerObjectTagInfoEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDebugMarkerObjectTagInfoEXT> for DebugMarkerObjectTagInfoExt<'s> {
-    fn from(f: vks::VkDebugMarkerObjectTagInfoEXT) -> DebugMarkerObjectTagInfoExt<'s> {
-        DebugMarkerObjectTagInfoExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -21768,6 +21510,10 @@ impl<'s> DebugMarkerMarkerInfoExt<'s> {
         DebugMarkerMarkerInfoExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDebugMarkerMarkerInfoEXT) -> DebugMarkerMarkerInfoExt<'s> {
+        DebugMarkerMarkerInfoExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -21801,12 +21547,6 @@ impl<'s> DebugMarkerMarkerInfoExt<'s> {
 impl<'s> From<DebugMarkerMarkerInfoExt<'s>> for vks::VkDebugMarkerMarkerInfoEXT {
     fn from(f: DebugMarkerMarkerInfoExt<'s>) -> vks::VkDebugMarkerMarkerInfoEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDebugMarkerMarkerInfoEXT> for DebugMarkerMarkerInfoExt<'s> {
-    fn from(f: vks::VkDebugMarkerMarkerInfoEXT) -> DebugMarkerMarkerInfoExt<'s> {
-        DebugMarkerMarkerInfoExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -21880,6 +21620,10 @@ impl<'s> DedicatedAllocationImageCreateInfoNv<'s> {
         DedicatedAllocationImageCreateInfoNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDedicatedAllocationImageCreateInfoNV) -> DedicatedAllocationImageCreateInfoNv<'s> {
+        DedicatedAllocationImageCreateInfoNv { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -21904,12 +21648,6 @@ impl<'s> DedicatedAllocationImageCreateInfoNv<'s> {
 impl<'s> From<DedicatedAllocationImageCreateInfoNv<'s>> for vks::VkDedicatedAllocationImageCreateInfoNV {
     fn from(f: DedicatedAllocationImageCreateInfoNv<'s>) -> vks::VkDedicatedAllocationImageCreateInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDedicatedAllocationImageCreateInfoNV> for DedicatedAllocationImageCreateInfoNv<'s> {
-    fn from(f: vks::VkDedicatedAllocationImageCreateInfoNV) -> DedicatedAllocationImageCreateInfoNv<'s> {
-        DedicatedAllocationImageCreateInfoNv { raw: f, _p: PhantomData }
     }
 }
 
@@ -21973,6 +21711,10 @@ impl<'s> DedicatedAllocationBufferCreateInfoNv<'s> {
         DedicatedAllocationBufferCreateInfoNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDedicatedAllocationBufferCreateInfoNV) -> DedicatedAllocationBufferCreateInfoNv<'s> {
+        DedicatedAllocationBufferCreateInfoNv { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -21997,12 +21739,6 @@ impl<'s> DedicatedAllocationBufferCreateInfoNv<'s> {
 impl<'s> From<DedicatedAllocationBufferCreateInfoNv<'s>> for vks::VkDedicatedAllocationBufferCreateInfoNV {
     fn from(f: DedicatedAllocationBufferCreateInfoNv<'s>) -> vks::VkDedicatedAllocationBufferCreateInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDedicatedAllocationBufferCreateInfoNV> for DedicatedAllocationBufferCreateInfoNv<'s> {
-    fn from(f: vks::VkDedicatedAllocationBufferCreateInfoNV) -> DedicatedAllocationBufferCreateInfoNv<'s> {
-        DedicatedAllocationBufferCreateInfoNv { raw: f, _p: PhantomData }
     }
 }
 
@@ -22066,6 +21802,10 @@ impl<'s> DedicatedAllocationMemoryAllocateInfoNv<'s> {
         DedicatedAllocationMemoryAllocateInfoNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDedicatedAllocationMemoryAllocateInfoNV) -> DedicatedAllocationMemoryAllocateInfoNv<'s> {
+        DedicatedAllocationMemoryAllocateInfoNv { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -22100,12 +21840,6 @@ impl<'s> DedicatedAllocationMemoryAllocateInfoNv<'s> {
 impl<'s> From<DedicatedAllocationMemoryAllocateInfoNv<'s>> for vks::VkDedicatedAllocationMemoryAllocateInfoNV {
     fn from(f: DedicatedAllocationMemoryAllocateInfoNv<'s>) -> vks::VkDedicatedAllocationMemoryAllocateInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDedicatedAllocationMemoryAllocateInfoNV> for DedicatedAllocationMemoryAllocateInfoNv<'s> {
-    fn from(f: vks::VkDedicatedAllocationMemoryAllocateInfoNV) -> DedicatedAllocationMemoryAllocateInfoNv<'s> {
-        DedicatedAllocationMemoryAllocateInfoNv { raw: f, _p: PhantomData }
     }
 }
 
@@ -22179,6 +21913,10 @@ impl ExternalImageFormatPropertiesNv {
         ExternalImageFormatPropertiesNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExternalImageFormatPropertiesNV) -> ExternalImageFormatPropertiesNv {
+        ExternalImageFormatPropertiesNv { raw, }
+    }
+
     pub fn image_format_properties<'a>(&'a self) -> &'a ImageFormatProperties {
         unsafe { &*(&self.raw.imageFormatProperties as *const vks::VkImageFormatProperties as *const ImageFormatProperties) }
     }
@@ -22226,12 +21964,6 @@ impl ExternalImageFormatPropertiesNv {
 impl From<ExternalImageFormatPropertiesNv> for vks::VkExternalImageFormatPropertiesNV {
     fn from(f: ExternalImageFormatPropertiesNv) -> vks::VkExternalImageFormatPropertiesNV {
         f.raw
-    }
-}
-
-impl From<vks::VkExternalImageFormatPropertiesNV> for ExternalImageFormatPropertiesNv {
-    fn from(f: vks::VkExternalImageFormatPropertiesNV) -> ExternalImageFormatPropertiesNv {
-        ExternalImageFormatPropertiesNv { raw: f, }
     }
 }
 
@@ -22317,6 +22049,10 @@ impl<'s> ExternalMemoryImageCreateInfoNv<'s> {
         ExternalMemoryImageCreateInfoNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExternalMemoryImageCreateInfoNV) -> ExternalMemoryImageCreateInfoNv<'s> {
+        ExternalMemoryImageCreateInfoNv { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -22342,12 +22078,6 @@ impl<'s> ExternalMemoryImageCreateInfoNv<'s> {
 impl<'s> From<ExternalMemoryImageCreateInfoNv<'s>> for vks::VkExternalMemoryImageCreateInfoNV {
     fn from(f: ExternalMemoryImageCreateInfoNv<'s>) -> vks::VkExternalMemoryImageCreateInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExternalMemoryImageCreateInfoNV> for ExternalMemoryImageCreateInfoNv<'s> {
-    fn from(f: vks::VkExternalMemoryImageCreateInfoNV) -> ExternalMemoryImageCreateInfoNv<'s> {
-        ExternalMemoryImageCreateInfoNv { raw: f, _p: PhantomData }
     }
 }
 
@@ -22412,6 +22142,10 @@ impl<'s> ExportMemoryAllocateInfoNv<'s> {
         ExportMemoryAllocateInfoNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExportMemoryAllocateInfoNV) -> ExportMemoryAllocateInfoNv<'s> {
+        ExportMemoryAllocateInfoNv { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -22437,12 +22171,6 @@ impl<'s> ExportMemoryAllocateInfoNv<'s> {
 impl<'s> From<ExportMemoryAllocateInfoNv<'s>> for vks::VkExportMemoryAllocateInfoNV {
     fn from(f: ExportMemoryAllocateInfoNv<'s>) -> vks::VkExportMemoryAllocateInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExportMemoryAllocateInfoNV> for ExportMemoryAllocateInfoNv<'s> {
-    fn from(f: vks::VkExportMemoryAllocateInfoNV) -> ExportMemoryAllocateInfoNv<'s> {
-        ExportMemoryAllocateInfoNv { raw: f, _p: PhantomData }
     }
 }
 
@@ -22507,6 +22235,10 @@ impl<'s> ImportMemoryWin32HandleInfoNv<'s> {
         ImportMemoryWin32HandleInfoNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImportMemoryWin32HandleInfoNV) -> ImportMemoryWin32HandleInfoNv<'s> {
+        ImportMemoryWin32HandleInfoNv { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -22540,12 +22272,6 @@ impl<'s> ImportMemoryWin32HandleInfoNv<'s> {
 impl<'s> From<ImportMemoryWin32HandleInfoNv<'s>> for vks::VkImportMemoryWin32HandleInfoNV {
     fn from(f: ImportMemoryWin32HandleInfoNv<'s>) -> vks::VkImportMemoryWin32HandleInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImportMemoryWin32HandleInfoNV> for ImportMemoryWin32HandleInfoNv<'s> {
-    fn from(f: vks::VkImportMemoryWin32HandleInfoNV) -> ImportMemoryWin32HandleInfoNv<'s> {
-        ImportMemoryWin32HandleInfoNv { raw: f, _p: PhantomData }
     }
 }
 
@@ -22619,6 +22345,10 @@ impl<'s> ExportMemoryWin32HandleInfoNv<'s> {
         ExportMemoryWin32HandleInfoNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExportMemoryWin32HandleInfoNV) -> ExportMemoryWin32HandleInfoNv<'s> {
+        ExportMemoryWin32HandleInfoNv { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -22651,12 +22381,6 @@ impl<'s> ExportMemoryWin32HandleInfoNv<'s> {
 impl<'s> From<ExportMemoryWin32HandleInfoNv<'s>> for vks::VkExportMemoryWin32HandleInfoNV {
     fn from(f: ExportMemoryWin32HandleInfoNv<'s>) -> vks::VkExportMemoryWin32HandleInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExportMemoryWin32HandleInfoNV> for ExportMemoryWin32HandleInfoNv<'s> {
-    fn from(f: vks::VkExportMemoryWin32HandleInfoNV) -> ExportMemoryWin32HandleInfoNv<'s> {
-        ExportMemoryWin32HandleInfoNv { raw: f, _p: PhantomData }
     }
 }
 
@@ -22727,6 +22451,10 @@ pub struct Win32KeyedMutexAcquireReleaseInfoNv<'s> {
 impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
     pub fn builder<'b>() -> Win32KeyedMutexAcquireReleaseInfoNvBuilder<'b> {
         Win32KeyedMutexAcquireReleaseInfoNvBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkWin32KeyedMutexAcquireReleaseInfoNV) -> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
+        Win32KeyedMutexAcquireReleaseInfoNv { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -22805,12 +22533,6 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
 impl<'s> From<Win32KeyedMutexAcquireReleaseInfoNv<'s>> for vks::VkWin32KeyedMutexAcquireReleaseInfoNV {
     fn from(f: Win32KeyedMutexAcquireReleaseInfoNv<'s>) -> vks::VkWin32KeyedMutexAcquireReleaseInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkWin32KeyedMutexAcquireReleaseInfoNV> for Win32KeyedMutexAcquireReleaseInfoNv<'s> {
-    fn from(f: vks::VkWin32KeyedMutexAcquireReleaseInfoNV) -> Win32KeyedMutexAcquireReleaseInfoNv<'s> {
-        Win32KeyedMutexAcquireReleaseInfoNv { raw: f, _p: PhantomData }
     }
 }
 
@@ -22932,6 +22654,10 @@ impl<'s> DeviceGeneratedCommandsFeaturesNvx<'s> {
         DeviceGeneratedCommandsFeaturesNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceGeneratedCommandsFeaturesNVX) -> DeviceGeneratedCommandsFeaturesNvx<'s> {
+        DeviceGeneratedCommandsFeaturesNvx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -22957,13 +22683,6 @@ impl<'s> DeviceGeneratedCommandsFeaturesNvx<'s> {
 impl<'s> From<DeviceGeneratedCommandsFeaturesNvx<'s>> for vks::VkDeviceGeneratedCommandsFeaturesNVX {
     fn from(f: DeviceGeneratedCommandsFeaturesNvx<'s>) -> vks::VkDeviceGeneratedCommandsFeaturesNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkDeviceGeneratedCommandsFeaturesNVX> for DeviceGeneratedCommandsFeaturesNvx<'s> {
-    fn from(f: vks::VkDeviceGeneratedCommandsFeaturesNVX) -> DeviceGeneratedCommandsFeaturesNvx<'s> {
-        DeviceGeneratedCommandsFeaturesNvx { raw: f, _p: PhantomData }
     }
 }
 
@@ -23031,6 +22750,10 @@ impl<'s> DeviceGeneratedCommandsLimitsNvx<'s> {
         DeviceGeneratedCommandsLimitsNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceGeneratedCommandsLimitsNVX) -> DeviceGeneratedCommandsLimitsNvx<'s> {
+        DeviceGeneratedCommandsLimitsNvx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -23088,13 +22811,6 @@ impl<'s> DeviceGeneratedCommandsLimitsNvx<'s> {
 impl<'s> From<DeviceGeneratedCommandsLimitsNvx<'s>> for vks::VkDeviceGeneratedCommandsLimitsNVX {
     fn from(f: DeviceGeneratedCommandsLimitsNvx<'s>) -> vks::VkDeviceGeneratedCommandsLimitsNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkDeviceGeneratedCommandsLimitsNVX> for DeviceGeneratedCommandsLimitsNvx<'s> {
-    fn from(f: vks::VkDeviceGeneratedCommandsLimitsNVX) -> DeviceGeneratedCommandsLimitsNvx<'s> {
-        DeviceGeneratedCommandsLimitsNvx { raw: f, _p: PhantomData }
     }
 }
 
@@ -23197,6 +22913,10 @@ impl IndirectCommandsTokenNvx {
         IndirectCommandsTokenNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkIndirectCommandsTokenNVX) -> IndirectCommandsTokenNvx {
+        IndirectCommandsTokenNvx { raw, }
+    }
+
     pub fn token_type<'a>(&'a self) -> IndirectCommandsTokenTypeNvx {
         self.raw.tokenType.into()
     }
@@ -23231,13 +22951,6 @@ impl IndirectCommandsTokenNvx {
 impl From<IndirectCommandsTokenNvx> for vks::VkIndirectCommandsTokenNVX {
     fn from(f: IndirectCommandsTokenNvx) -> vks::VkIndirectCommandsTokenNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl From<vks::VkIndirectCommandsTokenNVX> for IndirectCommandsTokenNvx {
-    fn from(f: vks::VkIndirectCommandsTokenNVX) -> IndirectCommandsTokenNvx {
-        IndirectCommandsTokenNvx { raw: f, }
     }
 }
 
@@ -23311,6 +23024,10 @@ impl IndirectCommandsLayoutTokenNvx {
         IndirectCommandsLayoutTokenNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkIndirectCommandsLayoutTokenNVX) -> IndirectCommandsLayoutTokenNvx {
+        IndirectCommandsLayoutTokenNvx { raw, }
+    }
+
     pub fn token_type<'a>(&'a self) -> IndirectCommandsTokenTypeNvx {
         self.raw.tokenType.into()
     }
@@ -23352,13 +23069,6 @@ impl IndirectCommandsLayoutTokenNvx {
 impl From<IndirectCommandsLayoutTokenNvx> for vks::VkIndirectCommandsLayoutTokenNVX {
     fn from(f: IndirectCommandsLayoutTokenNvx) -> vks::VkIndirectCommandsLayoutTokenNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl From<vks::VkIndirectCommandsLayoutTokenNVX> for IndirectCommandsLayoutTokenNvx {
-    fn from(f: vks::VkIndirectCommandsLayoutTokenNVX) -> IndirectCommandsLayoutTokenNvx {
-        IndirectCommandsLayoutTokenNvx { raw: f, }
     }
 }
 
@@ -23441,6 +23151,10 @@ impl<'s> IndirectCommandsLayoutCreateInfoNvx<'s> {
         IndirectCommandsLayoutCreateInfoNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkIndirectCommandsLayoutCreateInfoNVX) -> IndirectCommandsLayoutCreateInfoNvx<'s> {
+        IndirectCommandsLayoutCreateInfoNvx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -23487,13 +23201,6 @@ impl<'s> IndirectCommandsLayoutCreateInfoNvx<'s> {
 impl<'s> From<IndirectCommandsLayoutCreateInfoNvx<'s>> for vks::VkIndirectCommandsLayoutCreateInfoNVX {
     fn from(f: IndirectCommandsLayoutCreateInfoNvx<'s>) -> vks::VkIndirectCommandsLayoutCreateInfoNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkIndirectCommandsLayoutCreateInfoNVX> for IndirectCommandsLayoutCreateInfoNvx<'s> {
-    fn from(f: vks::VkIndirectCommandsLayoutCreateInfoNVX) -> IndirectCommandsLayoutCreateInfoNvx<'s> {
-        IndirectCommandsLayoutCreateInfoNvx { raw: f, _p: PhantomData }
     }
 }
 
@@ -23582,6 +23289,10 @@ pub struct CmdProcessCommandsInfoNvx<'s> {
 impl<'s> CmdProcessCommandsInfoNvx<'s> {
     pub fn builder<'b>() -> CmdProcessCommandsInfoNvxBuilder<'b> {
         CmdProcessCommandsInfoNvxBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkCmdProcessCommandsInfoNVX) -> CmdProcessCommandsInfoNvx<'s> {
+        CmdProcessCommandsInfoNvx { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -23682,13 +23393,6 @@ impl<'s> CmdProcessCommandsInfoNvx<'s> {
 impl<'s> From<CmdProcessCommandsInfoNvx<'s>> for vks::VkCmdProcessCommandsInfoNVX {
     fn from(f: CmdProcessCommandsInfoNvx<'s>) -> vks::VkCmdProcessCommandsInfoNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkCmdProcessCommandsInfoNVX> for CmdProcessCommandsInfoNvx<'s> {
-    fn from(f: vks::VkCmdProcessCommandsInfoNVX) -> CmdProcessCommandsInfoNvx<'s> {
-        CmdProcessCommandsInfoNvx { raw: f, _p: PhantomData }
     }
 }
 
@@ -23837,6 +23541,10 @@ impl<'s> CmdReserveSpaceForCommandsInfoNvx<'s> {
         CmdReserveSpaceForCommandsInfoNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkCmdReserveSpaceForCommandsInfoNVX) -> CmdReserveSpaceForCommandsInfoNvx<'s> {
+        CmdReserveSpaceForCommandsInfoNvx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -23880,13 +23588,6 @@ impl<'s> CmdReserveSpaceForCommandsInfoNvx<'s> {
 impl<'s> From<CmdReserveSpaceForCommandsInfoNvx<'s>> for vks::VkCmdReserveSpaceForCommandsInfoNVX {
     fn from(f: CmdReserveSpaceForCommandsInfoNvx<'s>) -> vks::VkCmdReserveSpaceForCommandsInfoNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkCmdReserveSpaceForCommandsInfoNVX> for CmdReserveSpaceForCommandsInfoNvx<'s> {
-    fn from(f: vks::VkCmdReserveSpaceForCommandsInfoNVX) -> CmdReserveSpaceForCommandsInfoNvx<'s> {
-        CmdReserveSpaceForCommandsInfoNvx { raw: f, _p: PhantomData }
     }
 }
 
@@ -23972,6 +23673,10 @@ pub struct ObjectTableCreateInfoNvx<'s> {
 impl<'s> ObjectTableCreateInfoNvx<'s> {
     pub fn builder<'b>() -> ObjectTableCreateInfoNvxBuilder<'b> {
         ObjectTableCreateInfoNvxBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkObjectTableCreateInfoNVX) -> ObjectTableCreateInfoNvx<'s> {
+        ObjectTableCreateInfoNvx { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -24066,13 +23771,6 @@ impl<'s> ObjectTableCreateInfoNvx<'s> {
 impl<'s> From<ObjectTableCreateInfoNvx<'s>> for vks::VkObjectTableCreateInfoNVX {
     fn from(f: ObjectTableCreateInfoNvx<'s>) -> vks::VkObjectTableCreateInfoNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkObjectTableCreateInfoNVX> for ObjectTableCreateInfoNvx<'s> {
-    fn from(f: vks::VkObjectTableCreateInfoNVX) -> ObjectTableCreateInfoNvx<'s> {
-        ObjectTableCreateInfoNvx { raw: f, _p: PhantomData }
     }
 }
 
@@ -24213,6 +23911,10 @@ impl ObjectTableEntryNvx {
         ObjectTableEntryNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkObjectTableEntryNVX) -> ObjectTableEntryNvx {
+        ObjectTableEntryNvx { raw, }
+    }
+
     pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
         self.raw.type_.into()
     }
@@ -24239,13 +23941,6 @@ impl ObjectTableEntryNvx {
 impl From<ObjectTableEntryNvx> for vks::VkObjectTableEntryNVX {
     fn from(f: ObjectTableEntryNvx) -> vks::VkObjectTableEntryNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl From<vks::VkObjectTableEntryNVX> for ObjectTableEntryNvx {
-    fn from(f: vks::VkObjectTableEntryNVX) -> ObjectTableEntryNvx {
-        ObjectTableEntryNvx { raw: f, }
     }
 }
 
@@ -24310,6 +24005,10 @@ impl ObjectTablePipelineEntryNvx {
         ObjectTablePipelineEntryNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkObjectTablePipelineEntryNVX) -> ObjectTablePipelineEntryNvx {
+        ObjectTablePipelineEntryNvx { raw, }
+    }
+
     pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
         self.raw.type_.into()
     }
@@ -24345,13 +24044,6 @@ impl ObjectTablePipelineEntryNvx {
 impl From<ObjectTablePipelineEntryNvx> for vks::VkObjectTablePipelineEntryNVX {
     fn from(f: ObjectTablePipelineEntryNvx) -> vks::VkObjectTablePipelineEntryNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl From<vks::VkObjectTablePipelineEntryNVX> for ObjectTablePipelineEntryNvx {
-    fn from(f: vks::VkObjectTablePipelineEntryNVX) -> ObjectTablePipelineEntryNvx {
-        ObjectTablePipelineEntryNvx { raw: f, }
     }
 }
 
@@ -24426,6 +24118,10 @@ impl ObjectTableDescriptorSetEntryNvx {
         ObjectTableDescriptorSetEntryNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkObjectTableDescriptorSetEntryNVX) -> ObjectTableDescriptorSetEntryNvx {
+        ObjectTableDescriptorSetEntryNvx { raw, }
+    }
+
     pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
         self.raw.type_.into()
     }
@@ -24470,13 +24166,6 @@ impl ObjectTableDescriptorSetEntryNvx {
 impl From<ObjectTableDescriptorSetEntryNvx> for vks::VkObjectTableDescriptorSetEntryNVX {
     fn from(f: ObjectTableDescriptorSetEntryNvx) -> vks::VkObjectTableDescriptorSetEntryNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl From<vks::VkObjectTableDescriptorSetEntryNVX> for ObjectTableDescriptorSetEntryNvx {
-    fn from(f: vks::VkObjectTableDescriptorSetEntryNVX) -> ObjectTableDescriptorSetEntryNvx {
-        ObjectTableDescriptorSetEntryNvx { raw: f, }
     }
 }
 
@@ -24561,6 +24250,10 @@ impl ObjectTableVertexBufferEntryNvx {
         ObjectTableVertexBufferEntryNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkObjectTableVertexBufferEntryNVX) -> ObjectTableVertexBufferEntryNvx {
+        ObjectTableVertexBufferEntryNvx { raw, }
+    }
+
     pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
         self.raw.type_.into()
     }
@@ -24596,13 +24289,6 @@ impl ObjectTableVertexBufferEntryNvx {
 impl From<ObjectTableVertexBufferEntryNvx> for vks::VkObjectTableVertexBufferEntryNVX {
     fn from(f: ObjectTableVertexBufferEntryNvx) -> vks::VkObjectTableVertexBufferEntryNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl From<vks::VkObjectTableVertexBufferEntryNVX> for ObjectTableVertexBufferEntryNvx {
-    fn from(f: vks::VkObjectTableVertexBufferEntryNVX) -> ObjectTableVertexBufferEntryNvx {
-        ObjectTableVertexBufferEntryNvx { raw: f, }
     }
 }
 
@@ -24677,6 +24363,10 @@ impl ObjectTableIndexBufferEntryNvx {
         ObjectTableIndexBufferEntryNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkObjectTableIndexBufferEntryNVX) -> ObjectTableIndexBufferEntryNvx {
+        ObjectTableIndexBufferEntryNvx { raw, }
+    }
+
     pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
         self.raw.type_.into()
     }
@@ -24720,13 +24410,6 @@ impl ObjectTableIndexBufferEntryNvx {
 impl From<ObjectTableIndexBufferEntryNvx> for vks::VkObjectTableIndexBufferEntryNVX {
     fn from(f: ObjectTableIndexBufferEntryNvx) -> vks::VkObjectTableIndexBufferEntryNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl From<vks::VkObjectTableIndexBufferEntryNVX> for ObjectTableIndexBufferEntryNvx {
-    fn from(f: vks::VkObjectTableIndexBufferEntryNVX) -> ObjectTableIndexBufferEntryNvx {
-        ObjectTableIndexBufferEntryNvx { raw: f, }
     }
 }
 
@@ -24810,6 +24493,10 @@ impl ObjectTablePushConstantEntryNvx {
         ObjectTablePushConstantEntryNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkObjectTablePushConstantEntryNVX) -> ObjectTablePushConstantEntryNvx {
+        ObjectTablePushConstantEntryNvx { raw, }
+    }
+
     pub fn type_of<'a>(&'a self) -> ObjectEntryTypeNvx {
         self.raw.type_.into()
     }
@@ -24854,13 +24541,6 @@ impl ObjectTablePushConstantEntryNvx {
 impl From<ObjectTablePushConstantEntryNvx> for vks::VkObjectTablePushConstantEntryNVX {
     fn from(f: ObjectTablePushConstantEntryNvx) -> vks::VkObjectTablePushConstantEntryNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl From<vks::VkObjectTablePushConstantEntryNVX> for ObjectTablePushConstantEntryNvx {
-    fn from(f: vks::VkObjectTablePushConstantEntryNVX) -> ObjectTablePushConstantEntryNvx {
-        ObjectTablePushConstantEntryNvx { raw: f, }
     }
 }
 
@@ -24944,6 +24624,10 @@ impl<'s> PhysicalDeviceFeatures2Khr<'s> {
         PhysicalDeviceFeatures2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceFeatures2KHR) -> PhysicalDeviceFeatures2Khr<'s> {
+        PhysicalDeviceFeatures2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -24972,12 +24656,6 @@ impl<'s> PhysicalDeviceFeatures2Khr<'s> {
 impl<'s> From<PhysicalDeviceFeatures2Khr<'s>> for vks::VkPhysicalDeviceFeatures2KHR {
     fn from(f: PhysicalDeviceFeatures2Khr<'s>) -> vks::VkPhysicalDeviceFeatures2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceFeatures2KHR> for PhysicalDeviceFeatures2Khr<'s> {
-    fn from(f: vks::VkPhysicalDeviceFeatures2KHR) -> PhysicalDeviceFeatures2Khr<'s> {
-        PhysicalDeviceFeatures2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -25045,6 +24723,10 @@ impl<'s> PhysicalDeviceProperties2Khr<'s> {
         PhysicalDeviceProperties2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceProperties2KHR) -> PhysicalDeviceProperties2Khr<'s> {
+        PhysicalDeviceProperties2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -25073,12 +24755,6 @@ impl<'s> PhysicalDeviceProperties2Khr<'s> {
 impl<'s> From<PhysicalDeviceProperties2Khr<'s>> for vks::VkPhysicalDeviceProperties2KHR {
     fn from(f: PhysicalDeviceProperties2Khr<'s>) -> vks::VkPhysicalDeviceProperties2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceProperties2KHR> for PhysicalDeviceProperties2Khr<'s> {
-    fn from(f: vks::VkPhysicalDeviceProperties2KHR) -> PhysicalDeviceProperties2Khr<'s> {
-        PhysicalDeviceProperties2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -25146,6 +24822,10 @@ impl<'s> FormatProperties2Khr<'s> {
         FormatProperties2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkFormatProperties2KHR) -> FormatProperties2Khr<'s> {
+        FormatProperties2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -25174,12 +24854,6 @@ impl<'s> FormatProperties2Khr<'s> {
 impl<'s> From<FormatProperties2Khr<'s>> for vks::VkFormatProperties2KHR {
     fn from(f: FormatProperties2Khr<'s>) -> vks::VkFormatProperties2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkFormatProperties2KHR> for FormatProperties2Khr<'s> {
-    fn from(f: vks::VkFormatProperties2KHR) -> FormatProperties2Khr<'s> {
-        FormatProperties2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -25247,6 +24921,10 @@ impl<'s> ImageFormatProperties2Khr<'s> {
         ImageFormatProperties2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageFormatProperties2KHR) -> ImageFormatProperties2Khr<'s> {
+        ImageFormatProperties2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -25275,12 +24953,6 @@ impl<'s> ImageFormatProperties2Khr<'s> {
 impl<'s> From<ImageFormatProperties2Khr<'s>> for vks::VkImageFormatProperties2KHR {
     fn from(f: ImageFormatProperties2Khr<'s>) -> vks::VkImageFormatProperties2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImageFormatProperties2KHR> for ImageFormatProperties2Khr<'s> {
-    fn from(f: vks::VkImageFormatProperties2KHR) -> ImageFormatProperties2Khr<'s> {
-        ImageFormatProperties2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -25348,6 +25020,10 @@ impl<'s> PhysicalDeviceImageFormatInfo2Khr<'s> {
         PhysicalDeviceImageFormatInfo2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceImageFormatInfo2KHR) -> PhysicalDeviceImageFormatInfo2Khr<'s> {
+        PhysicalDeviceImageFormatInfo2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -25406,12 +25082,6 @@ impl<'s> PhysicalDeviceImageFormatInfo2Khr<'s> {
 impl<'s> From<PhysicalDeviceImageFormatInfo2Khr<'s>> for vks::VkPhysicalDeviceImageFormatInfo2KHR {
     fn from(f: PhysicalDeviceImageFormatInfo2Khr<'s>) -> vks::VkPhysicalDeviceImageFormatInfo2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceImageFormatInfo2KHR> for PhysicalDeviceImageFormatInfo2Khr<'s> {
-    fn from(f: vks::VkPhysicalDeviceImageFormatInfo2KHR) -> PhysicalDeviceImageFormatInfo2Khr<'s> {
-        PhysicalDeviceImageFormatInfo2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -25513,6 +25183,10 @@ impl<'s> QueueFamilyProperties2Khr<'s> {
         QueueFamilyProperties2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkQueueFamilyProperties2KHR) -> QueueFamilyProperties2Khr<'s> {
+        QueueFamilyProperties2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -25541,12 +25215,6 @@ impl<'s> QueueFamilyProperties2Khr<'s> {
 impl<'s> From<QueueFamilyProperties2Khr<'s>> for vks::VkQueueFamilyProperties2KHR {
     fn from(f: QueueFamilyProperties2Khr<'s>) -> vks::VkQueueFamilyProperties2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkQueueFamilyProperties2KHR> for QueueFamilyProperties2Khr<'s> {
-    fn from(f: vks::VkQueueFamilyProperties2KHR) -> QueueFamilyProperties2Khr<'s> {
-        QueueFamilyProperties2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -25614,6 +25282,10 @@ impl<'s> PhysicalDeviceMemoryProperties2Khr<'s> {
         PhysicalDeviceMemoryProperties2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceMemoryProperties2KHR) -> PhysicalDeviceMemoryProperties2Khr<'s> {
+        PhysicalDeviceMemoryProperties2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -25642,12 +25314,6 @@ impl<'s> PhysicalDeviceMemoryProperties2Khr<'s> {
 impl<'s> From<PhysicalDeviceMemoryProperties2Khr<'s>> for vks::VkPhysicalDeviceMemoryProperties2KHR {
     fn from(f: PhysicalDeviceMemoryProperties2Khr<'s>) -> vks::VkPhysicalDeviceMemoryProperties2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceMemoryProperties2KHR> for PhysicalDeviceMemoryProperties2Khr<'s> {
-    fn from(f: vks::VkPhysicalDeviceMemoryProperties2KHR) -> PhysicalDeviceMemoryProperties2Khr<'s> {
-        PhysicalDeviceMemoryProperties2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -25715,6 +25381,10 @@ impl<'s> SparseImageFormatProperties2Khr<'s> {
         SparseImageFormatProperties2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSparseImageFormatProperties2KHR) -> SparseImageFormatProperties2Khr<'s> {
+        SparseImageFormatProperties2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -25743,12 +25413,6 @@ impl<'s> SparseImageFormatProperties2Khr<'s> {
 impl<'s> From<SparseImageFormatProperties2Khr<'s>> for vks::VkSparseImageFormatProperties2KHR {
     fn from(f: SparseImageFormatProperties2Khr<'s>) -> vks::VkSparseImageFormatProperties2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSparseImageFormatProperties2KHR> for SparseImageFormatProperties2Khr<'s> {
-    fn from(f: vks::VkSparseImageFormatProperties2KHR) -> SparseImageFormatProperties2Khr<'s> {
-        SparseImageFormatProperties2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -25816,6 +25480,10 @@ impl<'s> PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
         PhysicalDeviceSparseImageFormatInfo2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceSparseImageFormatInfo2KHR) -> PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
+        PhysicalDeviceSparseImageFormatInfo2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -25874,12 +25542,6 @@ impl<'s> PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
 impl<'s> From<PhysicalDeviceSparseImageFormatInfo2Khr<'s>> for vks::VkPhysicalDeviceSparseImageFormatInfo2KHR {
     fn from(f: PhysicalDeviceSparseImageFormatInfo2Khr<'s>) -> vks::VkPhysicalDeviceSparseImageFormatInfo2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceSparseImageFormatInfo2KHR> for PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
-    fn from(f: vks::VkPhysicalDeviceSparseImageFormatInfo2KHR) -> PhysicalDeviceSparseImageFormatInfo2Khr<'s> {
-        PhysicalDeviceSparseImageFormatInfo2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -25981,6 +25643,10 @@ impl<'s> PhysicalDevicePushDescriptorPropertiesKhr<'s> {
         PhysicalDevicePushDescriptorPropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDevicePushDescriptorPropertiesKHR) -> PhysicalDevicePushDescriptorPropertiesKhr<'s> {
+        PhysicalDevicePushDescriptorPropertiesKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -26005,12 +25671,6 @@ impl<'s> PhysicalDevicePushDescriptorPropertiesKhr<'s> {
 impl<'s> From<PhysicalDevicePushDescriptorPropertiesKhr<'s>> for vks::VkPhysicalDevicePushDescriptorPropertiesKHR {
     fn from(f: PhysicalDevicePushDescriptorPropertiesKhr<'s>) -> vks::VkPhysicalDevicePushDescriptorPropertiesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDevicePushDescriptorPropertiesKHR> for PhysicalDevicePushDescriptorPropertiesKhr<'s> {
-    fn from(f: vks::VkPhysicalDevicePushDescriptorPropertiesKHR) -> PhysicalDevicePushDescriptorPropertiesKhr<'s> {
-        PhysicalDevicePushDescriptorPropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -26074,6 +25734,10 @@ impl<'s> PresentRegionsKhr<'s> {
         PresentRegionsKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPresentRegionsKHR) -> PresentRegionsKhr<'s> {
+        PresentRegionsKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -26102,12 +25766,6 @@ impl<'s> PresentRegionsKhr<'s> {
 impl<'s> From<PresentRegionsKhr<'s>> for vks::VkPresentRegionsKHR {
     fn from(f: PresentRegionsKhr<'s>) -> vks::VkPresentRegionsKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPresentRegionsKHR> for PresentRegionsKhr<'s> {
-    fn from(f: vks::VkPresentRegionsKHR) -> PresentRegionsKhr<'s> {
-        PresentRegionsKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -26175,6 +25833,10 @@ impl<'s> PresentRegionKhr<'s> {
         PresentRegionKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPresentRegionKHR) -> PresentRegionKhr<'s> {
+        PresentRegionKhr { raw, _p: PhantomData }
+    }
+
     pub fn rectangles<'a>(&'a self) -> &'a [RectLayerKhr] {
         unsafe { slice::from_raw_parts(self.raw.pRectangles as *const _, self.raw.rectangleCount as usize) }
     }
@@ -26195,12 +25857,6 @@ impl<'s> PresentRegionKhr<'s> {
 impl<'s> From<PresentRegionKhr<'s>> for vks::VkPresentRegionKHR {
     fn from(f: PresentRegionKhr<'s>) -> vks::VkPresentRegionKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPresentRegionKHR> for PresentRegionKhr<'s> {
-    fn from(f: vks::VkPresentRegionKHR) -> PresentRegionKhr<'s> {
-        PresentRegionKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -26258,6 +25914,10 @@ impl RectLayerKhr {
         RectLayerKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkRectLayerKHR) -> RectLayerKhr {
+        RectLayerKhr { raw, }
+    }
+
     pub fn offset<'a>(&'a self) -> &'a Offset2d {
         unsafe { &*(&self.raw.offset as *const vks::VkOffset2D as *const Offset2d) }
     }
@@ -26298,12 +25958,6 @@ impl RectLayerKhr {
 impl From<RectLayerKhr> for vks::VkRectLayerKHR {
     fn from(f: RectLayerKhr) -> vks::VkRectLayerKHR {
         f.raw
-    }
-}
-
-impl From<vks::VkRectLayerKHR> for RectLayerKhr {
-    fn from(f: vks::VkRectLayerKHR) -> RectLayerKhr {
-        RectLayerKhr { raw: f, }
     }
 }
 
@@ -26381,6 +26035,10 @@ impl<'s> PhysicalDeviceVariablePointerFeaturesKhr<'s> {
         PhysicalDeviceVariablePointerFeaturesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceVariablePointerFeaturesKHR) -> PhysicalDeviceVariablePointerFeaturesKhr<'s> {
+        PhysicalDeviceVariablePointerFeaturesKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -26413,12 +26071,6 @@ impl<'s> PhysicalDeviceVariablePointerFeaturesKhr<'s> {
 impl<'s> From<PhysicalDeviceVariablePointerFeaturesKhr<'s>> for vks::VkPhysicalDeviceVariablePointerFeaturesKHR {
     fn from(f: PhysicalDeviceVariablePointerFeaturesKhr<'s>) -> vks::VkPhysicalDeviceVariablePointerFeaturesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceVariablePointerFeaturesKHR> for PhysicalDeviceVariablePointerFeaturesKhr<'s> {
-    fn from(f: vks::VkPhysicalDeviceVariablePointerFeaturesKHR) -> PhysicalDeviceVariablePointerFeaturesKhr<'s> {
-        PhysicalDeviceVariablePointerFeaturesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -26490,6 +26142,10 @@ impl ExternalMemoryPropertiesKhr {
         ExternalMemoryPropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExternalMemoryPropertiesKHR) -> ExternalMemoryPropertiesKhr {
+        ExternalMemoryPropertiesKhr { raw, }
+    }
+
     pub fn external_memory_features<'a>(&'a self) -> ExternalMemoryFeatureFlagsKhr {
         ExternalMemoryFeatureFlagsKhr::from_bits(self.raw.externalMemoryFeatures)
             .expect("ExternalMemoryPropertiesKhr::external_memory_features: error converting flags")
@@ -26525,12 +26181,6 @@ impl ExternalMemoryPropertiesKhr {
 impl From<ExternalMemoryPropertiesKhr> for vks::VkExternalMemoryPropertiesKHR {
     fn from(f: ExternalMemoryPropertiesKhr) -> vks::VkExternalMemoryPropertiesKHR {
         f.raw
-    }
-}
-
-impl From<vks::VkExternalMemoryPropertiesKHR> for ExternalMemoryPropertiesKhr {
-    fn from(f: vks::VkExternalMemoryPropertiesKHR) -> ExternalMemoryPropertiesKhr {
-        ExternalMemoryPropertiesKhr { raw: f, }
     }
 }
 
@@ -26603,6 +26253,10 @@ impl<'s> PhysicalDeviceExternalImageFormatInfoKhr<'s> {
         PhysicalDeviceExternalImageFormatInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceExternalImageFormatInfoKHR) -> PhysicalDeviceExternalImageFormatInfoKhr<'s> {
+        PhysicalDeviceExternalImageFormatInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -26628,12 +26282,6 @@ impl<'s> PhysicalDeviceExternalImageFormatInfoKhr<'s> {
 impl<'s> From<PhysicalDeviceExternalImageFormatInfoKhr<'s>> for vks::VkPhysicalDeviceExternalImageFormatInfoKHR {
     fn from(f: PhysicalDeviceExternalImageFormatInfoKhr<'s>) -> vks::VkPhysicalDeviceExternalImageFormatInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceExternalImageFormatInfoKHR> for PhysicalDeviceExternalImageFormatInfoKhr<'s> {
-    fn from(f: vks::VkPhysicalDeviceExternalImageFormatInfoKHR) -> PhysicalDeviceExternalImageFormatInfoKhr<'s> {
-        PhysicalDeviceExternalImageFormatInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -26698,6 +26346,10 @@ impl<'s> ExternalImageFormatPropertiesKhr<'s> {
         ExternalImageFormatPropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExternalImageFormatPropertiesKHR) -> ExternalImageFormatPropertiesKhr<'s> {
+        ExternalImageFormatPropertiesKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -26726,12 +26378,6 @@ impl<'s> ExternalImageFormatPropertiesKhr<'s> {
 impl<'s> From<ExternalImageFormatPropertiesKhr<'s>> for vks::VkExternalImageFormatPropertiesKHR {
     fn from(f: ExternalImageFormatPropertiesKhr<'s>) -> vks::VkExternalImageFormatPropertiesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExternalImageFormatPropertiesKHR> for ExternalImageFormatPropertiesKhr<'s> {
-    fn from(f: vks::VkExternalImageFormatPropertiesKHR) -> ExternalImageFormatPropertiesKhr<'s> {
-        ExternalImageFormatPropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -26799,6 +26445,10 @@ impl<'s> PhysicalDeviceExternalBufferInfoKhr<'s> {
         PhysicalDeviceExternalBufferInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceExternalBufferInfoKHR) -> PhysicalDeviceExternalBufferInfoKhr<'s> {
+        PhysicalDeviceExternalBufferInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -26842,12 +26492,6 @@ impl<'s> PhysicalDeviceExternalBufferInfoKhr<'s> {
 impl<'s> From<PhysicalDeviceExternalBufferInfoKhr<'s>> for vks::VkPhysicalDeviceExternalBufferInfoKHR {
     fn from(f: PhysicalDeviceExternalBufferInfoKhr<'s>) -> vks::VkPhysicalDeviceExternalBufferInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceExternalBufferInfoKHR> for PhysicalDeviceExternalBufferInfoKhr<'s> {
-    fn from(f: vks::VkPhysicalDeviceExternalBufferInfoKHR) -> PhysicalDeviceExternalBufferInfoKhr<'s> {
-        PhysicalDeviceExternalBufferInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -26932,6 +26576,10 @@ impl<'s> ExternalBufferPropertiesKhr<'s> {
         ExternalBufferPropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExternalBufferPropertiesKHR) -> ExternalBufferPropertiesKhr<'s> {
+        ExternalBufferPropertiesKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -26960,12 +26608,6 @@ impl<'s> ExternalBufferPropertiesKhr<'s> {
 impl<'s> From<ExternalBufferPropertiesKhr<'s>> for vks::VkExternalBufferPropertiesKHR {
     fn from(f: ExternalBufferPropertiesKhr<'s>) -> vks::VkExternalBufferPropertiesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExternalBufferPropertiesKHR> for ExternalBufferPropertiesKhr<'s> {
-    fn from(f: vks::VkExternalBufferPropertiesKHR) -> ExternalBufferPropertiesKhr<'s> {
-        ExternalBufferPropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -27033,6 +26675,10 @@ impl<'s> PhysicalDeviceIDPropertiesKhr<'s> {
         PhysicalDeviceIDPropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceIDPropertiesKHR) -> PhysicalDeviceIDPropertiesKhr<'s> {
+        PhysicalDeviceIDPropertiesKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -27089,12 +26735,6 @@ impl<'s> PhysicalDeviceIDPropertiesKhr<'s> {
 impl<'s> From<PhysicalDeviceIDPropertiesKhr<'s>> for vks::VkPhysicalDeviceIDPropertiesKHR {
     fn from(f: PhysicalDeviceIDPropertiesKhr<'s>) -> vks::VkPhysicalDeviceIDPropertiesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceIDPropertiesKHR> for PhysicalDeviceIDPropertiesKhr<'s> {
-    fn from(f: vks::VkPhysicalDeviceIDPropertiesKHR) -> PhysicalDeviceIDPropertiesKhr<'s> {
-        PhysicalDeviceIDPropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -27194,6 +26834,10 @@ impl<'s> ExternalMemoryImageCreateInfoKhr<'s> {
         ExternalMemoryImageCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExternalMemoryImageCreateInfoKHR) -> ExternalMemoryImageCreateInfoKhr<'s> {
+        ExternalMemoryImageCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -27219,12 +26863,6 @@ impl<'s> ExternalMemoryImageCreateInfoKhr<'s> {
 impl<'s> From<ExternalMemoryImageCreateInfoKhr<'s>> for vks::VkExternalMemoryImageCreateInfoKHR {
     fn from(f: ExternalMemoryImageCreateInfoKhr<'s>) -> vks::VkExternalMemoryImageCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExternalMemoryImageCreateInfoKHR> for ExternalMemoryImageCreateInfoKhr<'s> {
-    fn from(f: vks::VkExternalMemoryImageCreateInfoKHR) -> ExternalMemoryImageCreateInfoKhr<'s> {
-        ExternalMemoryImageCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -27289,6 +26927,10 @@ impl<'s> ExternalMemoryBufferCreateInfoKhr<'s> {
         ExternalMemoryBufferCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExternalMemoryBufferCreateInfoKHR) -> ExternalMemoryBufferCreateInfoKhr<'s> {
+        ExternalMemoryBufferCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -27314,12 +26956,6 @@ impl<'s> ExternalMemoryBufferCreateInfoKhr<'s> {
 impl<'s> From<ExternalMemoryBufferCreateInfoKhr<'s>> for vks::VkExternalMemoryBufferCreateInfoKHR {
     fn from(f: ExternalMemoryBufferCreateInfoKhr<'s>) -> vks::VkExternalMemoryBufferCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExternalMemoryBufferCreateInfoKHR> for ExternalMemoryBufferCreateInfoKhr<'s> {
-    fn from(f: vks::VkExternalMemoryBufferCreateInfoKHR) -> ExternalMemoryBufferCreateInfoKhr<'s> {
-        ExternalMemoryBufferCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -27384,6 +27020,10 @@ impl<'s> ExportMemoryAllocateInfoKhr<'s> {
         ExportMemoryAllocateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExportMemoryAllocateInfoKHR) -> ExportMemoryAllocateInfoKhr<'s> {
+        ExportMemoryAllocateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -27409,12 +27049,6 @@ impl<'s> ExportMemoryAllocateInfoKhr<'s> {
 impl<'s> From<ExportMemoryAllocateInfoKhr<'s>> for vks::VkExportMemoryAllocateInfoKHR {
     fn from(f: ExportMemoryAllocateInfoKhr<'s>) -> vks::VkExportMemoryAllocateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExportMemoryAllocateInfoKHR> for ExportMemoryAllocateInfoKhr<'s> {
-    fn from(f: vks::VkExportMemoryAllocateInfoKHR) -> ExportMemoryAllocateInfoKhr<'s> {
-        ExportMemoryAllocateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -27479,6 +27113,10 @@ impl<'s> ImportMemoryWin32HandleInfoKhr<'s> {
         ImportMemoryWin32HandleInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImportMemoryWin32HandleInfoKHR) -> ImportMemoryWin32HandleInfoKhr<'s> {
+        ImportMemoryWin32HandleInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -27520,12 +27158,6 @@ impl<'s> ImportMemoryWin32HandleInfoKhr<'s> {
 impl<'s> From<ImportMemoryWin32HandleInfoKhr<'s>> for vks::VkImportMemoryWin32HandleInfoKHR {
     fn from(f: ImportMemoryWin32HandleInfoKhr<'s>) -> vks::VkImportMemoryWin32HandleInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImportMemoryWin32HandleInfoKHR> for ImportMemoryWin32HandleInfoKhr<'s> {
-    fn from(f: vks::VkImportMemoryWin32HandleInfoKHR) -> ImportMemoryWin32HandleInfoKhr<'s> {
-        ImportMemoryWin32HandleInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -27608,6 +27240,10 @@ impl<'s> ExportMemoryWin32HandleInfoKhr<'s> {
         ExportMemoryWin32HandleInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExportMemoryWin32HandleInfoKHR) -> ExportMemoryWin32HandleInfoKhr<'s> {
+        ExportMemoryWin32HandleInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -27648,12 +27284,6 @@ impl<'s> ExportMemoryWin32HandleInfoKhr<'s> {
 impl<'s> From<ExportMemoryWin32HandleInfoKhr<'s>> for vks::VkExportMemoryWin32HandleInfoKHR {
     fn from(f: ExportMemoryWin32HandleInfoKhr<'s>) -> vks::VkExportMemoryWin32HandleInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExportMemoryWin32HandleInfoKHR> for ExportMemoryWin32HandleInfoKhr<'s> {
-    fn from(f: vks::VkExportMemoryWin32HandleInfoKHR) -> ExportMemoryWin32HandleInfoKhr<'s> {
-        ExportMemoryWin32HandleInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -27735,6 +27365,10 @@ impl<'s> MemoryWin32HandlePropertiesKhr<'s> {
         MemoryWin32HandlePropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryWin32HandlePropertiesKHR) -> MemoryWin32HandlePropertiesKhr<'s> {
+        MemoryWin32HandlePropertiesKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -27759,12 +27393,6 @@ impl<'s> MemoryWin32HandlePropertiesKhr<'s> {
 impl<'s> From<MemoryWin32HandlePropertiesKhr<'s>> for vks::VkMemoryWin32HandlePropertiesKHR {
     fn from(f: MemoryWin32HandlePropertiesKhr<'s>) -> vks::VkMemoryWin32HandlePropertiesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMemoryWin32HandlePropertiesKHR> for MemoryWin32HandlePropertiesKhr<'s> {
-    fn from(f: vks::VkMemoryWin32HandlePropertiesKHR) -> MemoryWin32HandlePropertiesKhr<'s> {
-        MemoryWin32HandlePropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -27828,6 +27456,10 @@ impl<'s> MemoryGetWin32HandleInfoKhr<'s> {
         MemoryGetWin32HandleInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryGetWin32HandleInfoKHR) -> MemoryGetWin32HandleInfoKhr<'s> {
+        MemoryGetWin32HandleInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -27862,12 +27494,6 @@ impl<'s> MemoryGetWin32HandleInfoKhr<'s> {
 impl<'s> From<MemoryGetWin32HandleInfoKhr<'s>> for vks::VkMemoryGetWin32HandleInfoKHR {
     fn from(f: MemoryGetWin32HandleInfoKhr<'s>) -> vks::VkMemoryGetWin32HandleInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMemoryGetWin32HandleInfoKHR> for MemoryGetWin32HandleInfoKhr<'s> {
-    fn from(f: vks::VkMemoryGetWin32HandleInfoKHR) -> MemoryGetWin32HandleInfoKhr<'s> {
-        MemoryGetWin32HandleInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -27942,6 +27568,10 @@ impl<'s> ImportMemoryFdInfoKhr<'s> {
         ImportMemoryFdInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImportMemoryFdInfoKHR) -> ImportMemoryFdInfoKhr<'s> {
+        ImportMemoryFdInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -27975,12 +27605,6 @@ impl<'s> ImportMemoryFdInfoKhr<'s> {
 impl<'s> From<ImportMemoryFdInfoKhr<'s>> for vks::VkImportMemoryFdInfoKHR {
     fn from(f: ImportMemoryFdInfoKhr<'s>) -> vks::VkImportMemoryFdInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImportMemoryFdInfoKHR> for ImportMemoryFdInfoKhr<'s> {
-    fn from(f: vks::VkImportMemoryFdInfoKHR) -> ImportMemoryFdInfoKhr<'s> {
-        ImportMemoryFdInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -28054,6 +27678,10 @@ impl<'s> MemoryFdPropertiesKhr<'s> {
         MemoryFdPropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryFdPropertiesKHR) -> MemoryFdPropertiesKhr<'s> {
+        MemoryFdPropertiesKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -28078,12 +27706,6 @@ impl<'s> MemoryFdPropertiesKhr<'s> {
 impl<'s> From<MemoryFdPropertiesKhr<'s>> for vks::VkMemoryFdPropertiesKHR {
     fn from(f: MemoryFdPropertiesKhr<'s>) -> vks::VkMemoryFdPropertiesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMemoryFdPropertiesKHR> for MemoryFdPropertiesKhr<'s> {
-    fn from(f: vks::VkMemoryFdPropertiesKHR) -> MemoryFdPropertiesKhr<'s> {
-        MemoryFdPropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -28147,6 +27769,10 @@ impl<'s> MemoryGetFdInfoKhr<'s> {
         MemoryGetFdInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryGetFdInfoKHR) -> MemoryGetFdInfoKhr<'s> {
+        MemoryGetFdInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -28181,12 +27807,6 @@ impl<'s> MemoryGetFdInfoKhr<'s> {
 impl<'s> From<MemoryGetFdInfoKhr<'s>> for vks::VkMemoryGetFdInfoKHR {
     fn from(f: MemoryGetFdInfoKhr<'s>) -> vks::VkMemoryGetFdInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMemoryGetFdInfoKHR> for MemoryGetFdInfoKhr<'s> {
-    fn from(f: vks::VkMemoryGetFdInfoKHR) -> MemoryGetFdInfoKhr<'s> {
-        MemoryGetFdInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -28259,6 +27879,10 @@ pub struct Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
 impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
     pub fn builder<'b>() -> Win32KeyedMutexAcquireReleaseInfoKhrBuilder<'b> {
         Win32KeyedMutexAcquireReleaseInfoKhrBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkWin32KeyedMutexAcquireReleaseInfoKHR) -> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
+        Win32KeyedMutexAcquireReleaseInfoKhr { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -28337,12 +27961,6 @@ impl<'s> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
 impl<'s> From<Win32KeyedMutexAcquireReleaseInfoKhr<'s>> for vks::VkWin32KeyedMutexAcquireReleaseInfoKHR {
     fn from(f: Win32KeyedMutexAcquireReleaseInfoKhr<'s>) -> vks::VkWin32KeyedMutexAcquireReleaseInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkWin32KeyedMutexAcquireReleaseInfoKHR> for Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
-    fn from(f: vks::VkWin32KeyedMutexAcquireReleaseInfoKHR) -> Win32KeyedMutexAcquireReleaseInfoKhr<'s> {
-        Win32KeyedMutexAcquireReleaseInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -28462,6 +28080,10 @@ impl<'s> PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
         PhysicalDeviceExternalSemaphoreInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceExternalSemaphoreInfoKHR) -> PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
+        PhysicalDeviceExternalSemaphoreInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -28487,12 +28109,6 @@ impl<'s> PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
 impl<'s> From<PhysicalDeviceExternalSemaphoreInfoKhr<'s>> for vks::VkPhysicalDeviceExternalSemaphoreInfoKHR {
     fn from(f: PhysicalDeviceExternalSemaphoreInfoKhr<'s>) -> vks::VkPhysicalDeviceExternalSemaphoreInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceExternalSemaphoreInfoKHR> for PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
-    fn from(f: vks::VkPhysicalDeviceExternalSemaphoreInfoKHR) -> PhysicalDeviceExternalSemaphoreInfoKhr<'s> {
-        PhysicalDeviceExternalSemaphoreInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -28557,6 +28173,10 @@ impl<'s> ExternalSemaphorePropertiesKhr<'s> {
         ExternalSemaphorePropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExternalSemaphorePropertiesKHR) -> ExternalSemaphorePropertiesKhr<'s> {
+        ExternalSemaphorePropertiesKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -28600,12 +28220,6 @@ impl<'s> ExternalSemaphorePropertiesKhr<'s> {
 impl<'s> From<ExternalSemaphorePropertiesKhr<'s>> for vks::VkExternalSemaphorePropertiesKHR {
     fn from(f: ExternalSemaphorePropertiesKhr<'s>) -> vks::VkExternalSemaphorePropertiesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExternalSemaphorePropertiesKHR> for ExternalSemaphorePropertiesKhr<'s> {
-    fn from(f: vks::VkExternalSemaphorePropertiesKHR) -> ExternalSemaphorePropertiesKhr<'s> {
-        ExternalSemaphorePropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -28690,6 +28304,10 @@ impl<'s> ExportSemaphoreCreateInfoKhr<'s> {
         ExportSemaphoreCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExportSemaphoreCreateInfoKHR) -> ExportSemaphoreCreateInfoKhr<'s> {
+        ExportSemaphoreCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -28715,12 +28333,6 @@ impl<'s> ExportSemaphoreCreateInfoKhr<'s> {
 impl<'s> From<ExportSemaphoreCreateInfoKhr<'s>> for vks::VkExportSemaphoreCreateInfoKHR {
     fn from(f: ExportSemaphoreCreateInfoKhr<'s>) -> vks::VkExportSemaphoreCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExportSemaphoreCreateInfoKHR> for ExportSemaphoreCreateInfoKhr<'s> {
-    fn from(f: vks::VkExportSemaphoreCreateInfoKHR) -> ExportSemaphoreCreateInfoKhr<'s> {
-        ExportSemaphoreCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -28785,6 +28397,10 @@ impl<'s> ImportSemaphoreWin32HandleInfoKhr<'s> {
         ImportSemaphoreWin32HandleInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImportSemaphoreWin32HandleInfoKHR) -> ImportSemaphoreWin32HandleInfoKhr<'s> {
+        ImportSemaphoreWin32HandleInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -28844,12 +28460,6 @@ impl<'s> ImportSemaphoreWin32HandleInfoKhr<'s> {
 impl<'s> From<ImportSemaphoreWin32HandleInfoKhr<'s>> for vks::VkImportSemaphoreWin32HandleInfoKHR {
     fn from(f: ImportSemaphoreWin32HandleInfoKhr<'s>) -> vks::VkImportSemaphoreWin32HandleInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImportSemaphoreWin32HandleInfoKHR> for ImportSemaphoreWin32HandleInfoKhr<'s> {
-    fn from(f: vks::VkImportSemaphoreWin32HandleInfoKHR) -> ImportSemaphoreWin32HandleInfoKhr<'s> {
-        ImportSemaphoreWin32HandleInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -28952,6 +28562,10 @@ impl<'s> ExportSemaphoreWin32HandleInfoKhr<'s> {
         ExportSemaphoreWin32HandleInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExportSemaphoreWin32HandleInfoKHR) -> ExportSemaphoreWin32HandleInfoKhr<'s> {
+        ExportSemaphoreWin32HandleInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -28992,12 +28606,6 @@ impl<'s> ExportSemaphoreWin32HandleInfoKhr<'s> {
 impl<'s> From<ExportSemaphoreWin32HandleInfoKhr<'s>> for vks::VkExportSemaphoreWin32HandleInfoKHR {
     fn from(f: ExportSemaphoreWin32HandleInfoKhr<'s>) -> vks::VkExportSemaphoreWin32HandleInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExportSemaphoreWin32HandleInfoKHR> for ExportSemaphoreWin32HandleInfoKhr<'s> {
-    fn from(f: vks::VkExportSemaphoreWin32HandleInfoKHR) -> ExportSemaphoreWin32HandleInfoKhr<'s> {
-        ExportSemaphoreWin32HandleInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -29079,6 +28687,10 @@ impl<'s> D3d12FenceSubmitInfoKHR<'s> {
         D3d12FenceSubmitInfoKHRBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkD3D12FenceSubmitInfoKHR) -> D3d12FenceSubmitInfoKHR<'s> {
+        D3d12FenceSubmitInfoKHR { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -29119,12 +28731,6 @@ impl<'s> D3d12FenceSubmitInfoKHR<'s> {
 impl<'s> From<D3d12FenceSubmitInfoKHR<'s>> for vks::VkD3D12FenceSubmitInfoKHR {
     fn from(f: D3d12FenceSubmitInfoKHR<'s>) -> vks::VkD3D12FenceSubmitInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkD3D12FenceSubmitInfoKHR> for D3d12FenceSubmitInfoKHR<'s> {
-    fn from(f: vks::VkD3D12FenceSubmitInfoKHR) -> D3d12FenceSubmitInfoKHR<'s> {
-        D3d12FenceSubmitInfoKHR { raw: f, _p: PhantomData }
     }
 }
 
@@ -29205,6 +28811,10 @@ impl<'s> SemaphoreGetWin32HandleInfoKhr<'s> {
         SemaphoreGetWin32HandleInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSemaphoreGetWin32HandleInfoKHR) -> SemaphoreGetWin32HandleInfoKhr<'s> {
+        SemaphoreGetWin32HandleInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -29239,12 +28849,6 @@ impl<'s> SemaphoreGetWin32HandleInfoKhr<'s> {
 impl<'s> From<SemaphoreGetWin32HandleInfoKhr<'s>> for vks::VkSemaphoreGetWin32HandleInfoKHR {
     fn from(f: SemaphoreGetWin32HandleInfoKhr<'s>) -> vks::VkSemaphoreGetWin32HandleInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSemaphoreGetWin32HandleInfoKHR> for SemaphoreGetWin32HandleInfoKhr<'s> {
-    fn from(f: vks::VkSemaphoreGetWin32HandleInfoKHR) -> SemaphoreGetWin32HandleInfoKhr<'s> {
-        SemaphoreGetWin32HandleInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -29319,6 +28923,10 @@ impl<'s> ImportSemaphoreFdInfoKhr<'s> {
         ImportSemaphoreFdInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImportSemaphoreFdInfoKHR) -> ImportSemaphoreFdInfoKhr<'s> {
+        ImportSemaphoreFdInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -29370,12 +28978,6 @@ impl<'s> ImportSemaphoreFdInfoKhr<'s> {
 impl<'s> From<ImportSemaphoreFdInfoKhr<'s>> for vks::VkImportSemaphoreFdInfoKHR {
     fn from(f: ImportSemaphoreFdInfoKhr<'s>) -> vks::VkImportSemaphoreFdInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImportSemaphoreFdInfoKHR> for ImportSemaphoreFdInfoKhr<'s> {
-    fn from(f: vks::VkImportSemaphoreFdInfoKHR) -> ImportSemaphoreFdInfoKhr<'s> {
-        ImportSemaphoreFdInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -29469,6 +29071,10 @@ impl<'s> SemaphoreGetFdInfoKhr<'s> {
         SemaphoreGetFdInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSemaphoreGetFdInfoKHR) -> SemaphoreGetFdInfoKhr<'s> {
+        SemaphoreGetFdInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -29503,12 +29109,6 @@ impl<'s> SemaphoreGetFdInfoKhr<'s> {
 impl<'s> From<SemaphoreGetFdInfoKhr<'s>> for vks::VkSemaphoreGetFdInfoKHR {
     fn from(f: SemaphoreGetFdInfoKhr<'s>) -> vks::VkSemaphoreGetFdInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSemaphoreGetFdInfoKHR> for SemaphoreGetFdInfoKhr<'s> {
-    fn from(f: vks::VkSemaphoreGetFdInfoKHR) -> SemaphoreGetFdInfoKhr<'s> {
-        SemaphoreGetFdInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -29583,6 +29183,10 @@ impl<'s> PhysicalDeviceExternalFenceInfoKhr<'s> {
         PhysicalDeviceExternalFenceInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceExternalFenceInfoKHR) -> PhysicalDeviceExternalFenceInfoKhr<'s> {
+        PhysicalDeviceExternalFenceInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -29608,12 +29212,6 @@ impl<'s> PhysicalDeviceExternalFenceInfoKhr<'s> {
 impl<'s> From<PhysicalDeviceExternalFenceInfoKhr<'s>> for vks::VkPhysicalDeviceExternalFenceInfoKHR {
     fn from(f: PhysicalDeviceExternalFenceInfoKhr<'s>) -> vks::VkPhysicalDeviceExternalFenceInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceExternalFenceInfoKHR> for PhysicalDeviceExternalFenceInfoKhr<'s> {
-    fn from(f: vks::VkPhysicalDeviceExternalFenceInfoKHR) -> PhysicalDeviceExternalFenceInfoKhr<'s> {
-        PhysicalDeviceExternalFenceInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -29678,6 +29276,10 @@ impl<'s> ExternalFencePropertiesKhr<'s> {
         ExternalFencePropertiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExternalFencePropertiesKHR) -> ExternalFencePropertiesKhr<'s> {
+        ExternalFencePropertiesKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -29721,12 +29323,6 @@ impl<'s> ExternalFencePropertiesKhr<'s> {
 impl<'s> From<ExternalFencePropertiesKhr<'s>> for vks::VkExternalFencePropertiesKHR {
     fn from(f: ExternalFencePropertiesKhr<'s>) -> vks::VkExternalFencePropertiesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExternalFencePropertiesKHR> for ExternalFencePropertiesKhr<'s> {
-    fn from(f: vks::VkExternalFencePropertiesKHR) -> ExternalFencePropertiesKhr<'s> {
-        ExternalFencePropertiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -29811,6 +29407,10 @@ impl<'s> ExportFenceCreateInfoKhr<'s> {
         ExportFenceCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExportFenceCreateInfoKHR) -> ExportFenceCreateInfoKhr<'s> {
+        ExportFenceCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -29836,12 +29436,6 @@ impl<'s> ExportFenceCreateInfoKhr<'s> {
 impl<'s> From<ExportFenceCreateInfoKhr<'s>> for vks::VkExportFenceCreateInfoKHR {
     fn from(f: ExportFenceCreateInfoKhr<'s>) -> vks::VkExportFenceCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExportFenceCreateInfoKHR> for ExportFenceCreateInfoKhr<'s> {
-    fn from(f: vks::VkExportFenceCreateInfoKHR) -> ExportFenceCreateInfoKhr<'s> {
-        ExportFenceCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -29906,6 +29500,10 @@ impl<'s> ImportFenceWin32HandleInfoKhr<'s> {
         ImportFenceWin32HandleInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImportFenceWin32HandleInfoKHR) -> ImportFenceWin32HandleInfoKhr<'s> {
+        ImportFenceWin32HandleInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -29965,12 +29563,6 @@ impl<'s> ImportFenceWin32HandleInfoKhr<'s> {
 impl<'s> From<ImportFenceWin32HandleInfoKhr<'s>> for vks::VkImportFenceWin32HandleInfoKHR {
     fn from(f: ImportFenceWin32HandleInfoKhr<'s>) -> vks::VkImportFenceWin32HandleInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImportFenceWin32HandleInfoKHR> for ImportFenceWin32HandleInfoKhr<'s> {
-    fn from(f: vks::VkImportFenceWin32HandleInfoKHR) -> ImportFenceWin32HandleInfoKhr<'s> {
-        ImportFenceWin32HandleInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -30073,6 +29665,10 @@ impl<'s> ExportFenceWin32HandleInfoKhr<'s> {
         ExportFenceWin32HandleInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkExportFenceWin32HandleInfoKHR) -> ExportFenceWin32HandleInfoKhr<'s> {
+        ExportFenceWin32HandleInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -30113,12 +29709,6 @@ impl<'s> ExportFenceWin32HandleInfoKhr<'s> {
 impl<'s> From<ExportFenceWin32HandleInfoKhr<'s>> for vks::VkExportFenceWin32HandleInfoKHR {
     fn from(f: ExportFenceWin32HandleInfoKhr<'s>) -> vks::VkExportFenceWin32HandleInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkExportFenceWin32HandleInfoKHR> for ExportFenceWin32HandleInfoKhr<'s> {
-    fn from(f: vks::VkExportFenceWin32HandleInfoKHR) -> ExportFenceWin32HandleInfoKhr<'s> {
-        ExportFenceWin32HandleInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -30200,6 +29790,10 @@ impl<'s> FenceGetWin32HandleInfoKhr<'s> {
         FenceGetWin32HandleInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkFenceGetWin32HandleInfoKHR) -> FenceGetWin32HandleInfoKhr<'s> {
+        FenceGetWin32HandleInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -30234,12 +29828,6 @@ impl<'s> FenceGetWin32HandleInfoKhr<'s> {
 impl<'s> From<FenceGetWin32HandleInfoKhr<'s>> for vks::VkFenceGetWin32HandleInfoKHR {
     fn from(f: FenceGetWin32HandleInfoKhr<'s>) -> vks::VkFenceGetWin32HandleInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkFenceGetWin32HandleInfoKHR> for FenceGetWin32HandleInfoKhr<'s> {
-    fn from(f: vks::VkFenceGetWin32HandleInfoKHR) -> FenceGetWin32HandleInfoKhr<'s> {
-        FenceGetWin32HandleInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -30314,6 +29902,10 @@ impl<'s> ImportFenceFdInfoKhr<'s> {
         ImportFenceFdInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImportFenceFdInfoKHR) -> ImportFenceFdInfoKhr<'s> {
+        ImportFenceFdInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -30365,12 +29957,6 @@ impl<'s> ImportFenceFdInfoKhr<'s> {
 impl<'s> From<ImportFenceFdInfoKhr<'s>> for vks::VkImportFenceFdInfoKHR {
     fn from(f: ImportFenceFdInfoKhr<'s>) -> vks::VkImportFenceFdInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImportFenceFdInfoKHR> for ImportFenceFdInfoKhr<'s> {
-    fn from(f: vks::VkImportFenceFdInfoKHR) -> ImportFenceFdInfoKhr<'s> {
-        ImportFenceFdInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -30464,6 +30050,10 @@ impl<'s> FenceGetFdInfoKhr<'s> {
         FenceGetFdInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkFenceGetFdInfoKHR) -> FenceGetFdInfoKhr<'s> {
+        FenceGetFdInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -30498,12 +30088,6 @@ impl<'s> FenceGetFdInfoKhr<'s> {
 impl<'s> From<FenceGetFdInfoKhr<'s>> for vks::VkFenceGetFdInfoKHR {
     fn from(f: FenceGetFdInfoKhr<'s>) -> vks::VkFenceGetFdInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkFenceGetFdInfoKHR> for FenceGetFdInfoKhr<'s> {
-    fn from(f: vks::VkFenceGetFdInfoKHR) -> FenceGetFdInfoKhr<'s> {
-        FenceGetFdInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -30580,6 +30164,10 @@ impl<'s> PhysicalDeviceMultiviewFeaturesKhx<'s> {
         PhysicalDeviceMultiviewFeaturesKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceMultiviewFeaturesKHX) -> PhysicalDeviceMultiviewFeaturesKhx<'s> {
+        PhysicalDeviceMultiviewFeaturesKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -30621,13 +30209,6 @@ impl<'s> PhysicalDeviceMultiviewFeaturesKhx<'s> {
 impl<'s> From<PhysicalDeviceMultiviewFeaturesKhx<'s>> for vks::VkPhysicalDeviceMultiviewFeaturesKHX {
     fn from(f: PhysicalDeviceMultiviewFeaturesKhx<'s>) -> vks::VkPhysicalDeviceMultiviewFeaturesKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkPhysicalDeviceMultiviewFeaturesKHX> for PhysicalDeviceMultiviewFeaturesKhx<'s> {
-    fn from(f: vks::VkPhysicalDeviceMultiviewFeaturesKHX) -> PhysicalDeviceMultiviewFeaturesKhx<'s> {
-        PhysicalDeviceMultiviewFeaturesKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -30713,6 +30294,10 @@ impl<'s> PhysicalDeviceMultiviewPropertiesKhx<'s> {
         PhysicalDeviceMultiviewPropertiesKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceMultiviewPropertiesKHX) -> PhysicalDeviceMultiviewPropertiesKhx<'s> {
+        PhysicalDeviceMultiviewPropertiesKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -30746,13 +30331,6 @@ impl<'s> PhysicalDeviceMultiviewPropertiesKhx<'s> {
 impl<'s> From<PhysicalDeviceMultiviewPropertiesKhx<'s>> for vks::VkPhysicalDeviceMultiviewPropertiesKHX {
     fn from(f: PhysicalDeviceMultiviewPropertiesKhx<'s>) -> vks::VkPhysicalDeviceMultiviewPropertiesKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkPhysicalDeviceMultiviewPropertiesKHX> for PhysicalDeviceMultiviewPropertiesKhx<'s> {
-    fn from(f: vks::VkPhysicalDeviceMultiviewPropertiesKHX) -> PhysicalDeviceMultiviewPropertiesKhx<'s> {
-        PhysicalDeviceMultiviewPropertiesKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -30829,6 +30407,10 @@ impl<'s> RenderPassMultiviewCreateInfoKhx<'s> {
         RenderPassMultiviewCreateInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkRenderPassMultiviewCreateInfoKHX) -> RenderPassMultiviewCreateInfoKhx<'s> {
+        RenderPassMultiviewCreateInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -30892,13 +30474,6 @@ impl<'s> RenderPassMultiviewCreateInfoKhx<'s> {
 impl<'s> From<RenderPassMultiviewCreateInfoKhx<'s>> for vks::VkRenderPassMultiviewCreateInfoKHX {
     fn from(f: RenderPassMultiviewCreateInfoKhx<'s>) -> vks::VkRenderPassMultiviewCreateInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkRenderPassMultiviewCreateInfoKHX> for RenderPassMultiviewCreateInfoKhx<'s> {
-    fn from(f: vks::VkRenderPassMultiviewCreateInfoKHX) -> RenderPassMultiviewCreateInfoKhx<'s> {
-        RenderPassMultiviewCreateInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -31004,6 +30579,10 @@ pub struct SurfaceCapabilities2Ext<'s> {
 impl<'s> SurfaceCapabilities2Ext<'s> {
     pub fn builder<'b>() -> SurfaceCapabilities2ExtBuilder<'b> {
         SurfaceCapabilities2ExtBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkSurfaceCapabilities2EXT) -> SurfaceCapabilities2Ext<'s> {
+        SurfaceCapabilities2Ext { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *mut c_void {
@@ -31127,12 +30706,6 @@ impl<'s> SurfaceCapabilities2Ext<'s> {
 impl<'s> From<SurfaceCapabilities2Ext<'s>> for vks::VkSurfaceCapabilities2EXT {
     fn from(f: SurfaceCapabilities2Ext<'s>) -> vks::VkSurfaceCapabilities2EXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSurfaceCapabilities2EXT> for SurfaceCapabilities2Ext<'s> {
-    fn from(f: vks::VkSurfaceCapabilities2EXT) -> SurfaceCapabilities2Ext<'s> {
-        SurfaceCapabilities2Ext { raw: f, _p: PhantomData }
     }
 }
 
@@ -31303,6 +30876,10 @@ impl<'s> DisplayPowerInfoExt<'s> {
         DisplayPowerInfoExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDisplayPowerInfoEXT) -> DisplayPowerInfoExt<'s> {
+        DisplayPowerInfoExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -31327,12 +30904,6 @@ impl<'s> DisplayPowerInfoExt<'s> {
 impl<'s> From<DisplayPowerInfoExt<'s>> for vks::VkDisplayPowerInfoEXT {
     fn from(f: DisplayPowerInfoExt<'s>) -> vks::VkDisplayPowerInfoEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDisplayPowerInfoEXT> for DisplayPowerInfoExt<'s> {
-    fn from(f: vks::VkDisplayPowerInfoEXT) -> DisplayPowerInfoExt<'s> {
-        DisplayPowerInfoExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -31396,6 +30967,10 @@ impl<'s> DeviceEventInfoExt<'s> {
         DeviceEventInfoExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceEventInfoEXT) -> DeviceEventInfoExt<'s> {
+        DeviceEventInfoExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -31420,12 +30995,6 @@ impl<'s> DeviceEventInfoExt<'s> {
 impl<'s> From<DeviceEventInfoExt<'s>> for vks::VkDeviceEventInfoEXT {
     fn from(f: DeviceEventInfoExt<'s>) -> vks::VkDeviceEventInfoEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDeviceEventInfoEXT> for DeviceEventInfoExt<'s> {
-    fn from(f: vks::VkDeviceEventInfoEXT) -> DeviceEventInfoExt<'s> {
-        DeviceEventInfoExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -31489,6 +31058,10 @@ impl<'s> DisplayEventInfoExt<'s> {
         DisplayEventInfoExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDisplayEventInfoEXT) -> DisplayEventInfoExt<'s> {
+        DisplayEventInfoExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -31513,12 +31086,6 @@ impl<'s> DisplayEventInfoExt<'s> {
 impl<'s> From<DisplayEventInfoExt<'s>> for vks::VkDisplayEventInfoEXT {
     fn from(f: DisplayEventInfoExt<'s>) -> vks::VkDisplayEventInfoEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDisplayEventInfoEXT> for DisplayEventInfoExt<'s> {
-    fn from(f: vks::VkDisplayEventInfoEXT) -> DisplayEventInfoExt<'s> {
-        DisplayEventInfoExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -31582,6 +31149,10 @@ impl<'s> SwapchainCounterCreateInfoExt<'s> {
         SwapchainCounterCreateInfoExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSwapchainCounterCreateInfoEXT) -> SwapchainCounterCreateInfoExt<'s> {
+        SwapchainCounterCreateInfoExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -31607,12 +31178,6 @@ impl<'s> SwapchainCounterCreateInfoExt<'s> {
 impl<'s> From<SwapchainCounterCreateInfoExt<'s>> for vks::VkSwapchainCounterCreateInfoEXT {
     fn from(f: SwapchainCounterCreateInfoExt<'s>) -> vks::VkSwapchainCounterCreateInfoEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSwapchainCounterCreateInfoEXT> for SwapchainCounterCreateInfoExt<'s> {
-    fn from(f: vks::VkSwapchainCounterCreateInfoEXT) -> SwapchainCounterCreateInfoExt<'s> {
-        SwapchainCounterCreateInfoExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -31679,6 +31244,10 @@ impl<'s> PhysicalDeviceGroupPropertiesKhx<'s> {
         PhysicalDeviceGroupPropertiesKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceGroupPropertiesKHX) -> PhysicalDeviceGroupPropertiesKhx<'s> {
+        PhysicalDeviceGroupPropertiesKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -31720,13 +31289,6 @@ impl<'s> PhysicalDeviceGroupPropertiesKhx<'s> {
 impl<'s> From<PhysicalDeviceGroupPropertiesKhx<'s>> for vks::VkPhysicalDeviceGroupPropertiesKHX {
     fn from(f: PhysicalDeviceGroupPropertiesKhx<'s>) -> vks::VkPhysicalDeviceGroupPropertiesKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkPhysicalDeviceGroupPropertiesKHX> for PhysicalDeviceGroupPropertiesKhx<'s> {
-    fn from(f: vks::VkPhysicalDeviceGroupPropertiesKHX) -> PhysicalDeviceGroupPropertiesKhx<'s> {
-        PhysicalDeviceGroupPropertiesKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -31812,6 +31374,10 @@ impl<'s> MemoryAllocateFlagsInfoKhx<'s> {
         MemoryAllocateFlagsInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryAllocateFlagsInfoKHX) -> MemoryAllocateFlagsInfoKhx<'s> {
+        MemoryAllocateFlagsInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -31846,13 +31412,6 @@ impl<'s> MemoryAllocateFlagsInfoKhx<'s> {
 impl<'s> From<MemoryAllocateFlagsInfoKhx<'s>> for vks::VkMemoryAllocateFlagsInfoKHX {
     fn from(f: MemoryAllocateFlagsInfoKhx<'s>) -> vks::VkMemoryAllocateFlagsInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkMemoryAllocateFlagsInfoKHX> for MemoryAllocateFlagsInfoKhx<'s> {
-    fn from(f: vks::VkMemoryAllocateFlagsInfoKHX) -> MemoryAllocateFlagsInfoKhx<'s> {
-        MemoryAllocateFlagsInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -31930,6 +31489,10 @@ impl<'s> BindBufferMemoryDeviceGroupInfoKhx<'s> {
         BindBufferMemoryDeviceGroupInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkBindBufferMemoryDeviceGroupInfoKHX) -> BindBufferMemoryDeviceGroupInfoKhx<'s> {
+        BindBufferMemoryDeviceGroupInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -31959,13 +31522,6 @@ impl<'s> BindBufferMemoryDeviceGroupInfoKhx<'s> {
 impl<'s> From<BindBufferMemoryDeviceGroupInfoKhx<'s>> for vks::VkBindBufferMemoryDeviceGroupInfoKHX {
     fn from(f: BindBufferMemoryDeviceGroupInfoKhx<'s>) -> vks::VkBindBufferMemoryDeviceGroupInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkBindBufferMemoryDeviceGroupInfoKHX> for BindBufferMemoryDeviceGroupInfoKhx<'s> {
-    fn from(f: vks::VkBindBufferMemoryDeviceGroupInfoKHX) -> BindBufferMemoryDeviceGroupInfoKhx<'s> {
-        BindBufferMemoryDeviceGroupInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -32037,6 +31593,10 @@ impl<'s> BindImageMemoryDeviceGroupInfoKhx<'s> {
         BindImageMemoryDeviceGroupInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkBindImageMemoryDeviceGroupInfoKHX) -> BindImageMemoryDeviceGroupInfoKhx<'s> {
+        BindImageMemoryDeviceGroupInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -32078,13 +31638,6 @@ impl<'s> BindImageMemoryDeviceGroupInfoKhx<'s> {
 impl<'s> From<BindImageMemoryDeviceGroupInfoKhx<'s>> for vks::VkBindImageMemoryDeviceGroupInfoKHX {
     fn from(f: BindImageMemoryDeviceGroupInfoKhx<'s>) -> vks::VkBindImageMemoryDeviceGroupInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkBindImageMemoryDeviceGroupInfoKHX> for BindImageMemoryDeviceGroupInfoKhx<'s> {
-    fn from(f: vks::VkBindImageMemoryDeviceGroupInfoKHX) -> BindImageMemoryDeviceGroupInfoKhx<'s> {
-        BindImageMemoryDeviceGroupInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -32169,6 +31722,10 @@ impl<'s> DeviceGroupRenderPassBeginInfoKhx<'s> {
         DeviceGroupRenderPassBeginInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceGroupRenderPassBeginInfoKHX) -> DeviceGroupRenderPassBeginInfoKhx<'s> {
+        DeviceGroupRenderPassBeginInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -32206,13 +31763,6 @@ impl<'s> DeviceGroupRenderPassBeginInfoKhx<'s> {
 impl<'s> From<DeviceGroupRenderPassBeginInfoKhx<'s>> for vks::VkDeviceGroupRenderPassBeginInfoKHX {
     fn from(f: DeviceGroupRenderPassBeginInfoKhx<'s>) -> vks::VkDeviceGroupRenderPassBeginInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkDeviceGroupRenderPassBeginInfoKHX> for DeviceGroupRenderPassBeginInfoKhx<'s> {
-    fn from(f: vks::VkDeviceGroupRenderPassBeginInfoKHX) -> DeviceGroupRenderPassBeginInfoKhx<'s> {
-        DeviceGroupRenderPassBeginInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -32293,6 +31843,10 @@ impl<'s> DeviceGroupCommandBufferBeginInfoKhx<'s> {
         DeviceGroupCommandBufferBeginInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceGroupCommandBufferBeginInfoKHX) -> DeviceGroupCommandBufferBeginInfoKhx<'s> {
+        DeviceGroupCommandBufferBeginInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -32318,13 +31872,6 @@ impl<'s> DeviceGroupCommandBufferBeginInfoKhx<'s> {
 impl<'s> From<DeviceGroupCommandBufferBeginInfoKhx<'s>> for vks::VkDeviceGroupCommandBufferBeginInfoKHX {
     fn from(f: DeviceGroupCommandBufferBeginInfoKhx<'s>) -> vks::VkDeviceGroupCommandBufferBeginInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkDeviceGroupCommandBufferBeginInfoKHX> for DeviceGroupCommandBufferBeginInfoKhx<'s> {
-    fn from(f: vks::VkDeviceGroupCommandBufferBeginInfoKHX) -> DeviceGroupCommandBufferBeginInfoKhx<'s> {
-        DeviceGroupCommandBufferBeginInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -32392,6 +31939,10 @@ impl<'s> DeviceGroupSubmitInfoKhx<'s> {
         DeviceGroupSubmitInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceGroupSubmitInfoKHX) -> DeviceGroupSubmitInfoKhx<'s> {
+        DeviceGroupSubmitInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -32445,13 +31996,6 @@ impl<'s> DeviceGroupSubmitInfoKhx<'s> {
 impl<'s> From<DeviceGroupSubmitInfoKhx<'s>> for vks::VkDeviceGroupSubmitInfoKHX {
     fn from(f: DeviceGroupSubmitInfoKhx<'s>) -> vks::VkDeviceGroupSubmitInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkDeviceGroupSubmitInfoKHX> for DeviceGroupSubmitInfoKhx<'s> {
-    fn from(f: vks::VkDeviceGroupSubmitInfoKHX) -> DeviceGroupSubmitInfoKhx<'s> {
-        DeviceGroupSubmitInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -32549,6 +32093,10 @@ impl<'s> DeviceGroupBindSparseInfoKhx<'s> {
         DeviceGroupBindSparseInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceGroupBindSparseInfoKHX) -> DeviceGroupBindSparseInfoKhx<'s> {
+        DeviceGroupBindSparseInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -32582,13 +32130,6 @@ impl<'s> DeviceGroupBindSparseInfoKhx<'s> {
 impl<'s> From<DeviceGroupBindSparseInfoKhx<'s>> for vks::VkDeviceGroupBindSparseInfoKHX {
     fn from(f: DeviceGroupBindSparseInfoKhx<'s>) -> vks::VkDeviceGroupBindSparseInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkDeviceGroupBindSparseInfoKHX> for DeviceGroupBindSparseInfoKhx<'s> {
-    fn from(f: vks::VkDeviceGroupBindSparseInfoKHX) -> DeviceGroupBindSparseInfoKhx<'s> {
-        DeviceGroupBindSparseInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -32665,6 +32206,10 @@ impl<'s> DeviceGroupPresentCapabilitiesKhx<'s> {
         DeviceGroupPresentCapabilitiesKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceGroupPresentCapabilitiesKHX) -> DeviceGroupPresentCapabilitiesKhx<'s> {
+        DeviceGroupPresentCapabilitiesKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -32699,13 +32244,6 @@ impl<'s> DeviceGroupPresentCapabilitiesKhx<'s> {
 impl<'s> From<DeviceGroupPresentCapabilitiesKhx<'s>> for vks::VkDeviceGroupPresentCapabilitiesKHX {
     fn from(f: DeviceGroupPresentCapabilitiesKhx<'s>) -> vks::VkDeviceGroupPresentCapabilitiesKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkDeviceGroupPresentCapabilitiesKHX> for DeviceGroupPresentCapabilitiesKhx<'s> {
-    fn from(f: vks::VkDeviceGroupPresentCapabilitiesKHX) -> DeviceGroupPresentCapabilitiesKhx<'s> {
-        DeviceGroupPresentCapabilitiesKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -32783,6 +32321,10 @@ impl<'s> ImageSwapchainCreateInfoKhx<'s> {
         ImageSwapchainCreateInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageSwapchainCreateInfoKHX) -> ImageSwapchainCreateInfoKhx<'s> {
+        ImageSwapchainCreateInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -32809,13 +32351,6 @@ impl<'s> ImageSwapchainCreateInfoKhx<'s> {
 impl<'s> From<ImageSwapchainCreateInfoKhx<'s>> for vks::VkImageSwapchainCreateInfoKHX {
     fn from(f: ImageSwapchainCreateInfoKhx<'s>) -> vks::VkImageSwapchainCreateInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkImageSwapchainCreateInfoKHX> for ImageSwapchainCreateInfoKhx<'s> {
-    fn from(f: vks::VkImageSwapchainCreateInfoKHX) -> ImageSwapchainCreateInfoKhx<'s> {
-        ImageSwapchainCreateInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -32884,6 +32419,10 @@ impl<'s> BindImageMemorySwapchainInfoKhx<'s> {
         BindImageMemorySwapchainInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkBindImageMemorySwapchainInfoKHX) -> BindImageMemorySwapchainInfoKhx<'s> {
+        BindImageMemorySwapchainInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -32918,13 +32457,6 @@ impl<'s> BindImageMemorySwapchainInfoKhx<'s> {
 impl<'s> From<BindImageMemorySwapchainInfoKhx<'s>> for vks::VkBindImageMemorySwapchainInfoKHX {
     fn from(f: BindImageMemorySwapchainInfoKhx<'s>) -> vks::VkBindImageMemorySwapchainInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkBindImageMemorySwapchainInfoKHX> for BindImageMemorySwapchainInfoKhx<'s> {
-    fn from(f: vks::VkBindImageMemorySwapchainInfoKHX) -> BindImageMemorySwapchainInfoKhx<'s> {
-        BindImageMemorySwapchainInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -33002,6 +32534,10 @@ impl<'s> AcquireNextImageInfoKhx<'s> {
         AcquireNextImageInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkAcquireNextImageInfoKHX) -> AcquireNextImageInfoKhx<'s> {
+        AcquireNextImageInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -33062,13 +32598,6 @@ impl<'s> AcquireNextImageInfoKhx<'s> {
 impl<'s> From<AcquireNextImageInfoKhx<'s>> for vks::VkAcquireNextImageInfoKHX {
     fn from(f: AcquireNextImageInfoKhx<'s>) -> vks::VkAcquireNextImageInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkAcquireNextImageInfoKHX> for AcquireNextImageInfoKhx<'s> {
-    fn from(f: vks::VkAcquireNextImageInfoKHX) -> AcquireNextImageInfoKhx<'s> {
-        AcquireNextImageInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -33175,6 +32704,10 @@ impl<'s> DeviceGroupPresentInfoKhx<'s> {
         DeviceGroupPresentInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceGroupPresentInfoKHX) -> DeviceGroupPresentInfoKhx<'s> {
+        DeviceGroupPresentInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -33218,13 +32751,6 @@ impl<'s> DeviceGroupPresentInfoKhx<'s> {
 impl<'s> From<DeviceGroupPresentInfoKhx<'s>> for vks::VkDeviceGroupPresentInfoKHX {
     fn from(f: DeviceGroupPresentInfoKhx<'s>) -> vks::VkDeviceGroupPresentInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkDeviceGroupPresentInfoKHX> for DeviceGroupPresentInfoKhx<'s> {
-    fn from(f: vks::VkDeviceGroupPresentInfoKHX) -> DeviceGroupPresentInfoKhx<'s> {
-        DeviceGroupPresentInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -33312,6 +32838,10 @@ impl<'s> DeviceGroupDeviceCreateInfoKhx<'s> {
         DeviceGroupDeviceCreateInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceGroupDeviceCreateInfoKHX) -> DeviceGroupDeviceCreateInfoKhx<'s> {
+        DeviceGroupDeviceCreateInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -33341,13 +32871,6 @@ impl<'s> DeviceGroupDeviceCreateInfoKhx<'s> {
 impl<'s> From<DeviceGroupDeviceCreateInfoKhx<'s>> for vks::VkDeviceGroupDeviceCreateInfoKHX {
     fn from(f: DeviceGroupDeviceCreateInfoKhx<'s>) -> vks::VkDeviceGroupDeviceCreateInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkDeviceGroupDeviceCreateInfoKHX> for DeviceGroupDeviceCreateInfoKhx<'s> {
-    fn from(f: vks::VkDeviceGroupDeviceCreateInfoKHX) -> DeviceGroupDeviceCreateInfoKhx<'s> {
-        DeviceGroupDeviceCreateInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -33419,6 +32942,10 @@ impl<'s> DeviceGroupSwapchainCreateInfoKhx<'s> {
         DeviceGroupSwapchainCreateInfoKhxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDeviceGroupSwapchainCreateInfoKHX) -> DeviceGroupSwapchainCreateInfoKhx<'s> {
+        DeviceGroupSwapchainCreateInfoKhx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -33445,13 +32972,6 @@ impl<'s> DeviceGroupSwapchainCreateInfoKhx<'s> {
 impl<'s> From<DeviceGroupSwapchainCreateInfoKhx<'s>> for vks::VkDeviceGroupSwapchainCreateInfoKHX {
     fn from(f: DeviceGroupSwapchainCreateInfoKhx<'s>) -> vks::VkDeviceGroupSwapchainCreateInfoKHX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkDeviceGroupSwapchainCreateInfoKHX> for DeviceGroupSwapchainCreateInfoKhx<'s> {
-    fn from(f: vks::VkDeviceGroupSwapchainCreateInfoKHX) -> DeviceGroupSwapchainCreateInfoKhx<'s> {
-        DeviceGroupSwapchainCreateInfoKhx { raw: f, _p: PhantomData }
     }
 }
 
@@ -33517,6 +33037,10 @@ impl DescriptorUpdateTemplateEntryKhr {
         DescriptorUpdateTemplateEntryKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDescriptorUpdateTemplateEntryKHR) -> DescriptorUpdateTemplateEntryKhr {
+        DescriptorUpdateTemplateEntryKhr { raw, }
+    }
+
     pub fn dst_binding<'a>(&'a self) -> u32 {
         self.raw.dstBinding.into()
     }
@@ -33573,12 +33097,6 @@ impl DescriptorUpdateTemplateEntryKhr {
 impl From<DescriptorUpdateTemplateEntryKhr> for vks::VkDescriptorUpdateTemplateEntryKHR {
     fn from(f: DescriptorUpdateTemplateEntryKhr) -> vks::VkDescriptorUpdateTemplateEntryKHR {
         f.raw
-    }
-}
-
-impl From<vks::VkDescriptorUpdateTemplateEntryKHR> for DescriptorUpdateTemplateEntryKhr {
-    fn from(f: vks::VkDescriptorUpdateTemplateEntryKHR) -> DescriptorUpdateTemplateEntryKhr {
-        DescriptorUpdateTemplateEntryKhr { raw: f, }
     }
 }
 
@@ -33675,6 +33193,10 @@ impl<'s> DescriptorUpdateTemplateCreateInfoKhr<'s> {
         DescriptorUpdateTemplateCreateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkDescriptorUpdateTemplateCreateInfoKHR) -> DescriptorUpdateTemplateCreateInfoKhr<'s> {
+        DescriptorUpdateTemplateCreateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -33754,12 +33276,6 @@ impl<'s> DescriptorUpdateTemplateCreateInfoKhr<'s> {
 impl<'s> From<DescriptorUpdateTemplateCreateInfoKhr<'s>> for vks::VkDescriptorUpdateTemplateCreateInfoKHR {
     fn from(f: DescriptorUpdateTemplateCreateInfoKhr<'s>) -> vks::VkDescriptorUpdateTemplateCreateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkDescriptorUpdateTemplateCreateInfoKHR> for DescriptorUpdateTemplateCreateInfoKhr<'s> {
-    fn from(f: vks::VkDescriptorUpdateTemplateCreateInfoKHR) -> DescriptorUpdateTemplateCreateInfoKhr<'s> {
-        DescriptorUpdateTemplateCreateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -33883,6 +33399,10 @@ impl XYColorExt {
         XYColorExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkXYColorEXT) -> XYColorExt {
+        XYColorExt { raw, }
+    }
+
     pub fn x<'a>(&'a self) -> f32 {
         self.raw.x.into()
     }
@@ -33907,12 +33427,6 @@ impl XYColorExt {
 impl From<XYColorExt> for vks::VkXYColorEXT {
     fn from(f: XYColorExt) -> vks::VkXYColorEXT {
         f.raw
-    }
-}
-
-impl From<vks::VkXYColorEXT> for XYColorExt {
-    fn from(f: vks::VkXYColorEXT) -> XYColorExt {
-        XYColorExt { raw: f, }
     }
 }
 
@@ -33971,6 +33485,10 @@ pub struct HdrMetadataExt<'s> {
 impl<'s> HdrMetadataExt<'s> {
     pub fn builder<'b>() -> HdrMetadataExtBuilder<'b> {
         HdrMetadataExtBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkHdrMetadataEXT) -> HdrMetadataExt<'s> {
+        HdrMetadataExt { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *const c_void {
@@ -34069,12 +33587,6 @@ impl<'s> HdrMetadataExt<'s> {
 impl<'s> From<HdrMetadataExt<'s>> for vks::VkHdrMetadataEXT {
     fn from(f: HdrMetadataExt<'s>) -> vks::VkHdrMetadataEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkHdrMetadataEXT> for HdrMetadataExt<'s> {
-    fn from(f: vks::VkHdrMetadataEXT) -> HdrMetadataExt<'s> {
-        HdrMetadataExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -34216,6 +33728,10 @@ impl RefreshCycleDurationGoogle {
         RefreshCycleDurationGoogleBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkRefreshCycleDurationGOOGLE) -> RefreshCycleDurationGoogle {
+        RefreshCycleDurationGoogle { raw, }
+    }
+
     pub fn refresh_duration<'a>(&'a self) -> u64 {
         self.raw.refreshDuration.into()
     }
@@ -34232,12 +33748,6 @@ impl RefreshCycleDurationGoogle {
 impl From<RefreshCycleDurationGoogle> for vks::VkRefreshCycleDurationGOOGLE {
     fn from(f: RefreshCycleDurationGoogle) -> vks::VkRefreshCycleDurationGOOGLE {
         f.raw
-    }
-}
-
-impl From<vks::VkRefreshCycleDurationGOOGLE> for RefreshCycleDurationGoogle {
-    fn from(f: vks::VkRefreshCycleDurationGOOGLE) -> RefreshCycleDurationGoogle {
-        RefreshCycleDurationGoogle { raw: f, }
     }
 }
 
@@ -34288,6 +33798,10 @@ impl PastPresentationTimingGoogle {
         PastPresentationTimingGoogleBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPastPresentationTimingGOOGLE) -> PastPresentationTimingGoogle {
+        PastPresentationTimingGoogle { raw, }
+    }
+
     pub fn present_id<'a>(&'a self) -> u32 {
         self.raw.presentID.into()
     }
@@ -34336,12 +33850,6 @@ impl PastPresentationTimingGoogle {
 impl From<PastPresentationTimingGoogle> for vks::VkPastPresentationTimingGOOGLE {
     fn from(f: PastPresentationTimingGoogle) -> vks::VkPastPresentationTimingGOOGLE {
         f.raw
-    }
-}
-
-impl From<vks::VkPastPresentationTimingGOOGLE> for PastPresentationTimingGoogle {
-    fn from(f: vks::VkPastPresentationTimingGOOGLE) -> PastPresentationTimingGoogle {
-        PastPresentationTimingGoogle { raw: f, }
     }
 }
 
@@ -34429,6 +33937,10 @@ impl<'s> PresentTimesInfoGoogle<'s> {
         PresentTimesInfoGoogleBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPresentTimesInfoGOOGLE) -> PresentTimesInfoGoogle<'s> {
+        PresentTimesInfoGoogle { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -34457,12 +33969,6 @@ impl<'s> PresentTimesInfoGoogle<'s> {
 impl<'s> From<PresentTimesInfoGoogle<'s>> for vks::VkPresentTimesInfoGOOGLE {
     fn from(f: PresentTimesInfoGoogle<'s>) -> vks::VkPresentTimesInfoGOOGLE {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPresentTimesInfoGOOGLE> for PresentTimesInfoGoogle<'s> {
-    fn from(f: vks::VkPresentTimesInfoGOOGLE) -> PresentTimesInfoGoogle<'s> {
-        PresentTimesInfoGoogle { raw: f, _p: PhantomData }
     }
 }
 
@@ -34529,6 +34035,10 @@ impl PresentTimeGoogle {
         PresentTimeGoogleBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPresentTimeGOOGLE) -> PresentTimeGoogle {
+        PresentTimeGoogle { raw, }
+    }
+
     pub fn present_id<'a>(&'a self) -> u32 {
         self.raw.presentID.into()
     }
@@ -34553,12 +34063,6 @@ impl PresentTimeGoogle {
 impl From<PresentTimeGoogle> for vks::VkPresentTimeGOOGLE {
     fn from(f: PresentTimeGoogle) -> vks::VkPresentTimeGOOGLE {
         f.raw
-    }
-}
-
-impl From<vks::VkPresentTimeGOOGLE> for PresentTimeGoogle {
-    fn from(f: vks::VkPresentTimeGOOGLE) -> PresentTimeGoogle {
-        PresentTimeGoogle { raw: f, }
     }
 }
 
@@ -34619,6 +34123,10 @@ impl<'s> IosSurfaceCreateInfoMvk<'s> {
         IosSurfaceCreateInfoMvkBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkIOSSurfaceCreateInfoMVK) -> IosSurfaceCreateInfoMvk<'s> {
+        IosSurfaceCreateInfoMvk { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -34652,12 +34160,6 @@ impl<'s> IosSurfaceCreateInfoMvk<'s> {
 impl<'s> From<IosSurfaceCreateInfoMvk<'s>> for vks::VkIOSSurfaceCreateInfoMVK {
     fn from(f: IosSurfaceCreateInfoMvk<'s>) -> vks::VkIOSSurfaceCreateInfoMVK {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkIOSSurfaceCreateInfoMVK> for IosSurfaceCreateInfoMvk<'s> {
-    fn from(f: vks::VkIOSSurfaceCreateInfoMVK) -> IosSurfaceCreateInfoMvk<'s> {
-        IosSurfaceCreateInfoMvk { raw: f, _p: PhantomData }
     }
 }
 
@@ -34731,6 +34233,10 @@ impl<'s> MacOsSurfaceCreateInfoMvk<'s> {
         MacOsSurfaceCreateInfoMvkBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMacOSSurfaceCreateInfoMVK) -> MacOsSurfaceCreateInfoMvk<'s> {
+        MacOsSurfaceCreateInfoMvk { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -34764,12 +34270,6 @@ impl<'s> MacOsSurfaceCreateInfoMvk<'s> {
 impl<'s> From<MacOsSurfaceCreateInfoMvk<'s>> for vks::VkMacOSSurfaceCreateInfoMVK {
     fn from(f: MacOsSurfaceCreateInfoMvk<'s>) -> vks::VkMacOSSurfaceCreateInfoMVK {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMacOSSurfaceCreateInfoMVK> for MacOsSurfaceCreateInfoMvk<'s> {
-    fn from(f: vks::VkMacOSSurfaceCreateInfoMVK) -> MacOsSurfaceCreateInfoMvk<'s> {
-        MacOsSurfaceCreateInfoMvk { raw: f, _p: PhantomData }
     }
 }
 
@@ -34842,6 +34342,10 @@ impl ViewportWScalingNv {
         ViewportWScalingNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkViewportWScalingNV) -> ViewportWScalingNv {
+        ViewportWScalingNv { raw, }
+    }
+
     pub fn xcoeff<'a>(&'a self) -> f32 {
         self.raw.xcoeff.into()
     }
@@ -34866,12 +34370,6 @@ impl ViewportWScalingNv {
 impl From<ViewportWScalingNv> for vks::VkViewportWScalingNV {
     fn from(f: ViewportWScalingNv) -> vks::VkViewportWScalingNV {
         f.raw
-    }
-}
-
-impl From<vks::VkViewportWScalingNV> for ViewportWScalingNv {
-    fn from(f: vks::VkViewportWScalingNV) -> ViewportWScalingNv {
-        ViewportWScalingNv { raw: f, }
     }
 }
 
@@ -34932,6 +34430,10 @@ impl<'s> PipelineViewportWScalingStateCreateInfoNv<'s> {
         PipelineViewportWScalingStateCreateInfoNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineViewportWScalingStateCreateInfoNV) -> PipelineViewportWScalingStateCreateInfoNv<'s> {
+        PipelineViewportWScalingStateCreateInfoNv { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -34968,12 +34470,6 @@ impl<'s> PipelineViewportWScalingStateCreateInfoNv<'s> {
 impl<'s> From<PipelineViewportWScalingStateCreateInfoNv<'s>> for vks::VkPipelineViewportWScalingStateCreateInfoNV {
     fn from(f: PipelineViewportWScalingStateCreateInfoNv<'s>) -> vks::VkPipelineViewportWScalingStateCreateInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineViewportWScalingStateCreateInfoNV> for PipelineViewportWScalingStateCreateInfoNv<'s> {
-    fn from(f: vks::VkPipelineViewportWScalingStateCreateInfoNV) -> PipelineViewportWScalingStateCreateInfoNv<'s> {
-        PipelineViewportWScalingStateCreateInfoNv { raw: f, _p: PhantomData }
     }
 }
 
@@ -35049,6 +34545,10 @@ impl ViewportSwizzleNv {
         ViewportSwizzleNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkViewportSwizzleNV) -> ViewportSwizzleNv {
+        ViewportSwizzleNv { raw, }
+    }
+
     pub fn x<'a>(&'a self) -> ViewportCoordinateSwizzleNv {
         self.raw.x.into()
     }
@@ -35089,12 +34589,6 @@ impl ViewportSwizzleNv {
 impl From<ViewportSwizzleNv> for vks::VkViewportSwizzleNV {
     fn from(f: ViewportSwizzleNv) -> vks::VkViewportSwizzleNV {
         f.raw
-    }
-}
-
-impl From<vks::VkViewportSwizzleNV> for ViewportSwizzleNv {
-    fn from(f: vks::VkViewportSwizzleNV) -> ViewportSwizzleNv {
-        ViewportSwizzleNv { raw: f, }
     }
 }
 
@@ -35173,6 +34667,10 @@ impl<'s> PipelineViewportSwizzleStateCreateInfoNv<'s> {
         PipelineViewportSwizzleStateCreateInfoNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineViewportSwizzleStateCreateInfoNV) -> PipelineViewportSwizzleStateCreateInfoNv<'s> {
+        PipelineViewportSwizzleStateCreateInfoNv { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -35210,12 +34708,6 @@ impl<'s> PipelineViewportSwizzleStateCreateInfoNv<'s> {
 impl<'s> From<PipelineViewportSwizzleStateCreateInfoNv<'s>> for vks::VkPipelineViewportSwizzleStateCreateInfoNV {
     fn from(f: PipelineViewportSwizzleStateCreateInfoNv<'s>) -> vks::VkPipelineViewportSwizzleStateCreateInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineViewportSwizzleStateCreateInfoNV> for PipelineViewportSwizzleStateCreateInfoNv<'s> {
-    fn from(f: vks::VkPipelineViewportSwizzleStateCreateInfoNV) -> PipelineViewportSwizzleStateCreateInfoNv<'s> {
-        PipelineViewportSwizzleStateCreateInfoNv { raw: f, _p: PhantomData }
     }
 }
 
@@ -35293,6 +34785,10 @@ impl<'s> PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
         PhysicalDeviceDiscardRectanglePropertiesExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT) -> PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
+        PhysicalDeviceDiscardRectanglePropertiesExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -35317,12 +34813,6 @@ impl<'s> PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
 impl<'s> From<PhysicalDeviceDiscardRectanglePropertiesExt<'s>> for vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT {
     fn from(f: PhysicalDeviceDiscardRectanglePropertiesExt<'s>) -> vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT> for PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
-    fn from(f: vks::VkPhysicalDeviceDiscardRectanglePropertiesEXT) -> PhysicalDeviceDiscardRectanglePropertiesExt<'s> {
-        PhysicalDeviceDiscardRectanglePropertiesExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -35386,6 +34876,10 @@ impl<'s> PipelineDiscardRectangleStateCreateInfoExt<'s> {
         PipelineDiscardRectangleStateCreateInfoExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineDiscardRectangleStateCreateInfoEXT) -> PipelineDiscardRectangleStateCreateInfoExt<'s> {
+        PipelineDiscardRectangleStateCreateInfoExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -35431,12 +34925,6 @@ impl<'s> PipelineDiscardRectangleStateCreateInfoExt<'s> {
 impl<'s> From<PipelineDiscardRectangleStateCreateInfoExt<'s>> for vks::VkPipelineDiscardRectangleStateCreateInfoEXT {
     fn from(f: PipelineDiscardRectangleStateCreateInfoExt<'s>) -> vks::VkPipelineDiscardRectangleStateCreateInfoEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineDiscardRectangleStateCreateInfoEXT> for PipelineDiscardRectangleStateCreateInfoExt<'s> {
-    fn from(f: vks::VkPipelineDiscardRectangleStateCreateInfoEXT) -> PipelineDiscardRectangleStateCreateInfoExt<'s> {
-        PipelineDiscardRectangleStateCreateInfoExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -35525,6 +35013,10 @@ impl<'s> PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
         PhysicalDeviceMultiviewPerViewAttributesPropertiesNvxBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX) -> PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
+        PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -35550,13 +35042,6 @@ impl<'s> PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
 impl<'s> From<PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s>> for vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
     fn from(f: PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s>) -> vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
         f.raw
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl<'s> From<vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX> for PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
-    fn from(f: vks::VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX) -> PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx<'s> {
-        PhysicalDeviceMultiviewPerViewAttributesPropertiesNvx { raw: f, _p: PhantomData }
     }
 }
 
@@ -35622,6 +35107,10 @@ impl<'s> PhysicalDeviceSurfaceInfo2Khr<'s> {
         PhysicalDeviceSurfaceInfo2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceSurfaceInfo2KHR) -> PhysicalDeviceSurfaceInfo2Khr<'s> {
+        PhysicalDeviceSurfaceInfo2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -35647,12 +35136,6 @@ impl<'s> PhysicalDeviceSurfaceInfo2Khr<'s> {
 impl<'s> From<PhysicalDeviceSurfaceInfo2Khr<'s>> for vks::VkPhysicalDeviceSurfaceInfo2KHR {
     fn from(f: PhysicalDeviceSurfaceInfo2Khr<'s>) -> vks::VkPhysicalDeviceSurfaceInfo2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceSurfaceInfo2KHR> for PhysicalDeviceSurfaceInfo2Khr<'s> {
-    fn from(f: vks::VkPhysicalDeviceSurfaceInfo2KHR) -> PhysicalDeviceSurfaceInfo2Khr<'s> {
-        PhysicalDeviceSurfaceInfo2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -35717,6 +35200,10 @@ impl<'s> SurfaceCapabilities2Khr<'s> {
         SurfaceCapabilities2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSurfaceCapabilities2KHR) -> SurfaceCapabilities2Khr<'s> {
+        SurfaceCapabilities2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -35745,12 +35232,6 @@ impl<'s> SurfaceCapabilities2Khr<'s> {
 impl<'s> From<SurfaceCapabilities2Khr<'s>> for vks::VkSurfaceCapabilities2KHR {
     fn from(f: SurfaceCapabilities2Khr<'s>) -> vks::VkSurfaceCapabilities2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSurfaceCapabilities2KHR> for SurfaceCapabilities2Khr<'s> {
-    fn from(f: vks::VkSurfaceCapabilities2KHR) -> SurfaceCapabilities2Khr<'s> {
-        SurfaceCapabilities2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -35818,6 +35299,10 @@ impl<'s> SurfaceFormat2Khr<'s> {
         SurfaceFormat2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSurfaceFormat2KHR) -> SurfaceFormat2Khr<'s> {
+        SurfaceFormat2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -35846,12 +35331,6 @@ impl<'s> SurfaceFormat2Khr<'s> {
 impl<'s> From<SurfaceFormat2Khr<'s>> for vks::VkSurfaceFormat2KHR {
     fn from(f: SurfaceFormat2Khr<'s>) -> vks::VkSurfaceFormat2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSurfaceFormat2KHR> for SurfaceFormat2Khr<'s> {
-    fn from(f: vks::VkSurfaceFormat2KHR) -> SurfaceFormat2Khr<'s> {
-        SurfaceFormat2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -35919,6 +35398,10 @@ impl<'s> SharedPresentSurfaceCapabilitiesKhr<'s> {
         SharedPresentSurfaceCapabilitiesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSharedPresentSurfaceCapabilitiesKHR) -> SharedPresentSurfaceCapabilitiesKhr<'s> {
+        SharedPresentSurfaceCapabilitiesKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -35944,12 +35427,6 @@ impl<'s> SharedPresentSurfaceCapabilitiesKhr<'s> {
 impl<'s> From<SharedPresentSurfaceCapabilitiesKhr<'s>> for vks::VkSharedPresentSurfaceCapabilitiesKHR {
     fn from(f: SharedPresentSurfaceCapabilitiesKhr<'s>) -> vks::VkSharedPresentSurfaceCapabilitiesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSharedPresentSurfaceCapabilitiesKHR> for SharedPresentSurfaceCapabilitiesKhr<'s> {
-    fn from(f: vks::VkSharedPresentSurfaceCapabilitiesKHR) -> SharedPresentSurfaceCapabilitiesKhr<'s> {
-        SharedPresentSurfaceCapabilitiesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -36014,6 +35491,10 @@ impl<'s> PhysicalDevice16BitStorageFeaturesKhr<'s> {
         PhysicalDevice16BitStorageFeaturesKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDevice16BitStorageFeaturesKHR) -> PhysicalDevice16BitStorageFeaturesKhr<'s> {
+        PhysicalDevice16BitStorageFeaturesKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -36062,12 +35543,6 @@ impl<'s> PhysicalDevice16BitStorageFeaturesKhr<'s> {
 impl<'s> From<PhysicalDevice16BitStorageFeaturesKhr<'s>> for vks::VkPhysicalDevice16BitStorageFeaturesKHR {
     fn from(f: PhysicalDevice16BitStorageFeaturesKhr<'s>) -> vks::VkPhysicalDevice16BitStorageFeaturesKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDevice16BitStorageFeaturesKHR> for PhysicalDevice16BitStorageFeaturesKhr<'s> {
-    fn from(f: vks::VkPhysicalDevice16BitStorageFeaturesKHR) -> PhysicalDevice16BitStorageFeaturesKhr<'s> {
-        PhysicalDevice16BitStorageFeaturesKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -36158,6 +35633,10 @@ impl<'s> BufferMemoryRequirementsInfo2Khr<'s> {
         BufferMemoryRequirementsInfo2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkBufferMemoryRequirementsInfo2KHR) -> BufferMemoryRequirementsInfo2Khr<'s> {
+        BufferMemoryRequirementsInfo2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -36183,12 +35662,6 @@ impl<'s> BufferMemoryRequirementsInfo2Khr<'s> {
 impl<'s> From<BufferMemoryRequirementsInfo2Khr<'s>> for vks::VkBufferMemoryRequirementsInfo2KHR {
     fn from(f: BufferMemoryRequirementsInfo2Khr<'s>) -> vks::VkBufferMemoryRequirementsInfo2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkBufferMemoryRequirementsInfo2KHR> for BufferMemoryRequirementsInfo2Khr<'s> {
-    fn from(f: vks::VkBufferMemoryRequirementsInfo2KHR) -> BufferMemoryRequirementsInfo2Khr<'s> {
-        BufferMemoryRequirementsInfo2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -36253,6 +35726,10 @@ impl<'s> ImageMemoryRequirementsInfo2Khr<'s> {
         ImageMemoryRequirementsInfo2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageMemoryRequirementsInfo2KHR) -> ImageMemoryRequirementsInfo2Khr<'s> {
+        ImageMemoryRequirementsInfo2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -36278,12 +35755,6 @@ impl<'s> ImageMemoryRequirementsInfo2Khr<'s> {
 impl<'s> From<ImageMemoryRequirementsInfo2Khr<'s>> for vks::VkImageMemoryRequirementsInfo2KHR {
     fn from(f: ImageMemoryRequirementsInfo2Khr<'s>) -> vks::VkImageMemoryRequirementsInfo2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImageMemoryRequirementsInfo2KHR> for ImageMemoryRequirementsInfo2Khr<'s> {
-    fn from(f: vks::VkImageMemoryRequirementsInfo2KHR) -> ImageMemoryRequirementsInfo2Khr<'s> {
-        ImageMemoryRequirementsInfo2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -36348,6 +35819,10 @@ impl<'s> ImageSparseMemoryRequirementsInfo2Khr<'s> {
         ImageSparseMemoryRequirementsInfo2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkImageSparseMemoryRequirementsInfo2KHR) -> ImageSparseMemoryRequirementsInfo2Khr<'s> {
+        ImageSparseMemoryRequirementsInfo2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -36373,12 +35848,6 @@ impl<'s> ImageSparseMemoryRequirementsInfo2Khr<'s> {
 impl<'s> From<ImageSparseMemoryRequirementsInfo2Khr<'s>> for vks::VkImageSparseMemoryRequirementsInfo2KHR {
     fn from(f: ImageSparseMemoryRequirementsInfo2Khr<'s>) -> vks::VkImageSparseMemoryRequirementsInfo2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkImageSparseMemoryRequirementsInfo2KHR> for ImageSparseMemoryRequirementsInfo2Khr<'s> {
-    fn from(f: vks::VkImageSparseMemoryRequirementsInfo2KHR) -> ImageSparseMemoryRequirementsInfo2Khr<'s> {
-        ImageSparseMemoryRequirementsInfo2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -36443,6 +35912,10 @@ impl<'s> MemoryRequirements2Khr<'s> {
         MemoryRequirements2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryRequirements2KHR) -> MemoryRequirements2Khr<'s> {
+        MemoryRequirements2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -36471,12 +35944,6 @@ impl<'s> MemoryRequirements2Khr<'s> {
 impl<'s> From<MemoryRequirements2Khr<'s>> for vks::VkMemoryRequirements2KHR {
     fn from(f: MemoryRequirements2Khr<'s>) -> vks::VkMemoryRequirements2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMemoryRequirements2KHR> for MemoryRequirements2Khr<'s> {
-    fn from(f: vks::VkMemoryRequirements2KHR) -> MemoryRequirements2Khr<'s> {
-        MemoryRequirements2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -36544,6 +36011,10 @@ impl<'s> SparseImageMemoryRequirements2Khr<'s> {
         SparseImageMemoryRequirements2KhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSparseImageMemoryRequirements2KHR) -> SparseImageMemoryRequirements2Khr<'s> {
+        SparseImageMemoryRequirements2Khr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -36572,12 +36043,6 @@ impl<'s> SparseImageMemoryRequirements2Khr<'s> {
 impl<'s> From<SparseImageMemoryRequirements2Khr<'s>> for vks::VkSparseImageMemoryRequirements2KHR {
     fn from(f: SparseImageMemoryRequirements2Khr<'s>) -> vks::VkSparseImageMemoryRequirements2KHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSparseImageMemoryRequirements2KHR> for SparseImageMemoryRequirements2Khr<'s> {
-    fn from(f: vks::VkSparseImageMemoryRequirements2KHR) -> SparseImageMemoryRequirements2Khr<'s> {
-        SparseImageMemoryRequirements2Khr { raw: f, _p: PhantomData }
     }
 }
 
@@ -36645,6 +36110,10 @@ impl<'s> MemoryDedicatedRequirementsKhr<'s> {
         MemoryDedicatedRequirementsKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryDedicatedRequirementsKHR) -> MemoryDedicatedRequirementsKhr<'s> {
+        MemoryDedicatedRequirementsKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -36677,12 +36146,6 @@ impl<'s> MemoryDedicatedRequirementsKhr<'s> {
 impl<'s> From<MemoryDedicatedRequirementsKhr<'s>> for vks::VkMemoryDedicatedRequirementsKHR {
     fn from(f: MemoryDedicatedRequirementsKhr<'s>) -> vks::VkMemoryDedicatedRequirementsKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMemoryDedicatedRequirementsKHR> for MemoryDedicatedRequirementsKhr<'s> {
-    fn from(f: vks::VkMemoryDedicatedRequirementsKHR) -> MemoryDedicatedRequirementsKhr<'s> {
-        MemoryDedicatedRequirementsKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -36755,6 +36218,10 @@ impl<'s> MemoryDedicatedAllocateInfoKhr<'s> {
         MemoryDedicatedAllocateInfoKhrBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkMemoryDedicatedAllocateInfoKHR) -> MemoryDedicatedAllocateInfoKhr<'s> {
+        MemoryDedicatedAllocateInfoKhr { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -36789,12 +36256,6 @@ impl<'s> MemoryDedicatedAllocateInfoKhr<'s> {
 impl<'s> From<MemoryDedicatedAllocateInfoKhr<'s>> for vks::VkMemoryDedicatedAllocateInfoKHR {
     fn from(f: MemoryDedicatedAllocateInfoKhr<'s>) -> vks::VkMemoryDedicatedAllocateInfoKHR {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkMemoryDedicatedAllocateInfoKHR> for MemoryDedicatedAllocateInfoKhr<'s> {
-    fn from(f: vks::VkMemoryDedicatedAllocateInfoKHR) -> MemoryDedicatedAllocateInfoKhr<'s> {
-        MemoryDedicatedAllocateInfoKhr { raw: f, _p: PhantomData }
     }
 }
 
@@ -36869,6 +36330,10 @@ impl<'s> TextureLODGatherFormatPropertiesAmd<'s> {
         TextureLODGatherFormatPropertiesAmdBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkTextureLODGatherFormatPropertiesAMD) -> TextureLODGatherFormatPropertiesAmd<'s> {
+        TextureLODGatherFormatPropertiesAmd { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -36893,12 +36358,6 @@ impl<'s> TextureLODGatherFormatPropertiesAmd<'s> {
 impl<'s> From<TextureLODGatherFormatPropertiesAmd<'s>> for vks::VkTextureLODGatherFormatPropertiesAMD {
     fn from(f: TextureLODGatherFormatPropertiesAmd<'s>) -> vks::VkTextureLODGatherFormatPropertiesAMD {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkTextureLODGatherFormatPropertiesAMD> for TextureLODGatherFormatPropertiesAmd<'s> {
-    fn from(f: vks::VkTextureLODGatherFormatPropertiesAMD) -> TextureLODGatherFormatPropertiesAmd<'s> {
-        TextureLODGatherFormatPropertiesAmd { raw: f, _p: PhantomData }
     }
 }
 
@@ -36962,6 +36421,10 @@ impl<'s> PipelineCoverageToColorStateCreateInfoNv<'s> {
         PipelineCoverageToColorStateCreateInfoNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineCoverageToColorStateCreateInfoNV) -> PipelineCoverageToColorStateCreateInfoNv<'s> {
+        PipelineCoverageToColorStateCreateInfoNv { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -37003,12 +36466,6 @@ impl<'s> PipelineCoverageToColorStateCreateInfoNv<'s> {
 impl<'s> From<PipelineCoverageToColorStateCreateInfoNv<'s>> for vks::VkPipelineCoverageToColorStateCreateInfoNV {
     fn from(f: PipelineCoverageToColorStateCreateInfoNv<'s>) -> vks::VkPipelineCoverageToColorStateCreateInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineCoverageToColorStateCreateInfoNV> for PipelineCoverageToColorStateCreateInfoNv<'s> {
-    fn from(f: vks::VkPipelineCoverageToColorStateCreateInfoNV) -> PipelineCoverageToColorStateCreateInfoNv<'s> {
-        PipelineCoverageToColorStateCreateInfoNv { raw: f, _p: PhantomData }
     }
 }
 
@@ -37091,6 +36548,10 @@ impl<'s> PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
         PhysicalDeviceSamplerFilterMinmaxPropertiesExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT) -> PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
+        PhysicalDeviceSamplerFilterMinmaxPropertiesExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -37123,12 +36584,6 @@ impl<'s> PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
 impl<'s> From<PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s>> for vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
     fn from(f: PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s>) -> vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT> for PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
-    fn from(f: vks::VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT) -> PhysicalDeviceSamplerFilterMinmaxPropertiesExt<'s> {
-        PhysicalDeviceSamplerFilterMinmaxPropertiesExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -37201,6 +36656,10 @@ impl<'s> SamplerReductionModeCreateInfoExt<'s> {
         SamplerReductionModeCreateInfoExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkSamplerReductionModeCreateInfoEXT) -> SamplerReductionModeCreateInfoExt<'s> {
+        SamplerReductionModeCreateInfoExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -37225,12 +36684,6 @@ impl<'s> SamplerReductionModeCreateInfoExt<'s> {
 impl<'s> From<SamplerReductionModeCreateInfoExt<'s>> for vks::VkSamplerReductionModeCreateInfoEXT {
     fn from(f: SamplerReductionModeCreateInfoExt<'s>) -> vks::VkSamplerReductionModeCreateInfoEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkSamplerReductionModeCreateInfoEXT> for SamplerReductionModeCreateInfoExt<'s> {
-    fn from(f: vks::VkSamplerReductionModeCreateInfoEXT) -> SamplerReductionModeCreateInfoExt<'s> {
-        SamplerReductionModeCreateInfoExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -37294,6 +36747,10 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
         PhysicalDeviceBlendOperationAdvancedFeaturesExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT) -> PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
+        PhysicalDeviceBlendOperationAdvancedFeaturesExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *mut c_void {
         self.raw.pNext
     }
@@ -37318,12 +36775,6 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
 impl<'s> From<PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s>> for vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT {
     fn from(f: PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s>) -> vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT> for PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
-    fn from(f: vks::VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT) -> PhysicalDeviceBlendOperationAdvancedFeaturesExt<'s> {
-        PhysicalDeviceBlendOperationAdvancedFeaturesExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -37385,6 +36836,10 @@ pub struct PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
 impl<'s> PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
     pub fn builder<'b>() -> PhysicalDeviceBlendOperationAdvancedPropertiesExtBuilder<'b> {
         PhysicalDeviceBlendOperationAdvancedPropertiesExtBuilder::new()
+    }
+
+    pub unsafe fn from_raw(raw: vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT) -> PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
+        PhysicalDeviceBlendOperationAdvancedPropertiesExt { raw, _p: PhantomData }
     }
 
     pub fn next<'a>(&'a self) -> *mut c_void {
@@ -37451,12 +36906,6 @@ impl<'s> PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
 impl<'s> From<PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s>> for vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
     fn from(f: PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s>) -> vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT> for PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
-    fn from(f: vks::VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT) -> PhysicalDeviceBlendOperationAdvancedPropertiesExt<'s> {
-        PhysicalDeviceBlendOperationAdvancedPropertiesExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -37565,6 +37014,10 @@ impl<'s> PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
         PipelineColorBlendAdvancedStateCreateInfoExtBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT) -> PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
+        PipelineColorBlendAdvancedStateCreateInfoExt { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -37605,12 +37058,6 @@ impl<'s> PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
 impl<'s> From<PipelineColorBlendAdvancedStateCreateInfoExt<'s>> for vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT {
     fn from(f: PipelineColorBlendAdvancedStateCreateInfoExt<'s>) -> vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT> for PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
-    fn from(f: vks::VkPipelineColorBlendAdvancedStateCreateInfoEXT) -> PipelineColorBlendAdvancedStateCreateInfoExt<'s> {
-        PipelineColorBlendAdvancedStateCreateInfoExt { raw: f, _p: PhantomData }
     }
 }
 
@@ -37692,6 +37139,10 @@ impl<'s> PipelineCoverageModulationStateCreateInfoNv<'s> {
         PipelineCoverageModulationStateCreateInfoNvBuilder::new()
     }
 
+    pub unsafe fn from_raw(raw: vks::VkPipelineCoverageModulationStateCreateInfoNV) -> PipelineCoverageModulationStateCreateInfoNv<'s> {
+        PipelineCoverageModulationStateCreateInfoNv { raw, _p: PhantomData }
+    }
+
     pub fn next<'a>(&'a self) -> *const c_void {
         self.raw.pNext
     }
@@ -37745,12 +37196,6 @@ impl<'s> PipelineCoverageModulationStateCreateInfoNv<'s> {
 impl<'s> From<PipelineCoverageModulationStateCreateInfoNv<'s>> for vks::VkPipelineCoverageModulationStateCreateInfoNV {
     fn from(f: PipelineCoverageModulationStateCreateInfoNv<'s>) -> vks::VkPipelineCoverageModulationStateCreateInfoNV {
         f.raw
-    }
-}
-
-impl<'s> From<vks::VkPipelineCoverageModulationStateCreateInfoNV> for PipelineCoverageModulationStateCreateInfoNv<'s> {
-    fn from(f: vks::VkPipelineCoverageModulationStateCreateInfoNV) -> PipelineCoverageModulationStateCreateInfoNv<'s> {
-        PipelineCoverageModulationStateCreateInfoNv { raw: f, _p: PhantomData }
     }
 }
 

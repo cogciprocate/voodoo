@@ -16,7 +16,7 @@ impl ImageViewHandle {
     }
 }
 
-impl Handle for ImageViewHandle {
+unsafe impl Handle for ImageViewHandle {
     type Target = ImageViewHandle;
 
     #[inline(always)]
@@ -54,7 +54,7 @@ impl ImageView {
     }
 }
 
-impl<'i> Handle for &'i ImageView {
+unsafe impl<'i> Handle for &'i ImageView {
     type Target = ImageViewHandle;
 
     #[inline(always)]

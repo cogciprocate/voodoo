@@ -16,7 +16,7 @@ impl DescriptorSetLayoutHandle {
     }
 }
 
-impl Handle for DescriptorSetLayoutHandle {
+unsafe impl Handle for DescriptorSetLayoutHandle {
     type Target = DescriptorSetLayoutHandle;
 
     #[inline(always)]
@@ -94,7 +94,7 @@ impl DescriptorSetLayout {
     }
 }
 
-impl<'h> Handle for &'h DescriptorSetLayout {
+unsafe impl<'h> Handle for &'h DescriptorSetLayout {
     type Target = DescriptorSetLayoutHandle;
 
     #[inline(always)]

@@ -1515,80 +1515,9 @@ impl Drop for App {
 }
 
 
-#[allow(unused_unsafe)]
-pub unsafe fn make_everything() -> VooResult<()> {
-    let instance = init_instance()?;
-    let (window, events_loop) = init_window();
-    let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
-    let queue_family_flags = QueueFlags::GRAPHICS;
-    let physical_device = choose_physical_device(&instance, &surface,
-        queue_family_flags)?;
-    let device = create_device(instance.clone(), &surface, physical_device,
-        queue_family_flags)?;
-    let swapchain = create_swapchain(surface.clone(), device.clone(), queue_family_flags,
-        None, None)?;
-    // let image_views = create_image_views(&swapchain)?;
-
-    // let render_pass = create_render_pass_fake(device.clone(), swapchain.image_format())?;
-    let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;
-
-    // let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
-    // let pipeline_layout = create_pipeline_layout(device.clone(),
-    //     Some(&descriptor_set_layout))?;
-    // let vert_shader_code = util::read_file("/src/voodoo/shaders/vert.spv")?;
-    // let frag_shader_code = util::read_file("/src/voodoo/shaders/frag.spv")?;
-    // let graphics_pipeline = create_graphics_pipeline(device.clone(), &pipeline_layout,
-    //     &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
-    // let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;
-    // let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(&device,
-    //     &command_pool, swapchain.extent().clone())?;
-    // let framebuffers = create_framebuffers(&device, &render_pass,
-    //     &image_views, &depth_image_view, swapchain.extent().clone())?;
-    // let (texture_image, texture_image_memory) = create_texture_image(&device,
-    //     &command_pool)?;
-    // let texture_image_view = create_texture_image_view(device.clone(),
-    //     &texture_image)?;
-    // let texture_sampler = create_texture_sampler(device.clone())?;
-    // // // let (vertices, indices) = load_model(&device)?;
-    // let vertices = VERTICES[..].to_owned();
-    // let indices = INDICES[..].to_owned();
-    // let (vertex_buffer, vertex_buffer_memory) = create_vertex_buffer(&device, &command_pool,
-    //     &vertices)?;
-    // let (index_buffer, index_buffer_memory) = create_index_buffer(&device, &command_pool,
-    //     &indices)?;
-    // let (uniform_buffer, uniform_buffer_memory) = create_uniform_buffer(&device,
-    //     &command_pool, swapchain.extent().clone())?;
-    // let descriptor_pool = create_descriptor_pool(device.clone())?;
-    // let descriptor_sets = create_descriptor_sets(&device, &descriptor_set_layout,
-    //     &descriptor_pool, &uniform_buffer, &texture_image_view, &texture_sampler)?;
-    // let command_buffers = create_command_buffers(&device, &command_pool, &render_pass,
-    //     &graphics_pipeline, &framebuffers, swapchain.extent(),
-    //     &vertex_buffer, &index_buffer,
-    //     vertices.len() as u32, vertices.len() as u32, &pipeline_layout,
-    //     descriptor_sets[0].clone())?;
-    // let image_available_semaphore = Semaphore::new(device.clone())?;
-    // let render_finished_semaphore = Semaphore::new(device.clone())?;
-    // let start_time = time::Instant::now();
-
-    // let swapchain_components = SwapchainComponents {
-    //     image_views: image_views,
-    //     render_pass: render_pass,
-    //     graphics_pipeline: graphics_pipeline,
-    //     depth_image,
-    //     depth_image_memory,
-    //     depth_image_view,
-    //     framebuffers: framebuffers,
-    // };
-
-    Ok(())
-}
-
-
-
 fn main() {
     println!("Hello triangle!");
     unsafe {
-        // main_debug::make_everything();
         let mut app = App::new().unwrap();
         app.main_loop().unwrap();
     }

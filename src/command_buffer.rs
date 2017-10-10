@@ -25,7 +25,7 @@ impl CommandBufferHandle {
     }
 }
 
-impl Handle for CommandBufferHandle {
+unsafe impl Handle for CommandBufferHandle {
     type Target = CommandBufferHandle;
 
     #[inline]
@@ -402,7 +402,7 @@ impl CommandBuffer {
 
 }
 
-impl<'h> Handle for &'h CommandBuffer {
+unsafe impl<'h> Handle for &'h CommandBuffer {
     type Target = CommandBufferHandle;
 
     #[inline]

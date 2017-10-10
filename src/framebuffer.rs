@@ -18,7 +18,7 @@ impl FramebufferHandle {
     }
 }
 
-impl Handle for FramebufferHandle {
+unsafe impl Handle for FramebufferHandle {
     type Target = FramebufferHandle;
 
     fn handle(&self) -> Self::Target {
@@ -56,7 +56,7 @@ impl Framebuffer {
     }
 }
 
-impl<'h> Handle for &'h Framebuffer {
+unsafe impl<'h> Handle for &'h Framebuffer {
     type Target = FramebufferHandle;
 
     fn handle(&self) -> Self::Target {

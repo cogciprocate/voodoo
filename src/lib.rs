@@ -1,11 +1,9 @@
-//! vkc - Vulkan Compute
+//! Voodoo - Vulkan, but rustier.
 
-#![allow(unused_extern_crates, /*unused_imports,*/ dead_code, unused_variables)]
+#![allow(unused_extern_crates, dead_code, unused_variables)]
 
 extern crate libloading as lib;
 extern crate smallvec;
-// extern crate nalgebra;
-// extern crate cgmath;
 extern crate vks as vks_;
 extern crate libc;
 extern crate tobj;
@@ -20,7 +18,7 @@ pub extern crate winit;
 mod error;
 mod version;
 mod loader;
-pub mod instance; // temporarily public
+mod instance; // temporarily public
 mod physical_device;
 mod swapchain;
 mod image_view;
@@ -134,7 +132,6 @@ pub mod vks {
     pub use vks_::nv_viewport_array2::*;
     pub use vks_::nv_viewport_swizzle::*;
     pub use vks_::nv_win32_keyed_mutex::*;
-
     pub use vks_::android_types::*;
     pub use vks_::mir_types::*;
     pub use vks_::wayland_types::*;
@@ -146,16 +143,12 @@ pub mod vks {
     pub use vks_::experimental::*;
 }
 
-// pub mod vulkan_h;
 pub mod device;
 pub mod util;
 pub mod voodoo_winit;
 
-// use std::ffi::OsStr;
 use std::hash::{Hash, Hasher};
-// use libc::c_void;
 use std::mem;
-// use std::ptr;
 use ordered_float::OrderedFloat;
 use error::Result as VooResult;
 pub use util::{CharStr, CharStrs};
@@ -189,13 +182,13 @@ pub use enums::*;
 pub use bitflags::*;
 
 
-pub trait Handle {
+pub unsafe trait Handle {
     type Target;
 
     fn handle(&self) -> Self::Target;
 }
 
-pub trait AnyPipelineHandle: Handle<Target=PipelineHandle> {}
+pub unsafe trait AnyPipelineHandle: Handle<Target=PipelineHandle> {}
 
 
 
@@ -210,7 +203,7 @@ impl FenceHandle {
     }
 }
 
-impl Handle for FenceHandle {
+unsafe impl Handle for FenceHandle {
     type Target = FenceHandle;
 
     fn handle(&self) -> Self::Target {
@@ -230,7 +223,7 @@ impl EventHandle {
     }
 }
 
-impl Handle for EventHandle {
+unsafe impl Handle for EventHandle {
     type Target = EventHandle;
 
     fn handle(&self) -> Self::Target {
@@ -250,7 +243,7 @@ impl QueryPoolHandle {
     }
 }
 
-impl Handle for QueryPoolHandle {
+unsafe impl Handle for QueryPoolHandle {
     type Target = QueryPoolHandle;
 
     fn handle(&self) -> Self::Target {
@@ -270,7 +263,7 @@ impl BufferViewHandle {
     }
 }
 
-impl Handle for BufferViewHandle {
+unsafe impl Handle for BufferViewHandle {
     type Target = BufferViewHandle;
 
     fn handle(&self) -> Self::Target {
@@ -290,7 +283,7 @@ impl PipelineCacheHandle {
     }
 }
 
-impl Handle for PipelineCacheHandle {
+unsafe impl Handle for PipelineCacheHandle {
     type Target = PipelineCacheHandle;
 
     fn handle(&self) -> Self::Target {
@@ -310,7 +303,7 @@ impl PipelineHandle {
     }
 }
 
-impl Handle for PipelineHandle {
+unsafe impl Handle for PipelineHandle {
     type Target = PipelineHandle;
 
     fn handle(&self) -> Self::Target {
@@ -330,7 +323,7 @@ impl DescriptorSetHandle {
     }
 }
 
-impl Handle for DescriptorSetHandle {
+unsafe impl Handle for DescriptorSetHandle {
     type Target = DescriptorSetHandle;
 
     fn handle(&self) -> Self::Target {
@@ -350,7 +343,7 @@ impl DisplayKhrHandle {
     }
 }
 
-impl Handle for DisplayKhrHandle {
+unsafe impl Handle for DisplayKhrHandle {
     type Target = DisplayKhrHandle;
 
     fn handle(&self) -> Self::Target {
@@ -370,7 +363,7 @@ impl DisplayModeKhrHandle {
     }
 }
 
-impl Handle for DisplayModeKhrHandle {
+unsafe impl Handle for DisplayModeKhrHandle {
     type Target = DisplayModeKhrHandle;
 
     fn handle(&self) -> Self::Target {
@@ -390,7 +383,7 @@ impl DescriptorUpdateTemplateHandle {
     }
 }
 
-impl Handle for DescriptorUpdateTemplateHandle {
+unsafe impl Handle for DescriptorUpdateTemplateHandle {
     type Target = DescriptorUpdateTemplateHandle;
 
     fn handle(&self) -> Self::Target {
@@ -410,7 +403,7 @@ impl DebugReportCallbackExtHandle {
     }
 }
 
-impl Handle for DebugReportCallbackExtHandle {
+unsafe impl Handle for DebugReportCallbackExtHandle {
     type Target = DebugReportCallbackExtHandle;
 
     fn handle(&self) -> Self::Target {
@@ -430,7 +423,7 @@ impl SamplerYcbcrConversionKhrHandle {
     }
 }
 
-impl Handle for SamplerYcbcrConversionKhrHandle {
+unsafe impl Handle for SamplerYcbcrConversionKhrHandle {
     type Target = SamplerYcbcrConversionKhrHandle;
 
     fn handle(&self) -> Self::Target {
@@ -450,7 +443,7 @@ impl ObjectTableNvxHandle {
     }
 }
 
-impl Handle for ObjectTableNvxHandle {
+unsafe impl Handle for ObjectTableNvxHandle {
     type Target = ObjectTableNvxHandle;
 
     fn handle(&self) -> Self::Target {
@@ -470,7 +463,7 @@ impl IndirectCommandsLayoutNvxHandle {
     }
 }
 
-impl Handle for IndirectCommandsLayoutNvxHandle {
+unsafe impl Handle for IndirectCommandsLayoutNvxHandle {
     type Target = IndirectCommandsLayoutNvxHandle;
 
     fn handle(&self) -> Self::Target {
@@ -490,7 +483,7 @@ impl ValidationCacheExtHandle {
     }
 }
 
-impl Handle for ValidationCacheExtHandle {
+unsafe impl Handle for ValidationCacheExtHandle {
     type Target = ValidationCacheExtHandle;
 
     fn handle(&self) -> Self::Target {
@@ -510,7 +503,7 @@ impl DescriptorSet {
     }
 }
 
-impl Handle for DescriptorSet {
+unsafe impl Handle for DescriptorSet {
     type Target = DescriptorSetHandle;
 
     fn handle(&self) -> Self::Target {
@@ -518,7 +511,7 @@ impl Handle for DescriptorSet {
     }
 }
 
-impl<'h> Handle for &'h DescriptorSet {
+unsafe impl<'h> Handle for &'h DescriptorSet {
     type Target = DescriptorSetHandle;
 
     fn handle(&self) -> Self::Target {
@@ -536,7 +529,7 @@ impl BufferView {
     }
 }
 
-impl<'h> Handle for &'h BufferView {
+unsafe impl<'h> Handle for &'h BufferView {
     type Target = BufferViewHandle;
 
     fn handle(&self) -> Self::Target {
@@ -554,7 +547,7 @@ impl Pipeline {
     }
 }
 
-impl<'h> Handle for &'h Pipeline {
+unsafe impl<'h> Handle for &'h Pipeline {
     type Target = PipelineHandle;
 
     fn handle(&self) -> Self::Target {
@@ -572,7 +565,7 @@ impl QueryPool {
     }
 }
 
-impl<'h> Handle for &'h QueryPool {
+unsafe impl<'h> Handle for &'h QueryPool {
     type Target = QueryPoolHandle;
 
     fn handle(&self) -> Self::Target {
@@ -590,7 +583,7 @@ impl Fence {
     }
 }
 
-impl<'h> Handle for &'h Fence {
+unsafe impl<'h> Handle for &'h Fence {
     type Target = FenceHandle;
 
     fn handle(&self) -> Self::Target {
@@ -608,7 +601,7 @@ impl Event {
     }
 }
 
-impl<'h> Handle for &'h Event {
+unsafe impl<'h> Handle for &'h Event {
     type Target = EventHandle;
 
     fn handle(&self) -> Self::Target {
@@ -626,7 +619,7 @@ impl DisplayModeKhr {
     }
 }
 
-impl<'h> Handle for &'h DisplayModeKhr {
+unsafe impl<'h> Handle for &'h DisplayModeKhr {
     type Target = DisplayModeKhrHandle;
 
     fn handle(&self) -> Self::Target {
@@ -644,7 +637,7 @@ impl DisplayKhr {
     }
 }
 
-impl<'h> Handle for &'h DisplayKhr {
+unsafe impl<'h> Handle for &'h DisplayKhr {
     type Target = DisplayKhrHandle;
 
     fn handle(&self) -> Self::Target {
@@ -733,22 +726,6 @@ macro_rules! offset_of {
 }
 
 
-// TODO: MOVE TO `PhysicalDevice`.
-// pub fn memory_type_index(device: &Device, type_filter: u32, properties: vks::VkMemoryPropertyFlags)
-//         -> u32 {
-//     let mut mem_props = device.physical_device().memory_properties();
-
-//     for i in 0..mem_props.memoryTypeCount {
-//         if (type_filter & (1 << i)) != 0 &&
-//             (mem_props.memoryTypes[i as usize].propertyFlags & properties) == properties
-//         {
-//             return i;
-//         }
-//     }
-//     panic!("Failed to find suitable memory type.");
-// }
-
-
 
 #[derive(Clone, Copy)]
 #[repr(C)]
@@ -777,21 +754,18 @@ impl Vertex {
             VertexInputAttributeDescription::builder()
                 .binding(0)
                 .location(0)
-                // .format(vks::VK_FORMAT_R32G32B32_SFLOAT)
                 .format(Format::R32G32B32Sfloat)
                 .offset(offset_of!(Vertex, pos))
                 .build(),
             VertexInputAttributeDescription::builder()
                 .binding(0)
                 .location(1)
-                // .format(vks::VK_FORMAT_R32G32B32_SFLOAT)
                 .format(Format::R32G32B32Sfloat)
                 .offset(offset_of!(Vertex, color))
                 .build(),
             VertexInputAttributeDescription::builder()
                 .binding(0)
                 .location(2)
-                // .format(vks::VK_FORMAT_R32G32_SFLOAT)
                 .format(Format::R32G32Sfloat)
                 .offset(offset_of!(Vertex, tex_coord))
                 .build(),
@@ -973,9 +947,3 @@ mod tests {
 
     }
 }
-
-
-// camelCase to snake_case:
-// ([a-z])([A-Z]+)
-// --->
-// $1_\l$2

@@ -1519,6 +1519,20 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
         writeln!(o, "{t}{t}{}Builder::new()", s.voodoo_name, t=t)?;
         write!(o, "{t}}}\n\n", t=t)?;
 
+        // `from_raw`:
+        writeln!(o, "{t}pub unsafe fn from_raw(raw: {}{}) -> {}{} {{", ORIG_PRE, s.orig_name,
+            s.voodoo_name, struct_type_param_block, t=t)?;
+        write!(o, "{t}{t}{} {{ raw, ", s.voodoo_name, t=t)?;
+        // for (_, field) in &s.special_fields {
+        //     write!(o, "{}: {}, ", field.name, field.default_val)?;
+        // }
+        if s.contains_ptr {
+            write!(o, "_p: PhantomData ")?;
+        }
+        writeln!(o, "}}")?;
+        writeln!(o, "{t}}}", t=t)?;
+        write!(o, "\n")?;
+
         // Write getter functions:
         for m in &s.members {
             write_get_fn(o, s, m, struct_type_param, &struct_type_param_block, structs, false)?;
@@ -1530,6 +1544,7 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
             write_set_fn(o, s, m, struct_type_param, &struct_type_param_block, structs, false)?;
         }
 
+        // `as_raw`:
         writeln!(o, "{t}pub fn as_raw(&self) -> &{}{} {{", ORIG_PRE, s.orig_name, t=t)?;
         writeln!(o, "{t}{t}&self.raw", t=t)?;
         writeln!(o, "{t}}}", t=t)?;
@@ -1549,26 +1564,27 @@ fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> i
         writeln!(o, "{t}{t}f.raw", t=t)?;
         writeln!(o, "{t}}}", t=t)?;
         write!(o, "}}\n\n")?;
+        write!(o, "\n")?;
 
-        if is_experimental(&s.orig_name) {
-            writeln!(o, "#[cfg(feature = \"experimental\")]")?;
-        }
-        write!(o, "impl{} From<{}{}> for {}{}", struct_type_param_block, ORIG_PRE, s.orig_name,
-            s.voodoo_name, struct_type_param_block)?;
-        writeln!(o, " {{")?;
-        writeln!(o, "{t}fn from(f: {}{}) -> {}{} {{", ORIG_PRE, s.orig_name,
-            s.voodoo_name, struct_type_param_block, t=t)?;
-        write!(o, "{t}{t}{} {{ raw: f, ", s.voodoo_name, t=t)?;
-        // for (_, field) in &s.special_fields {
-        //     write!(o, "{}: {}, ", field.name, field.default_val)?;
+        // if is_experimental(&s.orig_name) {
+        //     writeln!(o, "#[cfg(feature = \"experimental\")]")?;
         // }
-        if s.contains_ptr {
-            write!(o, "_p: PhantomData ")?;
-        }
-        writeln!(o, "}}")?;
-        writeln!(o, "{t}}}", t=t)?;
+        // write!(o, "impl{} From<{}{}> for {}{}", struct_type_param_block, ORIG_PRE, s.orig_name,
+        //     s.voodoo_name, struct_type_param_block)?;
+        // writeln!(o, " {{")?;
+        // writeln!(o, "{t}fn from(f: {}{}) -> {}{} {{", ORIG_PRE, s.orig_name,
+        //     s.voodoo_name, struct_type_param_block, t=t)?;
+        // write!(o, "{t}{t}{} {{ raw: f, ", s.voodoo_name, t=t)?;
+        // // for (_, field) in &s.special_fields {
+        // //     write!(o, "{}: {}, ", field.name, field.default_val)?;
+        // // }
+        // if s.contains_ptr {
+        //     write!(o, "_p: PhantomData ")?;
+        // }
+        // writeln!(o, "}}")?;
+        // writeln!(o, "{t}}}", t=t)?;
 
-        write!(o, "}}\n\n\n")?;
+        // write!(o, "}}\n\n\n")?;
 
         // ################ BUILDER ################
         writeln!(o, "/// A builder for `{}`.", s.orig_name)?;

@@ -16,7 +16,7 @@ impl QueueHandle {
     }
 }
 
-impl Handle for QueueHandle {
+unsafe impl Handle for QueueHandle {
     type Target = QueueHandle;
 
     #[inline(always)]
@@ -123,7 +123,7 @@ impl Queue {
     }
 }
 
-impl Handle for Queue {
+unsafe impl Handle for Queue {
     type Target = QueueHandle;
 
     #[inline(always)]

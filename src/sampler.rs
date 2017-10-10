@@ -16,7 +16,7 @@ impl SamplerHandle {
     }
 }
 
-impl Handle for SamplerHandle {
+unsafe impl Handle for SamplerHandle {
     type Target = SamplerHandle;
 
     #[inline(always)]
@@ -91,7 +91,7 @@ impl Sampler {
     }
 }
 
-impl<'h> Handle for &'h Sampler {
+unsafe impl<'h> Handle for &'h Sampler {
     type Target = SamplerHandle;
 
     #[inline(always)]
