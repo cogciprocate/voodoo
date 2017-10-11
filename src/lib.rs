@@ -658,6 +658,7 @@ pub type SECURITY_ATTRIBUTES = vks::SECURITY_ATTRIBUTES;
 pub type DWORD = vks::DWORD;
 #[allow(non_camel_case_types)]
 pub type LPCWSTR = vks::LPCWSTR;
+pub type CommandPoolTrimFlagsKhr = vks::VkCommandPoolTrimFlagsKHR;
 
 
 // TODO: MAKE THESE UNIONS ENUMS:

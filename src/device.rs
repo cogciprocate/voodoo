@@ -27,8 +27,15 @@ use ::{VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo, CharStrs,
     ClearAttachment, ImageResolve, QueryControlFlags, ClearRect, PresentInfoKhr, MappedMemoryRange,
     SparseImageMemoryRequirements, BindSparseInfo, CallResult, QueryPoolCreateInfo,
     ImageSubresource, SubresourceLayout, DescriptorSetAllocateInfo, DescriptorPoolResetFlags,
-    Extent2d, CommandPoolResetFlags,
-};
+    Extent2d, CommandPoolResetFlags, CommandPoolTrimFlagsKhr, MemoryGetWin32HandleInfoKhr,
+    ExternalMemoryHandleTypeFlagsKhr, HANDLE, MemoryGetFdInfoKhr,
+    ImportSemaphoreWin32HandleInfoKhr, SemaphoreGetWin32HandleInfoKhr, ImportSemaphoreFdInfoKhr,
+    SemaphoreGetFdInfoKhr, PipelineLayout, BufferMemoryRequirementsInfo2Khr,
+    ImportFenceWin32HandleInfoKhr, FenceGetWin32HandleInfoKhr, ImportFenceFdInfoKhr,
+    FenceGetFdInfoKhr, ImageMemoryRequirementsInfo2Khr, ImageSparseMemoryRequirementsInfo2Khr,
+    DebugMarkerObjectTagInfoExt, DebugMarkerObjectNameInfoExt, DisplayPowerInfoExt,
+    DisplayKhrHandle, DeviceEventInfoExt, DisplayEventInfoExt, HdrMetadataExt,
+    SurfaceCounterFlagsExt,};
 
 // #[cfg(feature = "experimental")]
 // use ::{QueryPoolCreateInfo, };
@@ -37,7 +44,7 @@ use ::{VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo, CharStrs,
 use ::{SamplerYcbcrConversionCreateInfoKhr, IndirectCommandsLayoutNvxCreateInfo,
     ObjectTableNvxCreateInfo, ValidationCacheExtCreateInfo, DescriptorUpdateTemplateCreateInfoKhr,
     DescriptorUpdateTemplateKhrHandle, SamplerYcbcrConversionKhrHandle, IndirectCommandsLayoutNvxHandle,
-    ValidationCacheExtHandle, ObjectTableNvxHandle,};
+    ValidationCacheExtHandle, ObjectTableNvxHandle, SampleLocationsInfoExt, ValidationCacheExt,};
 
 
 
@@ -1276,83 +1283,103 @@ impl Device {
         Ok(())
     }
 
+    // *PFN_vkCreateSharedSwapchainsKHR)(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains);
+    pub unsafe fn create_shared_swapchains_khr(&self, create_infos: &[SwapchainCreateInfoKhr],
+            allocator: Option<*const vks::VkAllocationCallbacks>)
+            -> VooResult<SmallVec<[SwapchainKhrHandle; 4]>> {
+        let allocator = allocator.unwrap_or(ptr::null());
+        let mut swapchains = SmallVec::<[SwapchainKhrHandle; 4]>::new();
+        swapchains.reserve_exact(create_infos.len());
+        swapchains.set_len(create_infos.len());
+        ::check(self.proc_addr_loader().vkCreateSharedSwapchainsKHR(self.handle().to_raw(),
+            create_infos.len() as u32, create_infos as *const _ as *const vks::VkSwapchainCreateInfoKHR,
+            allocator, swapchains.as_mut_ptr() as *mut vks::VkSwapchainKHR));
+        Ok(swapchains)
+    }
 
-    // // *PFN_vkCreateSharedSwapchainsKHR)(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains);
-    // pub unsafe fn create_shared_swapchains_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkCreateSharedSwapchainsKHR)(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, allocator: Option<*const vks::VkAllocationCallbacks>, VkSwapchainKHR* pSwapchains);
-    // }
+    // *PFN_vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags);
+    pub unsafe fn trim_command_pool_khr<P>(&self, command_pool: P, flags: CommandPoolTrimFlagsKhr)
+             -> VooResult<()>
+            where P: Handle<Target=CommandPoolHandle> {
+        // self.proc_addr_loader().
+        //     vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags);
+        unimplemented!();
+    }
 
+    // *PFN_vkGetMemoryWin32HandleKHR)(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    pub unsafe fn get_memory_win32_handle_khr(&self,
+            get_win32_handle_info: &MemoryGetWin32HandleInfoKhr)
+             -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkGetMemoryWin32HandleKHR)(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+        unimplemented!();
+    }
 
-    // // *PFN_vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags);
-    // pub unsafe fn trim_command_pool_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags);
-    // }
+    // *PFN_vkGetMemoryWin32HandlePropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
+    pub unsafe fn get_memory_win32_handle_properties_khr(&self,
+            handle_type: ExternalMemoryHandleTypeFlagsKhr, handle: HANDLE) -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkGetMemoryWin32HandlePropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
+        unimplemented!();
+    }
 
+    // *PFN_vkGetMemoryFdKHR)(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
+    pub unsafe fn get_memory_fd_khr(&self, get_fd_info: &MemoryGetFdInfoKhr, fd: &mut i32)
+            -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkGetMemoryFdKHR)(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
+        unimplemented!();
+    }
 
-    // // *PFN_vkGetMemoryWin32HandleKHR)(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
-    // pub unsafe fn get_memory_win32_handle_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkGetMemoryWin32HandleKHR)(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
-    // }
+    // *PFN_vkGetMemoryFdPropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
+    pub unsafe fn get_memory_fd_properties_khr(&self, handle_type: ExternalMemoryHandleTypeFlagsKhr,
+            fd: i32) -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkGetMemoryFdPropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
+        unimplemented!();
+    }
 
+    // *PFN_vkImportSemaphoreWin32HandleKHR)(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo);
+    pub unsafe fn import_semaphore_win32_handle_khr(&self,
+            import_semaphore_win32_handle_info: &ImportSemaphoreWin32HandleInfoKhr) -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkImportSemaphoreWin32HandleKHR)(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo);
+        unimplemented!();
+    }
 
-    // // *PFN_vkGetMemoryWin32HandlePropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
-    // pub unsafe fn get_memory_win32_handle_properties_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkGetMemoryWin32HandlePropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
-    // }
+    // *PFN_vkGetSemaphoreWin32HandleKHR)(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    pub unsafe fn get_semaphore_win32_handle_khr(&self,
+            get_win32_handle_info: &SemaphoreGetWin32HandleInfoKhr) -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkGetSemaphoreWin32HandleKHR)(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+        unimplemented!();
+    }
 
+    // *PFN_vkImportSemaphoreFdKHR)(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
+    pub unsafe fn import_semaphore_fd_khr(&self,
+            import_semaphore_fd_info: &ImportSemaphoreFdInfoKhr) -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkImportSemaphoreFdKHR)(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
+        unimplemented!();
+    }
 
-    // // *PFN_vkGetMemoryFdKHR)(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
-    // pub unsafe fn get_memory_fd_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkGetMemoryFdKHR)(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
-    // }
+    // *PFN_vkGetSemaphoreFdKHR)(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
+    pub unsafe fn get_semaphore_fd_khr(&self, get_fd_info: &SemaphoreGetFdInfoKhr)
+            -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkGetSemaphoreFdKHR)(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
+        unimplemented!();
+    }
 
-
-    // // *PFN_vkGetMemoryFdPropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
-    // pub unsafe fn get_memory_fd_properties_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkGetMemoryFdPropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
-    // }
-
-
-    // // *PFN_vkImportSemaphoreWin32HandleKHR)(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo);
-    // pub unsafe fn import_semaphore_win32_handle_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkImportSemaphoreWin32HandleKHR)(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo);
-    // }
-
-
-    // // *PFN_vkGetSemaphoreWin32HandleKHR)(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
-    // pub unsafe fn get_semaphore_win32_handle_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkGetSemaphoreWin32HandleKHR)(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
-    // }
-
-
-    // // *PFN_vkImportSemaphoreFdKHR)(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
-    // pub unsafe fn import_semaphore_fd_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkImportSemaphoreFdKHR)(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
-    // }
-
-
-    // // *PFN_vkGetSemaphoreFdKHR)(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
-    // pub unsafe fn get_semaphore_fd_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkGetSemaphoreFdKHR)(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
-    // }
-
-
-    // // *PFN_vkCmdPushDescriptorSetKHR)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
-    // pub unsafe fn cmd_push_descriptor_set_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkCmdPushDescriptorSetKHR)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
-    // }
-
+    // *PFN_vkCmdPushDescriptorSetKHR)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
+    pub unsafe fn cmd_push_descriptor_set_khr<Cb>(&self, command_buffer: Cb,
+            pipeline_bind_point: PipelineBindPoint, layout: PipelineLayout, set: u32,
+            descriptor_writes: &[WriteDescriptorSet]) -> VooResult<()>
+            where Cb: Handle<Target=CommandBufferHandle> {
+        // self.proc_addr_loader().
+        //     vkCmdPushDescriptorSetKHR)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
+        unimplemented!();
+    }
 
     // *PFN_vkCreateDescriptorUpdateTemplateKHR)(VkDevice device, const VkDescriptorUpdateTemplateCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplateKHR* pDescriptorUpdateTemplate);
     #[cfg(feature = "unimplemented")]
@@ -1377,72 +1404,83 @@ impl Device {
             descriptor_update_template_khr.to_raw(), allocator);
     }
 
-//
-    // // *PFN_vkUpdateDescriptorSetWithTemplateKHR)(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const void* pData);
-    // pub unsafe fn update_descriptor_set_with_template_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkUpdateDescriptorSetWithTemplateKHR)(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const void* pData);
-    // }
+    // *PFN_vkUpdateDescriptorSetWithTemplateKHR)(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const void* pData);
+    #[cfg(feature = "unimplemented")]
+    pub unsafe fn update_descriptor_set_with_template_khr<Ds>(&self, descriptor_set: Ds,
+            descriptor_update_template: DescriptorUpdateTemplateKhrHandle, data: *const c_void)
+            where Ds: Handle<Target=DescriptorSetHandle> {
+        // self.proc_addr_loader().
+        //     vkUpdateDescriptorSetWithTemplateKHR)(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const void* pData);
+        unimplemented!();
+    }
 
+    // *PFN_vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
+    #[cfg(feature = "unimplemented")]
+    pub unsafe fn cmd_push_descriptor_set_with_template_khr<Cb, Pl>(&self, command_buffer: Cb,
+            descriptor_update_template: DescriptorUpdateTemplateKhr, layout: Pl, set: u32,
+            data: *const c_void) -> VooResult<()>
+            where Cb: Handle<Target=CommandBufferHandle>, Pl: Handle<Target=PipelineLayoutHandle> {
+        // self.proc_addr_loader().
+        //     vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
+        unimplemented!();
+    }
 
-    // // *PFN_vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
-    // pub unsafe fn cmd_push_descriptor_set_with_template_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
-    // }
+    // *PFN_vkGetSwapchainStatusKHR)(VkDevice device, VkSwapchainKHR swapchain);
+    pub unsafe fn get_swapchain_status_khr<Sk>(&self, swapchain: Sk) -> VooResult<()>
+            where Sk: Handle<Target=SwapchainKhrHandle> {
+        // self.proc_addr_loader().
+        //     vkGetSwapchainStatusKHR)(VkDevice device, VkSwapchainKHR swapchain);
+        unimplemented!();
+    }
 
+    // *PFN_vkImportFenceWin32HandleKHR)(VkDevice device, const VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo);
+    pub unsafe fn import_fence_win32_handle_khr(&self,
+            import_fence_win32_handle_info: &ImportFenceWin32HandleInfoKhr) -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkImportFenceWin32HandleKHR)(VkDevice device, const VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo);
+        unimplemented!();
+    }
 
-    // // *PFN_vkGetSwapchainStatusKHR)(VkDevice device, VkSwapchainKHR swapchain);
-    // pub unsafe fn get_swapchain_status_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkGetSwapchainStatusKHR)(VkDevice device, VkSwapchainKHR swapchain);
-    // }
+    // *PFN_vkGetFenceWin32HandleKHR)(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    pub unsafe fn get_fence_win32_handle_khr(&self,
+            get_win32_handle_info: &FenceGetWin32HandleInfoKhr) -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkGetFenceWin32HandleKHR)(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+        unimplemented!();
+    }
 
+    // *PFN_vkImportFenceFdKHR)(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo);
+    pub unsafe fn import_fence_fd_khr(&self, import_fence_fd_info: &ImportFenceFdInfoKhr)
+            -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkImportFenceFdKHR)(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo);
+        unimplemented!();
+    }
 
-    // // *PFN_vkImportFenceWin32HandleKHR)(VkDevice device, const VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo);
-    // pub unsafe fn import_fence_win32_handle_khr(&self) {
-    //     self.proc_addr_loader().
-    // }
+    // *PFN_vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd);
+    pub unsafe fn get_fence_fd_khr(&self, get_fd_info: &FenceGetFdInfoKhr) -> VooResult<()> {
+        // self.proc_addr_loader().
+        //     vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd);
+        unimplemented!();
+    }
 
+    // *PFN_vkGetImageMemoryRequirements2KHR)(VkDevice device, const VkImageMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
+    pub unsafe fn get_image_memory_requirements_2_khr(&self,
+            info: &ImageMemoryRequirementsInfo2Khr) -> VooResult<()> {
+        unimplemented!();
+    }
 
-    // // *PFN_vkGetFenceWin32HandleKHR)(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
-    // pub unsafe fn get_fence_win32_handle_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkGetFenceWin32HandleKHR)(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
-    // }
+    // *PFN_vkGetBufferMemoryRequirements2KHR)(VkDevice device, const VkBufferMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
+    pub fn get_buffer_memory_requirements_2_khr(&self, info: &BufferMemoryRequirementsInfo2Khr)
+            -> VooResult<()> {
+        unimplemented!();
+    }
 
-
-    // // *PFN_vkImportFenceFdKHR)(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo);
-    // pub unsafe fn import_fence_fd_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkImportFenceFdKHR)(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo);
-    // }
-
-
-    // // *PFN_vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd);
-    // pub unsafe fn get_fence_fd_khr(&self) {
-    //     self.proc_addr_loader().
-    //         vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd);
-    // }
-
-
-    // // *PFN_vkGetImageMemoryRequirements2KHR)(VkDevice device, const VkImageMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
-    // pub unsafe fn get_image_memory_requirements_2_khr(&self) {
-    //     unimplemented!();
-    // }
-
-
-    // // *PFN_vkGetBufferMemoryRequirements2KHR)(VkDevice device, const VkBufferMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
-    // pub fn get_buffer_memory_requirements_2_khr(&self, info: BufferMemoryRequirementsInfo2Khr) {
-    //     unimplemented!();
-    // }
-
-
-    // // *PFN_vkGetImageSparseMemoryRequirements2KHR)(VkDevice device, const VkImageSparseMemoryRequirementsInfo2KHR* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2KHR* pSparseMemoryRequirements);
-    // pub unsafe fn get_image_sparse_memory_requirements_2_khr(&self) {
-    //     unimplemented!();
-    // }
-
+    // *PFN_vkGetImageSparseMemoryRequirements2KHR)(VkDevice device, const VkImageSparseMemoryRequirementsInfo2KHR* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2KHR* pSparseMemoryRequirements);
+    pub unsafe fn get_image_sparse_memory_requirements_2_khr(&self,
+            info: &ImageSparseMemoryRequirementsInfo2Khr) -> VooResult<()> {
+        unimplemented!();
+    }
 
     // *PFN_vkCreateSamplerYcbcrConversionKHR)(VkDevice device, const VkSamplerYcbcrConversionCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversionKHR* pYcbcrConversion);
     #[cfg(feature = "unimplemented")]
@@ -1467,30 +1505,27 @@ impl Device {
             sampler_ycbcr_conversion_khr.to_raw(), allocator);
     }
 
-
     // *PFN_vkBindBufferMemory2KHR)(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfoKHR* pBindInfos);
     pub unsafe fn bind_buffer_memory_2_khr(&self) {
         unimplemented!();
     }
-
 
     // *PFN_vkBindImageMemory2KHR)(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfoKHR* pBindInfos);
     pub unsafe fn bind_image_memory_2_khr(&self) {
         unimplemented!();
     }
 
-
     // *PFN_vkDebugMarkerSetObjectTagEXT)(VkDevice device, const VkDebugMarkerObjectTagInfoEXT* pTagInfo);
-    pub unsafe fn debug_marker_set_object_tag_ext(&self) {
+    pub unsafe fn debug_marker_set_object_tag_ext(&self, tag_info: &DebugMarkerObjectTagInfoExt)
+            -> VooResult<()> {
         unimplemented!();
     }
-
 
     // *PFN_vkDebugMarkerSetObjectNameEXT)(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo);
-    pub unsafe fn debug_marker_set_object_name_ext(&self) {
+    pub unsafe fn debug_marker_set_object_name_ext(&self, name_info: &DebugMarkerObjectNameInfoExt)
+            -> VooResult<()> {
         unimplemented!();
     }
-
 
     // *PFN_vkCmdDebugMarkerBeginEXT)(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
     pub unsafe fn cmd_debug_marker_begin_ext(&self, command_buffer: CommandBufferHandle,
@@ -1499,12 +1534,10 @@ impl Device {
             marker_info.as_raw());
     }
 
-
     // *PFN_vkCmdDebugMarkerEndEXT)(VkCommandBuffer commandBuffer);
     pub unsafe fn cmd_debug_marker_end_ext(&self, command_buffer: CommandBufferHandle) {
         self.proc_addr_loader().vkCmdDebugMarkerEndEXT(command_buffer.to_raw());
     }
-
 
     // *PFN_vkCmdDebugMarkerInsertEXT)(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
     pub unsafe fn cmd_debug_marker_insert_ext(&self, command_buffer: CommandBufferHandle,
@@ -1513,72 +1546,60 @@ impl Device {
             marker_info.as_raw());
     }
 
-
     // *PFN_vkCmdDrawIndirectCountAMD)(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride);
     pub unsafe fn cmd_draw_indirect_count_amd(&self) {
         unimplemented!();
     }
-
 
     // *PFN_vkCmdDrawIndexedIndirectCountAMD)(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride);
     pub unsafe fn cmd_draw_indexed_indirect_count_amd(&self) {
         unimplemented!();
     }
 
-
     // *PFN_vkGetMemoryWin32HandleNV)(VkDevice device, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE* pHandle);
     pub unsafe fn get_memory_win32_handle_nv(&self) {
         unimplemented!();
     }
-
 
     // *PFN_vkGetDeviceGroupPeerMemoryFeaturesKHX)(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlagsKHX* pPeerMemoryFeatures);
     pub unsafe fn get_device_group_peer_memory_features_khx(&self) {
         unimplemented!();
     }
 
-
     // *PFN_vkCmdSetDeviceMaskKHX)(VkCommandBuffer commandBuffer, uint32_t deviceMask);
     pub unsafe fn cmd_set_device_mask_khx(&self) {
         unimplemented!();
     }
-
 
     // *PFN_vkCmdDispatchBaseKHX)(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
     pub unsafe fn cmd_dispatch_base_khx(&self) {
         unimplemented!();
     }
 
-
     // *PFN_vkGetDeviceGroupPresentCapabilitiesKHX)(VkDevice device, VkDeviceGroupPresentCapabilitiesKHX* pDeviceGroupPresentCapabilities);
     pub unsafe fn get_device_group_present_capabilities_khx(&self) {
         unimplemented!();
     }
-
 
     // *PFN_vkGetDeviceGroupSurfacePresentModesKHX)(VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHX* pModes);
     pub unsafe fn get_device_group_surface_present_modes_khx(&self) {
         unimplemented!();
     }
 
-
     // *PFN_vkAcquireNextImage2KHX)(VkDevice device, const VkAcquireNextImageInfoKHX* pAcquireInfo, uint32_t* pImageIndex);
     pub unsafe fn acquire_next_image2_khx(&self) {
         unimplemented!();
     }
-
 
     // *PFN_vkCmdProcessCommandsNVX)(VkCommandBuffer commandBuffer, const VkCmdProcessCommandsInfoNVX* pProcessCommandsInfo);
     pub unsafe fn cmd_process_commands_nvx(&self) {
         unimplemented!();
     }
 
-
     // *PFN_vkCmdReserveSpaceForCommandsNVX)(VkCommandBuffer commandBuffer, const VkCmdReserveSpaceForCommandsInfoNVX* pReserveSpaceInfo);
     pub unsafe fn cmd_reserve_space_for_commands_nvx(&self) {
         unimplemented!();
     }
-
 
     // *PFN_vkCreateIndirectCommandsLayoutNVX)(VkDevice device, const VkIndirectCommandsLayoutCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutNVX* pIndirectCommandsLayout);
     #[cfg(feature = "unimplemented")]
@@ -1624,78 +1645,82 @@ impl Device {
             object_table_nvx.to_raw(), allocator);
     }
 
-
     // *PFN_vkRegisterObjectsNVX)(VkDevice device, VkObjectTableNVX objectTable, uint32_t objectCount, const VkObjectTableEntryNVX* const*    ppObjectTableEntries, const uint32_t* pObjectIndices);
     pub unsafe fn register_objects_nvx(&self) {
         unimplemented!();
     }
-
 
     // *PFN_vkUnregisterObjectsNVX)(VkDevice device, VkObjectTableNVX objectTable, uint32_t objectCount, const VkObjectEntryTypeNVX* pObjectEntryTypes, const uint32_t* pObjectIndices);
     pub unsafe fn unregister_objects_nvx(&self) {
         unimplemented!();
     }
 
-
     // *PFN_vkCmdSetViewportWScalingNV)(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportWScalingNV* pViewportWScalings);
     pub unsafe fn cmd_set_viewport_w_scaling_nv(&self) {
         unimplemented!();
     }
 
-
     // *PFN_vkDisplayPowerControlEXT)(VkDevice device, VkDisplayKHR display, const VkDisplayPowerInfoEXT* pDisplayPowerInfo);
-    pub unsafe fn display_power_control_ext(&self) {
+    pub unsafe fn display_power_control_ext<Dk>(&self, display: Dk,
+            display_power_info: &DisplayPowerInfoExt)
+            where Dk: Handle<Target=DisplayKhrHandle> {
         unimplemented!();
     }
-
 
     // *PFN_vkRegisterDeviceEventEXT)(VkDevice device, const VkDeviceEventInfoEXT* pDeviceEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
-    pub unsafe fn register_device_event_ext(&self) {
+    pub unsafe fn register_device_event_ext(&self, device_event_info: &DeviceEventInfoExt,
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<()> {
+        let allocator = allocator.unwrap_or(ptr::null());
         unimplemented!();
     }
-
 
     // *PFN_vkRegisterDisplayEventEXT)(VkDevice device, VkDisplayKHR display, const VkDisplayEventInfoEXT* pDisplayEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
-    pub unsafe fn register_display_event_ext(&self) {
+    pub unsafe fn register_display_event_ext<Dk>(&self, display: Dk,
+            display_event_info: &DisplayEventInfoExt,
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<()>
+            where Dk: Handle<Target=DisplayKhrHandle> {
+        let allocator = allocator.unwrap_or(ptr::null());
         unimplemented!();
     }
-
 
     // *PFN_vkGetSwapchainCounterEXT)(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue);
-    pub unsafe fn get_swapchain_counter_ext(&self) {
+    pub unsafe fn get_swapchain_counter_ext<Sk>(&self, swapchain: Sk,
+            counter: SurfaceCounterFlagsExt) -> VooResult<u64>
+            where Sk: Handle<Target=SwapchainKhrHandle> {
         unimplemented!();
     }
-
 
     // *PFN_vkGetRefreshCycleDurationGOOGLE)(VkDevice device, VkSwapchainKHR swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties);
     pub unsafe fn get_refresh_cycle_duration_google(&self) {
         unimplemented!();
     }
 
-
     // *PFN_vkGetPastPresentationTimingGOOGLE)(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pPresentationTimingCount, VkPastPresentationTimingGOOGLE* pPresentationTimings);
     pub unsafe fn get_past_presentation_timing_google(&self) {
         unimplemented!();
     }
 
-
     // *PFN_vkCmdSetDiscardRectangleEXT)(VkCommandBuffer commandBuffer, uint32_t firstDiscardRectangle, uint32_t discardRectangleCount, const VkRect2D* pDiscardRectangles);
-    pub unsafe fn cmd_set_discard_rectangle_ext(&self) {
+    pub unsafe fn cmd_set_discard_rectangle_ext<Cb>(&self, command_buffer: Cb,
+        first_discard_rectangle: u32, discard_rectangle_count: u32, discard_rectangles: &Rect2d)
+            -> VooResult<()>
+            where Cb: Handle<Target=CommandBufferHandle> {
         unimplemented!();
     }
-
 
     // *PFN_vkSetHdrMetadataEXT)(VkDevice device, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const VkHdrMetadataEXT* pMetadata);
-    pub unsafe fn set_hdr_metadata_ext(&self) {
+    pub unsafe fn set_hdr_metadata_ext(&self, swapchains: &[SwapchainKhrHandle],
+            metadata: &HdrMetadataExt) -> VooResult<()> {
         unimplemented!();
     }
-
 
     // *PFN_vkCmdSetSampleLocationsEXT)(VkCommandBuffer commandBuffer, const VkSampleLocationsInfoEXT* pSampleLocationsInfo);
-    pub unsafe fn cmd_set_sample_locations_ext(&self) {
+    #[cfg(feature = "unimplemented")]
+    pub unsafe fn cmd_set_sample_locations_ext<Cb>(&self, command_buffer: Cb,
+            sample_locations_info: &SampleLocationsInfoExt) -> VooResult<()>
+            where Cb: Handle<Target=CommandBufferHandle> {
         unimplemented!();
     }
-
 
     // *PFN_vkCreateValidationCacheEXT)(VkDevice device, const VkValidationCacheCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkValidationCacheEXT* pValidationCache);
     #[cfg(feature = "unimplemented")]
@@ -1720,19 +1745,19 @@ impl Device {
             validation_cache_ext.to_raw(), allocator);
     }
 
-
     // *PFN_vkMergeValidationCachesEXT)(VkDevice device, VkValidationCacheEXT dstCache, uint32_t srcCacheCount, const VkValidationCacheEXT* pSrcCaches);
-    pub unsafe fn merge_validation_caches_ext(&self) {
+    #[cfg(feature = "unimplemented")]
+    pub unsafe fn merge_validation_caches_ext(&self, dst_cache: ValidationCacheExt,
+            src_caches: &[ValidationCacheExt]) -> VooResult<()> {
         unimplemented!();
     }
-
 
     // *PFN_vkGetValidationCacheDataEXT)(VkDevice device, VkValidationCacheEXT validationCache, size_t* pDataSize, void* pData);
-    pub unsafe fn get_validation_cache_data_ext(&self) {
+    #[cfg(feature = "unimplemented")]
+    pub unsafe fn get_validation_cache_data_ext(&self, validation_cache: ValidationCacheEXT,
+            data_size: *mut usize, data: *mut c_void) -> VooResult<()> {
         unimplemented!();
     }
-
-
 }
 
 unsafe impl<'h> Handle for &'h Device {
