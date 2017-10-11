@@ -6,8 +6,8 @@ use libc::{c_void};
 // use num_traits::FromPrimitive;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo,
-    CharStrs, PhysicalDeviceFeatures, PRINT, Handle, SubmitInfo, QueueHandle, MemoryAllocateInfo,
+use ::{VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo, CharStrs,
+    PhysicalDeviceFeatures, PRINT, Handle, SubmitInfo, QueueHandle, MemoryAllocateInfo,
     DeviceMemoryHandle, MemoryMapFlags, SwapchainKhrHandle, SwapchainCreateInfoKhr,
     ShaderModuleCreateInfo, ShaderModuleHandle, SemaphoreCreateInfo, SemaphoreHandle,
     SamplerCreateInfo, SamplerHandle, RenderPassCreateInfo, RenderPassHandle, BufferCreateInfo,
@@ -17,23 +17,21 @@ use ::{VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo,
     DescriptorPoolHandle, CommandPoolCreateInfo, CommandPoolHandle, CommandBufferAllocateInfo,
     CommandBufferHandle, PipelineLayoutCreateInfo, PipelineLayoutHandle, FenceCreateInfo,
     FenceHandle, EventCreateInfo, EventHandle, PipelineCacheCreateInfo, PipelineCacheHandle,
-    MemoryRequirements, /*BufferMemoryRequirementsInfo2Khr,*/ DeviceSize, CommandBufferBeginInfo,
-    GraphicsPipelineCreateInfo, PipelineHandle, ComputePipelineCreateInfo, PipelineStageFlags,
-    DependencyFlags, MemoryBarrier, BufferMemoryBarrier, ImageMemoryBarrier, WriteDescriptorSet,
-    CopyDescriptorSet, BufferImageCopy, ImageLayout, BufferCopy, CommandBufferResetFlags,
-    PipelineBindPoint, Viewport, Rect2d, StencilFaceFlags, DebugMarkerMarkerInfoExt,
-    DescriptorSetHandle, QueryPoolHandle, QueryResultFlags, ShaderStageFlags, RenderPassBeginInfo,
-    SubpassContents, ImageCopy, IndexType, ImageBlit, Filter, ClearColorValue,
-    ImageSubresourceRange, ClearDepthStencilValue, ClearAttachment, ImageResolve,
-    QueryControlFlags, ClearRect, PresentInfoKhr, MappedMemoryRange,
-
-SparseImageMemoryRequirements,
-BindSparseInfo,
-CallResult,
-
+    MemoryRequirements, DeviceSize, CommandBufferBeginInfo, GraphicsPipelineCreateInfo,
+    PipelineHandle, ComputePipelineCreateInfo, PipelineStageFlags, DependencyFlags, MemoryBarrier,
+    BufferMemoryBarrier, ImageMemoryBarrier, WriteDescriptorSet, CopyDescriptorSet,
+    BufferImageCopy, ImageLayout, BufferCopy, CommandBufferResetFlags, PipelineBindPoint, Viewport,
+    Rect2d, StencilFaceFlags, DebugMarkerMarkerInfoExt, DescriptorSetHandle, QueryPoolHandle,
+    QueryResultFlags, ShaderStageFlags, RenderPassBeginInfo, SubpassContents, ImageCopy, IndexType,
+    ImageBlit, Filter, ClearColorValue, ImageSubresourceRange, ClearDepthStencilValue,
+    ClearAttachment, ImageResolve, QueryControlFlags, ClearRect, PresentInfoKhr, MappedMemoryRange,
+    SparseImageMemoryRequirements, BindSparseInfo, CallResult, QueryPoolCreateInfo,
+    ImageSubresource, SubresourceLayout, DescriptorSetAllocateInfo, DescriptorPoolResetFlags,
+    Extent2d, CommandPoolResetFlags,
 };
-#[cfg(feature = "experimental")]
-use ::{QueryPoolCreateInfo, };
+
+// #[cfg(feature = "experimental")]
+// use ::{QueryPoolCreateInfo, };
 
 #[cfg(feature = "unimplemented")]
 use ::{SamplerYcbcrConversionCreateInfoKhr, IndirectCommandsLayoutNvxCreateInfo,
@@ -420,8 +418,7 @@ impl Device {
     }
 
     // *PFN_vkCreateQueryPool)(VkDevice device, const VkQueryPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool);
-        #[cfg(feature = "experimental")]
-        pub unsafe fn create_query_pool(&self, create_info: &QueryPoolCreateInfo,
+    pub unsafe fn create_query_pool(&self, create_info: &QueryPoolCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<QueryPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
@@ -431,7 +428,6 @@ impl Device {
     }
 
     // *PFN_vkDestroyQueryPool)(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator);
-    #[cfg(feature = "experimental")]
     pub unsafe fn destroy_query_pool(&self, query_pool: QueryPoolHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -440,10 +436,15 @@ impl Device {
     }
 
     // *PFN_vkGetQueryPoolResults)(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags);
-    // pub unsafe fn get_query_pool_results(&self) {
-    //     self.proc_addr_loader().
-    // }
-
+    pub unsafe fn get_query_pool_results<Q>(&self, query_pool: Q, first_query: u32, query_count: u32,
+            data_size: usize, data: *mut c_void, stride: DeviceSize, flags: QueryResultFlags)
+            -> VooResult<()>
+            where Q: Handle<Target=QueryPoolHandle> {
+        self.proc_addr_loader().vkGetQueryPoolResults(self.handle().to_raw(),
+            query_pool.handle().to_raw(), first_query, query_count, data_size, data, stride,
+            flags.bits());
+        Ok(())
+    }
 
     // *PFN_vkCreateBuffer)(VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer);
     pub unsafe fn create_buffer(&self, create_info: &BufferCreateInfo,
@@ -499,10 +500,16 @@ impl Device {
             image.to_raw(), allocator);
     }
 
-    // // *PFN_vkGetImageSubresourceLayout)(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout);
-    // pub unsafe fn get_image_subresource_layout(&self) {
-    //     self.proc_addr_loader().
-    // }
+    // *PFN_vkGetImageSubresourceLayout)(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout);
+    pub unsafe fn get_image_subresource_layout<I>(&self, image: I, subresource: &ImageSubresource)
+            -> VooResult<SubresourceLayout>
+            where I: Handle<Target=ImageHandle> {
+        let mut layout = mem::uninitialized();
+        self.proc_addr_loader().vkGetImageSubresourceLayout(self.handle().to_raw(),
+            image.handle().to_raw(), subresource.as_raw(),
+            &mut layout as *mut _ as *mut vks::VkSubresourceLayout);
+        Ok(layout)
+    }
 
     // *PFN_vkCreateImageView)(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView);
     pub unsafe fn create_image_view(&self, create_info: &ImageViewCreateInfo,
@@ -558,19 +565,24 @@ impl Device {
             pipeline_cache.to_raw(), allocator);
     }
 
+    // *PFN_vkGetPipelineCacheData)(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData);
+    pub unsafe fn get_pipeline_cache_data<Pc>(&self, pipeline_cache: Pc, data_size: *mut usize,
+            data: *mut c_void) -> VooResult<()>
+            where Pc: Handle<Target=PipelineCacheHandle> {
+        ::check(self.proc_addr_loader().vkGetPipelineCacheData(self.handle().to_raw(),
+            pipeline_cache.handle().to_raw(), data_size, data));
+        Ok(())
+    }
 
-    // // *PFN_vkGetPipelineCacheData)(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData);
-    // pub unsafe fn get_pipeline_cache_data(&self) {
-    //     self.proc_addr_loader().
-    //         vkGetPipelineCacheData)(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData);
-    // }
-
-
-    // // *PFN_vkMergePipelineCaches)(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches);
-    // pub unsafe fn merge_pipeline_caches(&self) {
-    //     self.proc_addr_loader().
-    //         vkMergePipelineCaches)(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches);
-    // }
+    // *PFN_vkMergePipelineCaches)(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches);
+    pub unsafe fn merge_pipeline_caches<Pc>(&self, dst_cache: Pc, src_caches: &[PipelineCacheHandle])
+            -> VooResult<()>
+            where Pc: Handle<Target=PipelineCacheHandle> {
+        ::check(self.proc_addr_loader(). vkMergePipelineCaches(self.handle().to_raw(),
+            dst_cache.handle().to_raw(), src_caches.len() as u32,
+            src_caches.as_ptr() as *const vks::VkPipelineCache));
+        Ok(())
+    }
 
     // *PFN_vkCreateGraphicsPipelines)(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkGraphicsPipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines);
     pub unsafe fn create_graphics_pipelines(&self, pipeline_cache: Option<PipelineCacheHandle>,
@@ -688,27 +700,36 @@ impl Device {
             descriptor_pool.to_raw(), allocator);
     }
 
+    // *PFN_vkResetDescriptorPool)(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags);
+    pub unsafe fn reset_descriptor_pool<Dp>(&self, descriptor_pool: Dp,
+            flags: DescriptorPoolResetFlags)
+            where Dp: Handle<Target=DescriptorPoolHandle> {
+        ::check(self.proc_addr_loader().vkResetDescriptorPool(self.handle().to_raw(),
+            descriptor_pool.handle().to_raw(), flags.bits()));
+    }
 
-    // // *PFN_vkResetDescriptorPool)(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags);
-    // pub unsafe fn reset_descriptor_pool(&self) {
-    //     self.proc_addr_loader().
-    //         vkResetDescriptorPool)(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags);
-    // }
+    // *PFN_vkAllocateDescriptorSets)(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets);
+    pub unsafe fn allocate_descriptor_sets(&self, allocate_info: &DescriptorSetAllocateInfo)
+            -> VooResult<SmallVec<[DescriptorSetHandle; 8]>> {
+        let mut descriptor_sets = SmallVec::<[DescriptorSetHandle; 8]>::new();
+        let count = allocate_info.set_layouts().len();
+        descriptor_sets.reserve_exact(count);
+        descriptor_sets.set_len(count);
+        ::check(self.proc_addr_loader().vkAllocateDescriptorSets(
+            self.handle().to_raw(), allocate_info.as_raw(),
+            descriptor_sets.as_mut_ptr() as *mut vks::VkDescriptorSet));
+        Ok(descriptor_sets)
+    }
 
-
-    // // *PFN_vkAllocateDescriptorSets)(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets);
-    // pub unsafe fn allocate_descriptor_sets(&self) {
-    //     self.proc_addr_loader().
-    //         vkAllocateDescriptorSets)(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets);
-    // }
-
-
-    // // *PFN_vkFreeDescriptorSets)(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets);
-    // pub unsafe fn free_descriptor_sets(&self) {
-    //     self.proc_addr_loader().
-    //         vkFreeDescriptorSets)(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets);
-    // }
-
+    // *PFN_vkFreeDescriptorSets)(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets);
+    pub unsafe fn free_descriptor_sets<Dp>(&self, descriptor_pool: Dp,
+            descriptor_sets: &[DescriptorSetHandle]) -> VooResult<()>
+            where Dp: Handle<Target=DescriptorPoolHandle> {
+        ::check(self.proc_addr_loader().vkFreeDescriptorSets(self.handle().to_raw(),
+            descriptor_pool.handle().to_raw(), descriptor_sets.len() as u32,
+            descriptor_sets.as_ptr() as *const vks::VkDescriptorSet));
+        Ok(())
+    }
 
     // *PFN_vkUpdateDescriptorSets)(VkDevice device, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, const VkCopyDescriptorSet* pDescriptorCopies);
     /// Updates descriptor sets.
@@ -723,7 +744,6 @@ impl Device {
         }
     }
 
-
     // *PFN_vkCreateFramebuffer)(VkDevice device, const VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer);
     pub unsafe fn create_framebuffer(&self, create_info: &FramebufferCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<FramebufferHandle> {
@@ -734,7 +754,6 @@ impl Device {
         Ok(FramebufferHandle(handle))
     }
 
-
     // *PFN_vkDestroyFramebuffer)(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_framebuffer(&self, framebuffer: FramebufferHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
@@ -742,7 +761,6 @@ impl Device {
         self.proc_addr_loader().core.vkDestroyFramebuffer(self.handle().to_raw(),
             framebuffer.to_raw(), allocator);
     }
-
 
     // *PFN_vkCreateRenderPass)(VkDevice device, const VkRenderPassCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass);
     pub unsafe fn create_render_pass(&self, create_info: &RenderPassCreateInfo,
@@ -762,13 +780,15 @@ impl Device {
             render_pass.to_raw(), allocator);
     }
 
-
-    // // *PFN_vkGetRenderAreaGranularity)(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity);
-    // pub unsafe fn get_render_area_granularity(&self) {
-    //     self.proc_addr_loader().
-    //         vkGetRenderAreaGranularity)(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity);
-    // }
-
+    // *PFN_vkGetRenderAreaGranularity)(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity);
+    pub unsafe fn get_render_area_granularity<Rp>(&self, render_pass: Rp)
+            -> VooResult<Extent2d>
+            where Rp: Handle<Target=RenderPassHandle> {
+        let mut granularity = mem::uninitialized();
+        self.proc_addr_loader().vkGetRenderAreaGranularity(self.handle().to_raw(),
+            render_pass.handle().to_raw(), &mut granularity as *mut _ as *mut vks::VkExtent2D);
+        Ok(granularity)
+    }
 
     // *PFN_vkCreateCommandPool)(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool);
     pub unsafe fn create_command_pool(&self, create_info: &CommandPoolCreateInfo,
@@ -788,13 +808,14 @@ impl Device {
             command_pool.to_raw(), allocator);
     }
 
-
-    // // *PFN_vkResetCommandPool)(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags);
-    // pub unsafe fn reset_command_pool(&self) {
-    //     self.proc_addr_loader().
-    //         vkResetCommandPool)(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags);
-    // }
-
+    // *PFN_vkResetCommandPool)(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags);
+    pub unsafe fn reset_command_pool<Cp>(&self, command_pool: Cp, flags: CommandPoolResetFlags)
+            -> VooResult<()>
+            where Cp: Handle<Target=CommandPoolHandle> {
+        ::check(self.proc_addr_loader().vkResetCommandPool(self.handle().to_raw(),
+            command_pool.handle().to_raw(), flags.bits()));
+        Ok(())
+    }
 
     // *PFN_vkAllocateCommandBuffers)(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers);
     pub unsafe fn allocate_command_buffers(&self, allocate_info: &CommandBufferAllocateInfo)
@@ -809,9 +830,9 @@ impl Device {
     }
 
     // *PFN_vkFreeCommandBuffers)(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers);
-    pub unsafe fn free_command_buffers<C>(&self, command_pool: C, command_buffers: &[CommandBufferHandle])
+    pub unsafe fn free_command_buffers<Cp>(&self, command_pool: Cp, command_buffers: &[CommandBufferHandle])
             -> VooResult<()>
-            where C: Handle<Target=CommandPoolHandle> {
+            where Cp: Handle<Target=CommandPoolHandle> {
         self.proc_addr_loader().core.vkFreeCommandBuffers(self.handle().to_raw(),
             command_pool.handle().to_raw(), command_buffers.len() as u32,
             command_buffers.as_ptr() as *const vks::VkCommandBuffer);

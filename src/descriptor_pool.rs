@@ -4,7 +4,8 @@ use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
 use ::{VooResult, Device, DescriptorSetLayoutHandle, Handle,
-    WriteDescriptorSet, CopyDescriptorSet};
+    WriteDescriptorSet, CopyDescriptorSet, DescriptorSet,
+    DescriptorSetAllocateInfo, DescriptorSetHandle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -55,39 +56,23 @@ impl DescriptorPool {
     }
 
     /// Updates descriptor sets.
-    pub fn allocate_descriptor_sets(&self, layouts: &[DescriptorSetLayoutHandle])
-            -> SmallVec<[::DescriptorSet; 8]> {
-        // let layout_handles: SmallVec<[_; 8]> =
-        //     layouts.iter().map(|dsl| dsl.handle()).collect();
-
+    pub fn allocate_descriptor_sets<Ds>(&self, layouts: &[Ds])
+            -> VooResult<SmallVec<[DescriptorSet; 8]>>
+            where Ds: Handle<Target=DescriptorSetLayoutHandle> {
+        let layouts: SmallVec<[DescriptorSetLayoutHandle; 8]> = layouts.iter().map(|ds|
+            ds.handle()).collect();
         let len = layouts.len();
 
-        // let alloc_info = vks::VkDescriptorSetAllocateInfo {
-        //     sType: vks::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-        //     pNext: ptr::null(),
-        //     descriptorPool: self.inner.handle.0,
-        //     descriptorSetCount: layout_handles.len() as u32,
-        //     pSetLayouts: layout_handles.as_ptr(),
-        // };
-
-        let alloc_info = ::DescriptorSetAllocateInfo::builder()
+        let alloc_info = DescriptorSetAllocateInfo::builder()
             .descriptor_pool(self.handle())
-            .set_layouts(layouts)
+            .set_layouts(&layouts)
             .build();
 
+        let descriptor_set_handles: SmallVec<[DescriptorSetHandle; 8]> = unsafe {
+            self.inner.device.allocate_descriptor_sets(&alloc_info)?
+        };
 
-        let mut descriptor_sets = SmallVec::<[::DescriptorSet; 8]>::new();
-        descriptor_sets.reserve_exact(len);
-        unsafe {
-            descriptor_sets.set_len(len);
-            ::check(self.inner.device.proc_addr_loader().vkAllocateDescriptorSets(
-                self.inner.device.handle().0,
-                // &alloc_info,
-                alloc_info.as_raw(),
-                descriptor_sets.as_mut_ptr() as *mut vks::VkDescriptorSet));
-        }
-
-        descriptor_sets
+        Ok(descriptor_set_handles.iter().map(|&dsh| DescriptorSet(dsh)).collect())
     }
 
     pub fn update_descriptor_sets(&self, descriptor_writes: &[WriteDescriptorSet],

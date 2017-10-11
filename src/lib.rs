@@ -494,7 +494,7 @@ unsafe impl Handle for DescriptorUpdateTemplateKhrHandle {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
-pub struct DescriptorSet(DescriptorSetHandle);
+pub struct DescriptorSet(pub(crate) DescriptorSetHandle);
 
 impl DescriptorSet {
     pub fn handle(&self) -> DescriptorSetHandle {

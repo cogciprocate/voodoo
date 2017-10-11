@@ -438,7 +438,7 @@ fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
 fn create_descriptor_sets(device: &Device, layout: &DescriptorSetLayout,
         pool: &DescriptorPool, uniform_buffer: &Buffer, texture_image_view: &ImageView,
         texture_sampler: &Sampler) -> VooResult<SmallVec<[DescriptorSet; 8]>> {
-    let descriptor_sets = pool.allocate_descriptor_sets(&[layout.handle()][..]);
+    let descriptor_sets = pool.allocate_descriptor_sets(&[layout.handle()])?;
 
     let buffer_info = DescriptorBufferInfo::builder()
         .buffer(uniform_buffer)
@@ -471,7 +471,7 @@ fn create_descriptor_sets(device: &Device, layout: &DescriptorSetLayout,
             .build(),
     ];
 
-    pool.update_descriptor_sets(&descriptor_writes[..], &[]);
+    pool.update_descriptor_sets(&descriptor_writes, &[]);
 
     Ok(descriptor_sets)
 }
