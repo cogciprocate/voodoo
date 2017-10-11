@@ -25,21 +25,15 @@ use ::{PRINT, VooResult, Loader, ApplicationInfo, PhysicalDeviceHandle, Physical
     QueueFamilyProperties2Khr, PhysicalDeviceMemoryProperties2Khr, SparseImageFormatProperties2Khr,
     PhysicalDeviceImageFormatInfo2Khr, PhysicalDeviceSparseImageFormatInfo2Khr,
     SurfaceCapabilities2Khr, SurfaceFormat2Khr, PhysicalDeviceSurfaceInfo2Khr,
-ViSurfaceCreateInfoNn,
-IosSurfaceCreateInfoMvk,
-MacOsSurfaceCreateInfoMvk,
-ExternalImageFormatPropertiesNv,
-ExternalMemoryHandleTypeFlagsNv,
-SurfaceCapabilities2Ext,
-RROutput,
-
-};
+    ViSurfaceCreateInfoNn, IosSurfaceCreateInfoMvk, MacOsSurfaceCreateInfoMvk,
+    ExternalImageFormatPropertiesNv, ExternalMemoryHandleTypeFlagsNv, SurfaceCapabilities2Ext,
+    RROutput};
 
 #[cfg(feature = "experimental")]
-use ::{Rect2d,};
+use ::{Rect2d, };
 
 #[cfg(feature = "unimplemented")]
-use ::{MultisamplePropertiesExt,};
+use ::{MultisamplePropertiesExt, };
 
 
 unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,

@@ -41,6 +41,8 @@ mod descriptor_pool;
 mod structs;
 mod enums;
 mod bitflags;
+mod event;
+mod fence;
 
 pub mod vks {
     pub use vks_::*;
@@ -187,6 +189,8 @@ pub use device_memory::{DeviceMemoryHandle, DeviceMemory, DeviceMemoryBuilder};
 pub use descriptor_set_layout::{DescriptorSetLayoutHandle, DescriptorSetLayout,
     DescriptorSetLayoutBuilder};
 pub use descriptor_pool::{DescriptorPoolHandle, DescriptorPool, DescriptorPoolBuilder};
+pub use fence::{FenceHandle, Fence, FenceStatus};
+pub use event::{EventHandle, Event, EventStatus};
 pub use structs::*;
 pub use enums::*;
 pub use bitflags::*;
@@ -202,44 +206,6 @@ pub unsafe trait AnyPipelineHandle: Handle<Target=PipelineHandle> {}
 
 
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct FenceHandle(pub(crate) vks::VkFence);
-
-impl FenceHandle {
-    #[inline(always)]
-    pub fn to_raw(&self) -> vks::VkFence {
-        self.0
-    }
-}
-
-unsafe impl Handle for FenceHandle {
-    type Target = FenceHandle;
-
-    fn handle(&self) -> Self::Target {
-        *self
-    }
-}
-
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(C)]
-pub struct EventHandle(pub(crate) vks::VkEvent);
-
-impl EventHandle {
-    #[inline(always)]
-    pub fn to_raw(&self) -> vks::VkEvent {
-        self.0
-    }
-}
-
-unsafe impl Handle for EventHandle {
-    type Target = EventHandle;
-
-    fn handle(&self) -> Self::Target {
-        *self
-    }
-}
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -607,40 +573,7 @@ unsafe impl<'h> Handle for &'h QueryPool {
 }
 
 
-#[derive(Clone, Debug)]
-pub struct Fence(FenceHandle);
 
-impl Fence {
-    pub fn handle(&self) -> FenceHandle {
-        self.0
-    }
-}
-
-unsafe impl<'h> Handle for &'h Fence {
-    type Target = FenceHandle;
-
-    fn handle(&self) -> Self::Target {
-        self.0
-    }
-}
-
-
-#[derive(Clone, Debug)]
-pub struct Event(EventHandle);
-
-impl Event {
-    pub fn handle(&self) -> EventHandle {
-        self.0
-    }
-}
-
-unsafe impl<'h> Handle for &'h Event {
-    type Target = EventHandle;
-
-    fn handle(&self) -> Self::Target {
-        self.0
-    }
-}
 
 
 #[derive(Clone, Debug)]

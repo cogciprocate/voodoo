@@ -39,7 +39,7 @@ use voo::{voodoo_winit, vks, util, queue, Result as VooResult, Instance, Device,
     BufferUsageFlags, MemoryPropertyFlags, MemoryMapFlags, ImageType, Filter, SamplerMipmapMode,
     SamplerAddressMode, BorderColor, CommandBufferHandle, CommandBufferBeginInfo, ClearValue,
     ClearColorValue, RenderPassBeginInfo, SubpassContents, IndexType, SemaphoreCreateFlags,
-    ResultEnum, PresentInfoKhr};
+    CallResult, PresentInfoKhr};
 use voodoo_winit::winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
 
 #[cfg(debug_assertions)]
@@ -1428,7 +1428,7 @@ impl App {
                     Some(self.image_available_semaphore.handle()), None, 0) {
                 Ok(idx) => idx,
                 Err(res) => {
-                    if res == ResultEnum::ErrorOutOfDateKhr as i32 {
+                    if res == CallResult::ErrorOutOfDateKhr as i32 {
                         let dims = self.window.get_inner_size_pixels().unwrap();
                         self.recreate_swapchain(Extent2d::builder()
                             .height(dims.0).width(dims.1).build())?;

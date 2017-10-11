@@ -11,7 +11,7 @@ pub enum PipelineCacheHeaderVersion {
 
 #[repr(i32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
-pub enum ResultEnum {
+pub enum CallResult {
     Success = vks::VK_SUCCESS as i32,
     NotReady = vks::VK_NOT_READY as i32,
     Timeout = vks::VK_TIMEOUT as i32,
@@ -41,21 +41,27 @@ pub enum ResultEnum {
     ErrorInvalidExternalHandleKhr = vks::VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR as i32,
 }
 
-impl From<ResultEnum> for i32 {
-    fn from(f: ResultEnum) -> i32 {
+impl From<CallResult> for i32 {
+    fn from(f: CallResult) -> i32 {
         f as i32
     }
 }
 
-impl From<ResultEnum> for u32 {
-    fn from(f: ResultEnum) -> u32 {
+impl From<CallResult> for u32 {
+    fn from(f: CallResult) -> u32 {
         f as u32
     }
 }
 
-impl From<u32> for ResultEnum {
-    fn from(f: u32) -> ResultEnum {
-        ResultEnum::from_u32(f).unwrap()
+impl From<u32> for CallResult {
+    fn from(f: u32) -> CallResult {
+        CallResult::from_u32(f).unwrap()
+    }
+}
+
+impl From<i32> for CallResult {
+    fn from(f: i32) -> CallResult {
+        CallResult::from_i32(f).unwrap()
     }
 }
 
