@@ -16,7 +16,7 @@ use ::{VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo,
     DescriptorPoolHandle, CommandPoolCreateInfo, CommandPoolHandle, CommandBufferAllocateInfo,
     CommandBufferHandle, PipelineLayoutCreateInfo, PipelineLayoutHandle, FenceCreateInfo,
     FenceHandle, EventCreateInfo, EventHandle, PipelineCacheCreateInfo, PipelineCacheHandle,
-    MemoryRequirements, BufferMemoryRequirementsInfo2Khr, DeviceSize, CommandBufferBeginInfo,
+    MemoryRequirements, /*BufferMemoryRequirementsInfo2Khr,*/ DeviceSize, CommandBufferBeginInfo,
     GraphicsPipelineCreateInfo, PipelineHandle, ComputePipelineCreateInfo, PipelineStageFlags,
     DependencyFlags, MemoryBarrier, BufferMemoryBarrier, ImageMemoryBarrier, WriteDescriptorSet,
     CopyDescriptorSet, BufferImageCopy, ImageLayout, BufferCopy, CommandBufferResetFlags,
@@ -26,12 +26,13 @@ use ::{VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo,
     ImageSubresourceRange, ClearDepthStencilValue, ClearAttachment, ImageResolve,
     QueryControlFlags, ClearRect, PresentInfoKhr, };
 #[cfg(feature = "experimental")]
-use ::{QuerypoolCreateInfo, QuerypoolHandle, DescriptorUpdateTemplateKhrCreateInfo,
-    DescriptorUpdateTemplateKhrHandle, SamplerYcbcrConversionKhrCreateInfo,
-    SamplerYcbcrConversionKhrHandle, IndirectCommandsLayoutNvxCreateInfo,
-    IndirectCommandsLayoutNvxHandle, ObjectTableNvxCreateInfo, ObjectTableNvxHandle,
-    ValidationCacheExtCreateInfo, ValidationCacheExtHandle, };
+use ::{QueryPoolCreateInfo, };
 
+#[cfg(feature = "unimplemented")]
+use ::{SamplerYcbcrConversionCreateInfoKhr, IndirectCommandsLayoutNvxCreateInfo,
+    ObjectTableNvxCreateInfo, ValidationCacheExtCreateInfo, DescriptorUpdateTemplateCreateInfoKhr,
+    DescriptorUpdateTemplateKhrHandle, SamplerYcbcrConversionKhrHandle, IndirectCommandsLayoutNvxHandle,
+    ValidationCacheExtHandle, ObjectTableNvxHandle,};
 
 
 
@@ -179,13 +180,11 @@ impl Device {
         Ok(())
     }
 
-
     // *PFN_vkDeviceWaitIdle)(VkDevice device);
     pub fn device_wait_idle(&self) -> VooResult<()> {
         unsafe { ::check(self.proc_addr_loader().vkDeviceWaitIdle(self.handle().to_raw())); }
         Ok(())
     }
-
 
     // *PFN_vkAllocateMemory)(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
     pub unsafe fn allocate_memory(&self, allocate_info: &MemoryAllocateInfo,
@@ -219,22 +218,25 @@ impl Device {
         self.proc_addr_loader().core.vkUnmapMemory(self.handle().0, memory.to_raw());
     }
 
-    // *PFN_vkFlushMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
-    pub unsafe fn flush_mapped_memory_ranges(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkFlushMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
+    // pub unsafe fn flush_mapped_memory_ranges(&self) {
+    //     self.proc_addr_loader().
+    //         vkFlushMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
+    // }
 
 
-    // *PFN_vkInvalidateMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
-    pub unsafe fn invalidate_mapped_memory_ranges(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkInvalidateMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
+    // pub unsafe fn invalidate_mapped_memory_ranges(&self) {
+    //     self.proc_addr_loader().
+    //         vkInvalidateMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
+    // }
 
 
-    // *PFN_vkGetDeviceMemoryCommitment)(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes);
-    pub unsafe fn get_device_memory_commitment(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetDeviceMemoryCommitment)(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes);
+    // pub unsafe fn get_device_memory_commitment(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetDeviceMemoryCommitment)(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes);
+    // }
 
 
     // *PFN_vkBindBufferMemory)(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset);
@@ -275,16 +277,18 @@ impl Device {
     }
 
 
-    // *PFN_vkGetImageSparseMemoryRequirements)(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements);
-    pub unsafe fn get_image_sparse_memory_requirements(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetImageSparseMemoryRequirements)(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements);
+    // pub unsafe fn get_image_sparse_memory_requirements(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetImageSparseMemoryRequirements)(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements);
+    // }
 
 
-    // *PFN_vkQueueBindSparse)(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence);
-    pub unsafe fn queue_bind_sparse(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkQueueBindSparse)(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence);
+    // pub unsafe fn queue_bind_sparse(&self) {
+    //     self.proc_addr_loader().
+    //         vkQueueBindSparse)(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence);
+    // }
 
 
     // *PFN_vkCreateFence)(VkDevice device, const VkFenceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
@@ -305,22 +309,25 @@ impl Device {
             fence.to_raw(), allocator);
     }
 
-    // *PFN_vkResetFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences);
-    pub unsafe fn reset_fences(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkResetFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences);
+    // pub unsafe fn reset_fences(&self) {
+    //     self.proc_addr_loader().
+    //         vkResetFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences);
+    // }
 
 
-    // *PFN_vkGetFenceStatus)(VkDevice device, VkFence fence);
-    pub unsafe fn get_fence_status(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetFenceStatus)(VkDevice device, VkFence fence);
+    // pub unsafe fn get_fence_status(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetFenceStatus)(VkDevice device, VkFence fence);
+    // }
 
 
-    // *PFN_vkWaitForFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout);
-    pub unsafe fn wait_for_fences(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkWaitForFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout);
+    // pub unsafe fn wait_for_fences(&self) {
+    //     self.proc_addr_loader().
+    //         vkWaitForFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout);
+    // }
 
 
     // *PFN_vkCreateSemaphore)(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore);
@@ -360,49 +367,51 @@ impl Device {
             event.to_raw(), allocator);
     }
 
-
-    // *PFN_vkGetEventStatus)(VkDevice device, VkEvent event);
-    pub unsafe fn get_event_status(&self) {
-        unimplemented!();
-    }
-
-
-    // *PFN_vkSetEvent)(VkDevice device, VkEvent event);
-    pub unsafe fn set_event(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetEventStatus)(VkDevice device, VkEvent event);
+    // pub unsafe fn get_event_status(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetEventStatus)(VkDevice device, VkEvent event);
+    // }
 
 
-    // *PFN_vkResetEvent)(VkDevice device, VkEvent event);
-    pub unsafe fn reset_event(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkSetEvent)(VkDevice device, VkEvent event);
+    // pub unsafe fn set_event(&self) {
+    //     self.proc_addr_loader().
+    //         vkSetEvent)(VkDevice device, VkEvent event);
+    // }
+
+
+    // // *PFN_vkResetEvent)(VkDevice device, VkEvent event);
+    // pub unsafe fn reset_event(&self) {
+    //     self.proc_addr_loader().
+    //         vkResetEvent)(VkDevice device, VkEvent event);
+    // }
 
 
     // *PFN_vkCreateQueryPool)(VkDevice device, const VkQueryPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool);
         #[cfg(feature = "experimental")]
-        pub unsafe fn create_query_pool(&self, create_info: &QuerypoolCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<QuerypoolHandle> {
+        pub unsafe fn create_query_pool(&self, create_info: &QueryPoolCreateInfo,
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<QueryPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateQuerypool(self.handle().to_raw(),
+        ::check(self.proc_addr_loader().core.vkCreateQueryPool(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle));
-        Ok(QuerypoolHandle(handle))
+        Ok(QueryPoolHandle(handle))
     }
 
     // *PFN_vkDestroyQueryPool)(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator);
     #[cfg(feature = "experimental")]
-    pub unsafe fn destroy_query_pool(&self, query_pool: QuerypoolHandle,
+    pub unsafe fn destroy_query_pool(&self, query_pool: QueryPoolHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyQuerypool(self.handle().to_raw(),
+        self.proc_addr_loader().core.vkDestroyQueryPool(self.handle().to_raw(),
             query_pool.to_raw(), allocator);
     }
 
     // *PFN_vkGetQueryPoolResults)(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags);
-    pub unsafe fn get_query_pool_results(&self) {
-        unimplemented!();
-    }
+    // pub unsafe fn get_query_pool_results(&self) {
+    //     self.proc_addr_loader().
+    // }
 
 
     // *PFN_vkCreateBuffer)(VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer);
@@ -459,12 +468,10 @@ impl Device {
             image.to_raw(), allocator);
     }
 
-    // *PFN_vkGetImageSubresourceLayout)(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout);
-    pub unsafe fn get_image_subresource_layout(&self) {
-        unimplemented!();
-    }
-
-
+    // // *PFN_vkGetImageSubresourceLayout)(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout);
+    // pub unsafe fn get_image_subresource_layout(&self) {
+    //     self.proc_addr_loader().
+    // }
 
     // *PFN_vkCreateImageView)(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView);
     pub unsafe fn create_image_view(&self, create_info: &ImageViewCreateInfo,
@@ -521,17 +528,18 @@ impl Device {
     }
 
 
-    // *PFN_vkGetPipelineCacheData)(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData);
-    pub unsafe fn get_pipeline_cache_data(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetPipelineCacheData)(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData);
+    // pub unsafe fn get_pipeline_cache_data(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetPipelineCacheData)(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData);
+    // }
 
 
-    // *PFN_vkMergePipelineCaches)(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches);
-    pub unsafe fn merge_pipeline_caches(&self) {
-        unimplemented!();
-    }
-
+    // // *PFN_vkMergePipelineCaches)(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches);
+    // pub unsafe fn merge_pipeline_caches(&self) {
+    //     self.proc_addr_loader().
+    //         vkMergePipelineCaches)(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches);
+    // }
 
     // *PFN_vkCreateGraphicsPipelines)(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkGraphicsPipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines);
     pub unsafe fn create_graphics_pipelines(&self, pipeline_cache: Option<PipelineCacheHandle>,
@@ -650,38 +658,31 @@ impl Device {
     }
 
 
-    // *PFN_vkResetDescriptorPool)(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags);
-    pub unsafe fn reset_descriptor_pool(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkResetDescriptorPool)(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags);
+    // pub unsafe fn reset_descriptor_pool(&self) {
+    //     self.proc_addr_loader().
+    //         vkResetDescriptorPool)(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags);
+    // }
 
 
-    // *PFN_vkAllocateDescriptorSets)(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets);
-    pub unsafe fn allocate_descriptor_sets(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkAllocateDescriptorSets)(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets);
+    // pub unsafe fn allocate_descriptor_sets(&self) {
+    //     self.proc_addr_loader().
+    //         vkAllocateDescriptorSets)(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets);
+    // }
 
 
-    // *PFN_vkFreeDescriptorSets)(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets);
-    pub unsafe fn free_descriptor_sets(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkFreeDescriptorSets)(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets);
+    // pub unsafe fn free_descriptor_sets(&self) {
+    //     self.proc_addr_loader().
+    //         vkFreeDescriptorSets)(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets);
+    // }
 
 
     // *PFN_vkUpdateDescriptorSets)(VkDevice device, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, const VkCopyDescriptorSet* pDescriptorCopies);
     /// Updates descriptor sets.
     pub fn update_descriptor_sets(&self, descriptor_writes: &[WriteDescriptorSet],
             descriptor_copies: &[CopyDescriptorSet]) {
-        // let (descriptor_writes_len, descriptor_writes_ptr) = match descriptor_writes {
-        //     Some(ref dws) => (dws.len() as u32, dws.as_ptr()),
-        //     None => (0, ptr::null()),
-        // };
-
-        // let (descriptor_copies_len, descriptor_copies_ptr) = match descriptor_copies {
-        //     Some(ref dcs) => (dcs.len() as u32, dcs.as_ptr()),
-        //     None => (0, ptr::null()),
-        // };
-
         unsafe {
             self.proc_addr_loader().vkUpdateDescriptorSets(self.handle().0,
                 descriptor_writes.len() as u32,
@@ -731,10 +732,11 @@ impl Device {
     }
 
 
-    // *PFN_vkGetRenderAreaGranularity)(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity);
-    pub unsafe fn get_render_area_granularity(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetRenderAreaGranularity)(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity);
+    // pub unsafe fn get_render_area_granularity(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetRenderAreaGranularity)(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity);
+    // }
 
 
     // *PFN_vkCreateCommandPool)(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool);
@@ -756,10 +758,11 @@ impl Device {
     }
 
 
-    // *PFN_vkResetCommandPool)(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags);
-    pub unsafe fn reset_command_pool(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkResetCommandPool)(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags);
+    // pub unsafe fn reset_command_pool(&self) {
+    //     self.proc_addr_loader().
+    //         vkResetCommandPool)(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags);
+    // }
 
 
     // *PFN_vkAllocateCommandBuffers)(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers);
@@ -1222,74 +1225,85 @@ impl Device {
     }
 
 
-    // *PFN_vkCreateSharedSwapchainsKHR)(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains);
-    pub unsafe fn create_shared_swapchains_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkCreateSharedSwapchainsKHR)(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains);
+    // pub unsafe fn create_shared_swapchains_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkCreateSharedSwapchainsKHR)(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, allocator: Option<*const vks::VkAllocationCallbacks>, VkSwapchainKHR* pSwapchains);
+    // }
 
 
-    // *PFN_vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags);
-    pub unsafe fn trim_command_pool_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags);
+    // pub unsafe fn trim_command_pool_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags);
+    // }
 
 
-    // *PFN_vkGetMemoryWin32HandleKHR)(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
-    pub unsafe fn get_memory_win32_handle_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetMemoryWin32HandleKHR)(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    // pub unsafe fn get_memory_win32_handle_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetMemoryWin32HandleKHR)(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    // }
 
 
-    // *PFN_vkGetMemoryWin32HandlePropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
-    pub unsafe fn get_memory_win32_handle_properties_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetMemoryWin32HandlePropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
+    // pub unsafe fn get_memory_win32_handle_properties_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetMemoryWin32HandlePropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
+    // }
 
 
-    // *PFN_vkGetMemoryFdKHR)(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
-    pub unsafe fn get_memory_fd_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetMemoryFdKHR)(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
+    // pub unsafe fn get_memory_fd_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetMemoryFdKHR)(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
+    // }
 
 
-    // *PFN_vkGetMemoryFdPropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
-    pub unsafe fn get_memory_fd_properties_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetMemoryFdPropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
+    // pub unsafe fn get_memory_fd_properties_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetMemoryFdPropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
+    // }
 
 
-    // *PFN_vkImportSemaphoreWin32HandleKHR)(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo);
-    pub unsafe fn import_semaphore_win32_handle_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkImportSemaphoreWin32HandleKHR)(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo);
+    // pub unsafe fn import_semaphore_win32_handle_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkImportSemaphoreWin32HandleKHR)(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo);
+    // }
 
 
-    // *PFN_vkGetSemaphoreWin32HandleKHR)(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
-    pub unsafe fn get_semaphore_win32_handle_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetSemaphoreWin32HandleKHR)(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    // pub unsafe fn get_semaphore_win32_handle_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetSemaphoreWin32HandleKHR)(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    // }
 
 
-    // *PFN_vkImportSemaphoreFdKHR)(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
-    pub unsafe fn import_semaphore_fd_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkImportSemaphoreFdKHR)(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
+    // pub unsafe fn import_semaphore_fd_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkImportSemaphoreFdKHR)(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
+    // }
 
 
-    // *PFN_vkGetSemaphoreFdKHR)(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
-    pub unsafe fn get_semaphore_fd_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetSemaphoreFdKHR)(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
+    // pub unsafe fn get_semaphore_fd_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetSemaphoreFdKHR)(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
+    // }
 
 
-    // *PFN_vkCmdPushDescriptorSetKHR)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
-    pub unsafe fn cmd_push_descriptor_set_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkCmdPushDescriptorSetKHR)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
+    // pub unsafe fn cmd_push_descriptor_set_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkCmdPushDescriptorSetKHR)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
+    // }
 
 
     // *PFN_vkCreateDescriptorUpdateTemplateKHR)(VkDevice device, const VkDescriptorUpdateTemplateCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplateKHR* pDescriptorUpdateTemplate);
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     pub unsafe fn create_descriptor_update_template_khr(&self,
             create_info: &DescriptorUpdateTemplateKhrCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>)
@@ -1302,7 +1316,7 @@ impl Device {
     }
 
     // *PFN_vkDestroyDescriptorUpdateTemplateKHR)(VkDevice device, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator);
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     pub unsafe fn destroy_descriptor_update_template_khr(&self,
             descriptor_update_template_khr: DescriptorUpdateTemplateKhrHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
@@ -1311,75 +1325,75 @@ impl Device {
             descriptor_update_template_khr.to_raw(), allocator);
     }
 
-
-    // *PFN_vkUpdateDescriptorSetWithTemplateKHR)(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const void* pData);
-    pub unsafe fn update_descriptor_set_with_template_khr(&self) {
-        unimplemented!();
-    }
-
-
-    // *PFN_vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
-    pub unsafe fn cmd_push_descriptor_set_with_template_khr(&self) {
-        unimplemented!();
-    }
+//
+    // // *PFN_vkUpdateDescriptorSetWithTemplateKHR)(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const void* pData);
+    // pub unsafe fn update_descriptor_set_with_template_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkUpdateDescriptorSetWithTemplateKHR)(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const void* pData);
+    // }
 
 
-    // *PFN_vkGetSwapchainStatusKHR)(VkDevice device, VkSwapchainKHR swapchain);
-    pub unsafe fn get_swapchain_status_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
+    // pub unsafe fn cmd_push_descriptor_set_with_template_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
+    // }
 
 
-    // *PFN_vkImportFenceWin32HandleKHR)(VkDevice device, const VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo);
-    pub unsafe fn import_fence_win32_handle_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetSwapchainStatusKHR)(VkDevice device, VkSwapchainKHR swapchain);
+    // pub unsafe fn get_swapchain_status_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetSwapchainStatusKHR)(VkDevice device, VkSwapchainKHR swapchain);
+    // }
 
 
-    // *PFN_vkGetFenceWin32HandleKHR)(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
-    pub unsafe fn get_fence_win32_handle_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkImportFenceWin32HandleKHR)(VkDevice device, const VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo);
+    // pub unsafe fn import_fence_win32_handle_khr(&self) {
+    //     self.proc_addr_loader().
+    // }
 
 
-    // *PFN_vkImportFenceFdKHR)(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo);
-    pub unsafe fn import_fence_fd_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetFenceWin32HandleKHR)(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    // pub unsafe fn get_fence_win32_handle_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetFenceWin32HandleKHR)(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    // }
 
 
-    // *PFN_vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd);
-    pub unsafe fn get_fence_fd_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkImportFenceFdKHR)(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo);
+    // pub unsafe fn import_fence_fd_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkImportFenceFdKHR)(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo);
+    // }
 
 
-    // *PFN_vkGetImageMemoryRequirements2KHR)(VkDevice device, const VkImageMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
-    pub unsafe fn get_image_memory_requirements_2_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd);
+    // pub unsafe fn get_fence_fd_khr(&self) {
+    //     self.proc_addr_loader().
+    //         vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd);
+    // }
 
 
-    // *PFN_vkGetBufferMemoryRequirements2KHR)(VkDevice device, const VkBufferMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
-    pub fn get_buffer_memory_requirements_2_khr(&self, info: BufferMemoryRequirementsInfo2Khr) {
-        // // Memory Requirements:
-        // let mut memory_requirements: vks::VkMemoryRequirements;
-        // unsafe {
-        //     memory_requirements = mem::uninitialized();
-        //     self.proc_addr_loader().core.vkGetBufferMemoryRequirements(self.handle().to_raw(),
-        //         , &mut memory_requirements);
-        // }
-    }
+    // // *PFN_vkGetImageMemoryRequirements2KHR)(VkDevice device, const VkImageMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
+    // pub unsafe fn get_image_memory_requirements_2_khr(&self) {
+    //     unimplemented!();
+    // }
 
 
-    // *PFN_vkGetImageSparseMemoryRequirements2KHR)(VkDevice device, const VkImageSparseMemoryRequirementsInfo2KHR* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2KHR* pSparseMemoryRequirements);
-    pub unsafe fn get_image_sparse_memory_requirements_2_khr(&self) {
-        unimplemented!();
-    }
+    // // *PFN_vkGetBufferMemoryRequirements2KHR)(VkDevice device, const VkBufferMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
+    // pub fn get_buffer_memory_requirements_2_khr(&self, info: BufferMemoryRequirementsInfo2Khr) {
+    //     unimplemented!();
+    // }
+
+
+    // // *PFN_vkGetImageSparseMemoryRequirements2KHR)(VkDevice device, const VkImageSparseMemoryRequirementsInfo2KHR* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2KHR* pSparseMemoryRequirements);
+    // pub unsafe fn get_image_sparse_memory_requirements_2_khr(&self) {
+    //     unimplemented!();
+    // }
 
 
     // *PFN_vkCreateSamplerYcbcrConversionKHR)(VkDevice device, const VkSamplerYcbcrConversionCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversionKHR* pYcbcrConversion);
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     pub unsafe fn create_sampler_ycbcr_conversion_khr(&self,
             create_info: &SamplerYcbcrConversionKhrCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>)
@@ -1392,7 +1406,7 @@ impl Device {
     }
 
     // *PFN_vkDestroySamplerYcbcrConversionKHR)(VkDevice device, VkSamplerYcbcrConversionKHR ycbcrConversion, const VkAllocationCallbacks* pAllocator);
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     pub unsafe fn destroy_sampler_ycbcr_conversion_khr(&self,
             sampler_ycbcr_conversion_khr: SamplerYcbcrConversionKhrHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
@@ -1515,7 +1529,7 @@ impl Device {
 
 
     // *PFN_vkCreateIndirectCommandsLayoutNVX)(VkDevice device, const VkIndirectCommandsLayoutCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutNVX* pIndirectCommandsLayout);
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     pub unsafe fn create_indirect_commands_layout_nvx(&self,
             create_info: &IndirectCommandsLayoutNvxCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>)
@@ -1528,7 +1542,7 @@ impl Device {
     }
 
     // *PFN_vkDestroyIndirectCommandsLayoutNVX)(VkDevice device, VkIndirectCommandsLayoutNVX indirectCommandsLayout, const VkAllocationCallbacks* pAllocator);
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     pub unsafe fn destroy_indirect_commands_layout_nvx(&self,
             indirect_commands_layout_nvx: IndirectCommandsLayoutNvxHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
@@ -1538,7 +1552,7 @@ impl Device {
     }
 
     // *PFN_vkCreateObjectTableNVX)(VkDevice device, const VkObjectTableCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkObjectTableNVX* pObjectTable);
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     pub unsafe fn create_object_table_nvx(&self, create_info: &ObjectTableNvxCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>)
             -> VooResult<ObjectTableNvxHandle> {
@@ -1550,7 +1564,7 @@ impl Device {
     }
 
     // *PFN_vkDestroyObjectTableNVX)(VkDevice device, VkObjectTableNVX objectTable, const VkAllocationCallbacks* pAllocator);
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     pub unsafe fn destroy_object_table_nvx(&self, object_table_nvx: ObjectTableNvxHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -1632,7 +1646,7 @@ impl Device {
 
 
     // *PFN_vkCreateValidationCacheEXT)(VkDevice device, const VkValidationCacheCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkValidationCacheEXT* pValidationCache);
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     pub unsafe fn create_validation_cache_ext(&self,
             create_info: &ValidationCacheExtCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>)
@@ -1645,7 +1659,7 @@ impl Device {
     }
 
     // *PFN_vkDestroyValidationCacheEXT)(VkDevice device, VkValidationCacheEXT validationCache, const VkAllocationCallbacks* pAllocator);
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     pub unsafe fn destroy_validation_cache_ext(&self,
             validation_cache_ext: ValidationCacheExtHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {

@@ -87,7 +87,7 @@ impl PhysicalDevice {
 
     #[inline]
     pub fn extension_properties(&self) -> VooResult<SmallVec<[ExtensionProperties; 64]>> {
-        self.instance().enumerate_device_extension_properties(self)
+        self.instance().enumerate_device_extension_properties(self, None)
 
     }
 

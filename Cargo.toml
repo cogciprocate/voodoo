@@ -15,6 +15,10 @@ exclude = ["target/*", "*.png", "bak/*"]
 [features]
 # Experimental and unstable Vulkan stuff.
 experimental = ["vks/experimental"]
+# Partially implemented and unimplemented stuff.
+unimplemented = []
+
+# default = ["experimental"]
 
 [dependencies]
 winit = "*"

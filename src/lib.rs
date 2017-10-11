@@ -141,6 +141,16 @@ pub mod vks {
 
     #[cfg(feature = "experimental")]
     pub use vks_::experimental::*;
+    #[cfg(feature = "experimental")]
+    pub use vks_::experimental::khx_device_group::*;
+    #[cfg(feature = "experimental")]
+    pub use vks_::experimental::khx_device_group_creation::*;
+    #[cfg(feature = "experimental")]
+    pub use vks_::experimental::khx_multiview::*;
+    #[cfg(feature = "experimental")]
+    pub use vks_::experimental::nvx_device_generated_commands::*;
+    #[cfg(feature = "experimental")]
+    pub use vks_::experimental::nvx_multiview_per_view_attributes::*;
 }
 
 pub mod device;
@@ -492,6 +502,29 @@ unsafe impl Handle for ValidationCacheExtHandle {
 }
 
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(C)]
+#[cfg(feature = "experimental")]
+pub struct DescriptorUpdateTemplateKhrHandle(pub(crate) u64);
+
+#[cfg(feature = "experimental")]
+impl DescriptorUpdateTemplateKhrHandle {
+    #[inline(always)]
+    pub fn to_raw(&self) -> u64 {
+        self.0
+    }
+}
+
+#[cfg(feature = "experimental")]
+unsafe impl Handle for DescriptorUpdateTemplateKhrHandle {
+    type Target = DescriptorUpdateTemplateKhrHandle;
+
+    fn handle(&self) -> Self::Target {
+        *self
+    }
+}
+
+
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
@@ -646,6 +679,7 @@ unsafe impl<'h> Handle for &'h DisplayKhr {
 }
 
 
+
 // typedef union VkClearColorValue {
 //     float       float32[4];
 //     int32_t     int32[4];
@@ -663,6 +697,9 @@ pub type ClearColorValue = vks::VkClearColorValue;
 // pub type SwapchainKhr = vks::VkSwapchainKHR;
 pub type DeviceSize = vks::VkDeviceSize;
 pub type Display = vks::Display;
+pub type Window = vks::Window;
+pub type VisualID = vks::VisualID;
+pub type RROutput = vks::RROutput;
 pub type MirConnection = vks::MirConnection;
 pub type MirSurface = vks::MirSurface;
 pub type ANativeWindow = vks::ANativeWindow;
@@ -678,6 +715,8 @@ pub type HWND = vks::HWND;
 pub type xcb_connection_t = vks::xcb_connection_t;
 #[allow(non_camel_case_types)]
 pub type xcb_window_t = vks::xcb_window_t;
+#[allow(non_camel_case_types)]
+pub type xcb_visualid_t = vks::xcb_visualid_t;
 #[allow(non_camel_case_types)]
 pub type HANDLE = vks::HANDLE;
 #[allow(non_camel_case_types)]

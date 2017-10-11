@@ -780,6 +780,9 @@ fn parse_structs() -> (HashMap<String, Struct>, Vec<String>) {
 }
 
 /// Returns true if a struct with a certain name is to be ignored.
+///
+/// This is basically a list of structs that contain unimplemented or
+/// partially implemented types.
 fn struct_is_excluded(orig_name: &str) -> bool {
     match orig_name {
         "VkRect3D" => true,
@@ -807,6 +810,20 @@ fn struct_is_excluded(orig_name: &str) -> bool {
         "VkImageFormatListCreateInfoKHR" => true,
         "VkValidationCacheCreateInfoEXT" => true,
         "VkShaderModuleValidationCacheCreateInfoEXT" => true,
+        "VkBindBufferMemoryDeviceGroupInfoKHX" => true,
+        "VkBindImageMemoryDeviceGroupInfoKHX" => true,
+        "VkDeviceGroupRenderPassBeginInfoKHX" => true,
+        "VkDeviceGroupCommandBufferBeginInfoKHX" => true,
+        "VkIndirectCommandsTokenNVX" => true,
+        "VkIndirectCommandsLayoutTokenNVX" => true,
+        "VkObjectTableCreateInfoNVX" => true,
+        "VkIndirectCommandsLayoutCreateInfoNVX" => true,
+        "VkCmdProcessCommandsInfoNVX" => true,
+        "VkObjectTableEntryNVX" => true,
+        "VkObjectTablePipelineEntryNVX" => true,
+        "VkRenderPassMultiviewCreateInfoKHX" => true,
+        "VkPhysicalDeviceGroupPropertiesKHX" => true,
+        "VkDeviceGroupPresentInfoKHX" => true,
         _ => false,
     }
 }

@@ -1523,9 +1523,9 @@ pub enum ColorSpaceKhr {
     AdobergbNonlinearExt = vks::VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT as i32,
     PassThroughExt = vks::VK_COLOR_SPACE_PASS_THROUGH_EXT as i32,
     ExtendedSrgbNonlinearExt = vks::VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeKhr = vks::VK_COLOR_SPACE_RANGE_SIZE_KHR as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumKhr = vks::VK_COLOR_SPACE_MAX_ENUM_KHR as i32,
 }
 
@@ -1557,9 +1557,9 @@ pub enum PresentModeKhr {
     FifoRelaxedKhr = vks::VK_PRESENT_MODE_FIFO_RELAXED_KHR as i32,
     SharedDemandRefreshKhr = vks::VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR as i32,
     SharedContinuousRefreshKhr = vks::VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeKhr = vks::VK_PRESENT_MODE_RANGE_SIZE_KHR as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumKhr = vks::VK_PRESENT_MODE_MAX_ENUM_KHR as i32,
 }
 
@@ -1587,9 +1587,9 @@ impl From<u32> for PresentModeKhr {
 pub enum DescriptorUpdateTemplateTypeKhr {
     DescriptorSetKhr = vks::VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET_KHR as i32,
     PushDescriptorsKhr = vks::VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeKhr = vks::VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_RANGE_SIZE_KHR as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumKhr = vks::VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_MAX_ENUM_KHR as i32,
 }
 
@@ -1613,7 +1613,7 @@ impl From<u32> for DescriptorUpdateTemplateTypeKhr {
 
 pub type DescriptorUpdateTemplateCreateFlagsKHR = i32;
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum PointClippingBehaviorKhr {
@@ -1623,21 +1623,21 @@ pub enum PointClippingBehaviorKhr {
     MaxEnumKhr = vks::VK_POINT_CLIPPING_BEHAVIOR_MAX_ENUM_KHR as i32,
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<PointClippingBehaviorKhr> for i32 {
     fn from(f: PointClippingBehaviorKhr) -> i32 {
         f as i32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<PointClippingBehaviorKhr> for u32 {
     fn from(f: PointClippingBehaviorKhr) -> u32 {
         f as u32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<u32> for PointClippingBehaviorKhr {
     fn from(f: u32) -> PointClippingBehaviorKhr {
         PointClippingBehaviorKhr::from_u32(f).unwrap()
@@ -1645,7 +1645,7 @@ impl From<u32> for PointClippingBehaviorKhr {
 }
 
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum TessellationDomainOriginKhr {
@@ -1655,21 +1655,21 @@ pub enum TessellationDomainOriginKhr {
     MaxEnumKhr = vks::VK_TESSELLATION_DOMAIN_ORIGIN_MAX_ENUM_KHR as i32,
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<TessellationDomainOriginKhr> for i32 {
     fn from(f: TessellationDomainOriginKhr) -> i32 {
         f as i32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<TessellationDomainOriginKhr> for u32 {
     fn from(f: TessellationDomainOriginKhr) -> u32 {
         f as u32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<u32> for TessellationDomainOriginKhr {
     fn from(f: u32) -> TessellationDomainOriginKhr {
         TessellationDomainOriginKhr::from_u32(f).unwrap()
@@ -1677,7 +1677,7 @@ impl From<u32> for TessellationDomainOriginKhr {
 }
 
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum SamplerYcbcrModelConversionKhr {
@@ -1690,21 +1690,21 @@ pub enum SamplerYcbcrModelConversionKhr {
     MaxEnumKhr = vks::VK_SAMPLER_YCBCR_MODEL_CONVERSION_MAX_ENUM_KHR as i32,
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<SamplerYcbcrModelConversionKhr> for i32 {
     fn from(f: SamplerYcbcrModelConversionKhr) -> i32 {
         f as i32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<SamplerYcbcrModelConversionKhr> for u32 {
     fn from(f: SamplerYcbcrModelConversionKhr) -> u32 {
         f as u32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<u32> for SamplerYcbcrModelConversionKhr {
     fn from(f: u32) -> SamplerYcbcrModelConversionKhr {
         SamplerYcbcrModelConversionKhr::from_u32(f).unwrap()
@@ -1712,7 +1712,7 @@ impl From<u32> for SamplerYcbcrModelConversionKhr {
 }
 
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum SamplerYcbcrRangeKhr {
@@ -1722,21 +1722,21 @@ pub enum SamplerYcbcrRangeKhr {
     MaxEnumKhr = vks::VK_SAMPLER_YCBCR_RANGE_MAX_ENUM_KHR as i32,
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<SamplerYcbcrRangeKhr> for i32 {
     fn from(f: SamplerYcbcrRangeKhr) -> i32 {
         f as i32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<SamplerYcbcrRangeKhr> for u32 {
     fn from(f: SamplerYcbcrRangeKhr) -> u32 {
         f as u32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<u32> for SamplerYcbcrRangeKhr {
     fn from(f: u32) -> SamplerYcbcrRangeKhr {
         SamplerYcbcrRangeKhr::from_u32(f).unwrap()
@@ -1744,7 +1744,7 @@ impl From<u32> for SamplerYcbcrRangeKhr {
 }
 
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum ChromaLocationKhr {
@@ -1754,21 +1754,21 @@ pub enum ChromaLocationKhr {
     MaxEnumKhr = vks::VK_CHROMA_LOCATION_MAX_ENUM_KHR as i32,
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<ChromaLocationKhr> for i32 {
     fn from(f: ChromaLocationKhr) -> i32 {
         f as i32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<ChromaLocationKhr> for u32 {
     fn from(f: ChromaLocationKhr) -> u32 {
         f as u32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<u32> for ChromaLocationKhr {
     fn from(f: u32) -> ChromaLocationKhr {
         ChromaLocationKhr::from_u32(f).unwrap()
@@ -1814,14 +1814,14 @@ pub enum DebugReportObjectTypeExt {
     ObjectTableNvxExt = vks::VK_DEBUG_REPORT_OBJECT_TYPE_OBJECT_TABLE_NVX_EXT as i32,
     #[cfg(feature = "experimental")]
     IndirectCommandsLayoutNvxExt = vks::VK_DEBUG_REPORT_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     ValidationCacheExt = vks::VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT as i32,
     DescriptorUpdateTemplateKhrExt = vks::VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     SamplerYcbcrConversionKhrExt = vks::VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeExt = vks::VK_DEBUG_REPORT_OBJECT_TYPE_RANGE_SIZE_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumExt = vks::VK_DEBUG_REPORT_OBJECT_TYPE_MAX_ENUM_EXT as i32,
 }
 
@@ -1850,9 +1850,9 @@ impl From<u32> for DebugReportObjectTypeExt {
 pub enum RasterizationOrderAmd {
     StrictAmd = vks::VK_RASTERIZATION_ORDER_STRICT_AMD as i32,
     RelaxedAmd = vks::VK_RASTERIZATION_ORDER_RELAXED_AMD as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeAmd = vks::VK_RASTERIZATION_ORDER_RANGE_SIZE_AMD as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumAmd = vks::VK_RASTERIZATION_ORDER_MAX_ENUM_AMD as i32,
 }
 
@@ -1880,9 +1880,9 @@ impl From<u32> for RasterizationOrderAmd {
 pub enum ValidationCheckExt {
     AllExt = vks::VK_VALIDATION_CHECK_ALL_EXT as i32,
     ShadersExt = vks::VK_VALIDATION_CHECK_SHADERS_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeExt = vks::VK_VALIDATION_CHECK_RANGE_SIZE_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumExt = vks::VK_VALIDATION_CHECK_MAX_ENUM_EXT as i32,
 }
 
@@ -1905,7 +1905,7 @@ impl From<u32> for ValidationCheckExt {
 }
 
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum IndirectCommandsTokenTypeNvx {
@@ -1921,21 +1921,21 @@ pub enum IndirectCommandsTokenTypeNvx {
     MaxEnumNvx = vks::VK_INDIRECT_COMMANDS_TOKEN_TYPE_MAX_ENUM_NVX as i32,
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<IndirectCommandsTokenTypeNvx> for i32 {
     fn from(f: IndirectCommandsTokenTypeNvx) -> i32 {
         f as i32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<IndirectCommandsTokenTypeNvx> for u32 {
     fn from(f: IndirectCommandsTokenTypeNvx) -> u32 {
         f as u32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<u32> for IndirectCommandsTokenTypeNvx {
     fn from(f: u32) -> IndirectCommandsTokenTypeNvx {
         IndirectCommandsTokenTypeNvx::from_u32(f).unwrap()
@@ -1952,7 +1952,9 @@ pub enum ObjectEntryTypeNvx {
     IndexBufferNvx = vks::VK_OBJECT_ENTRY_TYPE_INDEX_BUFFER_NVX as i32,
     VertexBufferNvx = vks::VK_OBJECT_ENTRY_TYPE_VERTEX_BUFFER_NVX as i32,
     PushConstantNvx = vks::VK_OBJECT_ENTRY_TYPE_PUSH_CONSTANT_NVX as i32,
+    #[cfg(feature = "unimplemented")]
     RangeSizeNvx = vks::VK_OBJECT_ENTRY_TYPE_RANGE_SIZE_NVX as i32,
+    #[cfg(feature = "unimplemented")]
     MaxEnumNvx = vks::VK_OBJECT_ENTRY_TYPE_MAX_ENUM_NVX as i32,
 }
 
@@ -1984,9 +1986,9 @@ pub enum DisplayPowerStateExt {
     OffExt = vks::VK_DISPLAY_POWER_STATE_OFF_EXT as i32,
     SuspendExt = vks::VK_DISPLAY_POWER_STATE_SUSPEND_EXT as i32,
     OnExt = vks::VK_DISPLAY_POWER_STATE_ON_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeExt = vks::VK_DISPLAY_POWER_STATE_RANGE_SIZE_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumExt = vks::VK_DISPLAY_POWER_STATE_MAX_ENUM_EXT as i32,
 }
 
@@ -2013,9 +2015,9 @@ impl From<u32> for DisplayPowerStateExt {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum DeviceEventTypeExt {
     DisplayHotplugExt = vks::VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeExt = vks::VK_DEVICE_EVENT_TYPE_RANGE_SIZE_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumExt = vks::VK_DEVICE_EVENT_TYPE_MAX_ENUM_EXT as i32,
 }
 
@@ -2042,9 +2044,9 @@ impl From<u32> for DeviceEventTypeExt {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum DisplayEventTypeExt {
     FirstPixelOutExt = vks::VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeExt = vks::VK_DISPLAY_EVENT_TYPE_RANGE_SIZE_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumExt = vks::VK_DISPLAY_EVENT_TYPE_MAX_ENUM_EXT as i32,
 }
 
@@ -2078,9 +2080,9 @@ pub enum ViewportCoordinateSwizzleNv {
     NegativeZNv = vks::VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_Z_NV as i32,
     PositiveWNv = vks::VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_W_NV as i32,
     NegativeWNv = vks::VK_VIEWPORT_COORDINATE_SWIZZLE_NEGATIVE_W_NV as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeNv = vks::VK_VIEWPORT_COORDINATE_SWIZZLE_RANGE_SIZE_NV as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumNv = vks::VK_VIEWPORT_COORDINATE_SWIZZLE_MAX_ENUM_NV as i32,
 }
 
@@ -2108,9 +2110,9 @@ impl From<u32> for ViewportCoordinateSwizzleNv {
 pub enum DiscardRectangleModeExt {
     InclusiveExt = vks::VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT as i32,
     ExclusiveExt = vks::VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeExt = vks::VK_DISCARD_RECTANGLE_MODE_RANGE_SIZE_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumExt = vks::VK_DISCARD_RECTANGLE_MODE_MAX_ENUM_EXT as i32,
 }
 
@@ -2139,9 +2141,9 @@ pub enum SamplerReductionModeExt {
     WeightedAverageExt = vks::VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT as i32,
     MinExt = vks::VK_SAMPLER_REDUCTION_MODE_MIN_EXT as i32,
     MaxExt = vks::VK_SAMPLER_REDUCTION_MODE_MAX_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeExt = vks::VK_SAMPLER_REDUCTION_MODE_RANGE_SIZE_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumExt = vks::VK_SAMPLER_REDUCTION_MODE_MAX_ENUM_EXT as i32,
 }
 
@@ -2170,9 +2172,9 @@ pub enum BlendOverlapExt {
     UncorrelatedExt = vks::VK_BLEND_OVERLAP_UNCORRELATED_EXT as i32,
     DisjointExt = vks::VK_BLEND_OVERLAP_DISJOINT_EXT as i32,
     ConjointExt = vks::VK_BLEND_OVERLAP_CONJOINT_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeExt = vks::VK_BLEND_OVERLAP_RANGE_SIZE_EXT as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumExt = vks::VK_BLEND_OVERLAP_MAX_ENUM_EXT as i32,
 }
 
@@ -2202,9 +2204,9 @@ pub enum CoverageModulationModeNv {
     RgbNv = vks::VK_COVERAGE_MODULATION_MODE_RGB_NV as i32,
     AlphaNv = vks::VK_COVERAGE_MODULATION_MODE_ALPHA_NV as i32,
     RgbaNv = vks::VK_COVERAGE_MODULATION_MODE_RGBA_NV as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     RangeSizeNv = vks::VK_COVERAGE_MODULATION_MODE_RANGE_SIZE_NV as i32,
-    #[cfg(feature = "experimental")]
+    #[cfg(feature = "unimplemented")]
     MaxEnumNv = vks::VK_COVERAGE_MODULATION_MODE_MAX_ENUM_NV as i32,
 }
 
@@ -2227,7 +2229,7 @@ impl From<u32> for CoverageModulationModeNv {
 }
 
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 #[repr(i32)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Primitive, Hash)]
 pub enum ValidationCacheHeaderVersionExt {
@@ -2235,21 +2237,21 @@ pub enum ValidationCacheHeaderVersionExt {
     MaxEnumExt = vks::VK_VALIDATION_CACHE_HEADER_VERSION_MAX_ENUM_EXT as i32,
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<ValidationCacheHeaderVersionExt> for i32 {
     fn from(f: ValidationCacheHeaderVersionExt) -> i32 {
         f as i32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<ValidationCacheHeaderVersionExt> for u32 {
     fn from(f: ValidationCacheHeaderVersionExt) -> u32 {
         f as u32
     }
 }
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "unimplemented")]
 impl From<u32> for ValidationCacheHeaderVersionExt {
     fn from(f: u32) -> ValidationCacheHeaderVersionExt {
         ValidationCacheHeaderVersionExt::from_u32(f).unwrap()
