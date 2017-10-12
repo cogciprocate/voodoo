@@ -154,7 +154,7 @@ fn to_voodoo_type(orig_type: &str) -> String {
         // "VkDisplayKHR" => "Display".to_string(),
         // "VkDisplayModeKHR" => "DisplayMode".to_string(),
         "VkDescriptorUpdateTemplateKHR" => "DescriptorUpdateTemplate".to_string(),
-        "Window" => "u64".to_string(),
+        // "Window" => "u64".to_string(),
         other @ _ => {
             if other.len() > 2 && other.split_at(2).0 == "Vk" {
                 let mut out_str = replace_suffix(other.split_at(2).1);

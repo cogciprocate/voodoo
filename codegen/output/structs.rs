@@ -20069,7 +20069,7 @@ impl<'s> XlibSurfaceCreateInfoKhr<'s> {
     }
 
     pub unsafe fn set_window<'m>(&mut self, window: u64) {
-        self.raw.window = window.into();
+        self.raw.window = window;
     }
 
     pub fn as_raw(&self) -> &vks::VkXlibSurfaceCreateInfoKHR {
