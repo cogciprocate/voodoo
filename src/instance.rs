@@ -116,7 +116,6 @@ impl Instance {
             self.proc_addr_loader().core.vkGetPhysicalDeviceFeatures(physical_device.handle().to_raw(),
                 &mut features);
             PhysicalDeviceFeatures::from_raw(features)
-            // error::check(result, "vkGetPhysicalDeviceFeatures", PhysicalDeviceFeatures::from_raw(features))
         }
     }
 
@@ -129,7 +128,6 @@ impl Instance {
             self.proc_addr_loader().vkGetPhysicalDeviceFormatProperties(physical_device.handle().to_raw(),
                 format.into(), &mut props as *mut _ as *mut vks::VkFormatProperties);
             props
-            // error::check(result, "vkGetPhysicalDeviceFormatProperties", props)
         }
     }
 
@@ -143,7 +141,6 @@ impl Instance {
             let result = self.proc_addr_loader().vkGetPhysicalDeviceImageFormatProperties(
                 physical_device.handle().to_raw(), format.into(), type_.into(),
                 tiling.into(), usage.bits(), flags.bits(), &mut image_format_properties);
-            // Ok(ImageFormatProperties::from_raw(image_format_properties))
             error::check(result, "vkGetPhysicalDeviceImageFormatProperties", ImageFormatProperties::from_raw(image_format_properties))
         }
     }
@@ -157,7 +154,6 @@ impl Instance {
             self.proc_addr_loader().vkGetPhysicalDeviceProperties(physical_device.handle().to_raw(),
                 &mut device_properties);
             PhysicalDeviceProperties::from_raw(device_properties)
-            // error::check(result, "vkGetPhysicalDeviceProperties", PhysicalDeviceProperties::from_raw(device_properties))
         }
     }
 
@@ -170,7 +166,6 @@ impl Instance {
         unsafe {
             self.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(
                 physical_device.handle().to_raw(), &mut queue_family_count, ptr::null_mut());
-            // assert!(queue_family_count as usize <= queue_families.inline_size());
             queue_families.reserve_exact(queue_family_count as usize);
             queue_families.set_len(queue_family_count as usize);
             self.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(
@@ -192,7 +187,6 @@ impl Instance {
             self.proc_addr_loader().core.vkGetPhysicalDeviceMemoryProperties(
                 physical_device.handle().to_raw(), &mut mem_props);
             PhysicalDeviceMemoryProperties::from_raw(mem_props)
-            // error::check(result, "vkGetPhysicalDeviceMemoryProperties", PhysicalDeviceMemoryProperties::from_raw(mem_props))
         }
     }
 
@@ -298,7 +292,6 @@ impl Instance {
         let mut supported: vks::VkBool32 = vks::VK_FALSE;
         let result = self.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceSupportKHR(
             physical_device.handle().to_raw(), queue_family_index, surface.handle().to_raw(), &mut supported);
-        // Ok(supported == vks::VK_TRUE)
         error::check(result, "vkGetPhysicalDeviceSurfaceSupportKHR", supported == vks::VK_TRUE)
     }
 
@@ -309,7 +302,6 @@ impl Instance {
         let mut capabilities = mem::uninitialized();
         let result = self.proc_addr_loader().khr_surface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
             physical_device.handle().to_raw(), surface.handle().to_raw(), &mut capabilities);
-        // Ok(SurfaceCapabilitiesKhr::from_raw(capabilities))
         error::check(result, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR",
             SurfaceCapabilitiesKhr::from_raw(capabilities))
     }
@@ -380,7 +372,6 @@ impl Instance {
                 return error::check(result, "vkGetPhysicalDeviceDisplayPropertiesKHR", properties);
             }
         }
-        // Ok(properties)
     }
 
     // *PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR)(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlanePropertiesKHR* pProperties);
@@ -402,7 +393,6 @@ impl Instance {
                 return error::check(result, "vkGetPhysicalDeviceDisplayPlanePropertiesKHR", properties);
             }
         }
-        // Ok(properties)
     }
 
     // *PFN_vkGetDisplayPlaneSupportedDisplaysKHR)(VkPhysicalDevice physicalDevice, uint32_t planeIndex, uint32_t* pDisplayCount, VkDisplayKHR* pDisplays);
@@ -424,7 +414,6 @@ impl Instance {
                 return error::check(result, "vkGetDisplayPlaneSupportedDisplaysKHR", displays);
             }
         }
-        // Ok(displays)
     }
 
     // *PFN_vkGetDisplayModePropertiesKHR)(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModePropertiesKHR* pProperties);
@@ -446,7 +435,6 @@ impl Instance {
                 return error::check(result, "vkGetDisplayModePropertiesKHR", properties);
             }
         }
-        // Ok(properties)
     }
 
     // *PFN_vkCreateDisplayModeKHR)(VkPhysicalDevice physicalDevice, VkDisplayKHR display, const VkDisplayModeCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDisplayModeKHR* pMode);
@@ -458,7 +446,6 @@ impl Instance {
         let mut mode = 0;
         let result = self.proc_addr_loader().vkCreateDisplayModeKHR(physical_device.handle().to_raw(),
             display.handle().to_raw(), create_info.as_raw(), allocator, &mut mode);
-        // Ok(DisplayModeKhrHandle(mode))
         error::check(result, "vkCreateDisplayModeKHR", DisplayModeKhrHandle(mode))
     }
 
@@ -470,7 +457,6 @@ impl Instance {
         let mut capabilities = mem::uninitialized();
         let result = self.proc_addr_loader().vkGetDisplayPlaneCapabilitiesKHR(physical_device.handle().to_raw(),
             mode.handle().to_raw(), plane_index, &mut capabilities);
-        // Ok(DisplayPlaneCapabilitiesKhr::from_raw(capabilities))
         error::check(result, "vkGetDisplayPlaneCapabilitiesKHR",
             DisplayPlaneCapabilitiesKhr::from_raw(capabilities))
     }
@@ -483,7 +469,6 @@ impl Instance {
         let mut surface = 0;
         let result = self.proc_addr_loader().vkCreateDisplayPlaneSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
-        // Ok(SurfaceKhrHandle(surface))
         error::check(result, "vkCreateDisplayPlaneSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
@@ -495,7 +480,6 @@ impl Instance {
         let mut surface = 0;
         let result = self.proc_addr_loader().vkCreateXlibSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
-        // Ok(SurfaceKhrHandle(surface))
         error::check(result, "vkCreateXlibSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
@@ -505,7 +489,6 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let result = self.proc_addr_loader().vkGetPhysicalDeviceXlibPresentationSupportKHR(
             physical_device.handle().to_raw(), queue_family_index, dpy, visual_id);
-        // error::check(result, "vkGetPhysicalDeviceXlibPresentationSupportKHR", )
         result != 0
     }
 
@@ -517,7 +500,6 @@ impl Instance {
         let mut surface = 0;
         let result = self.proc_addr_loader().vkCreateXcbSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
-        // Ok(SurfaceKhrHandle(surface))
         error::check(result, "vkCreateXcbSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
@@ -528,7 +510,6 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let result = self.proc_addr_loader().vkGetPhysicalDeviceXcbPresentationSupportKHR(
             physical_device.handle().to_raw(), queue_family_index, connection, visual_id);
-        // error::check(result, "vkGetPhysicalDeviceXcbPresentationSupportKHR", )
         result != 0
 
     }
@@ -541,7 +522,6 @@ impl Instance {
         let mut surface = 0;
         let result = self.proc_addr_loader().vkCreateWaylandSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
-        // Ok(SurfaceKhrHandle(surface))
         error::check(result, "vkCreateWaylandSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
@@ -551,7 +531,6 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let result = self.proc_addr_loader().vkGetPhysicalDeviceWaylandPresentationSupportKHR(
             physical_device.handle().to_raw(), queue_family_index, display);
-        // error::check(result, "vkGetPhysicalDeviceWaylandPresentationSupportKHR", )
         result != 0
     }
 
@@ -563,7 +542,6 @@ impl Instance {
         let mut surface = 0;
         let result = self.proc_addr_loader().vkCreateMirSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
-        // Ok(SurfaceKhrHandle(surface))
         error::check(result, "vkCreateMirSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
@@ -573,7 +551,6 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let result = self.proc_addr_loader().vkGetPhysicalDeviceMirPresentationSupportKHR(
             physical_device.handle().to_raw(), queue_family_index, connection);
-        // error::check(result, "vkGetPhysicalDeviceMirPresentationSupportKHR", )
         result != 0
     }
 
@@ -585,7 +562,6 @@ impl Instance {
         let mut surface = 0;
         let result = self.proc_addr_loader().vkCreateAndroidSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
-        // Ok(SurfaceKhrHandle(surface))
         error::check(result, "vkCreateAndroidSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
@@ -596,7 +572,6 @@ impl Instance {
         let mut surface = 0;
         let result = self.proc_addr_loader().khr_win32_surface.vkCreateWin32SurfaceKHR(
             self.handle().to_raw(), create_info.as_raw(), allocator, &mut surface);
-        // Ok(SurfaceKhrHandle(surface))
         error::check(result, "vkCreateWin32SurfaceKHR", SurfaceKhrHandle(surface))
     }
 
@@ -606,7 +581,6 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let result = self.proc_addr_loader().vkGetPhysicalDeviceWin32PresentationSupportKHR(
             physical_device.handle().to_raw(), queue_family_index);
-        // error::check(result, "vkGetPhysicalDeviceWin32PresentationSupportKHR", )
         result != 0
     }
 
@@ -619,8 +593,6 @@ impl Instance {
         self.proc_addr_loader().vkGetPhysicalDeviceFeatures2KHR(
             physical_device.handle().to_raw(), &mut features);
         PhysicalDeviceFeatures2Khr::from_raw(features)
-        // error::check(result, "vkGetPhysicalDeviceFeatures2KHR",
-            // PhysicalDeviceFeatures2Khr::from_raw(features))
     }
 
 
@@ -632,8 +604,6 @@ impl Instance {
         self.proc_addr_loader().vkGetPhysicalDeviceProperties2KHR(
             physical_device.handle().to_raw(), &mut properties);
         PhysicalDeviceProperties2Khr::from_raw(properties)
-        // error::check(result, "vkGetPhysicalDeviceProperties2KHR",
-            // PhysicalDeviceProperties2Khr::from_raw(properties))
     }
 
     // *PFN_vkGetPhysicalDeviceFormatProperties2KHR)(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2KHR* pFormatProperties);
@@ -645,7 +615,6 @@ impl Instance {
             physical_device.handle().to_raw(),
             format.into(), &mut props as *mut _ as *mut vks::VkFormatProperties2KHR);
         props
-        // error::check(result, "vkGetPhysicalDeviceFormatProperties2KHR", DeviceHandle(props))
     }
 
     // *PFN_vkGetPhysicalDeviceImageFormatProperties2KHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2KHR* pImageFormatInfo, VkImageFormatProperties2KHR* pImageFormatProperties);
@@ -657,7 +626,6 @@ impl Instance {
         let result = self.proc_addr_loader().vkGetPhysicalDeviceImageFormatProperties2KHR(
             physical_device.handle().to_raw(), image_format_info.as_raw(),
             &mut image_format_properties);
-        // Ok(ImageFormatProperties2Khr::from_raw(image_format_properties))
         error::check(result, "vkGetPhysicalDeviceImageFormatProperties2KHR",
             ImageFormatProperties2Khr::from_raw(image_format_properties))
     }
@@ -687,8 +655,6 @@ impl Instance {
         self.proc_addr_loader().vkGetPhysicalDeviceMemoryProperties2KHR(
             physical_device.handle().to_raw(), &mut mem_props);
         PhysicalDeviceMemoryProperties2Khr::from_raw(mem_props)
-        // error::check(result, "vkGetPhysicalDeviceMemoryProperties2KHR",
-            // PhysicalDeviceMemoryProperties2Khr::from_raw(mem_props))
     }
 
     // typedef void (VKAPI_PTR *PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2KHR* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2KHR* pProperties);
@@ -718,8 +684,6 @@ impl Instance {
         self.proc_addr_loader().vkGetPhysicalDeviceExternalBufferPropertiesKHR(
             physical_device.handle().to_raw(), external_buffer_info.as_raw(),
             &mut external_buffer_properties);
-        // error::check(result, "vkGetPhysicalDeviceExternalBufferPropertiesKHR",
-            // ExternalBufferPropertiesKhr::from_raw(external_buffer_properties))
         ExternalBufferPropertiesKhr::from_raw(external_buffer_properties)
     }
 
@@ -732,8 +696,6 @@ impl Instance {
         self.proc_addr_loader().vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(
             physical_device.handle().to_raw(), external_semaphore_info.as_raw(),
             &mut external_semaphore_properties);
-        // error::check(result, "vkGetPhysicalDeviceExternalSemaphorePropertiesKHR",
-        //     ExternalSemaphorePropertiesKhr::from_raw(external_semaphore_properties))
         ExternalSemaphorePropertiesKhr::from_raw(external_semaphore_properties)
     }
 
@@ -746,8 +708,6 @@ impl Instance {
         self.proc_addr_loader().vkGetPhysicalDeviceExternalFencePropertiesKHR(
             physical_device.handle().to_raw(), external_fence_info.as_raw(),
             &mut external_fence_properties);
-        // error::check(result, "vkGetPhysicalDeviceExternalFencePropertiesKHR",
-        //     ExternalFencePropertiesKhr::from_raw(external_fence_properties))
         ExternalFencePropertiesKhr::from_raw(external_fence_properties)
     }
 
@@ -760,7 +720,6 @@ impl Instance {
             physical_device.handle().to_raw(), surface_info.as_raw(), &mut capabilities);
         error::check(result, "vkGetPhysicalDeviceSurfaceCapabilities2KHR",
             SurfaceCapabilities2Khr::from_raw(capabilities))
-        // Ok(SurfaceCapabilities2Khr::from_raw(capabilities))
     }
 
     // *PFN_vkGetPhysicalDeviceSurfaceFormats2KHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats);
@@ -796,7 +755,6 @@ impl Instance {
         let mut callback = 0;
         let result = self.proc_addr_loader().vkCreateDebugReportCallbackEXT(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut callback);
-        // Ok(DebugReportCallbackExtHandle(callback))
         error::check(result, "vkCreateDebugReportCallbackEXT", DebugReportCallbackExtHandle(callback))
     }
 
@@ -816,7 +774,6 @@ impl Instance {
         self.proc_addr_loader().vkDebugReportMessageEXT(self.handle().to_raw(), flags.bits(),
             object_type.into(), object, location, message_code, layer_prefix.as_ptr(),
             message.as_ptr());
-        // error::check(result, "vkDebugReportMessageEXT", ())?;
     }
 
     // *PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV)(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkExternalMemoryHandleTypeFlagsNV externalHandleType, VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties);
@@ -831,7 +788,6 @@ impl Instance {
             physical_device.handle().to_raw(), format.into(), type_.into(),
             tiling.into(), usage.bits(), flags.bits(), external_handle_type.bits(),
             &mut external_image_format_properties);
-        // Ok(ExternalImageFormatPropertiesNv::from_raw(external_image_format_properties))
         error::check(result, "vkGetPhysicalDeviceExternalImageFormatPropertiesNV",
             ExternalImageFormatPropertiesNv::from_raw(external_image_format_properties))
     }
@@ -868,7 +824,6 @@ impl Instance {
         let mut surface = 0;
         let result = self.proc_addr_loader().vkCreateViSurfaceNN(
             self.handle().to_raw(), create_info.as_raw(), allocator, &mut surface);
-        // Ok(SurfaceKhrHandle(surface))
         error::check(result, "vkCreateViSurfaceNN", SurfaceKhrHandle(surface))
     }
 
@@ -909,7 +864,6 @@ impl Instance {
         let mut display = 0;
         let result = self.proc_addr_loader().vkGetRandROutputDisplayEXT(physical_device.handle().to_raw(),
             dpy, rr_output, &mut display);
-        // Ok(DisplayKhrHandle(display))
         error::check(result, "vkGetRandROutputDisplayEXT", DisplayKhrHandle(display))
     }
 
@@ -921,7 +875,6 @@ impl Instance {
         let result = self.proc_addr_loader().vkGetPhysicalDeviceSurfaceCapabilities2EXT(
             physical_device.handle().to_raw(), surface.handle().to_raw(),
             &mut surface_capabilities as *mut _ as *mut vks::VkSurfaceCapabilities2EXT);
-        // Ok(surface_capabilities)
         error::check(result, "vkGetPhysicalDeviceSurfaceCapabilities2EXT", surface_capabilities)
     }
 
@@ -932,7 +885,6 @@ impl Instance {
         let mut surface = 0;
         let result = self.proc_addr_loader().vkCreateIOSSurfaceMVK(
             self.handle().to_raw(), create_info.as_raw(), allocator, &mut surface);
-        // Ok(SurfaceKhrHandle(surface))
         error::check(result, "vkCreateIOSSurfaceMVK", SurfaceKhrHandle(surface))
     }
 
@@ -943,7 +895,6 @@ impl Instance {
         let mut surface = 0;
         let result = self.proc_addr_loader().vkCreateMacOSSurfaceMVK(
             self.handle().to_raw(), create_info.as_raw(), allocator, &mut surface);
-        // Ok(SurfaceKhrHandle(surface))
         error::check(result, "vkCreateMacOSSurfaceMVK", SurfaceKhrHandle(surface))
     }
 
