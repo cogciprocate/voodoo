@@ -5,7 +5,7 @@ use std::marker::PhantomData;
 use libc::{c_void};
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo, CharStrs,
+use ::{error, VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo, CharStrs,
     PhysicalDeviceFeatures, PRINT, Handle, SubmitInfo, QueueHandle, MemoryAllocateInfo,
     DeviceMemoryHandle, MemoryMapFlags, SwapchainKhrHandle, SwapchainCreateInfoKhr,
     ShaderModuleCreateInfo, ShaderModuleHandle, SemaphoreCreateInfo, SemaphoreHandle,
@@ -90,7 +90,7 @@ impl Device {
     }
 
     #[inline]
-    pub fn queue(&self, queue_idx: u32) -> VooResult<QueueHandle> {
+    pub fn queue(&self, queue_idx: u32) -> QueueHandle {
         assert!(self.inner.queue_family_indices.len() == 1,
             "Update this shitty queue family code.");
         self.get_device_queue(self.inner.queue_family_indices[0], queue_idx)
@@ -117,7 +117,7 @@ impl Device {
     }
 
     #[inline]
-    pub fn wait_idle(&self) -> VooResult<()> {
+    pub fn wait_idle(&self) {
         self.device_wait_idle()
     }
 
@@ -127,7 +127,7 @@ impl Device {
     // [HELPER]
     pub fn memory_type_index(&self, type_filter: u32, properties: ::MemoryPropertyFlags)
             -> VooResult<u32> {
-        let mem_props = self.physical_device().memory_properties()?;
+        let mem_props = self.physical_device().memory_properties();
 
         for i in 0..mem_props.memory_type_count() {
             if (type_filter & (1 << i)) != 0 &&
@@ -141,14 +141,16 @@ impl Device {
     }
 
     // *PFN_vkGetDeviceQueue)(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue);
-    pub fn get_device_queue(&self, queue_family_index: u32, queue_index: u32) -> VooResult<QueueHandle> {
+    pub fn get_device_queue(&self, queue_family_index: u32, queue_index: u32) -> QueueHandle {
         let mut handle = ptr::null_mut();
         unsafe {
             self.proc_addr_loader().core.vkGetDeviceQueue(self.inner.handle.0,
                 queue_family_index, queue_index, &mut handle);
+            // TODO: Check for nullptr
+            // error::check(result, "vkGetDeviceQueue", QueueHandle(handle))
         }
         // TODO: Check for nullptr
-        Ok(QueueHandle(handle))
+        QueueHandle(handle)
     }
 
 
@@ -166,25 +168,28 @@ impl Device {
     pub unsafe fn queue_submit(&self, queue: QueueHandle, submit_info: &[SubmitInfo],
             fence: Option<FenceHandle>) -> VooResult<()> {
         let fence_handle_raw = fence.map(|f| f.to_raw()).unwrap_or(0);
-        ::check(self.proc_addr_loader().core.vkQueueSubmit(queue.to_raw(),
+        let result = self.proc_addr_loader().core.vkQueueSubmit(queue.to_raw(),
             submit_info.len() as u32, submit_info.as_ptr() as *const vks::VkSubmitInfo,
-            fence_handle_raw));
-        Ok(())
+            fence_handle_raw);
+        // Ok(())
+        error::check(result, "vkQueueSubmit", ())
     }
 
     // *PFN_vkQueueWaitIdle)(VkQueue queue);
-    pub fn queue_wait_idle<Q>(&self, queue: Q) -> VooResult<()>
+    pub fn queue_wait_idle<Q>(&self, queue: Q)
             where Q: Handle<Target=QueueHandle> {
         unsafe {
-            ::check(self.proc_addr_loader().core.vkQueueWaitIdle(queue.handle().to_raw()));
+            self.proc_addr_loader().core.vkQueueWaitIdle(queue.handle().to_raw());
+            // error::check(result, "vkQueueWaitIdle", ())
         }
-        Ok(())
     }
 
     // *PFN_vkDeviceWaitIdle)(VkDevice device);
-    pub fn device_wait_idle(&self) -> VooResult<()> {
-        unsafe { ::check(self.proc_addr_loader().vkDeviceWaitIdle(self.handle().to_raw())); }
-        Ok(())
+    pub fn device_wait_idle(&self) {
+        unsafe {
+            self.proc_addr_loader().vkDeviceWaitIdle(self.handle().to_raw());
+            // error::check(result, "vkDeviceWaitIdle", ())
+        }
     }
 
     // *PFN_vkAllocateMemory)(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
@@ -194,10 +199,11 @@ impl Device {
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkAllocateMemory(self.handle().0,
             allocate_info.as_raw(), allocator, &mut handle);
-        match result {
-            0 => Ok(DeviceMemoryHandle(handle)),
-            _ => Err(result.into()),
-        }
+        // match result {
+        //     0 => Ok(DeviceMemoryHandle(handle)),
+        //     _ => Err(result.into()),
+        // }
+        error::check(result, "vkAllocateMemory", DeviceMemoryHandle(handle))
     }
 
     // *PFN_vkFreeMemory)(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator);
@@ -212,9 +218,10 @@ impl Device {
     pub unsafe fn map_memory<T>(&self, memory: DeviceMemoryHandle, offset_bytes: u64, size_bytes: u64,
             flags: MemoryMapFlags) -> VooResult<*mut T> {
         let mut data = ptr::null_mut();
-        ::check(self.proc_addr_loader().vkMapMemory(self.handle().to_raw(),
-            memory.to_raw(), offset_bytes, size_bytes, flags.bits(), &mut data));
-        Ok(data as *mut T)
+        let result = self.proc_addr_loader().vkMapMemory(self.handle().to_raw(),
+            memory.to_raw(), offset_bytes, size_bytes, flags.bits(), &mut data);
+        // Ok(data as *mut T)
+        error::check(result, "vkMapMemory", data as *mut T)
     }
 
     // *PFN_vkUnmapMemory)(VkDevice device, VkDeviceMemory memory);
@@ -223,16 +230,20 @@ impl Device {
     }
 
     // *PFN_vkFlushMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
-    pub unsafe fn flush_mapped_memory_ranges(&self, memory_ranges: &[MappedMemoryRange]) {
-        ::check(self.proc_addr_loader().vkFlushMappedMemoryRanges(self.handle().to_raw(),
-            memory_ranges.len() as u32, memory_ranges.as_ptr() as *const vks::VkMappedMemoryRange));
+    pub unsafe fn flush_mapped_memory_ranges(&self, memory_ranges: &[MappedMemoryRange])
+            -> VooResult<()> {
+        let result = self.proc_addr_loader().vkFlushMappedMemoryRanges(self.handle().to_raw(),
+            memory_ranges.len() as u32, memory_ranges.as_ptr() as *const vks::VkMappedMemoryRange);
+        error::check(result, "vkFlushMappedMemoryRanges", ())
     }
 
 
     // *PFN_vkInvalidateMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
-    pub unsafe fn invalidate_mapped_memory_ranges(&self, memory_ranges: &[MappedMemoryRange]) {
-        ::check(self.proc_addr_loader().vkInvalidateMappedMemoryRanges(self.handle().to_raw(),
-            memory_ranges.len() as u32, memory_ranges.as_ptr() as *const vks::VkMappedMemoryRange));
+    pub unsafe fn invalidate_mapped_memory_ranges(&self, memory_ranges: &[MappedMemoryRange])
+            -> VooResult<()> {
+        let result = self.proc_addr_loader().vkInvalidateMappedMemoryRanges(self.handle().to_raw(),
+            memory_ranges.len() as u32, memory_ranges.as_ptr() as *const vks::VkMappedMemoryRange);
+        error::check(result, "vkInvalidateMappedMemoryRanges", ())
     }
 
     // *PFN_vkGetDeviceMemoryCommitment)(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes);
@@ -243,22 +254,25 @@ impl Device {
         self.proc_addr_loader().vkGetDeviceMemoryCommitment(self.handle().to_raw(),
             memory.handle().to_raw(), &mut committed_memory_in_bytes);
         committed_memory_in_bytes
+        // error::check(result, "vkGetDeviceMemoryCommitment", committed_memory_in_bytes)
     }
 
     // *PFN_vkBindBufferMemory)(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset);
     pub unsafe fn bind_buffer_memory(&self, buffer: BufferHandle, memory: DeviceMemoryHandle,
             memory_offset: DeviceSize) -> VooResult<()> {
-        ::check(self.proc_addr_loader().vkBindBufferMemory(
-            self.handle().to_raw(), buffer.to_raw(), memory.to_raw(), memory_offset));
-        Ok(())
+        let result = self.proc_addr_loader().vkBindBufferMemory(
+            self.handle().to_raw(), buffer.to_raw(), memory.to_raw(), memory_offset);
+        // Ok(())
+        error::check(result, "vkBindBufferMemory", ())
     }
 
     // *PFN_vkBindImageMemory)(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset);
     pub unsafe fn bind_image_memory(&self, image: ImageHandle, memory: DeviceMemoryHandle,
             memory_offset: DeviceSize) -> VooResult<()> {
-        ::check(self.proc_addr_loader().vkBindImageMemory(
-            self.handle().to_raw(), image.to_raw(), memory.to_raw(), memory_offset));
-        Ok(())
+        let result = self.proc_addr_loader().vkBindImageMemory(
+            self.handle().to_raw(), image.to_raw(), memory.to_raw(), memory_offset);
+        // Ok(())
+        error::check(result, "vkBindImageMemory", ())
     }
 
     // *PFN_vkGetBufferMemoryRequirements)(VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements);
@@ -268,6 +282,8 @@ impl Device {
         self.proc_addr_loader().core.vkGetBufferMemoryRequirements(self.handle().to_raw(),
             buffer.to_raw(), &mut memory_requirements);
         MemoryRequirements::from_raw(memory_requirements)
+        // error::check(result, "vkGetBufferMemoryRequirements",
+        //     MemoryRequirements::from_raw(memory_requirements))
     }
 
     // *PFN_vkGetImageMemoryRequirements)(VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements);
@@ -278,11 +294,13 @@ impl Device {
         self.proc_addr_loader().core.vkGetImageMemoryRequirements(self.handle().to_raw(),
             image.handle().to_raw(), &mut memory_requirements);
         MemoryRequirements::from_raw(memory_requirements)
+        // error::check(result, "vkGetImageMemoryRequirements",
+        //     MemoryRequirements::from_raw(memory_requirements))
     }
 
     // *PFN_vkGetImageSparseMemoryRequirements)(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements);
     pub unsafe fn get_image_sparse_memory_requirements<I>(&self, image: I)
-            -> VooResult<SmallVec<[SparseImageMemoryRequirements; 32]>>
+            -> SmallVec<[SparseImageMemoryRequirements; 32]>
             where I: Handle<Target=ImageHandle> {
         let mut sparse_memory_requirement_count = 0u32;
         let mut sparse_memory_requirements: SmallVec<[SparseImageMemoryRequirements; 32]> = SmallVec::new();
@@ -293,15 +311,17 @@ impl Device {
         self.proc_addr_loader().vkGetImageSparseMemoryRequirements(self.handle().to_raw(),
             image.handle().to_raw(), &mut sparse_memory_requirement_count,
             sparse_memory_requirements.as_mut_ptr() as *mut vks::VkSparseImageMemoryRequirements);
-        Ok(sparse_memory_requirements)
+        sparse_memory_requirements
     }
 
     // *PFN_vkQueueBindSparse)(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence);
     pub unsafe fn queue_bind_sparse<Q, F>(&self, queue: Q, bind_info: &[BindSparseInfo], fence: F)
+            -> VooResult<()>
             where Q: Handle<Target=QueueHandle>, F: Handle<Target=FenceHandle> {
-        self.proc_addr_loader().vkQueueBindSparse(queue.handle().to_raw(),
+        let result = self.proc_addr_loader().vkQueueBindSparse(queue.handle().to_raw(),
             bind_info.len() as u32, bind_info.as_ptr() as *const _ as *const vks::VkBindSparseInfo,
             fence.handle().to_raw());
+        error::check(result, "vkQueueBindSparse", ())
     }
 
     // *PFN_vkCreateFence)(VkDevice device, const VkFenceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
@@ -309,9 +329,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<FenceHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateFence(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(FenceHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateFence(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(FenceHandle(handle))
+        error::check(result, "vkCreateFence", FenceHandle(handle))
     }
 
     // *PFN_vkDestroyFence)(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator);
@@ -324,26 +345,29 @@ impl Device {
 
     // *PFN_vkResetFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences);
     pub unsafe fn reset_fences(&self, fences: &[FenceHandle]) -> VooResult<()> {
-        ::check(self.proc_addr_loader().vkResetFences(self.handle().to_raw(),
-            fences.len() as u32, fences.as_ptr() as *const vks::VkFence));
-        Ok(())
+        let result = self.proc_addr_loader().vkResetFences(self.handle().to_raw(),
+            fences.len() as u32, fences.as_ptr() as *const vks::VkFence);
+        // Ok(())
+        error::check(result, "vkResetFences", ())
     }
 
 
     // *PFN_vkGetFenceStatus)(VkDevice device, VkFence fence);
-    pub unsafe fn get_fence_status<F>(&self, fence: F) -> CallResult
+    pub unsafe fn get_fence_status<F>(&self, fence: F) -> VooResult<CallResult>
             where F: Handle<Target=FenceHandle> {
-        let res = self.proc_addr_loader().vkGetFenceStatus(self.handle().to_raw(), fence.handle().to_raw());
-        CallResult::from(res)
+        let result = self.proc_addr_loader().vkGetFenceStatus(self.handle().to_raw(), fence.handle().to_raw());
+        // CallResult::from(res)
+        error::check(result, "vkGetFenceStatus", CallResult::from(result))
     }
 
     // *PFN_vkWaitForFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout);
     pub unsafe fn wait_for_fences(&self, fences: &[FenceHandle], wait_all: bool, timeout: u64)
             -> VooResult<()> {
-        ::check(self.proc_addr_loader().vkWaitForFences(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vkWaitForFences(self.handle().to_raw(),
             fences.len() as u32, fences.as_ptr() as *const vks::VkFence,
-            wait_all as vks::VkBool32, timeout));
-        Ok(())
+            wait_all as vks::VkBool32, timeout);
+        // Ok(())
+        error::check(result, "vkWaitForFences", ())
     }
 
     // *PFN_vkCreateSemaphore)(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore);
@@ -351,9 +375,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<SemaphoreHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateSemaphore(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(SemaphoreHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateSemaphore(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(SemaphoreHandle(handle))
+        error::check(result, "vkCreateSemaphore", SemaphoreHandle(handle))
     }
 
     // *PFN_vkDestroySemaphore)(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator);
@@ -369,9 +394,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<EventHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateEvent(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(EventHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateEvent(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(EventHandle(handle))
+        error::check(result, "vkCreateEvent", EventHandle(handle))
     }
 
     // *PFN_vkDestroyEvent)(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator);
@@ -383,27 +409,30 @@ impl Device {
     }
 
     // *PFN_vkGetEventStatus)(VkDevice device, VkEvent event);
-    pub unsafe fn get_event_status<E>(&self, event: E) -> CallResult
+    pub unsafe fn get_event_status<E>(&self, event: E) -> VooResult<CallResult>
             where E: Handle<Target=EventHandle> {
-        let res = self.proc_addr_loader().vkGetEventStatus(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vkGetEventStatus(self.handle().to_raw(),
             event.handle().to_raw());
-        CallResult::from(res)
+        // CallResult::from(res)
+        error::check(result, "vkGetEventStatus", CallResult::from(result))
     }
 
     // *PFN_vkSetEvent)(VkDevice device, VkEvent event);
     pub unsafe fn set_event<E>(&self, event: E) -> VooResult<()>
             where E: Handle<Target=EventHandle> {
-        ::check(self.proc_addr_loader().vkSetEvent(self.handle().to_raw(),
-            event.handle().to_raw()));
-        Ok(())
+        let result = self.proc_addr_loader().vkSetEvent(self.handle().to_raw(),
+            event.handle().to_raw());
+        // Ok(())
+        error::check(result, "vkSetEvent", ())
     }
 
     // *PFN_vkResetEvent)(VkDevice device, VkEvent event);
     pub unsafe fn reset_event<E>(&self, event: E) -> VooResult<()>
             where E: Handle<Target=EventHandle> {
-        ::check(self.proc_addr_loader().vkResetEvent(self.handle().to_raw(),
-            event.handle().to_raw()));
-        Ok(())
+        let result = self.proc_addr_loader().vkResetEvent(self.handle().to_raw(),
+            event.handle().to_raw());
+        // Ok(())
+        error::check(result, "vkResetEvent", ())
     }
 
     // *PFN_vkCreateQueryPool)(VkDevice device, const VkQueryPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool);
@@ -411,9 +440,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<QueryPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateQueryPool(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(QueryPoolHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateQueryPool(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(QueryPoolHandle(handle))
+        error::check(result, "vkCreateQueryPool", QueryPoolHandle(handle))
     }
 
     // *PFN_vkDestroyQueryPool)(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator);
@@ -429,10 +459,11 @@ impl Device {
             data_size: usize, data: *mut c_void, stride: DeviceSize, flags: QueryResultFlags)
             -> VooResult<()>
             where Q: Handle<Target=QueryPoolHandle> {
-        self.proc_addr_loader().vkGetQueryPoolResults(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vkGetQueryPoolResults(self.handle().to_raw(),
             query_pool.handle().to_raw(), first_query, query_count, data_size, data, stride,
             flags.bits());
-        Ok(())
+        // Ok(())
+        error::check(result, "vkGetQueryPoolResults", ())
     }
 
     // *PFN_vkCreateBuffer)(VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer);
@@ -440,9 +471,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<BufferHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateBuffer(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(BufferHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateBuffer(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(BufferHandle(handle))
+        error::check(result, "vkCreateBuffer", BufferHandle(handle))
     }
 
     // *PFN_vkDestroyBuffer)(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator);
@@ -458,9 +490,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<BufferViewHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateBufferView(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(BufferViewHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateBufferView(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(BufferViewHandle(handle))
+        error::check(result, "vkCreateBufferView", BufferViewHandle(handle))
     }
 
     // *PFN_vkDestroyBufferView)(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator);
@@ -476,9 +509,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<ImageHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateImage(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(ImageHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateImage(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(ImageHandle(handle))
+        error::check(result, "vkCreateImage", ImageHandle(handle))
     }
 
     // *PFN_vkDestroyImage)(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator);
@@ -491,13 +525,14 @@ impl Device {
 
     // *PFN_vkGetImageSubresourceLayout)(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout);
     pub unsafe fn get_image_subresource_layout<I>(&self, image: I, subresource: &ImageSubresource)
-            -> VooResult<SubresourceLayout>
+            -> SubresourceLayout
             where I: Handle<Target=ImageHandle> {
         let mut layout = mem::uninitialized();
         self.proc_addr_loader().vkGetImageSubresourceLayout(self.handle().to_raw(),
             image.handle().to_raw(), subresource.as_raw(),
             &mut layout as *mut _ as *mut vks::VkSubresourceLayout);
-        Ok(layout)
+        layout
+        // error::check(result, "vkGetImageSubresourceLayout", layout)
     }
 
     // *PFN_vkCreateImageView)(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView);
@@ -505,9 +540,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<ImageViewHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateImageView(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(ImageViewHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateImageView(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(ImageViewHandle(handle))
+        error::check(result, "vkCreateImageView", ImageViewHandle(handle))
     }
 
     // *PFN_vkDestroyImageView)(VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator);
@@ -523,9 +559,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<ShaderModuleHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateShaderModule(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(ShaderModuleHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateShaderModule(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(ShaderModuleHandle(handle))
+        error::check(result, "vkCreateShaderModule", ShaderModuleHandle(handle))
     }
 
     // *PFN_vkDestroyShaderModule)(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator);
@@ -541,9 +578,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<PipelineCacheHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreatePipelineCache(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(PipelineCacheHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreatePipelineCache(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(PipelineCacheHandle(handle))
+        error::check(result, "vkCreatePipelineCache", PipelineCacheHandle(handle))
     }
 
     // *PFN_vkDestroyPipelineCache)(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator);
@@ -558,19 +596,21 @@ impl Device {
     pub unsafe fn get_pipeline_cache_data<Pc>(&self, pipeline_cache: Pc, data_size: *mut usize,
             data: *mut c_void) -> VooResult<()>
             where Pc: Handle<Target=PipelineCacheHandle> {
-        ::check(self.proc_addr_loader().vkGetPipelineCacheData(self.handle().to_raw(),
-            pipeline_cache.handle().to_raw(), data_size, data));
-        Ok(())
+        let result = self.proc_addr_loader().vkGetPipelineCacheData(self.handle().to_raw(),
+            pipeline_cache.handle().to_raw(), data_size, data);
+        // Ok(())
+        error::check(result, "vkGetPipelineCacheData", ())
     }
 
     // *PFN_vkMergePipelineCaches)(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches);
     pub unsafe fn merge_pipeline_caches<Pc>(&self, dst_cache: Pc, src_caches: &[PipelineCacheHandle])
             -> VooResult<()>
             where Pc: Handle<Target=PipelineCacheHandle> {
-        ::check(self.proc_addr_loader(). vkMergePipelineCaches(self.handle().to_raw(),
+        let result = self.proc_addr_loader(). vkMergePipelineCaches(self.handle().to_raw(),
             dst_cache.handle().to_raw(), src_caches.len() as u32,
-            src_caches.as_ptr() as *const vks::VkPipelineCache));
-        Ok(())
+            src_caches.as_ptr() as *const vks::VkPipelineCache);
+        // Ok(())
+        error::check(result, "vkMergePipelineCaches", ())
     }
 
     // *PFN_vkCreateGraphicsPipelines)(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkGraphicsPipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines);
@@ -583,12 +623,13 @@ impl Device {
         let mut pipelines = SmallVec::<[PipelineHandle; 4]>::new();
         pipelines.reserve_exact(create_infos.len());
         pipelines.set_len(create_infos.len());
-        ::check(self.proc_addr_loader().core.vkCreateGraphicsPipelines(self.handle().to_raw(),
+        let result = self.proc_addr_loader().core.vkCreateGraphicsPipelines(self.handle().to_raw(),
             pipeline_cache, create_infos.len() as u32,
             create_infos.as_ptr() as *const vks::VkGraphicsPipelineCreateInfo,
             allocator,
-            pipelines.as_mut_ptr() as *mut vks::VkPipeline));
-        Ok(pipelines)
+            pipelines.as_mut_ptr() as *mut vks::VkPipeline);
+        // Ok(pipelines)
+        error::check(result, "vkCreateGraphicsPipelines", pipelines)
     }
 
     // *PFN_vkCreateComputePipelines)(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkComputePipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines);
@@ -601,12 +642,13 @@ impl Device {
         let mut pipelines = SmallVec::<[PipelineHandle; 4]>::new();
         pipelines.reserve_exact(create_infos.len());
         pipelines.set_len(create_infos.len());
-        ::check(self.proc_addr_loader().core.vkCreateComputePipelines(self.handle().to_raw(),
+        let result = self.proc_addr_loader().core.vkCreateComputePipelines(self.handle().to_raw(),
             pipeline_cache, create_infos.len() as u32,
             create_infos.as_ptr() as *const vks::VkComputePipelineCreateInfo,
             allocator,
-            pipelines.as_mut_ptr() as *mut vks::VkPipeline));
-        Ok(pipelines)
+            pipelines.as_mut_ptr() as *mut vks::VkPipeline);
+        // Ok(pipelines)
+        error::check(result, "vkCreateComputePipelines", pipelines)
     }
 
     // *PFN_vkDestroyPipeline)(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator);
@@ -622,9 +664,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<PipelineLayoutHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreatePipelineLayout(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(PipelineLayoutHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreatePipelineLayout(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(PipelineLayoutHandle(handle))
+        error::check(result, "vkCreatePipelineLayout", PipelineLayoutHandle(handle))
     }
 
     // *PFN_vkDestroyPipelineLayout)(VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator);
@@ -640,9 +683,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<SamplerHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateSampler(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(SamplerHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateSampler(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(SamplerHandle(handle))
+        error::check(result, "vkCreateSampler", SamplerHandle(handle))
     }
 
     // *PFN_vkDestroySampler)(VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator);
@@ -658,9 +702,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<DescriptorSetLayoutHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateDescriptorSetLayout(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(DescriptorSetLayoutHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateDescriptorSetLayout(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(DescriptorSetLayoutHandle(handle))
+        error::check(result, "vkCreateDescriptorSetLayout", DescriptorSetLayoutHandle(handle))
     }
 
     // *PFN_vkDestroyDescriptorSetLayout)(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator);
@@ -676,9 +721,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<DescriptorPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateDescriptorPool(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(DescriptorPoolHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateDescriptorPool(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(DescriptorPoolHandle(handle))
+        error::check(result, "vkCreateDescriptorPool", DescriptorPoolHandle(handle))
     }
 
     // *PFN_vkDestroyDescriptorPool)(VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator);
@@ -691,10 +737,11 @@ impl Device {
 
     // *PFN_vkResetDescriptorPool)(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags);
     pub unsafe fn reset_descriptor_pool<Dp>(&self, descriptor_pool: Dp,
-            flags: DescriptorPoolResetFlags)
+            flags: DescriptorPoolResetFlags) -> VooResult<()>
             where Dp: Handle<Target=DescriptorPoolHandle> {
-        ::check(self.proc_addr_loader().vkResetDescriptorPool(self.handle().to_raw(),
-            descriptor_pool.handle().to_raw(), flags.bits()));
+        let result = self.proc_addr_loader().vkResetDescriptorPool(self.handle().to_raw(),
+            descriptor_pool.handle().to_raw(), flags.bits());
+        error::check(result, "vkResetDescriptorPool", ())
     }
 
     // *PFN_vkAllocateDescriptorSets)(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets);
@@ -704,20 +751,22 @@ impl Device {
         let count = allocate_info.set_layouts().len();
         descriptor_sets.reserve_exact(count);
         descriptor_sets.set_len(count);
-        ::check(self.proc_addr_loader().vkAllocateDescriptorSets(
+        let result = self.proc_addr_loader().vkAllocateDescriptorSets(
             self.handle().to_raw(), allocate_info.as_raw(),
-            descriptor_sets.as_mut_ptr() as *mut vks::VkDescriptorSet));
-        Ok(descriptor_sets)
+            descriptor_sets.as_mut_ptr() as *mut vks::VkDescriptorSet);
+        // Ok(descriptor_sets)
+        error::check(result, "vkAllocateDescriptorSets", descriptor_sets)
     }
 
     // *PFN_vkFreeDescriptorSets)(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets);
     pub unsafe fn free_descriptor_sets<Dp>(&self, descriptor_pool: Dp,
             descriptor_sets: &[DescriptorSetHandle]) -> VooResult<()>
             where Dp: Handle<Target=DescriptorPoolHandle> {
-        ::check(self.proc_addr_loader().vkFreeDescriptorSets(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vkFreeDescriptorSets(self.handle().to_raw(),
             descriptor_pool.handle().to_raw(), descriptor_sets.len() as u32,
-            descriptor_sets.as_ptr() as *const vks::VkDescriptorSet));
-        Ok(())
+            descriptor_sets.as_ptr() as *const vks::VkDescriptorSet);
+        // Ok(())
+        error::check(result, "vkFreeDescriptorSets", ())
     }
 
     // *PFN_vkUpdateDescriptorSets)(VkDevice device, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, const VkCopyDescriptorSet* pDescriptorCopies);
@@ -730,6 +779,7 @@ impl Device {
                 descriptor_writes.as_ptr() as *const vks::VkWriteDescriptorSet,
                 descriptor_copies.len() as u32,
                 descriptor_copies.as_ptr() as *const vks::VkCopyDescriptorSet);
+            // error::check(result, "vkUpdateDescriptorSets", ())
         }
     }
 
@@ -738,9 +788,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<FramebufferHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateFramebuffer(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(FramebufferHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateFramebuffer(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(FramebufferHandle(handle))
+        error::check(result, "vkCreateFramebuffer", FramebufferHandle(handle))
     }
 
     // *PFN_vkDestroyFramebuffer)(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator);
@@ -756,9 +807,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<RenderPassHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateRenderPass(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(RenderPassHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateRenderPass(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(RenderPassHandle(handle))
+        error::check(result, "vkCreateRenderPass", RenderPassHandle(handle))
     }
 
     // *PFN_vkDestroyRenderPass)(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator);
@@ -771,12 +823,13 @@ impl Device {
 
     // *PFN_vkGetRenderAreaGranularity)(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity);
     pub unsafe fn get_render_area_granularity<Rp>(&self, render_pass: Rp)
-            -> VooResult<Extent2d>
+            -> Extent2d
             where Rp: Handle<Target=RenderPassHandle> {
         let mut granularity = mem::uninitialized();
         self.proc_addr_loader().vkGetRenderAreaGranularity(self.handle().to_raw(),
             render_pass.handle().to_raw(), &mut granularity as *mut _ as *mut vks::VkExtent2D);
-        Ok(granularity)
+        granularity
+        // error::check(result, "vkGetRenderAreaGranularity", granularity)
     }
 
     // *PFN_vkCreateCommandPool)(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool);
@@ -784,9 +837,10 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<CommandPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateCommandPool(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(CommandPoolHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateCommandPool(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(CommandPoolHandle(handle))
+        error::check(result, "vkCreateCommandPool", CommandPoolHandle(handle))
     }
 
     // *PFN_vkDestroyCommandPool)(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator);
@@ -801,9 +855,10 @@ impl Device {
     pub unsafe fn reset_command_pool<Cp>(&self, command_pool: Cp, flags: CommandPoolResetFlags)
             -> VooResult<()>
             where Cp: Handle<Target=CommandPoolHandle> {
-        ::check(self.proc_addr_loader().vkResetCommandPool(self.handle().to_raw(),
-            command_pool.handle().to_raw(), flags.bits()));
-        Ok(())
+        let result = self.proc_addr_loader().vkResetCommandPool(self.handle().to_raw(),
+            command_pool.handle().to_raw(), flags.bits());
+        // Ok(())
+        error::check(result, "vkResetCommandPool", ())
     }
 
     // *PFN_vkAllocateCommandBuffers)(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers);
@@ -812,41 +867,45 @@ impl Device {
         let mut command_buffers: SmallVec<[CommandBufferHandle; 16]> = SmallVec::new();
         command_buffers.reserve_exact(allocate_info.command_buffer_count() as usize);
         command_buffers.set_len(allocate_info.command_buffer_count() as usize);
-        ::check(self.proc_addr_loader().core.vkAllocateCommandBuffers(
+        let result = self.proc_addr_loader().core.vkAllocateCommandBuffers(
             self.handle().to_raw(), allocate_info.as_raw(),
-            command_buffers.as_mut_ptr() as *mut vks::VkCommandBuffer));
-        Ok(command_buffers)
+            command_buffers.as_mut_ptr() as *mut vks::VkCommandBuffer);
+        // Ok(command_buffers)
+        error::check(result, "vkAllocateCommandBuffers", command_buffers)
     }
 
     // *PFN_vkFreeCommandBuffers)(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers);
     pub unsafe fn free_command_buffers<Cp>(&self, command_pool: Cp, command_buffers: &[CommandBufferHandle])
-            -> VooResult<()>
             where Cp: Handle<Target=CommandPoolHandle> {
         self.proc_addr_loader().core.vkFreeCommandBuffers(self.handle().to_raw(),
             command_pool.handle().to_raw(), command_buffers.len() as u32,
             command_buffers.as_ptr() as *const vks::VkCommandBuffer);
-        Ok(())
+        // Ok(())
+        // error::check(result, "vkFreeCommandBuffers", ())
     }
 
     // *PFN_vkBeginCommandBuffer)(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo);
     pub unsafe fn begin_command_buffer(&self, command_buffer: CommandBufferHandle,
             begin_info: &CommandBufferBeginInfo) -> VooResult<()> {
-        self.proc_addr_loader().vkBeginCommandBuffer(command_buffer.to_raw(), begin_info.as_raw());
-        Ok(())
+        let result = self.proc_addr_loader().vkBeginCommandBuffer(command_buffer.to_raw(), begin_info.as_raw());
+        // Ok(())
+        error::check(result, "vkBeginCommandBuffer", ())
     }
 
     // *PFN_vkEndCommandBuffer)(VkCommandBuffer commandBuffer);
     pub unsafe fn end_command_buffer(&self, command_buffer: CommandBufferHandle) -> VooResult<()> {
-        ::check(self.proc_addr_loader().vkEndCommandBuffer(command_buffer.to_raw()));
-        Ok(())
+        let result = self.proc_addr_loader().vkEndCommandBuffer(command_buffer.to_raw());
+        // Ok(())
+        error::check(result, "vkEndCommandBuffer", ())
     }
 
 
     // *PFN_vkResetCommandBuffer)(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags);
     pub unsafe fn cmd_reset_command_buffer(&self, command_buffer: CommandBufferHandle,
             flags: CommandBufferResetFlags) -> VooResult<()> {
-        ::check(self.proc_addr_loader().vkResetCommandBuffer(command_buffer.to_raw(), flags.bits()));
-        Ok(())
+        let result = self.proc_addr_loader().vkResetCommandBuffer(command_buffer.to_raw(), flags.bits());
+        // Ok(())
+        error::check(result, "vkResetCommandBuffer", ())
     }
 
 
@@ -1213,14 +1272,15 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<SwapchainKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let res = self.proc_addr_loader().vkCreateSwapchainKHR(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vkCreateSwapchainKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
 
-        if res != vks::VK_SUCCESS {
-            panic!("failed to create swap chain!");
-        } else {
-            Ok(SwapchainKhrHandle(handle))
-        }
+        // if res != vks::VK_SUCCESS {
+        //     panic!("failed to create swap chain!");
+        // } else {
+        //     Ok(SwapchainKhrHandle(handle))
+        // }
+        error::check(result, "vkCreateSwapchainKHR", SwapchainKhrHandle(handle))
     }
 
     // *PFN_vkDestroySwapchainKHR)(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator);
@@ -1236,33 +1296,41 @@ impl Device {
             -> VooResult<SmallVec<[ImageHandle; 4]>> {
         let mut image_count = 0;
         let mut image_handles = SmallVec::<[ImageHandle; 4]>::new();
-        ::check(self.proc_addr_loader().vkGetSwapchainImagesKHR(self.handle().to_raw(),
-            swapchain.to_raw(), &mut image_count, ptr::null_mut()));
+        let result = self.proc_addr_loader().vkGetSwapchainImagesKHR(self.handle().to_raw(),
+            swapchain.to_raw(), &mut image_count, ptr::null_mut());
+        error::check(result, "vkGetSwapchainImagesKHR", ())?;
         image_handles.reserve_exact(image_count as usize);
         image_handles.set_len(image_count as usize);
-        ::check(self.proc_addr_loader().vkGetSwapchainImagesKHR(self.handle().to_raw(),
-            swapchain.to_raw(), &mut image_count, image_handles.as_mut_ptr() as *mut vks::VkImage));
-        Ok(image_handles)
+        loop {
+            let result = self.proc_addr_loader().vkGetSwapchainImagesKHR(self.handle().to_raw(),
+                swapchain.to_raw(), &mut image_count, image_handles.as_mut_ptr() as *mut vks::VkImage);
+            if result != CallResult::Incomplete as i32 {
+                return error::check(result, "vkGetSwapchainImagesKHR", image_handles);
+            }
+        }
+        // Ok(image_handles)
     }
 
     // *PFN_vkAcquireNextImageKHR)(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex);
     pub unsafe fn acquire_next_image_khr(&self, swapchain: SwapchainKhrHandle, _timeout: u64,
             semaphore: Option<SemaphoreHandle>, fence: Option<FenceHandle>, _image_index: u32)
-            -> Result<u32, i32> {
+            -> VooResult<u32> {
         let mut image_index = 0;
-        let res = self.proc_addr_loader().khr_swapchain.vkAcquireNextImageKHR(
+        let result = self.proc_addr_loader().khr_swapchain.vkAcquireNextImageKHR(
                 self.handle().to_raw(), swapchain.to_raw(), u64::max_value(),
                 semaphore.map(|s| s.to_raw()).unwrap_or(0),
                 fence.map(|f| f.to_raw()).unwrap_or(0), &mut image_index);
-        if res != 0 { Err(res) } else { Ok(image_index) }
+        // if res != 0 { Err(res) } else { Ok(image_index) }
+        error::check(result, "vkAcquireNextImageKHR", image_index)
     }
 
     // *PFN_vkQueuePresentKHR)(VkQueue queue, const VkPresentInfoKHR* pPresentInfo);
     pub unsafe fn queue_present_khr(&self, queue: QueueHandle, present_info: &PresentInfoKhr)
             -> VooResult<()> {
-        self.proc_addr_loader().khr_swapchain.vkQueuePresentKHR(queue.to_raw(),
+        let result = self.proc_addr_loader().khr_swapchain.vkQueuePresentKHR(queue.to_raw(),
             present_info.as_raw());
-        Ok(())
+        // Ok(())
+        error::check(result, "vkQueuePresentKHR", ())
     }
 
     // *PFN_vkCreateSharedSwapchainsKHR)(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains);
@@ -1273,10 +1341,11 @@ impl Device {
         let mut swapchains = SmallVec::<[SwapchainKhrHandle; 4]>::new();
         swapchains.reserve_exact(create_infos.len());
         swapchains.set_len(create_infos.len());
-        ::check(self.proc_addr_loader().vkCreateSharedSwapchainsKHR(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vkCreateSharedSwapchainsKHR(self.handle().to_raw(),
             create_infos.len() as u32, create_infos as *const _ as *const vks::VkSwapchainCreateInfoKHR,
-            allocator, swapchains.as_mut_ptr() as *mut vks::VkSwapchainKHR));
-        Ok(swapchains)
+            allocator, swapchains.as_mut_ptr() as *mut vks::VkSwapchainKHR);
+        // Ok(swapchains)
+        error::check(result, "vkCreateSharedSwapchainsKHR", swapchains)
     }
 
     // *PFN_vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags);
@@ -1371,9 +1440,11 @@ impl Device {
             -> VooResult<DescriptorUpdateTemplateKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateDescriptorUpdateTemplateKhr(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(DescriptorUpdateTemplateKhrHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateDescriptorUpdateTemplateKhr(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(DescriptorUpdateTemplateKhrHandle(handle))
+        error::check(result, "vkCreateDescriptorUpdateTemplateKhr",
+            DescriptorUpdateTemplateKhrHandle(handle))
     }
 
     // *PFN_vkDestroyDescriptorUpdateTemplateKHR)(VkDevice device, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator);
@@ -1472,9 +1543,11 @@ impl Device {
             -> VooResult<SamplerYcbcrConversionKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateSamplerYcbcrConversionKhr(
-            self.handle().to_raw(), create_info.as_raw(), allocator, &mut handle));
-        Ok(SamplerYcbcrConversionKhrHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateSamplerYcbcrConversionKhr(
+            self.handle().to_raw(), create_info.as_raw(), allocator, &mut handle);
+        // Ok(SamplerYcbcrConversionKhrHandle(handle))
+        error::check(result, "vkCreateSamplerYcbcrConversionKhr",
+            SamplerYcbcrConversionKhrHandle(handle))
     }
 
     // *PFN_vkDestroySamplerYcbcrConversionKHR)(VkDevice device, VkSamplerYcbcrConversionKHR ycbcrConversion, const VkAllocationCallbacks* pAllocator);
@@ -1591,9 +1664,11 @@ impl Device {
             -> VooResult<IndirectCommandsLayoutNvxHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateIndirectCommandsLayoutNvx(
-            self.handle().to_raw(), create_info.as_raw(), allocator, &mut handle));
-        Ok(IndirectCommandsLayoutNvxHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateIndirectCommandsLayoutNvx(
+            self.handle().to_raw(), create_info.as_raw(), allocator, &mut handle);
+        // Ok(IndirectCommandsLayoutNvxHandle(handle))
+        error::check(result, "vkCreateIndirectCommandsLayoutNvx",
+            IndirectCommandsLayoutNvxHandle(handle))
     }
 
     // *PFN_vkDestroyIndirectCommandsLayoutNVX)(VkDevice device, VkIndirectCommandsLayoutNVX indirectCommandsLayout, const VkAllocationCallbacks* pAllocator);
@@ -1613,9 +1688,10 @@ impl Device {
             -> VooResult<ObjectTableNvxHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateObjectTableNvx(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(ObjectTableNvxHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateObjectTableNvx(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(ObjectTableNvxHandle(handle))
+        error::check(result, "vkCreateObjectTableNvx", ObjectTableNvxHandle(handle))
     }
 
     // *PFN_vkDestroyObjectTableNVX)(VkDevice device, VkObjectTableNVX objectTable, const VkAllocationCallbacks* pAllocator);
@@ -1712,9 +1788,10 @@ impl Device {
             -> VooResult<ValidationCacheExtHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkCreateValidationCacheExt(self.handle().to_raw(),
-            create_info.as_raw(), allocator, &mut handle));
-        Ok(ValidationCacheExtHandle(handle))
+        let result = self.proc_addr_loader().core.vkCreateValidationCacheExt(self.handle().to_raw(),
+            create_info.as_raw(), allocator, &mut handle);
+        // Ok(ValidationCacheExtHandle(handle))
+        error::check(result, "vkCreateValidationCacheExt", ValidationCacheExtHandle(handle))
     }
 
     // *PFN_vkDestroyValidationCacheEXT)(VkDevice device, VkValidationCacheEXT validationCache, const VkAllocationCallbacks* pAllocator);

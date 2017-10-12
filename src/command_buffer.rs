@@ -415,7 +415,7 @@ impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
             self.command_pool.device().free_command_buffers(self.command_pool.handle(),
-                &[self.handle]).unwrap();
+                &[self.handle]);
         }
     }
 }

@@ -39,7 +39,7 @@ use voo::{voodoo_winit, vks, util, queue, Result as VooResult, Instance, Device,
     BufferUsageFlags, MemoryPropertyFlags, MemoryMapFlags, ImageType, Filter, SamplerMipmapMode,
     SamplerAddressMode, BorderColor, CommandBufferHandle, CommandBufferBeginInfo, ClearValue,
     ClearColorValue, RenderPassBeginInfo, SubpassContents, IndexType, SemaphoreCreateFlags,
-    CallResult, PresentInfoKhr};
+    CallResult, PresentInfoKhr, ErrorKind};
 use voodoo_winit::winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
 
 #[cfg(debug_assertions)]
@@ -127,7 +127,7 @@ fn init_instance() -> VooResult<Instance> {
 /// presentation modes.
 fn device_is_suitable(instance: &Instance, surface: &SurfaceKhr,
         physical_device: &PhysicalDevice, queue_family_flags: QueueFlags) -> VooResult<bool> {
-    let device_features = physical_device.features()?;
+    let device_features = physical_device.features();
 
     let reqd_exts: SmallVec<[_; 16]> = (&REQUIRED_DEVICE_EXTENSIONS[..]).iter().map(|ext_name| {
         CStr::from_bytes_with_nul(ext_name).expect("invalid required extension name")
@@ -175,9 +175,10 @@ fn create_device(instance: Instance, surface: &SurfaceKhr, physical_device: Phys
     let queue_family_idx = queue::queue_families(surface,
         &physical_device, queue_familiy_flags)?.family_idxs()[0] as u32;
 
+    let queue_priorities = [1.0];
     let queue_create_info = DeviceQueueCreateInfo::builder()
         .queue_family_index(queue_family_idx)
-        .queue_priorities(&[1.0])
+        .queue_priorities(&queue_priorities)
         .build();
 
     let features = PhysicalDeviceFeatures::builder()
@@ -313,7 +314,7 @@ pub fn create_image_views(swapchain: &SwapchainKhr) -> VooResult<Vec<ImageView>>
 fn find_supported_format(device: &Device, candidates: &[Format], tiling: ImageTiling,
         features: FormatFeatureFlags) -> VooResult<Format> {
     for &format in candidates {
-        let props = device.physical_device().format_properties(format)?;
+        let props = device.physical_device().format_properties(format);
 
         if tiling == ImageTiling::Linear &&
                 props.linear_tiling_features().contains(features) {
@@ -707,8 +708,8 @@ fn end_single_time_commands(device: &Device, command_pool: &CommandPool,
         .build();
     let cmd_buf_handles = [command_buffer.handle().to_raw()];
 
-    unsafe { device.queue_submit(device.queue(0)?, &[submit_info], None)?; }
-    device.queue_wait_idle(device.queue(0)?)?;
+    unsafe { device.queue_submit(device.queue(0), &[submit_info], None)?; }
+    device.queue_wait_idle(device.queue(0));
 
     Ok(())
 }
@@ -1348,7 +1349,7 @@ impl App {
     }
 
     fn recreate_swapchain(&mut self, current_extent: Extent2d) -> VooResult<()> {
-        self.device.wait_idle()?;
+        self.device.wait_idle();
 
         let swapchain = create_swapchain(self.surface.clone(), self.device.clone(),
             self.queue_family_flags, Some(current_extent), self.swapchain.as_ref().take())?;
@@ -1426,11 +1427,15 @@ impl App {
                     Some(self.image_available_semaphore.handle()), None, 0) {
                 Ok(idx) => idx,
                 Err(res) => {
-                    if res == CallResult::ErrorOutOfDateKhr as i32 {
-                        let dims = self.window.get_inner_size_pixels().unwrap();
-                        self.recreate_swapchain(Extent2d::builder()
-                            .height(dims.0).width(dims.1).build())?;
-                        return Ok(());
+                    if let ErrorKind::ApiCall(call_res, _fn_name) = res.kind {
+                        if call_res == CallResult::ErrorOutOfDateKhr {
+                            let dims = self.window.get_inner_size_pixels().unwrap();
+                            self.recreate_swapchain(Extent2d::builder()
+                                .height(dims.0).width(dims.1).build())?;
+                            return Ok(());
+                        } else {
+                            panic!("Unable to present swap chain image");
+                        }
                     } else {
                         panic!("Unable to present swap chain image");
                     }
@@ -1452,7 +1457,7 @@ impl App {
             .build();
 
         unsafe {
-            self.device.queue_submit(self.device.queue(0)?, &[submit_info], None)?;
+            self.device.queue_submit(self.device.queue(0), &[submit_info], None)?;
         }
 
         let swapchains = [self.swapchain.as_ref().unwrap().handle()];
@@ -1465,8 +1470,8 @@ impl App {
             .build();
 
         unsafe {
-            self.device.queue_present_khr(self.device.queue(0)?, &present_info)?;
-            self.device.queue_wait_idle(self.device.queue(0)?)?;
+            self.device.queue_present_khr(self.device.queue(0), &present_info)?;
+            self.device.queue_wait_idle(self.device.queue(0));
         }
 
         Ok(())
@@ -1501,7 +1506,7 @@ impl App {
             self.draw_frame()?;
         }
 
-        self.device.wait_idle()?;
+        self.device.wait_idle();
         Ok(())
     }
 }

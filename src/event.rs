@@ -95,8 +95,8 @@ impl Event {
         unsafe { self.inner.device.reset_event(self.handle()) }
     }
 
-    pub fn status(&self) -> EventStatus {
-        unsafe { self.inner.device.get_event_status(self.handle()).into() }
+    pub fn status(&self) -> VooResult<EventStatus> {
+        unsafe { Ok(self.inner.device.get_event_status(self.handle())?.into()) }
     }
 }
 

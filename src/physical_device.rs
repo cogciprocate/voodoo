@@ -60,17 +60,17 @@ impl PhysicalDevice {
     }
 
     #[inline]
-    pub fn features(&self) -> VooResult<PhysicalDeviceFeatures> {
+    pub fn features(&self) -> PhysicalDeviceFeatures {
         self.instance().get_physical_device_features(self)
     }
 
     #[inline]
-    pub fn format_properties(&self, format: Format) -> VooResult<FormatProperties> {
+    pub fn format_properties(&self, format: Format) -> FormatProperties {
         self.instance().get_physical_device_format_properties(self, format)
     }
 
     #[inline]
-    pub fn properties(&self) -> VooResult<PhysicalDeviceProperties> {
+    pub fn properties(&self) -> PhysicalDeviceProperties {
         self.instance().get_physical_device_properties(self)
     }
 
@@ -81,7 +81,7 @@ impl PhysicalDevice {
 
     /// Returns the memory properties for this device.
     #[inline]
-    pub fn memory_properties(&self) -> VooResult<PhysicalDeviceMemoryProperties> {
+    pub fn memory_properties(&self) -> PhysicalDeviceMemoryProperties {
         self.instance().get_physical_device_memory_properties(self)
     }
 

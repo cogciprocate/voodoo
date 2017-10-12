@@ -21,7 +21,6 @@ pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceK
     sb.build(instance)
 }
 
-
 #[cfg(target_os = "windows")]
 pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
     use winit::os::windows::WindowExt;

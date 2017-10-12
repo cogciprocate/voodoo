@@ -2,11 +2,10 @@ use std::error::Error as StdError;
 use std::result::Result as StdResult;
 use ::CallResult;
 
-pub type Result<T> = StdResult<T, Error>;
 
 pub enum ErrorKind {
     Void,
-    CallResult(CallResult),
+    ApiCall(CallResult, &'static str),
     String(String),
     Nul(::std::ffi::NulError),
     Io(::std::io::Error),
@@ -54,19 +53,19 @@ impl self::Error {
 
     /// Writes the error message for this error to a formatter.
     fn write_msg(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-            match self.kind {
-                ErrorKind::Void => write!(f, "Error"),
-                ErrorKind::CallResult(ref res) => write!(f, "Vulkan API call result: {:?}", res),
-                ErrorKind::Nul(ref err) => write!(f, "{}", err.description()),
-                ErrorKind::Io(ref err) => write!(f, "{}", err.description()),
-                ErrorKind::FromUtf8Error(ref err) => write!(f, "{}", err.description()),
-                ErrorKind::IntoStringError(ref err) => write!(f, "{}", err.description()),
-                ErrorKind::FromBytesWithNulError(ref err) => write!(f, "{}", err.description()),
-                ErrorKind::String(ref desc) => write!(f, "{}", desc),
-                ErrorKind::UnspecifiedDimensions => write!(f, "Cannot convert to a valid set of \
-                    dimensions. Please specify some dimensions."),
-            }
+        match self.kind {
+            ErrorKind::Void => write!(f, "Error"),
+            ErrorKind::ApiCall(ref res, ref fn_name) => write!(f, "Vulkan API ({}) call result: {:?}", fn_name, res),
+            ErrorKind::Nul(ref err) => write!(f, "{}", err.description()),
+            ErrorKind::Io(ref err) => write!(f, "{}", err.description()),
+            ErrorKind::FromUtf8Error(ref err) => write!(f, "{}", err.description()),
+            ErrorKind::IntoStringError(ref err) => write!(f, "{}", err.description()),
+            ErrorKind::FromBytesWithNulError(ref err) => write!(f, "{}", err.description()),
+            ErrorKind::String(ref desc) => write!(f, "{}", desc),
+            ErrorKind::UnspecifiedDimensions => write!(f, "Cannot convert to a valid set of \
+                dimensions. Please specify some dimensions."),
         }
+    }
 
     /// Writes the error message for this error and its cause to a formatter.
     fn _fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
@@ -97,7 +96,7 @@ impl StdError for self::Error {
     fn description(&self) -> &str {
         match self.kind {
             ErrorKind::Void => "Vulkan error",
-            ErrorKind::CallResult(ref _res) => "Vulkan API call error",
+            ErrorKind::ApiCall(ref _res, ..) => "Vulkan API call error",
             ErrorKind::Nul(ref err) => err.description(),
             ErrorKind::Io(ref err) => err.description(),
             ErrorKind::FromUtf8Error(ref err) => err.description(),
@@ -118,11 +117,11 @@ impl StdError for self::Error {
     }
 }
 
-impl From<i32> for self::Error {
-    fn from(res: i32) -> Self {
-        Error { kind: self::ErrorKind::CallResult(res.into()), cause: None }
-    }
-}
+// impl From<i32> for self::Error {
+//     fn from(res: i32) -> Self {
+//         Error { kind: self::ErrorKind::ApiCall(res.into()), cause: None }
+//     }
+// }
 
 impl From<()> for self::Error {
     fn from(_: ()) -> Self {
@@ -181,6 +180,7 @@ impl From<::std::ffi::FromBytesWithNulError> for self::Error {
 unsafe impl ::std::marker::Send for self::Error {}
 
 
+pub type Result<T> = StdResult<T, Error>;
 
 
 /// An chainable error.
@@ -206,3 +206,15 @@ impl<T> ChainErr<T, Error> for self::Result<T> {
         })
     }
 }
+
+
+/// Returns an error if `result` is less than zero, otherwise returns the `ok_val`.
+pub fn check<T>(result: i32, fn_name: &'static str, ok_val: T) -> self::Result<T> {
+    if result >= 0 {
+        Ok(ok_val)
+    } else {
+        Err(Error { kind: self::ErrorKind::ApiCall(result.into(), fn_name), cause: None })
+    }
+}
+
+

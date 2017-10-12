@@ -86,8 +86,8 @@ impl Fence {
         self.inner.handle
     }
 
-    pub fn status(&self) -> FenceStatus {
-        unsafe { self.inner.device.get_fence_status(self.handle()).into() }
+    pub fn status(&self) -> VooResult<FenceStatus> {
+        unsafe { Ok(FenceStatus::from(self.inner.device.get_fence_status(self.handle())?)) }
     }
 }
 

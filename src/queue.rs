@@ -104,7 +104,7 @@ impl Queue {
     // QUEUE_SPARSE_BINDING_BIT
     // QUEUE_TRANSFER_BIT
     pub fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VooResult<Queue> {
-        let handle = device.get_device_queue(queue_family_index, queue_index)?;
+        let handle = device.get_device_queue(queue_family_index, queue_index);
 
         Ok(Queue {
             handle,
