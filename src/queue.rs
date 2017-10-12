@@ -1,7 +1,7 @@
 // use std::ptr;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, PhysicalDevice, Device, SurfaceKhr, QueueFlags, Handle};
+use ::{VooResult, PhysicalDevice, Device, SurfaceKhr, QueueFlags, Handle};
 
 
 
@@ -27,19 +27,19 @@ unsafe impl Handle for QueueHandle {
 
 
 pub struct QueueFamilyIndices {
-    physical_device: PhysicalDevice,
-    flags: ::QueueFlags,
+    _physical_device: PhysicalDevice,
+    _flags: QueueFlags,
     pub flag_idxs: SmallVec<[i32; 64]>,
     pub presentation_support_idxs: SmallVec<[i32; 64]>,
 }
 
 impl QueueFamilyIndices {
-    pub fn new(physical_device: PhysicalDevice, flags: ::QueueFlags) -> QueueFamilyIndices {
+    pub fn new(_physical_device: PhysicalDevice, _flags: QueueFlags) -> QueueFamilyIndices {
         QueueFamilyIndices {
             flag_idxs: SmallVec::new(),
             presentation_support_idxs: SmallVec::new(),
-            physical_device,
-            flags
+            _physical_device,
+            _flags
         }
     }
 
@@ -64,7 +64,7 @@ impl QueueFamilyIndices {
     }
 }
 
-pub fn queue_families(instance: &Instance, surface: &SurfaceKhr, physical_device: &PhysicalDevice,
+pub fn queue_families(surface: &SurfaceKhr, physical_device: &PhysicalDevice,
         queue_flags: QueueFlags) -> VooResult<QueueFamilyIndices> {
     let mut indices = QueueFamilyIndices::new(physical_device.clone(), queue_flags);
     let queue_families = physical_device.queue_family_properties()?;
@@ -90,7 +90,6 @@ pub fn queue_families(instance: &Instance, surface: &SurfaceKhr, physical_device
 
 
 pub struct Queue {
-    // handle: vks::VkQueue,
     handle: QueueHandle,
     device: Device,
     family_idx: u32,
@@ -105,21 +104,26 @@ impl Queue {
     // QUEUE_SPARSE_BINDING_BIT
     // QUEUE_TRANSFER_BIT
     pub fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VooResult<Queue> {
-        // let mut handle = ptr::null_mut();
-        // unsafe {
-        //     device.proc_addr_loader().core.vkGetDeviceQueue(device.handle().0, queue_family_index,
-        //         queue_index, &mut handle);
-        // }
-
         let handle = device.get_device_queue(queue_family_index, queue_index)?;
 
         Ok(Queue {
-            // handle: QueueHandle(handle),
             handle,
             device,
             family_idx: queue_family_index,
             idx: queue_index,
         })
+    }
+
+    pub fn device(&self) -> &Device {
+        &self.device
+    }
+
+    pub fn family_index(&self) -> u32 {
+        self.family_idx
+    }
+
+    pub fn index(&self) -> u32 {
+        self.idx
     }
 }
 

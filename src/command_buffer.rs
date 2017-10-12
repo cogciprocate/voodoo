@@ -76,7 +76,7 @@ impl CommandBuffer {
     #[inline]
     pub fn begin(&self, flags: CommandBufferUsageFlags) -> VooResult<()> {
         let begin_info = CommandBufferBeginInfo::builder()
-            .flags(CommandBufferUsageFlags::ONE_TIME_SUBMIT)
+            .flags(flags)
             .build();
 
         unsafe {
@@ -259,8 +259,8 @@ impl CommandBuffer {
     }
 
     #[inline]
-    pub fn fill_buffer(&self,command_buffer: &CommandBuffer,  dst_buffer: &Buffer,
-            dst_offset: u64, size: Option<DeviceSize>, data: u32) {
+    pub fn fill_buffer(&self, dst_buffer: &Buffer, dst_offset: u64,
+            size: Option<DeviceSize>, data: u32) {
         unsafe { self.device().cmd_fill_buffer(self.handle(),
             dst_buffer.handle(), dst_offset, size, data); }
     }
@@ -391,7 +391,7 @@ impl CommandBuffer {
     }
 
     #[inline]
-    pub fn debug_marker_end_ext(&self, command_buffer: &CommandBuffer) {
+    pub fn debug_marker_end_ext(&self) {
         unsafe { self.device().cmd_debug_marker_end_ext(self.handle()); }
     }
 

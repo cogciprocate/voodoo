@@ -43,13 +43,6 @@ impl GraphicsPipeline {
             create_infos.push(builder.as_ref().clone());
         }
 
-        // unsafe {
-        //     pipeline_handles.set_len(builders.len());
-        //     ::check(device.proc_addr_loader().core.vkCreateGraphicsPipelines(device.handle().0,
-        //         0, create_infos.len() as u32, create_infos.as_ptr(), ptr::null(),
-        //         pipeline_handles.as_mut_ptr() as *mut vks::VkPipeline));
-        // }
-
         let pipeline_handles = unsafe { device.create_graphics_pipelines(None, &create_infos, None)? };
 
         for handle in pipeline_handles {

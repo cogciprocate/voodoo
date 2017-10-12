@@ -18,7 +18,12 @@
 
 #### Status
 
-Completion ~= 50%.
+* API coverage:
+  * core: 100%
+  * extensions: 70%
+* documentation: 5%
+
+
 
 
 #### Other Vulkan libraries in Rust

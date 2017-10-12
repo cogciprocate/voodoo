@@ -82,19 +82,7 @@ impl Drop for Inner {
 }
 
 
-// enum CreateInfo {
-//     Xlib(vks::VkXlibSurfaceCreateInfoKHR),
-//     Xcb(vks::VkXcbSurfaceCreateInfoKHR),
-//     Wayland(vks::VkWaylandSurfaceCreateInfoKHR),
-//     Mir(vks::VkMirSurfaceCreateInfoKHR),
-//     Win32(vks::VkWin32SurfaceCreateInfoKHR),
-//     Android(vks::VkAndroidSurfaceCreateInfoKHR),
-//     Ios(vks::VkIOSSurfaceCreateInfoMVK),
-//     MacOs(vks::VkMacOSSurfaceCreateInfoMVK),
-//     Vi(vks::VkViSurfaceCreateInfoNN),
-//     None,
-// }
-
+#[allow(dead_code)]
 enum CreateInfo<'c> {
     Xlib(XlibSurfaceCreateInfoKhr<'c>),
     Xcb(XcbSurfaceCreateInfoKhr<'c>),
@@ -203,24 +191,23 @@ impl<'b> SurfaceKhrBuilder<'b> {
 
     /// Builds and returns a new `SurfaceKhr`.
     pub fn build(&self, instance: Instance) -> VooResult<SurfaceKhr> {
-        // let mut handle = 0;
-
         let handle = unsafe {
             match self.create_info {
-                CreateInfo::Win32(ref ci) => {
-                    // ::check(instance.proc_addr_loader().khr_win32_surface.vkCreateWin32SurfaceKHR(
-                    //     instance.handle().0, ci, ptr::null(), &mut handle));
-                    instance.create_win32_surface_khr(ci, None)?
-                },
+                CreateInfo::Xlib(ref ci) => instance.create_xlib_surface_khr(ci, None)?,
+                CreateInfo::Xcb(ref ci) => instance.create_xcb_surface_khr(ci, None)?,
+                CreateInfo::Wayland(ref ci) => instance.create_wayland_surface_khr(ci, None)?,
+                CreateInfo::Mir(ref ci) => instance.create_mir_surface_khr(ci, None)?,
+                CreateInfo::Win32(ref ci) => instance.create_win32_surface_khr(ci, None)?,
+                CreateInfo::Android(ref ci) => instance.create_android_surface_khr(ci, None)?,
+                CreateInfo::Ios(ref ci) => instance.create_ios_surface_mvk(ci, None)?,
+                CreateInfo::MacOs(ref ci) => instance.create_mac_os_surface_mvk(ci, None)?,
+                CreateInfo::Vi(ref ci) => instance.create_vi_surface_nn(ci, None)?,
                 CreateInfo::None => panic!("no surface window information provided"),
-                _ => unimplemented!("unable to create surface: non-windows surfaces not yet \
-                    implemented (it's easy!)"),
             }
         };
 
         Ok(SurfaceKhr {
             inner: Arc::new(Inner {
-                // handle: SurfaceKhrHandle(handle),
                 handle,
                 instance: instance,
                 active: AtomicBool::new(false),

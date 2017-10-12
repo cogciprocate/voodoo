@@ -43,44 +43,6 @@ impl Sampler {
         SamplerBuilder::new()
     }
 
-    // pub fn new(device: Device) -> VooResult<Sampler> {
-    //     let create_info = vks::VkSamplerCreateInfo {
-    //         sType: vks::VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-    //         pNext: ptr::null(),
-    //         flags: 0,
-    //         magFilter: vks::VK_FILTER_LINEAR,
-    //         minFilter: vks::VK_FILTER_LINEAR,
-    //         mipmapMode: vks::VK_SAMPLER_MIPMAP_MODE_LINEAR,
-    //         addressModeU: vks::VK_SAMPLER_ADDRESS_MODE_REPEAT,
-    //         addressModeV: vks::VK_SAMPLER_ADDRESS_MODE_REPEAT,
-    //         addressModeW: vks::VK_SAMPLER_ADDRESS_MODE_REPEAT,
-    //         mipLodBias: 0.,
-    //         // anisotropyEnable: vks::VK_FALSE,
-    //         // maxAnisotropy: 1.,
-    //         anisotropyEnable: vks::VK_TRUE,
-    //         maxAnisotropy: 16.,
-    //         compareEnable: vks::VK_FALSE,
-    //         compareOp: vks::VK_COMPARE_OP_ALWAYS,
-    //         minLod: 0.,
-    //         maxLod: 0.,
-    //         borderColor: vks::VK_BORDER_COLOR_INT_OPAQUE_BLACK,
-    //         unnormalizedCoordinates: vks::VK_FALSE,
-    //     };
-
-    //     let mut handle = 0;
-    //     unsafe {
-    //         ::check(device.proc_addr_loader().vkCreateSampler(device.handle().0, &create_info,
-    //             ptr::null(), &mut handle));
-    //     }
-
-    //     Ok(Sampler {
-    //         inner: Arc::new(Inner {
-    //             handle,
-    //             device,
-    //         })
-    //     })
-    // }
-
     pub fn handle(&self) -> SamplerHandle {
         self.inner.handle
     }
@@ -103,8 +65,6 @@ unsafe impl<'h> Handle for &'h Sampler {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().vkDestroySampler(self.device.handle().0,
-            //     self.handle.0, ptr::null());
             self.device.destroy_sampler(self.handle, None);
         }
     }
@@ -285,17 +245,10 @@ impl<'b> SamplerBuilder<'b> {
 
     /// Creates and returns a new `Sampler`
     pub fn build(&self, device: Device) -> VooResult<Sampler> {
-        // let mut handle = 0;
-        // unsafe {
-        //     ::check(device.proc_addr_loader().core.vkCreateSampler(device.handle().0,
-        //         self.create_info.as_raw(), ptr::null(), &mut handle));
-        // }
-
         let handle = unsafe { device.create_sampler(&self.create_info, None)? };
 
         Ok(Sampler {
             inner: Arc::new(Inner {
-                // handle: SamplerHandle(handle),
                 handle,
                 device,
             })

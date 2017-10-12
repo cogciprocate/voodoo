@@ -45,14 +45,6 @@ impl Image {
     }
 
     pub fn from_handle(device: Device, handle: ImageHandle) -> VooResult<Image> {
-        // // Memory Requirements:
-        // let mut memory_requirements: vks::VkMemoryRequirements;
-        // unsafe {
-        //     memory_requirements = mem::uninitialized();
-        //     device.proc_addr_loader().core.vkGetImageMemoryRequirements(device.handle().0,
-        //         handle.0, &mut memory_requirements);
-        // }
-
         let memory_requirements = unsafe { device.get_image_memory_requirements(handle) };
 
         Ok(Image {
@@ -79,11 +71,8 @@ impl Image {
     pub fn bind_memory(&self, memory: &DeviceMemory, offset: ::DeviceSize)
             -> VooResult<()> {
         unsafe {
-            // ::check(self.inner.device.proc_addr_loader().vkBindImageMemory(
-            //     self.inner.device.handle().0, self.inner.handle.0, device_memory.handle().0, offset));
             self.inner.device.bind_image_memory(self.inner.handle, memory.handle(), offset)
         }
-        // Ok(())
     }
 
     /// Returns a reference to the associated device.
@@ -104,7 +93,6 @@ unsafe impl<'i> Handle for &'i Image {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().vkDestroyImage(self.device.handle().0, self.handle.0, ptr::null());
             self.device.destroy_image(self.handle, None);
         }
     }
@@ -112,25 +100,6 @@ impl Drop for Inner {
 
 
 /// A builder for `Image`.
-//
-// typedef struct VkImageCreateInfo {
-//     VkStructureType          sType;
-//     const void*              pNext;
-//     VkImageCreateFlags       flags;
-//     VkImageType              imageType;
-//     VkFormat                 format;
-//     VkExtent3D               extent;
-//     uint32_t                 mipLevels;
-//     uint32_t                 arrayLayers;
-//     VkSampleCountFlagBits    samples;
-//     VkImageTiling            tiling;
-//     VkImageUsageFlags        usage;
-//     VkSharingMode            sharingMode;
-//     uint32_t                 queueFamilyIndexCount;
-//     const uint32_t*          pQueueFamilyIndices;
-//     VkImageLayout            initialLayout;
-// } VkImageCreateInfo;
-//
 #[derive(Debug, Clone)]
 pub struct ImageBuilder<'b> {
     create_info: ::ImageCreateInfo<'b>,
@@ -234,7 +203,6 @@ impl<'b> ImageBuilder<'b> {
             queue_family_indices: &'p [u32])
             -> &'s mut ImageBuilder<'b>
             where 'p: 'b {
-        // self.create_info.set_queueFamilyIndexCount(queue_family_indices.len() as u32);
         self.create_info.set_queue_family_indices(queue_family_indices);
         self
     }
@@ -251,29 +219,7 @@ impl<'b> ImageBuilder<'b> {
 
     //// Creates and returns a new `Image`
     pub fn build(&self, device: Device) -> VooResult<Image> {
-        // let mut handle = 0;
-        // unsafe {
-        //     ::check(device.proc_addr_loader().core.vkCreateImage(device.handle().0,
-        //         self.create_info.as_raw(), ptr::null(), &mut handle));
-        // }
-
         let handle = unsafe { device.create_image(&self.create_info, None)? };
-
-        // // Memory Requirements:
-        // let mut memory_requirements: vks::VkMemoryRequirements;
-        // unsafe {
-        //     memory_requirements = mem::uninitialized();
-        //     device.proc_addr_loader().core.vkGetImageMemoryRequirements(device.handle().0, handle,
-        //         &mut memory_requirements);
-        // }
-
-        // Ok(Image {
-        //     inner: Arc::new(Inner {
-        //         handle,
-        //         memory_requirements: memory_requirements.into(),
-        //         device,
-        //     })
-        // })
         Image::from_handle(device, handle)
     }
 }

@@ -12,7 +12,7 @@ use ::{VooResult, Handle, InstanceHandle};
 const PRINT: bool = false;
 
 pub struct Loader {
-    vk_lib: lib::Library,
+    _vk_lib: lib::Library,
     vk_get_instance_proc_addr: vks::PFN_vkGetInstanceProcAddr,
     instance_proc_addr_loader: vks::InstanceProcAddrLoader,
 }
@@ -41,14 +41,13 @@ impl Loader {
             instance_proc_addr_loader.load_core_global();
         }
 
-        Ok(Loader { vk_lib, vk_get_instance_proc_addr, instance_proc_addr_loader })
+        Ok(Loader { _vk_lib: vk_lib, vk_get_instance_proc_addr, instance_proc_addr_loader })
     }
 
     #[inline]
-    pub fn get_instance_proc_addr(&self, instance: vks::VkInstance, name: *const i8)
+    pub fn get_instance_proc_addr(&self)
             -> Option<unsafe extern "system" fn(*mut vks::VkInstance_T, *const i8)
-                -> Option<unsafe extern "system" fn()>>
-    {
+                -> Option<unsafe extern "system" fn()>> {
         self.vk_get_instance_proc_addr
     }
 

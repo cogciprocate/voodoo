@@ -1,12 +1,8 @@
 use std::sync::Arc;
-// use std::mem;
-// use std::ptr;
-// use std::cmp;
-// use std::fmt;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Instance, SurfaceKhr, Device, PhysicalDevice, ImageHandle, Handle};
+use ::{VooResult, SurfaceKhr, Device, PhysicalDevice, ImageHandle, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -37,7 +33,7 @@ pub struct SwapchainSupportDetails {
 }
 
 impl SwapchainSupportDetails {
-    pub fn new(instance: &Instance, surface: &SurfaceKhr, physical_device: &PhysicalDevice)
+    pub fn new(surface: &SurfaceKhr, physical_device: &PhysicalDevice)
             -> VooResult<SwapchainSupportDetails> {
         let capabilities = physical_device.surface_capabilities_khr(surface)?;
         let formats = physical_device.surface_formats_khr(surface)?;
@@ -307,36 +303,12 @@ impl<'b> SwapchainKhrBuilder<'b> {
         let image_format = self.create_info.image_format().clone();
         let extent = self.create_info.image_extent().clone();
 
-        // let mut handle = 0;
-        // let res = unsafe { device.proc_addr_loader().vkCreateSwapchainKHR(device.handle().0,
-        //     self.create_info.as_raw(), ptr::null(), &mut handle) };
-
-        // if res != vks::VK_SUCCESS {
-        //     panic!("failed to create swap chain!");
-        // }
-
         let handle = unsafe { device.create_swapchain_khr(&self.create_info, None)? };
-
-        // let mut image_count = 0;
-        // let mut image_handles = SmallVec::<[ImageHandle; 8]>::new();
-        // unsafe {
-        //     ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle().to_raw(), handle.to_raw(),
-        //         &mut image_count, ptr::null_mut()));
-        //     assert!(image_count as usize <= image_handles.inline_size());
-        //     image_handles.set_len(image_count as usize);
-        //     ::check(device.proc_addr_loader().vkGetSwapchainImagesKHR(device.handle().to_raw(), handle.to_raw(),
-        //         &mut image_count, image_handles.as_mut_ptr() as *mut vks::VkImage));
-        // }
 
         let image_handles = unsafe { device.get_swapchain_images_khr(handle)? };
 
-        // let images = image_handles.iter()
-        // let images = image_handles.into_iter().map(|handle| Image::from_handle(device.clone(), handle))
-        //     .collect::<Result<SmallVec<[Image; 8]>, _>>()?;
-
         Ok(SwapchainKhr {
             inner: Arc::new(Inner {
-                // handle: SwapchainKhrHandle(handle),
                 handle,
                 device,
                 surface: self.surface.cloned()

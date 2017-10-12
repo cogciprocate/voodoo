@@ -137,13 +137,13 @@ fn device_is_suitable(instance: &Instance, surface: &SurfaceKhr,
 
     let mut swap_chain_adequate = false;
     if extensions_supported {
-        let swap_chain_details = SwapchainSupportDetails::new(instance, surface,
+        let swap_chain_details = SwapchainSupportDetails::new(surface,
             &physical_device)?;
         swap_chain_adequate = !swap_chain_details.formats.is_empty() &&
             !swap_chain_details.present_modes.is_empty()
     }
 
-    let queue_family_indices = queue::queue_families(instance, surface,
+    let queue_family_indices = queue::queue_families(surface,
         &physical_device, queue_family_flags)?;
 
     Ok(queue_family_indices.is_complete() &&
@@ -172,7 +172,7 @@ fn choose_physical_device(instance: &Instance, surface: &SurfaceKhr,
 
 fn create_device(instance: Instance, surface: &SurfaceKhr, physical_device: PhysicalDevice,
         queue_familiy_flags: QueueFlags) -> VooResult<Device> {
-    let queue_family_idx = queue::queue_families(&instance, surface,
+    let queue_family_idx = queue::queue_families(surface,
         &physical_device, queue_familiy_flags)?.family_idxs()[0] as u32;
 
     let queue_create_info = DeviceQueueCreateInfo::builder()
@@ -248,8 +248,7 @@ fn choose_swap_extent(capabilities: &SurfaceCapabilitiesKhr,
 fn create_swapchain(surface: SurfaceKhr, device: Device, queue_family_flags: QueueFlags,
         window_size: Option<Extent2d>, old_swapchain: Option<&SwapchainKhr>)
         -> VooResult<SwapchainKhr> {
-    let swapchain_details = SwapchainSupportDetails::new(device.instance(),
-        &surface, device.physical_device())?;
+    let swapchain_details = SwapchainSupportDetails::new(&surface, device.physical_device())?;
     let surface_format = choose_swap_surface_format(&swapchain_details.formats);
     let present_mode = choose_swap_present_mode(&swapchain_details.present_modes);
     let extent = choose_swap_extent(&swapchain_details.capabilities, window_size);
@@ -260,8 +259,7 @@ fn create_swapchain(surface: SurfaceKhr, device: Device, queue_family_flags: Que
             image_count > swapchain_details.capabilities.max_image_count() {
         image_count = swapchain_details.capabilities.max_image_count();
     }
-    let indices = queue::queue_families(device.instance(), &surface,
-        device.physical_device(), queue_family_flags)?;
+    let indices = queue::queue_families(&surface, device.physical_device(), queue_family_flags)?;
     let queue_family_indices = [indices.flag_idxs[0] as u32,
         indices.presentation_support_idxs[0] as u32];
 
@@ -668,8 +666,8 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
 
 fn create_command_pool(device: Device, surface: &SurfaceKhr, queue_family_flags: QueueFlags)
         -> VooResult<CommandPool> {
-    let queue_family_idx = voo::queue_families(device.instance(), surface,
-        device.physical_device(), queue_family_flags)?.family_idxs()[0] as u32;
+    let queue_family_idx = voo::queue_families(surface, device.physical_device(),
+        queue_family_flags)?.family_idxs()[0] as u32;
 
     CommandPool::builder()
         .queue_family_index(queue_family_idx)

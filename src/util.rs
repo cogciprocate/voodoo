@@ -186,9 +186,9 @@ pub fn read_file<P: AsRef<Path>>(file: P) -> VooResult<Vec<u8>> {
 }
 
 pub fn file_reader<P: AsRef<Path>>(file: P) -> VooResult<BufReader<File>> {
-    let file_name = file.as_ref().display().to_string();
+    // let file_name = file.as_ref().display().to_string();
     let f = File::open(file).expect("file not found");
-    let file_bytes = f.metadata().unwrap().len() as usize;
+    // let file_bytes = f.metadata().unwrap().len() as usize;
     // let mut contents = Vec::<u8>::with_capacity(file_bytes);
     Ok(BufReader::new(f))
 }

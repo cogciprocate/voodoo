@@ -473,10 +473,9 @@ impl Instance {
     }
 
     // *PFN_vkCreateWaylandSurfaceKHR)(VkInstance instance, const VkWaylandSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
-    pub unsafe fn create_wayland_surface_khr<Pd>(&self,
-            create_info: &WaylandSurfaceCreateInfoKhr, allocator: Option<*const vks::VkAllocationCallbacks>)
-            -> VooResult<SurfaceKhrHandle>
-            where Pd: Handle<Target=PhysicalDeviceHandle> {
+    pub unsafe fn create_wayland_surface_khr(&self, create_info: &WaylandSurfaceCreateInfoKhr,
+            allocator: Option<*const vks::VkAllocationCallbacks>)
+            -> VooResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut surface = 0;
         ::check(self.proc_addr_loader().vkCreateWaylandSurfaceKHR(self.handle().to_raw(),
@@ -487,7 +486,6 @@ impl Instance {
     // *PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR)(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct wl_display* display);
     pub unsafe fn get_physical_device_wayland_presentation_support_khr<Pd>(&self,
             physical_device: Pd, queue_family_index: u32, display: *mut wl_display) -> bool
-
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         self.proc_addr_loader().vkGetPhysicalDeviceWaylandPresentationSupportKHR(
             physical_device.handle().to_raw(), queue_family_index, display) != 0

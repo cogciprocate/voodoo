@@ -93,10 +93,6 @@ impl DeviceMemory {
     pub unsafe fn map_to_ptr<T>(&self, offset_bytes: u64, size_bytes: u64,
             flags: MemoryMapFlags)
             -> VooResult<*mut T> {
-        // let mut data = ptr::null_mut();
-        // ::check(self.inner.device.proc_addr_loader().vkMapMemory(self.inner.device.handle().0,
-        //     self.inner.handle.0, offset_bytes, size_bytes, flags, &mut data));
-        // Ok(data as *mut T)
         self.inner.device.map_memory(self.inner.handle, offset_bytes, size_bytes, flags)
     }
 
@@ -106,8 +102,6 @@ impl DeviceMemory {
     ///
     /// Use `::unmap` to unmap memory mapped by `::map`.
     pub unsafe fn unmap_ptr(&self) {
-        // self.inner.device.proc_addr_loader().core.vkUnmapMemory(self.inner.device.handle().0,
-        //     self.inner.handle.0);
         self.inner.device.unmap_memory(self.inner.handle);
     }
 

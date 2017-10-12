@@ -61,7 +61,7 @@ impl DescriptorPool {
             where Ds: Handle<Target=DescriptorSetLayoutHandle> {
         let layouts: SmallVec<[DescriptorSetLayoutHandle; 8]> = layouts.iter().map(|ds|
             ds.handle()).collect();
-        let len = layouts.len();
+        // let len = layouts.len();
 
         let alloc_info = DescriptorSetAllocateInfo::builder()
             .descriptor_pool(self.handle())
@@ -94,8 +94,6 @@ unsafe impl<'d> Handle for &'d DescriptorPool {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().vkDestroyDescriptorPool(self.device.handle().0,
-            //     self.handle.0, ptr::null());
             self.device.destroy_descriptor_pool(self.handle, None);
         }
     }
@@ -104,16 +102,6 @@ impl Drop for Inner {
 
 
 /// A builder for `DescriptorPool`.
-//
-// typedef struct VkDescriptorPoolCreateInfo {
-//     VkStructureType                sType;
-//     const void*                    pNext;
-//     VkDescriptorPoolCreateFlags    flags;
-//     uint32_t                       maxSets;
-//     uint32_t                       poolSizeCount;
-//     const VkDescriptorPoolSize*    pPoolSizes;
-// } VkDescriptorPoolCreateInfo;
-//
 #[derive(Debug, Clone)]
 pub struct DescriptorPoolBuilder<'b> {
     create_info: ::DescriptorPoolCreateInfo<'b>,
@@ -159,17 +147,10 @@ impl<'b> DescriptorPoolBuilder<'b> {
 
     /// Creates and returns a new `DescriptorPool`
     pub fn build(&self, device: Device) -> VooResult<DescriptorPool> {
-        // let mut handle = 0;
-        // unsafe {
-        //     ::check(device.proc_addr_loader().core.vkCreateDescriptorPool(device.handle().0,
-        //         self.create_info.as_raw(), ptr::null(), &mut handle));
-        // }
-
         let handle = unsafe { device.create_descriptor_pool(&self.create_info, None)? };
 
         Ok(DescriptorPool {
             inner: Arc::new(Inner {
-                // handle: DescriptorPoolHandle(handle),
                 handle,
                 device,
             })

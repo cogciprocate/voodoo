@@ -1,12 +1,11 @@
 //! Voodoo - Vulkan, but rustier.
 
-#![allow(unused_extern_crates, dead_code, unused_variables)]
 
 extern crate libloading as lib;
 extern crate smallvec;
 extern crate vks as vks_;
 extern crate libc;
-extern crate tobj;
+// extern crate tobj;
 extern crate ordered_float;
 #[macro_use]
 extern crate bitflags as bitflags_;
@@ -612,22 +611,8 @@ unsafe impl<'h> Handle for &'h DisplayKhr {
 }
 
 
-
-// typedef union VkClearColorValue {
-//     float       float32[4];
-//     int32_t     int32[4];
-//     uint32_t    uint32[4];
-// } VkClearColorValue;
-// pub enum ClearColorValue {
-//     Float([f32; 4]),
-//     I32([i32; 4]),
-//     U32([u32; 4]),
-// }
-
+pub type ClearValue = vks::VkClearValue;
 pub type ClearColorValue = vks::VkClearColorValue;
-
-// pub type SurfaceKhr = vks::VkSurfaceKHR;
-// pub type SwapchainKhr = vks::VkSwapchainKHR;
 pub type DeviceSize = vks::VkDeviceSize;
 pub type Display = vks::Display;
 pub type Window = vks::Window;
@@ -659,10 +644,6 @@ pub type DWORD = vks::DWORD;
 #[allow(non_camel_case_types)]
 pub type LPCWSTR = vks::LPCWSTR;
 pub type CommandPoolTrimFlagsKhr = vks::VkCommandPoolTrimFlagsKHR;
-
-
-// TODO: MAKE THESE UNIONS ENUMS:
-pub type ClearValue = vks::VkClearValue;
 
 
 pub const LOD_CLAMP_NONE: f32 = 1000.0f32;
@@ -782,135 +763,6 @@ pub fn check(code: i32) {
     if code != vks::VK_SUCCESS { panic!("VkResult error code: {}", code); }
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////// TEMPLATE /////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-// use std::sync::Arc;
-// use std::ptr;
-// use vks;
-// use ::{util, VooResult, Device};
-
-// #[derive(Debug)]
-// struct Inner {
-//     handle: vks::VkAbstractTemplate,
-//     device: Device,
-// }
-
-// #[derive(Debug, Clone)]
-// pub struct AbstractTemplate {
-//     inner: Arc<Inner>,
-// }
-
-// impl AbstractTemplate {
-//     /// Returns a new `AbstractTemplateBuilder`.
-//     pub fn builder<'b>() -> AbstractTemplateBuilder<'b> {
-//         AbstractTemplateBuilder::new()
-//     }
-
-//     pub fn new() -> VooResult<AbstractTemplate> {
-//         let mut handle = 0;
-//         unsafe {
-//             ::check(device.proc_addr_loader().vkCreateAbstractTemplate(device.handle().0, &create_info,
-//                 ptr::null(), &mut handle));
-//         }
-
-//         Ok(AbstractTemplate {
-//             inner: Arc::new(Inner {
-//                 handle,
-//                 device,
-//             })
-//         })
-//     }
-
-//     pub fn handle(&self) -> vks::VkAbstractTemplate {
-//         self.inner.handle
-//     }
-
-    /// Returns a reference to the associated device.
-//     pub fn device(&self) -> &Device {
-//         &self.inner.device
-//     }
-// }
-
-// impl Drop for Inner {
-//     fn drop(&mut self) {
-//         unsafe {
-//             self.device.proc_addr_loader().vkDestroyAbstractTemplate(self.device.handle().0, self.handle, ptr::null());
-//         }
-//     }
-// }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////// BUILDER TEMPLATE ///////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-// use std::marker::PhantomData;
-
-    // /// Returns a new `AbstractTemplateBuilder`.
-    // pub fn builder<'b>() -> AbstractTemplateBuilder<'b> {
-    //     AbstractTemplateBuilder::new()
-    // }
-
-// /// A builder for `AbstractTemplate`.
-// #[derive(Debug, Clone)]
-// pub struct AbstractTemplateBuilder<'b> {
-//     create_info: vks::VkAbstractTemplateCreateInfo,
-//     _p: PhantomData<&'b ()>,
-// }
-
-// impl<'b> AbstractTemplateBuilder<'b> {
-//     /// Returns a new render pass builder.
-//     pub fn new() -> AbstractTemplateBuilder<'b> {
-//         AbstractTemplateBuilder {
-//             create_info: vks::VkAbstractTemplateCreateInfo::default(),
-//             _p: PhantomData,
-//         }
-//     }
-
-//     pub fn fffffffffffff<'s>(&'s mut self, fffffffffffff: vks::VkAbstractTemplateCreateFlags)
-//             -> &'s mut AbstractTemplateBuilder<'b> {
-//         self.create_info.fffffffffffff = fffffffffffff;
-//         self
-//     }
-
-//     pub fn sssssssssssss<'s, 'p>(&'s mut self, sssssssssssss: &'p [DeviceQueueCreateInfo])
-//             -> &'s mut AbstractTemplateBuilder<'b>
-//             where 'p: 'b {
-//         self.create_info.SeeSsssee = sssssssssssss;
-//         self
-//     }
-
-//     pub fn pppppppppppppp<'s, 'p>(&'s mut self,
-//             pppppppppppppp: &'p [vks::VkAttachmentDescription])
-//             -> &'s mut AbstractTemplateBuilder<'b>
-//             where 'p: 'b {
-//         self.create_info.ppppppppppppppCount = pppppppppppppp.len() as u32;
-//         self.create_info.pApppppppp = pppppppppppppp.as_ptr();
-//         self
-//     }
-
-//     /// Creates and returns a new `AbstractTemplate`
-//     pub fn build(&self, device: Device) -> VooResult<AbstractTemplate> {
-//         let mut handle = 0;
-//         unsafe {
-//             ::check(device.proc_addr_loader().core.vkCreateAbstractTemplate(device.handle().0,
-//                 &self.create_info, ptr::null(), &mut handle));
-//         }
-
-//         Ok(AbstractTemplate {
-//             inner: Arc::new(Inner {
-//                 handle,
-//                 device,
-//             })
-//         })
-//     }
-// }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 #[cfg(test)]
