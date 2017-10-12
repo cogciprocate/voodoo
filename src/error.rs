@@ -1,10 +1,12 @@
 use std::error::Error as StdError;
 use std::result::Result as StdResult;
+use ::CallResult;
 
 pub type Result<T> = StdResult<T, Error>;
 
 pub enum ErrorKind {
     Void,
+    CallResult(CallResult),
     String(String),
     Nul(::std::ffi::NulError),
     Io(::std::io::Error),
@@ -52,7 +54,8 @@ impl self::Error {
     /// Writes the error message for this error to a formatter.
     fn write_msg(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
             match self.kind {
-                ErrorKind::Void => write!(f, "OpenCL Error"),
+                ErrorKind::Void => write!(f, "Error"),
+                ErrorKind::CallResult(ref res) => write!(f, "Vulkan API call result: {:?}", res),
                 ErrorKind::Nul(ref err) => write!(f, "{}", err.description()),
                 ErrorKind::Io(ref err) => write!(f, "{}", err.description()),
                 ErrorKind::FromUtf8Error(ref err) => write!(f, "{}", err.description()),
@@ -91,7 +94,8 @@ impl ::std::fmt::Display for self::Error {
 impl StdError for self::Error {
     fn description(&self) -> &str {
         match self.kind {
-            ErrorKind::Void => "OpenCL Error",
+            ErrorKind::Void => "Vulkan error",
+            ErrorKind::CallResult(ref _res) => "Vulkan API call error",
             ErrorKind::Nul(ref err) => err.description(),
             ErrorKind::Io(ref err) => err.description(),
             ErrorKind::FromUtf8Error(ref err) => err.description(),
@@ -108,6 +112,12 @@ impl StdError for self::Error {
             Some(ref bc) => Some(&*bc),
             None => None,
         }
+    }
+}
+
+impl From<i32> for self::Error {
+    fn from(res: i32) -> Self {
+        Error { kind: self::ErrorKind::CallResult(res.into()), cause: None }
     }
 }
 

@@ -1,4 +1,4 @@
-#![allow(/*unused_imports,*/ dead_code, unused_variables)]
+#![allow(dead_code, unused_variables)]
 
 extern crate voodoo as voo;
 extern crate cgmath;
@@ -175,9 +175,10 @@ fn create_device(instance: Instance, surface: &SurfaceKhr, physical_device: Phys
     let queue_family_idx = queue::queue_families(surface,
         &physical_device, queue_familiy_flags)?.family_idxs()[0] as u32;
 
+    let queue_priorities = [1.0];
     let queue_create_info = DeviceQueueCreateInfo::builder()
         .queue_family_index(queue_family_idx)
-        .queue_priorities(&[1.0])
+        .queue_priorities(&queue_priorities)
         .build();
 
     let features = PhysicalDeviceFeatures::builder()
@@ -1539,8 +1540,8 @@ fn create_test_buffers(device: &Device, command_pool: &CommandPool, bind: bool)
         let memory_requirements = buffer.memory_requirements().clone();
         let memory_type_index = device.memory_type_index(memory_requirements.memory_type_bits(),
             // MemoryPropertyFlags::HOST_VISIBLE | MemoryPropertyFlags::HOST_COHERENT)?;
-            // MemoryPropertyFlags::DEVICE_LOCAL)?;
-            MemoryPropertyFlags::HOST_VISIBLE)?;
+            MemoryPropertyFlags::DEVICE_LOCAL)?;
+            // MemoryPropertyFlags::HOST_VISIBLE)?;
         let buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
             memory_type_index)?;
 
@@ -1554,14 +1555,14 @@ fn create_test_buffers(device: &Device, command_pool: &CommandPool, bind: bool)
         println!("buffer size: {}B; allocation time: {}.{:09}s",
             buffer_bytes, duration.as_secs(), duration.subsec_nanos());
 
-        // buffers.push(buffer);
-        // allocs.push(buffer_memory);
+        buffers.push(buffer);
+        allocs.push(buffer_memory);
     }
     Ok((buffers, allocs))
 }
 
 
-unsafe fn test_alloc() -> VooResult<()> {
+fn test_alloc() -> VooResult<()> {
     let start_time = time::Instant::now();
 
     let instance = init_instance()?;
@@ -1582,8 +1583,6 @@ unsafe fn test_alloc() -> VooResult<()> {
 
 fn main() {
     println!("Beginning buffer test.");
-    unsafe {
-        test_alloc().unwrap();
+    test_alloc().unwrap();
 
-    }
 }

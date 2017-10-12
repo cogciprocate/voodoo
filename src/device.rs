@@ -192,9 +192,12 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<DeviceMemoryHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        ::check(self.proc_addr_loader().core.vkAllocateMemory(self.handle().0,
-            allocate_info.as_raw(), allocator, &mut handle));
-        Ok(DeviceMemoryHandle(handle))
+        let result = self.proc_addr_loader().core.vkAllocateMemory(self.handle().0,
+            allocate_info.as_raw(), allocator, &mut handle);
+        match result {
+            0 => Ok(DeviceMemoryHandle(handle)),
+            _ => Err(result.into()),
+        }
     }
 
     // *PFN_vkFreeMemory)(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator);
