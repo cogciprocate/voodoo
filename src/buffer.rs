@@ -2,7 +2,7 @@
 use std::sync::Arc;
 use std::marker::PhantomData;
 use vks;
-use ::{VooResult, Device, DeviceMemory, Handle};
+use ::{VdResult, Device, DeviceMemory, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -57,7 +57,7 @@ impl Buffer {
     /// the VkMemoryRequirements::size member in memory, starting from
     /// memoryOffset bytes, will be bound to the specified buffer.
     pub fn bind_memory(&self, memory: &DeviceMemory, offset: ::DeviceSize)
-            -> VooResult<()> {
+            -> VdResult<()> {
         unsafe {
             self.inner.device.bind_buffer_memory(self.inner.handle, memory.handle(), offset)
         }
@@ -155,7 +155,7 @@ impl<'b> BufferBuilder<'b> {
     }
 
     /// Creates and returns a new `Buffer`
-    pub fn build(&self, device: Device) -> VooResult<Buffer> {
+    pub fn build(&self, device: Device) -> VdResult<Buffer> {
         let handle = unsafe { device.create_buffer(&self.create_info, None)? };
         let memory_requirements = unsafe { device.get_buffer_memory_requirements(handle) };
 

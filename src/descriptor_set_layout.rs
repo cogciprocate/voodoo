@@ -2,7 +2,7 @@
 use std::sync::Arc;
 use std::marker::PhantomData;
 use vks;
-use ::{VooResult, Device, Handle};
+use ::{VdResult, Device, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -104,7 +104,7 @@ impl<'b> DescriptorSetLayoutBuilder<'b> {
     }
 
     /// Creates and returns a new `DescriptorSetLayout`
-    pub fn build(&self, device: Device) -> VooResult<DescriptorSetLayout> {
+    pub fn build(&self, device: Device) -> VdResult<DescriptorSetLayout> {
         let handle = unsafe { device.create_descriptor_set_layout(&self.create_info, None)? };
 
         Ok(DescriptorSetLayout {

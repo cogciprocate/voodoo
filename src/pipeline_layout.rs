@@ -4,7 +4,7 @@ use std::sync::Arc;
 use std::marker::PhantomData;
 use vks;
 // use smallvec::SmallVec;
-use ::{VooResult, Device,  DescriptorSetLayoutHandle, Handle,
+use ::{VdResult, Device,  DescriptorSetLayoutHandle, Handle,
     PipelineLayoutCreateInfo, PushConstantRange};
 
 
@@ -130,7 +130,7 @@ impl<'b> PipelineLayoutBuilder<'b> {
     }
 
     /// Creates and returns a new `PipelineLayout`
-    pub fn build(&self, device: Device) -> VooResult<PipelineLayout> {
+    pub fn build(&self, device: Device) -> VdResult<PipelineLayout> {
         // let mut handle = 0;
         // unsafe {
         //     ::check(device.proc_addr_loader().core.vkCreatePipelineLayout(device.handle().0,

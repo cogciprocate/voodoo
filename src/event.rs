@@ -1,7 +1,7 @@
 
 use std::sync::Arc;
 use vks;
-use ::{VooResult, CallResult, Handle, Device, EventCreateFlags, EventCreateInfo};
+use ::{VdResult, CallResult, Handle, Device, EventCreateFlags, EventCreateInfo};
 
 pub enum EventStatus {
     Signaled,
@@ -68,7 +68,7 @@ pub struct Event {
 }
 
 impl Event {
-    pub fn new(device: Device, flags: EventCreateFlags) -> VooResult<Event> {
+    pub fn new(device: Device, flags: EventCreateFlags) -> VdResult<Event> {
         let create_info = EventCreateInfo::builder()
             .flags(flags)
             .build();
@@ -87,15 +87,15 @@ impl Event {
         self.inner.handle
     }
 
-    pub fn set(&self) -> VooResult<()> {
+    pub fn set(&self) -> VdResult<()> {
         unsafe { self.inner.device.set_event(self.handle()) }
     }
 
-    pub fn reset(&self) -> VooResult<()> {
+    pub fn reset(&self) -> VdResult<()> {
         unsafe { self.inner.device.reset_event(self.handle()) }
     }
 
-    pub fn status(&self) -> VooResult<EventStatus> {
+    pub fn status(&self) -> VdResult<EventStatus> {
         unsafe { Ok(self.inner.device.get_event_status(self.handle())?.into()) }
     }
 }

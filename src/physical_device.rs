@@ -5,7 +5,7 @@ use std::ffi::CStr;
 use libc::c_char;
 use smallvec::SmallVec;
 use vks;
-use ::{PRINT, VooResult, Instance, Handle, SurfaceFormatKhr, PhysicalDeviceFeatures,
+use ::{PRINT, VdResult, Instance, Handle, SurfaceFormatKhr, PhysicalDeviceFeatures,
     PhysicalDeviceProperties, QueueFamilyProperties, PhysicalDeviceMemoryProperties,
     ExtensionProperties, SurfaceCapabilitiesKhr, PresentModeKhr, FormatProperties, Format,
     SurfaceKhr};
@@ -75,7 +75,7 @@ impl PhysicalDevice {
     }
 
     #[inline]
-    pub fn queue_family_properties(&self) -> VooResult<SmallVec<[QueueFamilyProperties; 16]>> {
+    pub fn queue_family_properties(&self) -> VdResult<SmallVec<[QueueFamilyProperties; 16]>> {
         self.instance().get_physical_device_queue_family_properties(self)
     }
 
@@ -86,36 +86,36 @@ impl PhysicalDevice {
     }
 
     #[inline]
-    pub fn extension_properties(&self) -> VooResult<SmallVec<[ExtensionProperties; 64]>> {
+    pub fn extension_properties(&self) -> VdResult<SmallVec<[ExtensionProperties; 64]>> {
         self.instance().enumerate_device_extension_properties(self, None)
 
     }
 
     #[inline]
     pub fn surface_support_khr(&self, queue_family_index: u32, surface: &SurfaceKhr)
-            -> VooResult<bool> {
+            -> VdResult<bool> {
         unsafe { self.instance().get_physical_device_surface_support_khr(self, queue_family_index, surface) }
     }
 
     #[inline]
-    pub fn surface_capabilities_khr(&self, surface: &SurfaceKhr) -> VooResult<SurfaceCapabilitiesKhr> {
+    pub fn surface_capabilities_khr(&self, surface: &SurfaceKhr) -> VdResult<SurfaceCapabilitiesKhr> {
         unsafe { self.instance().get_physical_device_surface_capabilities_khr(self, surface) }
     }
 
     #[inline]
-    pub fn surface_formats_khr(&self, surface: &SurfaceKhr) -> VooResult<SmallVec<[SurfaceFormatKhr; 64]>> {
+    pub fn surface_formats_khr(&self, surface: &SurfaceKhr) -> VdResult<SmallVec<[SurfaceFormatKhr; 64]>> {
         unsafe { self.instance().get_physical_device_surface_formats_khr(self, surface) }
     }
 
     #[inline]
-    pub fn surface_present_modes_khr(&self, surface: &SurfaceKhr) -> VooResult<SmallVec<[PresentModeKhr; 16]>> {
+    pub fn surface_present_modes_khr(&self, surface: &SurfaceKhr) -> VdResult<SmallVec<[PresentModeKhr; 16]>> {
         unsafe { self.instance().get_physical_device_surface_present_modes_khr(self, surface) }
     }
 
 
     /// Verifies that the extensions listed are supported by this physical device.
     #[inline]
-    pub fn verify_extensions_support(&self, extension_names: &[&CStr]) -> VooResult<bool> {
+    pub fn verify_extensions_support(&self, extension_names: &[&CStr]) -> VdResult<bool> {
         let avail_exts = self.extension_properties()?;
         unsafe {
             // Print available:

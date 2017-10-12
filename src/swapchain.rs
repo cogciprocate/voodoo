@@ -2,7 +2,7 @@ use std::sync::Arc;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, SurfaceKhr, Device, PhysicalDevice, ImageHandle, Handle};
+use ::{VdResult, SurfaceKhr, Device, PhysicalDevice, ImageHandle, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -34,7 +34,7 @@ pub struct SwapchainSupportDetails {
 
 impl SwapchainSupportDetails {
     pub fn new(surface: &SurfaceKhr, physical_device: &PhysicalDevice)
-            -> VooResult<SwapchainSupportDetails> {
+            -> VdResult<SwapchainSupportDetails> {
         let capabilities = physical_device.surface_capabilities_khr(surface)?;
         let formats = physical_device.surface_formats_khr(surface)?;
         let present_modes = physical_device.surface_present_modes_khr(surface)?;
@@ -299,7 +299,7 @@ impl<'b> SwapchainKhrBuilder<'b> {
     }
 
     /// Builds and returns a new `SwapchainKhr`.
-    pub fn build(&mut self, device: Device) -> VooResult<SwapchainKhr> {
+    pub fn build(&mut self, device: Device) -> VdResult<SwapchainKhr> {
         let image_format = self.create_info.image_format().clone();
         let extent = self.create_info.image_extent().clone();
 

@@ -3,7 +3,7 @@ use std::sync::Arc;
 // use std::ptr;
 use std::marker::PhantomData;
 use vks;
-use ::{VooResult, Device,  Handle};
+use ::{VdResult, Device,  Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -124,7 +124,7 @@ impl<'b> RenderPassBuilder<'b> {
     }
 
     /// Builds and returns a new `RenderPass`
-    pub fn build(&self, device: Device) -> VooResult<RenderPass> {
+    pub fn build(&self, device: Device) -> VdResult<RenderPass> {
         // let mut handle = 0;
         // unsafe {
         //     ::check(device.proc_addr_loader().core.vkCreateRenderPass(device.handle().0,

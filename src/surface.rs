@@ -4,7 +4,7 @@ use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
 // use winit;
 use vks;
-use ::{VooResult, Instance, Handle, XlibSurfaceCreateInfoKhr, XcbSurfaceCreateInfoKhr,
+use ::{VdResult, Instance, Handle, XlibSurfaceCreateInfoKhr, XcbSurfaceCreateInfoKhr,
     WaylandSurfaceCreateInfoKhr, MirSurfaceCreateInfoKhr, Win32SurfaceCreateInfoKhr,
     AndroidSurfaceCreateInfoKhr, IosSurfaceCreateInfoMvk, MacOsSurfaceCreateInfoMvk,
     ViSurfaceCreateInfoNn};
@@ -47,7 +47,7 @@ impl SurfaceKhr {
         SurfaceKhrBuilder::new()
     }
 
-    pub unsafe fn from_raw(instance: Instance, handle: SurfaceKhrHandle) -> VooResult<SurfaceKhr> {
+    pub unsafe fn from_raw(instance: Instance, handle: SurfaceKhrHandle) -> VdResult<SurfaceKhr> {
         Ok(SurfaceKhr {
             inner: Arc::new(Inner {
                 handle: handle,
@@ -190,7 +190,7 @@ impl<'b> SurfaceKhrBuilder<'b> {
     }
 
     /// Builds and returns a new `SurfaceKhr`.
-    pub fn build(&self, instance: Instance) -> VooResult<SurfaceKhr> {
+    pub fn build(&self, instance: Instance) -> VdResult<SurfaceKhr> {
         let handle = unsafe {
             match self.create_info {
                 CreateInfo::Xlib(ref ci) => instance.create_xlib_surface_khr(ci, None)?,

@@ -2,7 +2,7 @@
 use std::sync::Arc;
 // use std::ptr;
 use vks;
-use ::{VooResult, SwapchainKhr, Device, ImageHandle, Handle};
+use ::{VdResult, SwapchainKhr, Device, ImageHandle, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -121,7 +121,7 @@ impl<'b> ImageViewBuilder<'b> {
         self
     }
 
-    pub fn build(&self, device: Device, swapchain: Option<SwapchainKhr>) -> VooResult<ImageView> {
+    pub fn build(&self, device: Device, swapchain: Option<SwapchainKhr>) -> VdResult<ImageView> {
         // let mut handle = 0;
 
         // unsafe {

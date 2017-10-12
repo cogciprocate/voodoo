@@ -7,7 +7,7 @@ use libc::{c_char};
 use lib;
 use smallvec::SmallVec;
 use vks::{self};
-use ::{error, VooResult, Handle, InstanceHandle, CallResult};
+use ::{error, VdResult, Handle, InstanceHandle, CallResult};
 
 const PRINT: bool = false;
 
@@ -18,7 +18,7 @@ pub struct Loader {
 }
 
 impl Loader {
-    pub fn new() -> VooResult<Loader> {
+    pub fn new() -> VdResult<Loader> {
         let lib_filename = if cfg!(not(any(target_os = "macos", target_os = "ios"))) {
             if cfg!(all(unix, not(target_os = "android"), not(target_os = "macos"))) { "libvulkan.so.1" }
             else if cfg!(target_os = "android") { "libvulkan.so" }
@@ -67,7 +67,7 @@ impl Loader {
     }
 
     /// Returns all available instance layers.
-    pub fn enumerate_instance_layer_properties(&self) -> VooResult<SmallVec<[vks::VkLayerProperties; 64]>> {
+    pub fn enumerate_instance_layer_properties(&self) -> VdResult<SmallVec<[vks::VkLayerProperties; 64]>> {
         let mut property_count = 0u32;
         let mut properties = SmallVec::new();
         unsafe {
@@ -89,7 +89,7 @@ impl Loader {
     }
 
     /// Returns all available instance extensions.
-    pub fn enumerate_instance_extension_properties(&self) -> VooResult<SmallVec<[vks::VkExtensionProperties; 64]>> {
+    pub fn enumerate_instance_extension_properties(&self) -> VdResult<SmallVec<[vks::VkExtensionProperties; 64]>> {
         let mut property_count = 0u32;
         let mut properties = SmallVec::new();
         unsafe {
@@ -116,7 +116,7 @@ impl Loader {
         Ok(properties)
     }
 
-    pub fn check_validation_layer_support(&self) -> VooResult<bool> {
+    pub fn check_validation_layer_support(&self) -> VdResult<bool> {
         let available_layers = self.enumerate_instance_layer_properties()?;
         // Print available layers:
         for layer_props in &available_layers {
@@ -152,21 +152,27 @@ impl Loader {
 
     // *PFN_vkEnumeratePhysicalDevices)(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
     pub fn enumerate_physical_devices<I>(&self, instance: I)
-            -> SmallVec<[vks::VkPhysicalDevice; 16]>
+            -> VdResult<SmallVec<[vks::VkPhysicalDevice; 16]>>
             where I: Handle<Target=InstanceHandle> {
         let mut device_count = 0;
         let mut devices_raw = SmallVec::new();
         unsafe {
-            ::check(self.instance_proc_addr_loader.vkEnumeratePhysicalDevices(instance.handle().0,
-                &mut device_count, ptr::null_mut()));
+            error::check(self.instance_proc_addr_loader.vkEnumeratePhysicalDevices(instance.handle().0,
+                &mut device_count, ptr::null_mut()), "vkEnumeratePhysicalDevices", ())?;
             if device_count == 0 { panic!("No physical devices found."); }
             assert!(device_count as usize <= devices_raw.inline_size());
             devices_raw.set_len(device_count as usize);
-            ::check(self. instance_proc_addr_loader.vkEnumeratePhysicalDevices(instance.handle().0,
-                &mut device_count, devices_raw.as_mut_ptr()));
-        }
+            loop {
+                let result = self.instance_proc_addr_loader.vkEnumeratePhysicalDevices(instance.handle().0,
+                    &mut device_count, devices_raw.as_mut_ptr());
+                if result != CallResult::Incomplete as i32 {
+                        error::check(result, "vkEnumeratePhysicalDevices", ())?;
+                        break;
+                    }
+                }
+            }
         if PRINT { println!("Available devices: {:?}", devices_raw); }
-        devices_raw
+        Ok(devices_raw)
     }
 
                 // *PFN_vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);

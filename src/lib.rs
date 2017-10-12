@@ -6,7 +6,7 @@ extern crate smallvec;
 extern crate vks as vks_;
 extern crate libc;
 // extern crate tobj;
-extern crate ordered_float;
+// extern crate ordered_float;
 #[macro_use]
 extern crate bitflags as bitflags_;
 #[macro_use]
@@ -17,7 +17,7 @@ pub extern crate winit;
 mod error;
 mod version;
 mod loader;
-mod instance; // temporarily public
+mod instance;
 mod physical_device;
 mod swapchain;
 mod image_view;
@@ -158,10 +158,10 @@ pub mod device;
 pub mod util;
 pub mod voodoo_winit;
 
-use std::hash::{Hash, Hasher};
-use std::mem;
-use ordered_float::OrderedFloat;
-use error::{Result as VooResult};
+// use std::hash::{Hash, Hasher};
+// use std::mem;
+// use ordered_float::OrderedFloat;
+use error::{Result as VdResult};
 pub use util::{CharStr, CharStrs};
 pub use loader::Loader;
 pub use error::{Error, ErrorKind, Result};
@@ -195,14 +195,42 @@ pub use enums::*;
 pub use bitflags::*;
 
 
+#[macro_export]
+macro_rules! offset_of {
+    ($ty:ty, $field:ident) => {
+        unsafe { &(*(0 as *const $ty)).$field as *const _ as usize } as u32
+    }
+}
+
+
+pub static VALIDATION_LAYER_NAMES: &[&[u8]] = &[
+    b"VK_LAYER_LUNARG_standard_validation\0"
+];
+
+
+const PRINT: bool = false;
+pub const LOD_CLAMP_NONE: f32 = 1000.0f32;
+pub const REMAINING_MIP_LEVELS: u32 = !0;
+pub const REMAINING_ARRAY_LAYERS: u32= !0;
+pub const WHOLE_SIZE: u64 = !0;
+pub const ATTACHMENT_UNUSED: u32 = !0;
+pub const TRUE: i32 = 1;
+pub const FALSE: i32 = 0;
+pub const QUEUE_FAMILY_IGNORED: u32 = !0;
+pub const SUBPASS_EXTERNAL: u32 = !0;
+pub const MAX_PHYSICAL_DEVICE_NAME_SIZE: usize = 256;
+pub const UUID_SIZE: usize = 16;
+pub const MAX_MEMORY_TYPES: usize = 32;
+pub const MAX_MEMORY_HEAPS: usize = 16;
+pub const MAX_EXTENSION_NAME_SIZE: usize = 256;
+pub const MAX_DESCRIPTION_SIZE: usize = 256;
+
+
 pub unsafe trait Handle {
     type Target;
 
     fn handle(&self) -> Self::Target;
 }
-
-pub unsafe trait AnyPipelineHandle: Handle<Target=PipelineHandle> {}
-
 
 
 
@@ -646,122 +674,10 @@ pub type LPCWSTR = vks::LPCWSTR;
 pub type CommandPoolTrimFlagsKhr = vks::VkCommandPoolTrimFlagsKHR;
 
 
-pub const LOD_CLAMP_NONE: f32 = 1000.0f32;
-pub const REMAINING_MIP_LEVELS: u32 = !0;
-pub const REMAINING_ARRAY_LAYERS: u32= !0;
-pub const WHOLE_SIZE: u64 = !0;
-pub const ATTACHMENT_UNUSED: u32 = !0;
-pub const TRUE: i32 = 1;
-pub const FALSE: i32 = 0;
-pub const QUEUE_FAMILY_IGNORED: u32 = !0;
-pub const SUBPASS_EXTERNAL: u32 = !0;
-pub const MAX_PHYSICAL_DEVICE_NAME_SIZE: usize = 256;
-pub const UUID_SIZE: usize = 16;
-pub const MAX_MEMORY_TYPES: usize = 32;
-pub const MAX_MEMORY_HEAPS: usize = 16;
-pub const MAX_EXTENSION_NAME_SIZE: usize = 256;
-pub const MAX_DESCRIPTION_SIZE: usize = 256;
 
 
 //////////////////////////////////////
 
-const PRINT: bool = false;
-
-pub static VALIDATION_LAYER_NAMES: &[&[u8]] = &[
-    b"VK_LAYER_LUNARG_standard_validation\0"
-];
-
-
-#[macro_export]
-macro_rules! offset_of {
-    ($ty:ty, $field:ident) => {
-        unsafe { &(*(0 as *const $ty)).$field as *const _ as usize } as u32
-    }
-}
-
-
-
-#[derive(Clone, Copy)]
-#[repr(C)]
-pub struct Vertex {
-    pub pos: [f32; 3],
-    pub color: [f32; 3],
-    pub tex_coord: [f32; 2],
-}
-
-impl Vertex {
-    pub fn binding_description() -> VertexInputBindingDescription {
-        VertexInputBindingDescription::builder()
-            .binding(0)
-            .stride(mem::size_of::<Vertex>() as u32)
-            // * VERTEX_INPUT_RATE_VERTEX: Move to the next data entry
-            //   after each vertex
-            // * VERTEX_INPUT_RATE_INSTANCE: Move to the next data entry
-            //   after each instance
-            // .input_rate(vks::VK_VERTEX_INPUT_RATE_VERTEX)
-            .input_rate(VertexInputRate::Vertex)
-            .build()
-    }
-
-    pub fn attribute_descriptions() -> [VertexInputAttributeDescription; 3] {
-        [
-            VertexInputAttributeDescription::builder()
-                .binding(0)
-                .location(0)
-                .format(Format::R32G32B32Sfloat)
-                .offset(offset_of!(Vertex, pos))
-                .build(),
-            VertexInputAttributeDescription::builder()
-                .binding(0)
-                .location(1)
-                .format(Format::R32G32B32Sfloat)
-                .offset(offset_of!(Vertex, color))
-                .build(),
-            VertexInputAttributeDescription::builder()
-                .binding(0)
-                .location(2)
-                .format(Format::R32G32Sfloat)
-                .offset(offset_of!(Vertex, tex_coord))
-                .build(),
-        ]
-    }
-}
-
-impl Hash for Vertex {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        let pos = [OrderedFloat(self.pos[0]), OrderedFloat(self.pos[1]),
-            OrderedFloat(self.pos[2])];
-        let color = [OrderedFloat(self.color[0]), OrderedFloat(self.color[1]),
-            OrderedFloat(self.color[2])];
-        let tex_coord = [OrderedFloat(self.tex_coord[0]), OrderedFloat(self.tex_coord[1])];
-        pos.hash(state);
-        color.hash(state);
-        tex_coord.hash(state);
-    }
-}
-
-impl PartialEq for Vertex {
-    fn eq(&self, other: &Vertex) -> bool {
-        self.pos == other.pos && self.color == other.color && self.tex_coord == other.tex_coord
-    }
-}
-
-impl Eq for Vertex {}
-
-
-
-#[derive(Debug, Clone, Copy)]
-#[repr(C)]
-pub struct UniformBufferObject {
-    pub model: [[f32; 4]; 4],
-    pub view: [[f32; 4]; 4],
-    pub proj: [[f32; 4]; 4],
-}
-
-
-pub fn check(code: i32) {
-    if code != vks::VK_SUCCESS { panic!("VkResult error code: {}", code); }
-}
 
 
 

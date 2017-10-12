@@ -2,7 +2,7 @@
 use std::sync::Arc;
 use std::marker::PhantomData;
 use vks;
-use ::{VooResult, Device, DeviceMemory, Handle};
+use ::{VdResult, Device, DeviceMemory, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -44,7 +44,7 @@ impl Image {
         ImageBuilder::new()
     }
 
-    pub fn from_handle(device: Device, handle: ImageHandle) -> VooResult<Image> {
+    pub fn from_handle(device: Device, handle: ImageHandle) -> VdResult<Image> {
         let memory_requirements = unsafe { device.get_image_memory_requirements(handle) };
 
         Ok(Image {
@@ -69,7 +69,7 @@ impl Image {
     /// the VkMemoryRequirements::size member in memory, starting from
     /// memoryOffset bytes, will be bound to the specified image.
     pub fn bind_memory(&self, memory: &DeviceMemory, offset: ::DeviceSize)
-            -> VooResult<()> {
+            -> VdResult<()> {
         unsafe {
             self.inner.device.bind_image_memory(self.inner.handle, memory.handle(), offset)
         }
@@ -218,7 +218,7 @@ impl<'b> ImageBuilder<'b> {
 
 
     //// Creates and returns a new `Image`
-    pub fn build(&self, device: Device) -> VooResult<Image> {
+    pub fn build(&self, device: Device) -> VdResult<Image> {
         let handle = unsafe { device.create_image(&self.create_info, None)? };
         Image::from_handle(device, handle)
     }

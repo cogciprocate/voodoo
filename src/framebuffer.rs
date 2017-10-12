@@ -4,7 +4,7 @@ use std::sync::Arc;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Device, RenderPass, ImageView, Handle, FramebufferCreateInfo,
+use ::{VdResult, Device, RenderPass, ImageView, Handle, FramebufferCreateInfo,
     FramebufferCreateFlags};
 
 
@@ -169,7 +169,7 @@ impl<'b> FramebufferBuilder<'b> {
     }
 
     /// Creates and returns a new `Framebuffer`
-    pub fn build(&self, device: Device) -> VooResult<Framebuffer> {
+    pub fn build(&self, device: Device) -> VdResult<Framebuffer> {
         let render_pass = self.render_pass.cloned()
             .expect("unable to create framebuffer: no render pass specified");
         let attachments = self.attachments.as_ref()

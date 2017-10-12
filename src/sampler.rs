@@ -2,7 +2,7 @@
 use std::sync::Arc;
 use std::marker::PhantomData;
 use vks;
-use ::{VooResult, Device, Handle};
+use ::{VdResult, Device, Handle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -244,7 +244,7 @@ impl<'b> SamplerBuilder<'b> {
     }
 
     /// Creates and returns a new `Sampler`
-    pub fn build(&self, device: Device) -> VooResult<Sampler> {
+    pub fn build(&self, device: Device) -> VdResult<Sampler> {
         let handle = unsafe { device.create_sampler(&self.create_info, None)? };
 
         Ok(Sampler {

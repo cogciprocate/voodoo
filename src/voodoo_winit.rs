@@ -1,11 +1,11 @@
 use winit::Window;
-use ::{VooResult, Instance, SurfaceKhr};
+use ::{VdResult, Instance, SurfaceKhr};
 
 pub use winit;
 
 
 #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
-pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
+pub fn create_surface(instance: Instance, window: &Window) -> VdResult<SurfaceKhr> {
     use winit::os::unix::WindowExt;
     use ::{wl_display, wl_surface};
 
@@ -22,7 +22,7 @@ pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceK
 }
 
 #[cfg(target_os = "windows")]
-pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
+pub fn create_surface(instance: Instance, window: &Window) -> VdResult<SurfaceKhr> {
     use winit::os::windows::WindowExt;
     use std::ptr;
 
@@ -34,7 +34,7 @@ pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceK
 }
 
 #[cfg(target_os = "android")]
-pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
+pub fn create_surface(instance: Instance, window: &Window) -> VdResult<SurfaceKhr> {
     use winit::os::android::WindowExt;
 
     unsafe {
@@ -45,7 +45,7 @@ pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceK
 }
 
 #[cfg(target_os = "macos")]
-pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
+pub fn create_surface(instance: Instance, window: &Window) -> VdResult<SurfaceKhr> {
     use winit::os::macos::WindowExt;
     let wnd: cocoa_id = mem::transmute(window.get_nswindow());
 

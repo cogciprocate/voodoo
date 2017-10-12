@@ -1,7 +1,7 @@
 
 use std::sync::Arc;
 use vks;
-use ::{VooResult, Device, Handle, SemaphoreCreateFlags, SemaphoreCreateInfo};
+use ::{VdResult, Device, Handle, SemaphoreCreateFlags, SemaphoreCreateInfo};
 
 
 
@@ -38,7 +38,7 @@ pub struct Semaphore {
 }
 
 impl Semaphore {
-    pub fn new(device: Device, flags: SemaphoreCreateFlags) -> VooResult<Semaphore> {
+    pub fn new(device: Device, flags: SemaphoreCreateFlags) -> VdResult<Semaphore> {
         // let create_info = vks::VkSemaphoreCreateInfo {
         //     sType: vks::VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
         //     pNext: ptr::null(),

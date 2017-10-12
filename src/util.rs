@@ -6,7 +6,7 @@ use std::io::{Read, BufReader};
 use std::ops::Deref;
 use std::slice;
 use libc::c_char;
-use ::{VooResult, PRINT};
+use ::{VdResult, PRINT};
 
 /// An owned or borrowed C string representable as a pointer.
 #[derive(Debug, Clone)]
@@ -153,7 +153,7 @@ impl <'cs, 'p, 'q> From<&'p [&'q str]> for CharStrs<'cs> where 'q: 'p, 'p: 'cs, 
 }
 
 
-pub fn read_spir_v_file<P: AsRef<Path>>(file: P) -> VooResult<Vec<u32>> {
+pub fn read_spir_v_file<P: AsRef<Path>>(file: P) -> VdResult<Vec<u32>> {
     let mut contents = read_file(file)?;
     assert!(contents.len() % 4 == 0);
     assert!(mem::size_of_val(&contents[0]) == 1);
@@ -169,7 +169,7 @@ pub fn read_spir_v_file<P: AsRef<Path>>(file: P) -> VooResult<Vec<u32>> {
 }
 
 /// Reads a file into a byte Vec.
-pub fn read_file<P: AsRef<Path>>(file: P) -> VooResult<Vec<u8>> {
+pub fn read_file<P: AsRef<Path>>(file: P) -> VdResult<Vec<u8>> {
     let file_name = file.as_ref().display().to_string();
     let f = File::open(file).expect("shader file not found");
     let file_bytes = f.metadata().unwrap().len() as usize;
@@ -185,7 +185,7 @@ pub fn read_file<P: AsRef<Path>>(file: P) -> VooResult<Vec<u8>> {
     Ok(contents)
 }
 
-pub fn file_reader<P: AsRef<Path>>(file: P) -> VooResult<BufReader<File>> {
+pub fn file_reader<P: AsRef<Path>>(file: P) -> VdResult<BufReader<File>> {
     // let file_name = file.as_ref().display().to_string();
     let f = File::open(file).expect("file not found");
     // let file_bytes = f.metadata().unwrap().len() as usize;

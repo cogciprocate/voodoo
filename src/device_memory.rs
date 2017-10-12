@@ -5,7 +5,7 @@ use std::ops::{Deref, DerefMut};
 use std::slice;
 use std::marker::PhantomData;
 use vks;
-use ::{VooResult, Device, Handle, MemoryAllocateInfo, MemoryMapFlags};
+use ::{VdResult, Device, Handle, MemoryAllocateInfo, MemoryMapFlags};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -78,7 +78,7 @@ impl DeviceMemory {
         DeviceMemoryBuilder::new()
     }
 
-    pub fn new(device: Device, allocation_size: u64, memory_type_index: u32) -> VooResult<DeviceMemory> {
+    pub fn new(device: Device, allocation_size: u64, memory_type_index: u32) -> VdResult<DeviceMemory> {
         DeviceMemoryBuilder::new()
             .allocation_size(allocation_size)
             .memory_type_index(memory_type_index)
@@ -92,7 +92,7 @@ impl DeviceMemory {
     /// The `flags` argument is reserved for future use and is ignored.
     pub unsafe fn map_to_ptr<T>(&self, offset_bytes: u64, size_bytes: u64,
             flags: MemoryMapFlags)
-            -> VooResult<*mut T> {
+            -> VdResult<*mut T> {
         self.inner.device.map_memory(self.inner.handle, offset_bytes, size_bytes, flags)
     }
 
@@ -127,7 +127,7 @@ impl DeviceMemory {
     ///
     /// The `flags` argument is reserved for future use and is ignored.
     pub fn map<'m, T>(&'m self, offset_bytes: u64, size_bytes: u64, flags: MemoryMapFlags)
-            -> VooResult<MemoryMapping<'m, T>> {
+            -> VdResult<MemoryMapping<'m, T>> {
         let ptr = unsafe { self.map_to_ptr(offset_bytes, size_bytes, flags)? };
         let len = size_bytes as usize / mem::size_of::<T>();
         Ok(MemoryMapping::new(ptr, len, self.inner.handle))
@@ -196,7 +196,7 @@ impl<'b> DeviceMemoryBuilder<'b> {
     }
 
     /// Creates and returns a new `DeviceMemory`
-    pub fn build(&self, device: Device) -> VooResult<DeviceMemory> {
+    pub fn build(&self, device: Device) -> VdResult<DeviceMemory> {
         let handle = unsafe { device.allocate_memory(&self.allocate_info, None)? };
 
         Ok(DeviceMemory {

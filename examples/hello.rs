@@ -1,24 +1,28 @@
-#![allow(/*unused_imports,*/ dead_code, unused_variables)]
+#![allow(dead_code, unused_variables)]
 
+#[macro_use]
 extern crate voodoo as voo;
 extern crate cgmath;
 extern crate image;
 extern crate smallvec;
 extern crate libc;
 extern crate tobj;
+extern crate ordered_float;
 
 use std::mem;
 use std::time;
 use std::path::Path;
+use std::hash::{Hash, Hasher};
 use std::collections::HashMap;
 use std::ffi::{CStr, CString};
 use std::cmp;
 use libc::c_char;
 use smallvec::SmallVec;
 use cgmath::{Matrix3, Matrix4};
-use voo::{voodoo_winit, vks, util, queue, Result as VooResult, Instance, Device, SurfaceKhr,
+use ordered_float::OrderedFloat;
+use voo::{voodoo_winit, vks, util, queue, Result as VdResult, Instance, Device, SurfaceKhr,
     SwapchainKhr, ImageView, PipelineLayout, RenderPass, GraphicsPipeline, Framebuffer,
-    CommandPool, Semaphore, Buffer, DeviceMemory, Vertex, DescriptorSetLayout, UniformBufferObject,
+    CommandPool, Semaphore, Buffer, DeviceMemory, DescriptorSetLayout,
     DescriptorPool, Image, Sampler, Loader, SwapchainSupportDetails, PhysicalDevice,
     PhysicalDeviceFeatures, ShaderModule, QueueFlags, Format, ApplicationInfo,
     DeviceQueueCreateInfo, SurfaceFormatKhr, ColorSpaceKhr, PresentModeKhr, SurfaceCapabilitiesKhr,
@@ -39,7 +43,8 @@ use voo::{voodoo_winit, vks, util, queue, Result as VooResult, Instance, Device,
     BufferUsageFlags, MemoryPropertyFlags, MemoryMapFlags, ImageType, Filter, SamplerMipmapMode,
     SamplerAddressMode, BorderColor, CommandBufferHandle, CommandBufferBeginInfo, ClearValue,
     ClearColorValue, RenderPassBeginInfo, SubpassContents, IndexType, SemaphoreCreateFlags,
-    CallResult, PresentInfoKhr, ErrorKind, VALIDATION_LAYER_NAMES};
+    CallResult, PresentInfoKhr, ErrorKind, VALIDATION_LAYER_NAMES,
+    VertexInputBindingDescription, VertexInputRate, VertexInputAttributeDescription};
 use voodoo_winit::winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
 
 #[cfg(debug_assertions)]
@@ -59,6 +64,80 @@ static REQUIRED_DEVICE_EXTENSIONS: &[&[u8]] = &[
 static MODEL_PATH: &str = "/src/shared_assets/models/chalet.obj";
 // static TEXTURE_PATH: &str = "/src/shared_assets/textures/chalet.jpg";
 static TEXTURE_PATH: &str = "/src/shared_assets/textures/texture.jpg";
+
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct Vertex {
+    pub pos: [f32; 3],
+    pub color: [f32; 3],
+    pub tex_coord: [f32; 2],
+}
+
+impl Vertex {
+    pub fn binding_description() -> VertexInputBindingDescription {
+        VertexInputBindingDescription::builder()
+            .binding(0)
+            .stride(mem::size_of::<Vertex>() as u32)
+            .input_rate(VertexInputRate::Vertex)
+            .build()
+    }
+
+    pub fn attribute_descriptions() -> [VertexInputAttributeDescription; 3] {
+        [
+            VertexInputAttributeDescription::builder()
+                .binding(0)
+                .location(0)
+                .format(Format::R32G32B32Sfloat)
+                .offset(offset_of!(Vertex, pos))
+                .build(),
+            VertexInputAttributeDescription::builder()
+                .binding(0)
+                .location(1)
+                .format(Format::R32G32B32Sfloat)
+                .offset(offset_of!(Vertex, color))
+                .build(),
+            VertexInputAttributeDescription::builder()
+                .binding(0)
+                .location(2)
+                .format(Format::R32G32Sfloat)
+                .offset(offset_of!(Vertex, tex_coord))
+                .build(),
+        ]
+    }
+}
+
+impl Hash for Vertex {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        let pos = [OrderedFloat(self.pos[0]), OrderedFloat(self.pos[1]),
+            OrderedFloat(self.pos[2])];
+        let color = [OrderedFloat(self.color[0]), OrderedFloat(self.color[1]),
+            OrderedFloat(self.color[2])];
+        let tex_coord = [OrderedFloat(self.tex_coord[0]), OrderedFloat(self.tex_coord[1])];
+        pos.hash(state);
+        color.hash(state);
+        tex_coord.hash(state);
+    }
+}
+
+impl PartialEq for Vertex {
+    fn eq(&self, other: &Vertex) -> bool {
+        self.pos == other.pos && self.color == other.color && self.tex_coord == other.tex_coord
+    }
+}
+
+impl Eq for Vertex {}
+
+
+
+#[derive(Debug, Clone, Copy)]
+#[repr(C)]
+pub struct UniformBufferObject {
+    pub model: [[f32; 4]; 4],
+    pub view: [[f32; 4]; 4],
+    pub proj: [[f32; 4]; 4],
+}
+
 
 const VERTICES: [Vertex; 8] =  [
     Vertex { pos: [-0.5, -0.5, 0.25], color: [1.0, 0.0, 0.0], tex_coord: [1.0, 0.0]},
@@ -81,7 +160,7 @@ const INDICES: [u32; 12] = [
 fn init_window() -> (Window, EventsLoop) {
     let events_loop = EventsLoop::new();
     let window = WindowBuilder::new()
-        .with_title("Voodoo - Hello Triangle")
+        .with_title("Voodoo - Hello!")
         .build(&events_loop).unwrap();
     (window, events_loop)
 }
@@ -100,10 +179,10 @@ fn enabled_layer_names<'ln>(loader: &Loader)
     }
 }
 
-/// Initializes a loader and returns a new instance.
-fn init_instance() -> VooResult<Instance> {
-    let app_name = CString::new("Hello Triangle")?;
-    let eng_name = CString::new("None")?;
+/// Initializes and returns a new loader and instance.
+fn init_instance() -> VdResult<Instance> {
+    let app_name = CString::new("Hello!")?;
+    let eng_name = CString::new("Engine")?;
 
     let app_info = ApplicationInfo::builder()
         .application_name(&app_name)
@@ -118,15 +197,15 @@ fn init_instance() -> VooResult<Instance> {
     Instance::builder()
         .application_info(&app_info)
         .enabled_layer_names(enabled_layer_names(&loader).as_slice())
-        .enabled_extensions(loader.enumerate_instance_extension_properties()?.as_slice())
+        .enabled_extensions(&loader.enumerate_instance_extension_properties()?)
         .build(loader)
 }
 
 /// Returns true if the specified physical device has the required features,
 /// extensions, queue families and if the supported swap chain has the correct
 /// presentation modes.
-fn device_is_suitable(instance: &Instance, surface: &SurfaceKhr,
-        physical_device: &PhysicalDevice, queue_family_flags: QueueFlags) -> VooResult<bool> {
+fn device_is_suitable(surface: &SurfaceKhr,
+        physical_device: &PhysicalDevice, queue_family_flags: QueueFlags) -> VdResult<bool> {
     let device_features = physical_device.features();
 
     let reqd_exts: SmallVec<[_; 16]> = (&REQUIRED_DEVICE_EXTENSIONS[..]).iter().map(|ext_name| {
@@ -155,10 +234,10 @@ fn device_is_suitable(instance: &Instance, surface: &SurfaceKhr,
 /// Returns a physical device from the list of available physical devices if
 /// it meets the criteria specified in the above function.
 fn choose_physical_device(instance: &Instance, surface: &SurfaceKhr,
-        queue_family_flags: QueueFlags) -> VooResult<PhysicalDevice> {
+        queue_family_flags: QueueFlags) -> VdResult<PhysicalDevice> {
     let mut preferred_device = None;
-    for device in instance.physical_devices() {
-        if device_is_suitable(instance, surface, &device, queue_family_flags)? {
+    for device in instance.physical_devices()? {
+        if device_is_suitable(surface, &device, queue_family_flags)? {
             preferred_device = Some(device);
             break;
         }
@@ -170,8 +249,8 @@ fn choose_physical_device(instance: &Instance, surface: &SurfaceKhr,
     }
 }
 
-fn create_device(instance: Instance, surface: &SurfaceKhr, physical_device: PhysicalDevice,
-        queue_familiy_flags: QueueFlags) -> VooResult<Device> {
+fn create_device(surface: &SurfaceKhr, physical_device: PhysicalDevice,
+        queue_familiy_flags: QueueFlags) -> VdResult<Device> {
     let queue_family_idx = queue::queue_families(surface,
         &physical_device, queue_familiy_flags)?.family_idxs()[0] as u32;
 
@@ -248,7 +327,7 @@ fn choose_swap_extent(capabilities: &SurfaceCapabilitiesKhr,
 
 fn create_swapchain(surface: SurfaceKhr, device: Device, queue_family_flags: QueueFlags,
         window_size: Option<Extent2d>, old_swapchain: Option<&SwapchainKhr>)
-        -> VooResult<SwapchainKhr> {
+        -> VdResult<SwapchainKhr> {
     let swapchain_details = SwapchainSupportDetails::new(&surface, device.physical_device())?;
     let surface_format = choose_swap_surface_format(&swapchain_details.formats);
     let present_mode = choose_swap_present_mode(&swapchain_details.present_modes);
@@ -290,7 +369,7 @@ fn create_swapchain(surface: SurfaceKhr, device: Device, queue_family_flags: Que
     bldr.build(device)
 }
 
-pub fn create_image_views(swapchain: &SwapchainKhr) -> VooResult<Vec<ImageView>> {
+pub fn create_image_views(swapchain: &SwapchainKhr) -> VdResult<Vec<ImageView>> {
     swapchain.images().iter().map(|&image| {
         ImageView::builder()
             .image(image)
@@ -312,7 +391,7 @@ pub fn create_image_views(swapchain: &SwapchainKhr) -> VooResult<Vec<ImageView>>
 }
 
 fn find_supported_format(device: &Device, candidates: &[Format], tiling: ImageTiling,
-        features: FormatFeatureFlags) -> VooResult<Format> {
+        features: FormatFeatureFlags) -> VdResult<Format> {
     for &format in candidates {
         let props = device.physical_device().format_properties(format);
 
@@ -328,14 +407,14 @@ fn find_supported_format(device: &Device, candidates: &[Format], tiling: ImageTi
     panic!("Failed to find supported format.")
 }
 
-fn find_depth_format(device: &Device) -> VooResult<Format> {
+fn find_depth_format(device: &Device) -> VdResult<Format> {
     find_supported_format(device, &[Format::D32Sfloat, Format::D32SfloatS8Uint,
         Format::D24UnormS8Uint], ImageTiling::Optimal,
         FormatFeatureFlags::DEPTH_STENCIL_ATTACHMENT)
 }
 
 fn create_render_pass(device: Device, swapchain_image_format: Format)
-        -> VooResult<RenderPass> {
+        -> VdResult<RenderPass> {
     let depth_image_format = find_depth_format(&device)?;
 
     let color_attachment = AttachmentDescription::builder()
@@ -394,7 +473,7 @@ fn create_render_pass(device: Device, swapchain_image_format: Format)
         .build(device)
 }
 
-fn create_descriptor_set_layout(device: Device) -> VooResult<DescriptorSetLayout> {
+fn create_descriptor_set_layout(device: Device) -> VdResult<DescriptorSetLayout> {
     let ubo_layout_binding = DescriptorSetLayoutBinding::builder()
         .binding(0)
         .descriptor_type(DescriptorType::UniformBuffer)
@@ -416,7 +495,7 @@ fn create_descriptor_set_layout(device: Device) -> VooResult<DescriptorSetLayout
         .build(device)
 }
 
-fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
+fn create_descriptor_pool(device: Device) -> VdResult<DescriptorPool> {
     let pool_sizes = [
         DescriptorPoolSize::builder()
             .type_of(DescriptorType::UniformBuffer)
@@ -434,9 +513,9 @@ fn create_descriptor_pool(device: Device) -> VooResult<DescriptorPool> {
         .build(device)
 }
 
-fn create_descriptor_sets(device: &Device, layout: &DescriptorSetLayout,
+fn create_descriptor_sets(layout: &DescriptorSetLayout,
         pool: &DescriptorPool, uniform_buffer: &Buffer, texture_image_view: &ImageView,
-        texture_sampler: &Sampler) -> VooResult<SmallVec<[DescriptorSet; 8]>> {
+        texture_sampler: &Sampler) -> VdResult<SmallVec<[DescriptorSet; 8]>> {
     let descriptor_sets = pool.allocate_descriptor_sets(&[layout.handle()])?;
 
     let buffer_info = DescriptorBufferInfo::builder()
@@ -476,7 +555,7 @@ fn create_descriptor_sets(device: &Device, layout: &DescriptorSetLayout,
 }
 
 fn create_pipeline_layout(device: Device, descriptor_set_layout: Option<&DescriptorSetLayout>)
-        -> VooResult<PipelineLayout> {
+        -> VdResult<PipelineLayout> {
     let mut layouts = SmallVec::<[_; 8]>::new();
     if let Some(dsl) = descriptor_set_layout {
         layouts.push(dsl.handle());
@@ -489,7 +568,7 @@ fn create_pipeline_layout(device: Device, descriptor_set_layout: Option<&Descrip
 
 fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         render_pass: &RenderPass, swap_chain_extent: Extent2d, vert_shader_code: &[u32],
-        frag_shader_code: &[u32]) -> VooResult<GraphicsPipeline> {
+        frag_shader_code: &[u32]) -> VdResult<GraphicsPipeline> {
     let vert_shader_module = ShaderModule::new(device.clone(), vert_shader_code)?;
     let frag_shader_module = ShaderModule::new(device.clone(), frag_shader_code)?;
 
@@ -666,7 +745,7 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
 }
 
 fn create_command_pool(device: Device, surface: &SurfaceKhr, queue_family_flags: QueueFlags)
-        -> VooResult<CommandPool> {
+        -> VdResult<CommandPool> {
     let queue_family_idx = voo::queue_families(surface, device.physical_device(),
         queue_family_flags)?.family_idxs()[0] as u32;
 
@@ -677,7 +756,7 @@ fn create_command_pool(device: Device, surface: &SurfaceKhr, queue_family_flags:
 
 pub fn create_framebuffers(device: &Device, render_pass: &RenderPass,
         swapchain_image_views: &[ImageView], depth_image_view: &ImageView,
-        swapchain_extent: Extent2d) -> VooResult<Vec<Framebuffer>> {
+        swapchain_extent: Extent2d) -> VdResult<Vec<Framebuffer>> {
     swapchain_image_views.iter().map(|image_view| {
         let attachments = [image_view, depth_image_view];
         Framebuffer::builder()
@@ -692,21 +771,20 @@ pub fn create_framebuffers(device: &Device, render_pass: &RenderPass,
 
 
 fn begin_single_time_commands(command_pool: &CommandPool)
-        -> VooResult<CommandBuffer> {
+        -> VdResult<CommandBuffer> {
     let command_buffer = command_pool.allocate_command_buffer(CommandBufferLevel::Primary)?;
     command_buffer.begin(CommandBufferUsageFlags::ONE_TIME_SUBMIT)?;
     Ok(command_buffer)
 }
 
-fn end_single_time_commands(device: &Device, command_pool: &CommandPool,
-        command_buffer: CommandBuffer) -> VooResult<()> {
+fn end_single_time_commands(device: &Device, command_buffer: CommandBuffer) -> VdResult<()> {
     command_buffer.end()?;
 
     let command_buffers = [command_buffer.handle()];
     let submit_info = SubmitInfo::builder()
         .command_buffers(&command_buffers[..])
         .build();
-    let cmd_buf_handles = [command_buffer.handle().to_raw()];
+    // let cmd_buf_handles = [command_buffer.handle().to_raw()];
 
     unsafe { device.queue_submit(device.queue(0), &[submit_info], None)?; }
     device.queue_wait_idle(device.queue(0));
@@ -720,7 +798,7 @@ fn has_stencil_component(format: Format) -> bool {
 
 fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &Image,
         format: Format, old_layout: ImageLayout, new_layout: ImageLayout)
-         -> VooResult<()> {
+         -> VdResult<()> {
     let command_buffer = begin_single_time_commands(command_pool)?;
 
     let subresource_range = ImageSubresourceRange::builder()
@@ -788,11 +866,11 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
             &[], &[], &[barrier]);
     }
 
-    end_single_time_commands(device, command_pool, command_buffer)
+    end_single_time_commands(device, command_buffer)
 }
 
 fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Buffer,
-        image: &Image, width: u32, height: u32)  -> VooResult<()> {
+        image: &Image, width: u32, height: u32)  -> VdResult<()> {
     let command_buffer = begin_single_time_commands(command_pool)?;
 
     let image_subresource_layers = ImageSubresourceLayers::builder()
@@ -816,11 +894,11 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
             ImageLayout::TransferDstOptimal, &[region]);
     }
 
-    end_single_time_commands(device, command_pool, command_buffer)
+    end_single_time_commands(device, command_buffer)
 }
 
 fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
-        dst_buffer: &Buffer, size: DeviceSize)  -> VooResult<()> {
+        dst_buffer: &Buffer, size: DeviceSize)  -> VdResult<()> {
     // TODO: Look into creating a separate command pool with the
     // `VK_COMMAND_POOL_CREATE_TRANSIENT_BIT` flag for short lived command
     // buffers like this.
@@ -835,10 +913,11 @@ fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
     unsafe { device.cmd_copy_buffer(command_buffer.handle(), src_buffer.handle(),
             dst_buffer.handle(), &[copy_region]); }
 
-    end_single_time_commands(device, command_pool, command_buffer)
+    end_single_time_commands(device, command_buffer)
 }
 
-fn load_model(device: &Device) -> VooResult<(Vec<Vertex>, Vec<u32>)> {
+
+fn load_model(device: &Device) -> VdResult<(Vec<Vertex>, Vec<u32>)> {
     let (models, materials) = tobj::load_obj(&Path::new(MODEL_PATH))
         .expect("Error loading model");
 
@@ -881,7 +960,7 @@ fn load_model(device: &Device) -> VooResult<(Vec<Vertex>, Vec<u32>)> {
 }
 
 fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &[Vertex])
-        -> VooResult<(Buffer, DeviceMemory)> {
+        -> VdResult<(Buffer, DeviceMemory)> {
     let buffer_bytes = (mem::size_of::<Vertex>() * vertices.len()) as u64;
 
     // Either:
@@ -927,7 +1006,7 @@ fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &
 }
 
 fn create_index_buffer<T: Copy>(device: &Device, command_pool: &CommandPool, indices: &[T])
-        -> VooResult<(Buffer, DeviceMemory)> {
+        -> VdResult<(Buffer, DeviceMemory)> {
     let buffer_bytes = (mem::size_of::<T>() * indices.len()) as u64;
 
     let staging_buffer = Buffer::builder()
@@ -965,8 +1044,8 @@ fn create_index_buffer<T: Copy>(device: &Device, command_pool: &CommandPool, ind
     Ok((index_buffer, index_buffer_memory))
 }
 
-fn create_uniform_buffer(device: &Device, command_pool: &CommandPool, _extent: Extent2d)
-        -> VooResult<(Buffer, DeviceMemory)> {
+fn create_uniform_buffer(device: &Device, _command_pool: &CommandPool, _extent: Extent2d)
+        -> VdResult<(Buffer, DeviceMemory)> {
     let buffer_bytes = mem::size_of::<UniformBufferObject>() as u64;
     let uniform_buffer = Buffer::builder()
         .size(buffer_bytes)
@@ -985,7 +1064,7 @@ fn create_uniform_buffer(device: &Device, command_pool: &CommandPool, _extent: E
 }
 
 fn create_depth_resources(device: &Device, command_pool: &CommandPool,
-        swapchain_extent: Extent2d) -> VooResult<(Image, DeviceMemory, ImageView)> {
+        swapchain_extent: Extent2d) -> VdResult<(Image, DeviceMemory, ImageView)> {
     let depth_format = find_depth_format(device)?;
     let extent = Extent3d::builder()
         .width(swapchain_extent.width())
@@ -1034,7 +1113,7 @@ fn create_depth_resources(device: &Device, command_pool: &CommandPool,
 }
 
 fn create_texture_image(device: &Device, command_pool: &CommandPool)
-        -> VooResult<(Image, DeviceMemory)> {
+        -> VdResult<(Image, DeviceMemory)> {
     let pixels = image::open(TEXTURE_PATH).unwrap().to_rgba();
     let (tex_width, tex_height) = pixels.dimensions();
     let image_bytes = (tex_width * tex_height * 4) as u64;
@@ -1090,7 +1169,7 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool)
     Ok((texture_image, texture_image_memory))
 }
 
-fn create_texture_image_view(device: Device, image: &Image) -> VooResult<ImageView> {
+fn create_texture_image_view(device: Device, image: &Image) -> VdResult<ImageView> {
     ImageView::builder()
         .image(image.handle())
         .view_type(ImageViewType::Type2d)
@@ -1106,7 +1185,7 @@ fn create_texture_image_view(device: Device, image: &Image) -> VooResult<ImageVi
         .build(device, None)
 }
 
-fn create_texture_sampler(device: Device) -> VooResult<Sampler> {
+fn create_texture_sampler(device: Device) -> VdResult<Sampler> {
     Sampler::builder()
         .mag_filter(Filter::Linear)
         .min_filter(Filter::Linear)
@@ -1126,13 +1205,14 @@ fn create_texture_sampler(device: Device) -> VooResult<Sampler> {
         .build(device)
 }
 
+#[allow(unused_variables)]
 pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
         render_pass: &RenderPass, graphics_pipeline: &GraphicsPipeline,
         swapchain_framebuffers: &[Framebuffer], swapchain_extent: &Extent2d,
         vertex_buffer: &Buffer, index_buffer: &Buffer, vertex_count: u32,
         index_count: u32, pipeline_layout: &PipelineLayout,
         descriptor_set: DescriptorSet)
-        -> VooResult<SmallVec<[CommandBuffer; 16]>>
+        -> VdResult<SmallVec<[CommandBuffer; 16]>>
 {
     let command_buffers = command_pool.allocate_command_buffers(CommandBufferLevel::Primary,
             swapchain_framebuffers.len() as u32)?;
@@ -1241,14 +1321,14 @@ struct App {
 
 impl App {
     #[allow(unused_unsafe)]
-    pub unsafe fn new() -> VooResult<App> {
+    pub unsafe fn new() -> VdResult<App> {
         let instance = init_instance()?;
         let (window, events_loop) = init_window();
         let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
         let queue_family_flags = QueueFlags::GRAPHICS;
         let physical_device = choose_physical_device(&instance, &surface,
             queue_family_flags)?;
-        let device = create_device(instance.clone(), &surface, physical_device,
+        let device = create_device(&surface, physical_device,
             queue_family_flags)?;
         let swapchain = create_swapchain(surface.clone(), device.clone(), queue_family_flags,
             None, None)?;
@@ -1281,7 +1361,7 @@ impl App {
         let (uniform_buffer, uniform_buffer_memory) = create_uniform_buffer(&device,
             &command_pool, swapchain.extent().clone())?;
         let descriptor_pool = create_descriptor_pool(device.clone())?;
-        let descriptor_sets = create_descriptor_sets(&device, &descriptor_set_layout,
+        let descriptor_sets = create_descriptor_sets(&descriptor_set_layout,
             &descriptor_pool, &uniform_buffer, &texture_image_view, &texture_sampler)?;
         let command_buffers = create_command_buffers(&device, &command_pool, &render_pass,
             &graphics_pipeline, &framebuffers, swapchain.extent(),
@@ -1348,7 +1428,7 @@ impl App {
         self.command_buffers = None;
     }
 
-    fn recreate_swapchain(&mut self, current_extent: Extent2d) -> VooResult<()> {
+    fn recreate_swapchain(&mut self, current_extent: Extent2d) -> VdResult<()> {
         self.device.wait_idle();
 
         let swapchain = create_swapchain(self.surface.clone(), self.device.clone(),
@@ -1390,7 +1470,7 @@ impl App {
         Ok(())
     }
 
-    fn update_uniform_buffer(&mut self) -> VooResult<()> {
+    fn update_uniform_buffer(&mut self) -> VdResult<()> {
         let current_time = time::Instant::now();
         let elapsed = current_time.duration_since(self.start_time);
         let time = elapsed.as_secs() as f32 + (elapsed.subsec_nanos() as f32 * 1e-9);
@@ -1420,7 +1500,7 @@ impl App {
         Ok(())
     }
 
-    fn draw_frame(&mut self) -> VooResult<()> {
+    fn draw_frame(&mut self) -> VdResult<()> {
         let image_index = unsafe {
             match self.device.acquire_next_image_khr(
                     self.swapchain.as_ref().unwrap().handle(), u64::max_value(),
@@ -1477,7 +1557,7 @@ impl App {
         Ok(())
     }
 
-    fn main_loop(&mut self) -> VooResult<()> {
+    fn main_loop(&mut self) -> VdResult<()> {
         let mut exit = false;
         let mut recreate_swap = false;
         let mut current_extent = self.swapchain.as_ref().unwrap().extent().clone();

@@ -3,7 +3,7 @@ use std::sync::Arc;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Device, DescriptorSetLayoutHandle, Handle,
+use ::{VdResult, Device, DescriptorSetLayoutHandle, Handle,
     WriteDescriptorSet, CopyDescriptorSet, DescriptorSet,
     DescriptorSetAllocateInfo, DescriptorSetHandle};
 
@@ -57,7 +57,7 @@ impl DescriptorPool {
 
     /// Updates descriptor sets.
     pub fn allocate_descriptor_sets<Ds>(&self, layouts: &[Ds])
-            -> VooResult<SmallVec<[DescriptorSet; 8]>>
+            -> VdResult<SmallVec<[DescriptorSet; 8]>>
             where Ds: Handle<Target=DescriptorSetLayoutHandle> {
         let layouts: SmallVec<[DescriptorSetLayoutHandle; 8]> = layouts.iter().map(|ds|
             ds.handle()).collect();
@@ -146,7 +146,7 @@ impl<'b> DescriptorPoolBuilder<'b> {
     }
 
     /// Creates and returns a new `DescriptorPool`
-    pub fn build(&self, device: Device) -> VooResult<DescriptorPool> {
+    pub fn build(&self, device: Device) -> VdResult<DescriptorPool> {
         let handle = unsafe { device.create_descriptor_pool(&self.create_info, None)? };
 
         Ok(DescriptorPool {

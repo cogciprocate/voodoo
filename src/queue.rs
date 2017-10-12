@@ -1,7 +1,7 @@
 // use std::ptr;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, PhysicalDevice, Device, SurfaceKhr, QueueFlags, Handle};
+use ::{VdResult, PhysicalDevice, Device, SurfaceKhr, QueueFlags, Handle};
 
 
 
@@ -65,7 +65,7 @@ impl QueueFamilyIndices {
 }
 
 pub fn queue_families(surface: &SurfaceKhr, physical_device: &PhysicalDevice,
-        queue_flags: QueueFlags) -> VooResult<QueueFamilyIndices> {
+        queue_flags: QueueFlags) -> VdResult<QueueFamilyIndices> {
     let mut indices = QueueFamilyIndices::new(physical_device.clone(), queue_flags);
     let queue_families = physical_device.queue_family_properties()?;
 
@@ -103,7 +103,7 @@ impl Queue {
     // QUEUE_GRAPHICS_BIT
     // QUEUE_SPARSE_BINDING_BIT
     // QUEUE_TRANSFER_BIT
-    pub fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VooResult<Queue> {
+    pub fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VdResult<Queue> {
         let handle = device.get_device_queue(queue_family_index, queue_index);
 
         Ok(Queue {

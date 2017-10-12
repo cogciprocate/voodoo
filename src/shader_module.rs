@@ -5,7 +5,7 @@ use std::sync::Arc;
 // use std::fs::File;
 // use std::io::{};
 use vks;
-use ::{VooResult, Device, Handle, ShaderModuleCreateInfo};
+use ::{VdResult, Device, Handle, ShaderModuleCreateInfo};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -49,7 +49,7 @@ pub struct ShaderModule {
 }
 
 impl ShaderModule {
-    pub fn new(device: Device, code: &[u32]) -> VooResult<ShaderModule> {
+    pub fn new(device: Device, code: &[u32]) -> VdResult<ShaderModule> {
         // let create_info = vks::VkShaderModuleCreateInfo {
         //     sType: vks::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
         //     pNext: ptr::null(),

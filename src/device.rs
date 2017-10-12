@@ -6,7 +6,7 @@ use std::ffi::CStr;
 use libc::{c_void};
 use smallvec::SmallVec;
 use vks;
-use ::{error, VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo, CharStrs,
+use ::{error, VdResult, Instance, PhysicalDevice, DeviceQueueCreateInfo, CharStrs,
     PhysicalDeviceFeatures, PRINT, Handle, SubmitInfo, QueueHandle, MemoryAllocateInfo,
     DeviceMemoryHandle, MemoryMapFlags, SwapchainKhrHandle, SwapchainCreateInfoKhr,
     ShaderModuleCreateInfo, ShaderModuleHandle, SemaphoreCreateInfo, SemaphoreHandle,
@@ -38,7 +38,7 @@ use ::{error, VooResult, Instance, PhysicalDevice, DeviceQueueCreateInfo, CharSt
     SurfaceCounterFlagsExt,};
 
 // #[cfg(feature = "experimental")]
-// use ::{QueryPoolCreateInfo, };
+// use ::{};
 
 #[cfg(feature = "unimplemented")]
 use ::{SamplerYcbcrConversionCreateInfoKhr, IndirectCommandsLayoutNvxCreateInfo,
@@ -127,7 +127,7 @@ impl Device {
     //
     // [HELPER]
     pub fn memory_type_index(&self, type_filter: u32, properties: ::MemoryPropertyFlags)
-            -> VooResult<u32> {
+            -> VdResult<u32> {
         let mem_props = self.physical_device().memory_properties();
 
         for i in 0..mem_props.memory_type_count() {
@@ -169,7 +169,7 @@ impl Device {
     // fence is an optional handle to a fence to be signaled. If fence is not
     // VK_NULL_HANDLE, it defines a fence signal operation.
     pub unsafe fn queue_submit(&self, queue: QueueHandle, submit_info: &[SubmitInfo],
-            fence: Option<FenceHandle>) -> VooResult<()> {
+            fence: Option<FenceHandle>) -> VdResult<()> {
         let fence_handle_raw = fence.map(|f| f.to_raw()).unwrap_or(0);
         let result = self.proc_addr_loader().core.vkQueueSubmit(queue.to_raw(),
             submit_info.len() as u32, submit_info.as_ptr() as *const vks::VkSubmitInfo,
@@ -194,7 +194,7 @@ impl Device {
 
     // *PFN_vkAllocateMemory)(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
     pub unsafe fn allocate_memory(&self, allocate_info: &MemoryAllocateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<DeviceMemoryHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<DeviceMemoryHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkAllocateMemory(self.handle().0,
@@ -212,7 +212,7 @@ impl Device {
 
     // *PFN_vkMapMemory)(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData);
     pub unsafe fn map_memory<T>(&self, memory: DeviceMemoryHandle, offset_bytes: u64, size_bytes: u64,
-            flags: MemoryMapFlags) -> VooResult<*mut T> {
+            flags: MemoryMapFlags) -> VdResult<*mut T> {
         let mut data = ptr::null_mut();
         let result = self.proc_addr_loader().vkMapMemory(self.handle().to_raw(),
             memory.to_raw(), offset_bytes, size_bytes, flags.bits(), &mut data);
@@ -226,7 +226,7 @@ impl Device {
 
     // *PFN_vkFlushMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
     pub unsafe fn flush_mapped_memory_ranges(&self, memory_ranges: &[MappedMemoryRange])
-            -> VooResult<()> {
+            -> VdResult<()> {
         let result = self.proc_addr_loader().vkFlushMappedMemoryRanges(self.handle().to_raw(),
             memory_ranges.len() as u32, memory_ranges.as_ptr() as *const vks::VkMappedMemoryRange);
         error::check(result, "vkFlushMappedMemoryRanges", ())
@@ -235,7 +235,7 @@ impl Device {
 
     // *PFN_vkInvalidateMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
     pub unsafe fn invalidate_mapped_memory_ranges(&self, memory_ranges: &[MappedMemoryRange])
-            -> VooResult<()> {
+            -> VdResult<()> {
         let result = self.proc_addr_loader().vkInvalidateMappedMemoryRanges(self.handle().to_raw(),
             memory_ranges.len() as u32, memory_ranges.as_ptr() as *const vks::VkMappedMemoryRange);
         error::check(result, "vkInvalidateMappedMemoryRanges", ())
@@ -253,7 +253,7 @@ impl Device {
 
     // *PFN_vkBindBufferMemory)(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset);
     pub unsafe fn bind_buffer_memory(&self, buffer: BufferHandle, memory: DeviceMemoryHandle,
-            memory_offset: DeviceSize) -> VooResult<()> {
+            memory_offset: DeviceSize) -> VdResult<()> {
         let result = self.proc_addr_loader().vkBindBufferMemory(
             self.handle().to_raw(), buffer.to_raw(), memory.to_raw(), memory_offset);
         error::check(result, "vkBindBufferMemory", ())
@@ -261,7 +261,7 @@ impl Device {
 
     // *PFN_vkBindImageMemory)(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset);
     pub unsafe fn bind_image_memory(&self, image: ImageHandle, memory: DeviceMemoryHandle,
-            memory_offset: DeviceSize) -> VooResult<()> {
+            memory_offset: DeviceSize) -> VdResult<()> {
         let result = self.proc_addr_loader().vkBindImageMemory(
             self.handle().to_raw(), image.to_raw(), memory.to_raw(), memory_offset);
         error::check(result, "vkBindImageMemory", ())
@@ -304,7 +304,7 @@ impl Device {
 
     // *PFN_vkQueueBindSparse)(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence);
     pub unsafe fn queue_bind_sparse<Q, F>(&self, queue: Q, bind_info: &[BindSparseInfo], fence: F)
-            -> VooResult<()>
+            -> VdResult<()>
             where Q: Handle<Target=QueueHandle>, F: Handle<Target=FenceHandle> {
         let result = self.proc_addr_loader().vkQueueBindSparse(queue.handle().to_raw(),
             bind_info.len() as u32, bind_info.as_ptr() as *const _ as *const vks::VkBindSparseInfo,
@@ -314,7 +314,7 @@ impl Device {
 
     // *PFN_vkCreateFence)(VkDevice device, const VkFenceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
     pub unsafe fn create_fence(&self, create_info: &FenceCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<FenceHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<FenceHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateFence(self.handle().to_raw(),
@@ -331,7 +331,7 @@ impl Device {
     }
 
     // *PFN_vkResetFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences);
-    pub unsafe fn reset_fences(&self, fences: &[FenceHandle]) -> VooResult<()> {
+    pub unsafe fn reset_fences(&self, fences: &[FenceHandle]) -> VdResult<()> {
         let result = self.proc_addr_loader().vkResetFences(self.handle().to_raw(),
             fences.len() as u32, fences.as_ptr() as *const vks::VkFence);
         error::check(result, "vkResetFences", ())
@@ -339,7 +339,7 @@ impl Device {
 
 
     // *PFN_vkGetFenceStatus)(VkDevice device, VkFence fence);
-    pub unsafe fn get_fence_status<F>(&self, fence: F) -> VooResult<CallResult>
+    pub unsafe fn get_fence_status<F>(&self, fence: F) -> VdResult<CallResult>
             where F: Handle<Target=FenceHandle> {
         let result = self.proc_addr_loader().vkGetFenceStatus(self.handle().to_raw(), fence.handle().to_raw());
         error::check(result, "vkGetFenceStatus", CallResult::from(result))
@@ -347,7 +347,7 @@ impl Device {
 
     // *PFN_vkWaitForFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout);
     pub unsafe fn wait_for_fences(&self, fences: &[FenceHandle], wait_all: bool, timeout: u64)
-            -> VooResult<()> {
+            -> VdResult<()> {
         let result = self.proc_addr_loader().vkWaitForFences(self.handle().to_raw(),
             fences.len() as u32, fences.as_ptr() as *const vks::VkFence,
             wait_all as vks::VkBool32, timeout);
@@ -356,7 +356,7 @@ impl Device {
 
     // *PFN_vkCreateSemaphore)(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore);
     pub unsafe fn create_semaphore(&self, create_info: &SemaphoreCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<SemaphoreHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SemaphoreHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateSemaphore(self.handle().to_raw(),
@@ -374,7 +374,7 @@ impl Device {
 
     // *PFN_vkCreateEvent)(VkDevice device, const VkEventCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent);
     pub unsafe fn create_event(&self, create_info: &EventCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<EventHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<EventHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateEvent(self.handle().to_raw(),
@@ -391,7 +391,7 @@ impl Device {
     }
 
     // *PFN_vkGetEventStatus)(VkDevice device, VkEvent event);
-    pub unsafe fn get_event_status<E>(&self, event: E) -> VooResult<CallResult>
+    pub unsafe fn get_event_status<E>(&self, event: E) -> VdResult<CallResult>
             where E: Handle<Target=EventHandle> {
         let result = self.proc_addr_loader().vkGetEventStatus(self.handle().to_raw(),
             event.handle().to_raw());
@@ -399,7 +399,7 @@ impl Device {
     }
 
     // *PFN_vkSetEvent)(VkDevice device, VkEvent event);
-    pub unsafe fn set_event<E>(&self, event: E) -> VooResult<()>
+    pub unsafe fn set_event<E>(&self, event: E) -> VdResult<()>
             where E: Handle<Target=EventHandle> {
         let result = self.proc_addr_loader().vkSetEvent(self.handle().to_raw(),
             event.handle().to_raw());
@@ -407,7 +407,7 @@ impl Device {
     }
 
     // *PFN_vkResetEvent)(VkDevice device, VkEvent event);
-    pub unsafe fn reset_event<E>(&self, event: E) -> VooResult<()>
+    pub unsafe fn reset_event<E>(&self, event: E) -> VdResult<()>
             where E: Handle<Target=EventHandle> {
         let result = self.proc_addr_loader().vkResetEvent(self.handle().to_raw(),
             event.handle().to_raw());
@@ -416,7 +416,7 @@ impl Device {
 
     // *PFN_vkCreateQueryPool)(VkDevice device, const VkQueryPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool);
     pub unsafe fn create_query_pool(&self, create_info: &QueryPoolCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<QueryPoolHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<QueryPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateQueryPool(self.handle().to_raw(),
@@ -435,7 +435,7 @@ impl Device {
     // *PFN_vkGetQueryPoolResults)(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags);
     pub unsafe fn get_query_pool_results<Q>(&self, query_pool: Q, first_query: u32, query_count: u32,
             data_size: usize, data: *mut c_void, stride: DeviceSize, flags: QueryResultFlags)
-            -> VooResult<()>
+            -> VdResult<()>
             where Q: Handle<Target=QueryPoolHandle> {
         let result = self.proc_addr_loader().vkGetQueryPoolResults(self.handle().to_raw(),
             query_pool.handle().to_raw(), first_query, query_count, data_size, data, stride,
@@ -445,7 +445,7 @@ impl Device {
 
     // *PFN_vkCreateBuffer)(VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer);
     pub unsafe fn create_buffer(&self, create_info: &BufferCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<BufferHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<BufferHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateBuffer(self.handle().to_raw(),
@@ -463,7 +463,7 @@ impl Device {
 
     // *PFN_vkCreateBufferView)(VkDevice device, const VkBufferViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferView* pView);
     pub unsafe fn create_buffer_view(&self, create_info: &BufferViewCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<BufferViewHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<BufferViewHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateBufferView(self.handle().to_raw(),
@@ -481,7 +481,7 @@ impl Device {
 
     // *PFN_vkCreateImage)(VkDevice device, const VkImageCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImage* pImage);
     pub unsafe fn create_image(&self, create_info: &ImageCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<ImageHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<ImageHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateImage(self.handle().to_raw(),
@@ -510,7 +510,7 @@ impl Device {
 
     // *PFN_vkCreateImageView)(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView);
     pub unsafe fn create_image_view(&self, create_info: &ImageViewCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<ImageViewHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<ImageViewHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateImageView(self.handle().to_raw(),
@@ -528,7 +528,7 @@ impl Device {
 
     // *PFN_vkCreateShaderModule)(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule);
     pub unsafe fn create_shader_module(&self, create_info: &ShaderModuleCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<ShaderModuleHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<ShaderModuleHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateShaderModule(self.handle().to_raw(),
@@ -546,7 +546,7 @@ impl Device {
 
     // *PFN_vkCreatePipelineCache)(VkDevice device, const VkPipelineCacheCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineCache* pPipelineCache);
     pub unsafe fn create_pipeline_cache(&self, create_info: &PipelineCacheCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<PipelineCacheHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<PipelineCacheHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreatePipelineCache(self.handle().to_raw(),
@@ -564,7 +564,7 @@ impl Device {
 
     // *PFN_vkGetPipelineCacheData)(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData);
     pub unsafe fn get_pipeline_cache_data<Pc>(&self, pipeline_cache: Pc, data_size: *mut usize,
-            data: *mut c_void) -> VooResult<()>
+            data: *mut c_void) -> VdResult<()>
             where Pc: Handle<Target=PipelineCacheHandle> {
         let result = self.proc_addr_loader().vkGetPipelineCacheData(self.handle().to_raw(),
             pipeline_cache.handle().to_raw(), data_size, data);
@@ -573,7 +573,7 @@ impl Device {
 
     // *PFN_vkMergePipelineCaches)(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches);
     pub unsafe fn merge_pipeline_caches<Pc>(&self, dst_cache: Pc, src_caches: &[PipelineCacheHandle])
-            -> VooResult<()>
+            -> VdResult<()>
             where Pc: Handle<Target=PipelineCacheHandle> {
         let result = self.proc_addr_loader(). vkMergePipelineCaches(self.handle().to_raw(),
             dst_cache.handle().to_raw(), src_caches.len() as u32,
@@ -585,7 +585,7 @@ impl Device {
     pub unsafe fn create_graphics_pipelines(&self, pipeline_cache: Option<PipelineCacheHandle>,
             create_infos: &[GraphicsPipelineCreateInfo],
             allocator: Option<*const vks::VkAllocationCallbacks>)
-            -> VooResult<SmallVec<[PipelineHandle; 4]>> {
+            -> VdResult<SmallVec<[PipelineHandle; 4]>> {
         let allocator = allocator.unwrap_or(ptr::null());
         let pipeline_cache = pipeline_cache.map(|pc| pc.to_raw()).unwrap_or(0);
         let mut pipelines = SmallVec::<[PipelineHandle; 4]>::new();
@@ -603,7 +603,7 @@ impl Device {
     pub unsafe fn create_compute_pipelines(&self, pipeline_cache: Option<PipelineCacheHandle>,
             create_infos: &[ComputePipelineCreateInfo],
             allocator: Option<*const vks::VkAllocationCallbacks>)
-            -> VooResult<SmallVec<[PipelineHandle; 4]>> {
+            -> VdResult<SmallVec<[PipelineHandle; 4]>> {
         let allocator = allocator.unwrap_or(ptr::null());
         let pipeline_cache = pipeline_cache.map(|pc| pc.to_raw()).unwrap_or(0);
         let mut pipelines = SmallVec::<[PipelineHandle; 4]>::new();
@@ -627,7 +627,7 @@ impl Device {
 
     // *PFN_vkCreatePipelineLayout)(VkDevice device, const VkPipelineLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineLayout* pPipelineLayout);
     pub unsafe fn create_pipeline_layout(&self, create_info: &PipelineLayoutCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<PipelineLayoutHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<PipelineLayoutHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreatePipelineLayout(self.handle().to_raw(),
@@ -645,7 +645,7 @@ impl Device {
 
     // *PFN_vkCreateSampler)(VkDevice device, const VkSamplerCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSampler* pSampler);
     pub unsafe fn create_sampler(&self, create_info: &SamplerCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<SamplerHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SamplerHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateSampler(self.handle().to_raw(),
@@ -663,7 +663,7 @@ impl Device {
 
     // *PFN_vkCreateDescriptorSetLayout)(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorSetLayout* pSetLayout);
     pub unsafe fn create_descriptor_set_layout(&self, create_info: &DescriptorSetLayoutCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<DescriptorSetLayoutHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<DescriptorSetLayoutHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateDescriptorSetLayout(self.handle().to_raw(),
@@ -681,7 +681,7 @@ impl Device {
 
     // *PFN_vkCreateDescriptorPool)(VkDevice device, const VkDescriptorPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorPool* pDescriptorPool);
     pub unsafe fn create_descriptor_pool(&self, create_info: &DescriptorPoolCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<DescriptorPoolHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<DescriptorPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateDescriptorPool(self.handle().to_raw(),
@@ -699,7 +699,7 @@ impl Device {
 
     // *PFN_vkResetDescriptorPool)(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags);
     pub unsafe fn reset_descriptor_pool<Dp>(&self, descriptor_pool: Dp,
-            flags: DescriptorPoolResetFlags) -> VooResult<()>
+            flags: DescriptorPoolResetFlags) -> VdResult<()>
             where Dp: Handle<Target=DescriptorPoolHandle> {
         let result = self.proc_addr_loader().vkResetDescriptorPool(self.handle().to_raw(),
             descriptor_pool.handle().to_raw(), flags.bits());
@@ -708,7 +708,7 @@ impl Device {
 
     // *PFN_vkAllocateDescriptorSets)(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets);
     pub unsafe fn allocate_descriptor_sets(&self, allocate_info: &DescriptorSetAllocateInfo)
-            -> VooResult<SmallVec<[DescriptorSetHandle; 8]>> {
+            -> VdResult<SmallVec<[DescriptorSetHandle; 8]>> {
         let mut descriptor_sets = SmallVec::<[DescriptorSetHandle; 8]>::new();
         let count = allocate_info.set_layouts().len();
         descriptor_sets.reserve_exact(count);
@@ -721,7 +721,7 @@ impl Device {
 
     // *PFN_vkFreeDescriptorSets)(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets);
     pub unsafe fn free_descriptor_sets<Dp>(&self, descriptor_pool: Dp,
-            descriptor_sets: &[DescriptorSetHandle]) -> VooResult<()>
+            descriptor_sets: &[DescriptorSetHandle]) -> VdResult<()>
             where Dp: Handle<Target=DescriptorPoolHandle> {
         let result = self.proc_addr_loader().vkFreeDescriptorSets(self.handle().to_raw(),
             descriptor_pool.handle().to_raw(), descriptor_sets.len() as u32,
@@ -744,7 +744,7 @@ impl Device {
 
     // *PFN_vkCreateFramebuffer)(VkDevice device, const VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer);
     pub unsafe fn create_framebuffer(&self, create_info: &FramebufferCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<FramebufferHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<FramebufferHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateFramebuffer(self.handle().to_raw(),
@@ -762,7 +762,7 @@ impl Device {
 
     // *PFN_vkCreateRenderPass)(VkDevice device, const VkRenderPassCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass);
     pub unsafe fn create_render_pass(&self, create_info: &RenderPassCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<RenderPassHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<RenderPassHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateRenderPass(self.handle().to_raw(),
@@ -790,7 +790,7 @@ impl Device {
 
     // *PFN_vkCreateCommandPool)(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool);
     pub unsafe fn create_command_pool(&self, create_info: &CommandPoolCreateInfo,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<CommandPoolHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<CommandPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateCommandPool(self.handle().to_raw(),
@@ -808,7 +808,7 @@ impl Device {
 
     // *PFN_vkResetCommandPool)(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags);
     pub unsafe fn reset_command_pool<Cp>(&self, command_pool: Cp, flags: CommandPoolResetFlags)
-            -> VooResult<()>
+            -> VdResult<()>
             where Cp: Handle<Target=CommandPoolHandle> {
         let result = self.proc_addr_loader().vkResetCommandPool(self.handle().to_raw(),
             command_pool.handle().to_raw(), flags.bits());
@@ -817,7 +817,7 @@ impl Device {
 
     // *PFN_vkAllocateCommandBuffers)(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers);
     pub unsafe fn allocate_command_buffers(&self, allocate_info: &CommandBufferAllocateInfo)
-            -> VooResult<SmallVec<[CommandBufferHandle; 16]>> {
+            -> VdResult<SmallVec<[CommandBufferHandle; 16]>> {
         let mut command_buffers: SmallVec<[CommandBufferHandle; 16]> = SmallVec::new();
         command_buffers.reserve_exact(allocate_info.command_buffer_count() as usize);
         command_buffers.set_len(allocate_info.command_buffer_count() as usize);
@@ -837,13 +837,13 @@ impl Device {
 
     // *PFN_vkBeginCommandBuffer)(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo);
     pub unsafe fn begin_command_buffer(&self, command_buffer: CommandBufferHandle,
-            begin_info: &CommandBufferBeginInfo) -> VooResult<()> {
+            begin_info: &CommandBufferBeginInfo) -> VdResult<()> {
         let result = self.proc_addr_loader().vkBeginCommandBuffer(command_buffer.to_raw(), begin_info.as_raw());
         error::check(result, "vkBeginCommandBuffer", ())
     }
 
     // *PFN_vkEndCommandBuffer)(VkCommandBuffer commandBuffer);
-    pub unsafe fn end_command_buffer(&self, command_buffer: CommandBufferHandle) -> VooResult<()> {
+    pub unsafe fn end_command_buffer(&self, command_buffer: CommandBufferHandle) -> VdResult<()> {
         let result = self.proc_addr_loader().vkEndCommandBuffer(command_buffer.to_raw());
         error::check(result, "vkEndCommandBuffer", ())
     }
@@ -851,7 +851,7 @@ impl Device {
 
     // *PFN_vkResetCommandBuffer)(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags);
     pub unsafe fn cmd_reset_command_buffer(&self, command_buffer: CommandBufferHandle,
-            flags: CommandBufferResetFlags) -> VooResult<()> {
+            flags: CommandBufferResetFlags) -> VdResult<()> {
         let result = self.proc_addr_loader().vkResetCommandBuffer(command_buffer.to_raw(), flags.bits());
         error::check(result, "vkResetCommandBuffer", ())
     }
@@ -1217,7 +1217,7 @@ impl Device {
 
     // *PFN_vkCreateSwapchainKHR)(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain);
     pub unsafe fn create_swapchain_khr(&self, create_info: &SwapchainCreateInfoKhr,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<SwapchainKhrHandle> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SwapchainKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().vkCreateSwapchainKHR(self.handle().to_raw(),
@@ -1235,7 +1235,7 @@ impl Device {
 
     // *PFN_vkGetSwapchainImagesKHR)(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages);
     pub unsafe fn get_swapchain_images_khr(&self, swapchain: SwapchainKhrHandle)
-            -> VooResult<SmallVec<[ImageHandle; 4]>> {
+            -> VdResult<SmallVec<[ImageHandle; 4]>> {
         let mut image_count = 0;
         let mut image_handles = SmallVec::<[ImageHandle; 4]>::new();
         let result = self.proc_addr_loader().vkGetSwapchainImagesKHR(self.handle().to_raw(),
@@ -1255,7 +1255,7 @@ impl Device {
     // *PFN_vkAcquireNextImageKHR)(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex);
     pub unsafe fn acquire_next_image_khr(&self, swapchain: SwapchainKhrHandle, _timeout: u64,
             semaphore: Option<SemaphoreHandle>, fence: Option<FenceHandle>, _image_index: u32)
-            -> VooResult<u32> {
+            -> VdResult<u32> {
         let mut image_index = 0;
         let result = self.proc_addr_loader().khr_swapchain.vkAcquireNextImageKHR(
                 self.handle().to_raw(), swapchain.to_raw(), u64::max_value(),
@@ -1266,7 +1266,7 @@ impl Device {
 
     // *PFN_vkQueuePresentKHR)(VkQueue queue, const VkPresentInfoKHR* pPresentInfo);
     pub unsafe fn queue_present_khr(&self, queue: QueueHandle, present_info: &PresentInfoKhr)
-            -> VooResult<()> {
+            -> VdResult<()> {
         let result = self.proc_addr_loader().khr_swapchain.vkQueuePresentKHR(queue.to_raw(),
             present_info.as_raw());
         error::check(result, "vkQueuePresentKHR", ())
@@ -1275,7 +1275,7 @@ impl Device {
     // *PFN_vkCreateSharedSwapchainsKHR)(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains);
     pub unsafe fn create_shared_swapchains_khr(&self, create_infos: &[SwapchainCreateInfoKhr],
             allocator: Option<*const vks::VkAllocationCallbacks>)
-            -> VooResult<SmallVec<[SwapchainKhrHandle; 4]>> {
+            -> VdResult<SmallVec<[SwapchainKhrHandle; 4]>> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut swapchains = SmallVec::<[SwapchainKhrHandle; 4]>::new();
         swapchains.reserve_exact(create_infos.len());
@@ -1288,7 +1288,7 @@ impl Device {
 
     // *PFN_vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags);
     pub unsafe fn trim_command_pool_khr<P>(&self, _command_pool: P, _flags: CommandPoolTrimFlagsKhr)
-             -> VooResult<()>
+             -> VdResult<()>
             where P: Handle<Target=CommandPoolHandle> {
         // self.proc_addr_loader().
         //     vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags);
@@ -1298,7 +1298,7 @@ impl Device {
     // *PFN_vkGetMemoryWin32HandleKHR)(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
     pub unsafe fn get_memory_win32_handle_khr(&self,
             _get_win32_handle_info: &MemoryGetWin32HandleInfoKhr)
-             -> VooResult<()> {
+             -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkGetMemoryWin32HandleKHR)(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
         unimplemented!();
@@ -1306,7 +1306,7 @@ impl Device {
 
     // *PFN_vkGetMemoryWin32HandlePropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
     pub unsafe fn get_memory_win32_handle_properties_khr(&self,
-            _handle_type: ExternalMemoryHandleTypeFlagsKhr, _handle: HANDLE) -> VooResult<()> {
+            _handle_type: ExternalMemoryHandleTypeFlagsKhr, _handle: HANDLE) -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkGetMemoryWin32HandlePropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
         unimplemented!();
@@ -1314,7 +1314,7 @@ impl Device {
 
     // *PFN_vkGetMemoryFdKHR)(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
     pub unsafe fn get_memory_fd_khr(&self, _get_fd_info: &MemoryGetFdInfoKhr, _fd: &mut i32)
-            -> VooResult<()> {
+            -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkGetMemoryFdKHR)(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
         unimplemented!();
@@ -1322,7 +1322,7 @@ impl Device {
 
     // *PFN_vkGetMemoryFdPropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
     pub unsafe fn get_memory_fd_properties_khr(&self, _handle_type: ExternalMemoryHandleTypeFlagsKhr,
-            _fd: i32) -> VooResult<()> {
+            _fd: i32) -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkGetMemoryFdPropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
         unimplemented!();
@@ -1330,7 +1330,7 @@ impl Device {
 
     // *PFN_vkImportSemaphoreWin32HandleKHR)(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo);
     pub unsafe fn import_semaphore_win32_handle_khr(&self,
-            _import_semaphore_win32_handle_info: &ImportSemaphoreWin32HandleInfoKhr) -> VooResult<()> {
+            _import_semaphore_win32_handle_info: &ImportSemaphoreWin32HandleInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkImportSemaphoreWin32HandleKHR)(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo);
         unimplemented!();
@@ -1338,7 +1338,7 @@ impl Device {
 
     // *PFN_vkGetSemaphoreWin32HandleKHR)(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
     pub unsafe fn get_semaphore_win32_handle_khr(&self,
-            _get_win32_handle_info: &SemaphoreGetWin32HandleInfoKhr) -> VooResult<()> {
+            _get_win32_handle_info: &SemaphoreGetWin32HandleInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkGetSemaphoreWin32HandleKHR)(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
         unimplemented!();
@@ -1346,7 +1346,7 @@ impl Device {
 
     // *PFN_vkImportSemaphoreFdKHR)(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
     pub unsafe fn import_semaphore_fd_khr(&self,
-            _import_semaphore_fd_info: &ImportSemaphoreFdInfoKhr) -> VooResult<()> {
+            _import_semaphore_fd_info: &ImportSemaphoreFdInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkImportSemaphoreFdKHR)(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
         unimplemented!();
@@ -1354,7 +1354,7 @@ impl Device {
 
     // *PFN_vkGetSemaphoreFdKHR)(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
     pub unsafe fn get_semaphore_fd_khr(&self, _get_fd_info: &SemaphoreGetFdInfoKhr)
-            -> VooResult<()> {
+            -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkGetSemaphoreFdKHR)(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
         unimplemented!();
@@ -1363,7 +1363,7 @@ impl Device {
     // *PFN_vkCmdPushDescriptorSetKHR)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
     pub unsafe fn cmd_push_descriptor_set_khr<Cb>(&self, _command_buffer: Cb,
             _pipeline_bind_point: PipelineBindPoint, _layout: PipelineLayout, _set: u32,
-            _descriptor_writes: &[WriteDescriptorSet]) -> VooResult<()>
+            _descriptor_writes: &[WriteDescriptorSet]) -> VdResult<()>
             where Cb: Handle<Target=CommandBufferHandle> {
         // self.proc_addr_loader().
         //     vkCmdPushDescriptorSetKHR)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
@@ -1375,7 +1375,7 @@ impl Device {
     pub unsafe fn create_descriptor_update_template_khr(&self,
             create_info: &DescriptorUpdateTemplateKhrCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>)
-            -> VooResult<DescriptorUpdateTemplateKhrHandle> {
+            -> VdResult<DescriptorUpdateTemplateKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateDescriptorUpdateTemplateKhr(self.handle().to_raw(),
@@ -1408,7 +1408,7 @@ impl Device {
     #[cfg(feature = "unimplemented")]
     pub unsafe fn cmd_push_descriptor_set_with_template_khr<Cb, Pl>(&self, command_buffer: Cb,
             descriptor_update_template: DescriptorUpdateTemplateKhr, layout: Pl, set: u32,
-            data: *const c_void) -> VooResult<()>
+            data: *const c_void) -> VdResult<()>
             where Cb: Handle<Target=CommandBufferHandle>, Pl: Handle<Target=PipelineLayoutHandle> {
         // self.proc_addr_loader().
         //     vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
@@ -1416,7 +1416,7 @@ impl Device {
     }
 
     // *PFN_vkGetSwapchainStatusKHR)(VkDevice device, VkSwapchainKHR swapchain);
-    pub unsafe fn get_swapchain_status_khr<Sk>(&self, _swapchain: Sk) -> VooResult<()>
+    pub unsafe fn get_swapchain_status_khr<Sk>(&self, _swapchain: Sk) -> VdResult<()>
             where Sk: Handle<Target=SwapchainKhrHandle> {
         // self.proc_addr_loader().
         //     vkGetSwapchainStatusKHR)(VkDevice device, VkSwapchainKHR swapchain);
@@ -1425,7 +1425,7 @@ impl Device {
 
     // *PFN_vkImportFenceWin32HandleKHR)(VkDevice device, const VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo);
     pub unsafe fn import_fence_win32_handle_khr(&self,
-            _import_fence_win32_handle_info: &ImportFenceWin32HandleInfoKhr) -> VooResult<()> {
+            _import_fence_win32_handle_info: &ImportFenceWin32HandleInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkImportFenceWin32HandleKHR)(VkDevice device, const VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo);
         unimplemented!();
@@ -1433,7 +1433,7 @@ impl Device {
 
     // *PFN_vkGetFenceWin32HandleKHR)(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
     pub unsafe fn get_fence_win32_handle_khr(&self,
-            _get_win32_handle_info: &FenceGetWin32HandleInfoKhr) -> VooResult<()> {
+            _get_win32_handle_info: &FenceGetWin32HandleInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkGetFenceWin32HandleKHR)(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
         unimplemented!();
@@ -1441,14 +1441,14 @@ impl Device {
 
     // *PFN_vkImportFenceFdKHR)(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo);
     pub unsafe fn import_fence_fd_khr(&self, _import_fence_fd_info: &ImportFenceFdInfoKhr)
-            -> VooResult<()> {
+            -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkImportFenceFdKHR)(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo);
         unimplemented!();
     }
 
     // *PFN_vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd);
-    pub unsafe fn get_fence_fd_khr(&self, _get_fd_info: &FenceGetFdInfoKhr) -> VooResult<()> {
+    pub unsafe fn get_fence_fd_khr(&self, _get_fd_info: &FenceGetFdInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd);
         unimplemented!();
@@ -1456,19 +1456,19 @@ impl Device {
 
     // *PFN_vkGetImageMemoryRequirements2KHR)(VkDevice device, const VkImageMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
     pub unsafe fn get_image_memory_requirements_2_khr(&self,
-            _info: &ImageMemoryRequirementsInfo2Khr) -> VooResult<()> {
+            _info: &ImageMemoryRequirementsInfo2Khr) -> VdResult<()> {
         unimplemented!();
     }
 
     // *PFN_vkGetBufferMemoryRequirements2KHR)(VkDevice device, const VkBufferMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
     pub fn get_buffer_memory_requirements_2_khr(&self, _info: &BufferMemoryRequirementsInfo2Khr)
-            -> VooResult<()> {
+            -> VdResult<()> {
         unimplemented!();
     }
 
     // *PFN_vkGetImageSparseMemoryRequirements2KHR)(VkDevice device, const VkImageSparseMemoryRequirementsInfo2KHR* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2KHR* pSparseMemoryRequirements);
     pub unsafe fn get_image_sparse_memory_requirements_2_khr(&self,
-            _info: &ImageSparseMemoryRequirementsInfo2Khr) -> VooResult<()> {
+            _info: &ImageSparseMemoryRequirementsInfo2Khr) -> VdResult<()> {
         unimplemented!();
     }
 
@@ -1477,7 +1477,7 @@ impl Device {
     pub unsafe fn create_sampler_ycbcr_conversion_khr(&self,
             create_info: &SamplerYcbcrConversionKhrCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>)
-            -> VooResult<SamplerYcbcrConversionKhrHandle> {
+            -> VdResult<SamplerYcbcrConversionKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateSamplerYcbcrConversionKhr(
@@ -1508,13 +1508,13 @@ impl Device {
 
     // *PFN_vkDebugMarkerSetObjectTagEXT)(VkDevice device, const VkDebugMarkerObjectTagInfoEXT* pTagInfo);
     pub unsafe fn debug_marker_set_object_tag_ext(&self, _tag_info: &DebugMarkerObjectTagInfoExt)
-            -> VooResult<()> {
+            -> VdResult<()> {
         unimplemented!();
     }
 
     // *PFN_vkDebugMarkerSetObjectNameEXT)(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo);
     pub unsafe fn debug_marker_set_object_name_ext(&self, _name_info: &DebugMarkerObjectNameInfoExt)
-            -> VooResult<()> {
+            -> VdResult<()> {
         unimplemented!();
     }
 
@@ -1597,7 +1597,7 @@ impl Device {
     pub unsafe fn create_indirect_commands_layout_nvx(&self,
             create_info: &IndirectCommandsLayoutNvxCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>)
-            -> VooResult<IndirectCommandsLayoutNvxHandle> {
+            -> VdResult<IndirectCommandsLayoutNvxHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateIndirectCommandsLayoutNvx(
@@ -1620,7 +1620,7 @@ impl Device {
     #[cfg(feature = "unimplemented")]
     pub unsafe fn create_object_table_nvx(&self, create_info: &ObjectTableNvxCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>)
-            -> VooResult<ObjectTableNvxHandle> {
+            -> VdResult<ObjectTableNvxHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateObjectTableNvx(self.handle().to_raw(),
@@ -1661,7 +1661,7 @@ impl Device {
 
     // *PFN_vkRegisterDeviceEventEXT)(VkDevice device, const VkDeviceEventInfoEXT* pDeviceEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
     pub unsafe fn register_device_event_ext(&self, _device_event_info: &DeviceEventInfoExt,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<()> {
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<()> {
         let _allocator = allocator.unwrap_or(ptr::null());
         unimplemented!();
     }
@@ -1669,7 +1669,7 @@ impl Device {
     // *PFN_vkRegisterDisplayEventEXT)(VkDevice device, VkDisplayKHR display, const VkDisplayEventInfoEXT* pDisplayEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
     pub unsafe fn register_display_event_ext<Dk>(&self, _display: Dk,
             _display_event_info: &DisplayEventInfoExt,
-            allocator: Option<*const vks::VkAllocationCallbacks>) -> VooResult<()>
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<()>
             where Dk: Handle<Target=DisplayKhrHandle> {
         let _allocator = allocator.unwrap_or(ptr::null());
         unimplemented!();
@@ -1677,7 +1677,7 @@ impl Device {
 
     // *PFN_vkGetSwapchainCounterEXT)(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue);
     pub unsafe fn get_swapchain_counter_ext<Sk>(&self, _swapchain: Sk,
-            _counter: SurfaceCounterFlagsExt) -> VooResult<u64>
+            _counter: SurfaceCounterFlagsExt) -> VdResult<u64>
             where Sk: Handle<Target=SwapchainKhrHandle> {
         unimplemented!();
     }
@@ -1695,21 +1695,21 @@ impl Device {
     // *PFN_vkCmdSetDiscardRectangleEXT)(VkCommandBuffer commandBuffer, uint32_t firstDiscardRectangle, uint32_t discardRectangleCount, const VkRect2D* pDiscardRectangles);
     pub unsafe fn cmd_set_discard_rectangle_ext<Cb>(&self, _command_buffer: Cb,
             _first_discard_rectangle: u32, _discard_rectangle_count: u32, _discard_rectangles: &Rect2d)
-            -> VooResult<()>
+            -> VdResult<()>
             where Cb: Handle<Target=CommandBufferHandle> {
         unimplemented!();
     }
 
     // *PFN_vkSetHdrMetadataEXT)(VkDevice device, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const VkHdrMetadataEXT* pMetadata);
     pub unsafe fn set_hdr_metadata_ext(&self, _swapchains: &[SwapchainKhrHandle],
-            _metadata: &HdrMetadataExt) -> VooResult<()> {
+            _metadata: &HdrMetadataExt) -> VdResult<()> {
         unimplemented!();
     }
 
     // *PFN_vkCmdSetSampleLocationsEXT)(VkCommandBuffer commandBuffer, const VkSampleLocationsInfoEXT* pSampleLocationsInfo);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn cmd_set_sample_locations_ext<Cb>(&self, command_buffer: Cb,
-            sample_locations_info: &SampleLocationsInfoExt) -> VooResult<()>
+            sample_locations_info: &SampleLocationsInfoExt) -> VdResult<()>
             where Cb: Handle<Target=CommandBufferHandle> {
         unimplemented!();
     }
@@ -1719,7 +1719,7 @@ impl Device {
     pub unsafe fn create_validation_cache_ext(&self,
             create_info: &ValidationCacheExtCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>)
-            -> VooResult<ValidationCacheExtHandle> {
+            -> VdResult<ValidationCacheExtHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
         let result = self.proc_addr_loader().core.vkCreateValidationCacheExt(self.handle().to_raw(),
@@ -1741,14 +1741,14 @@ impl Device {
     // *PFN_vkMergeValidationCachesEXT)(VkDevice device, VkValidationCacheEXT dstCache, uint32_t srcCacheCount, const VkValidationCacheEXT* pSrcCaches);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn merge_validation_caches_ext(&self, dst_cache: ValidationCacheExt,
-            src_caches: &[ValidationCacheExt]) -> VooResult<()> {
+            src_caches: &[ValidationCacheExt]) -> VdResult<()> {
         unimplemented!();
     }
 
     // *PFN_vkGetValidationCacheDataEXT)(VkDevice device, VkValidationCacheEXT validationCache, size_t* pDataSize, void* pData);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn get_validation_cache_data_ext(&self, validation_cache: ValidationCacheExt,
-            data_size: *mut usize, data: *mut c_void) -> VooResult<()> {
+            data_size: *mut usize, data: *mut c_void) -> VdResult<()> {
         unimplemented!();
     }
 }
@@ -1853,7 +1853,7 @@ impl<'db> DeviceBuilder<'db> {
     }
 
     /// Builds and returns a new `Device`.
-    pub fn build(&self, physical_device: PhysicalDevice) -> VooResult<Device> {
+    pub fn build(&self, physical_device: PhysicalDevice) -> VdResult<Device> {
         let handle = unsafe {
             physical_device.instance().create_device(physical_device.handle(), &self.create_info, None)?
         };
@@ -1866,190 +1866,192 @@ impl<'db> DeviceBuilder<'db> {
         }
 
         unsafe {
-            for &extension_name in self.enabled_extension_names.as_ref()
-                    .expect("enabled extension names not set").as_ptr_slice() {
-                match CStr::from_ptr(extension_name).to_str().expect("invalid extension name") {
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_16bit_storage" => loader.load_khr_16bit_storage(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_android_surface" => loader.load_khr_android_surface(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_bind_memory2" => loader.load_khr_bind_memory2(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_dedicated_allocation" => loader.load_khr_dedicated_allocation(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_descriptor_update_template" => loader.load_khr_descriptor_update_template(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_display" => loader.load_khr_display(handle.to_raw()),
-                    "VK_KHR_display_swapchain" => loader.load_khr_display_swapchain(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_external_fence" => loader.load_khr_external_fence(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_external_fence_capabilities" => loader.load_khr_external_fence_capabilities(handle.to_raw()),
-                    "VK_KHR_external_fence_fd" => loader.load_khr_external_fence_fd(handle.to_raw()),
-                    "VK_KHR_external_fence_win32" => loader.load_khr_external_fence_win32(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_external_memory" => loader.load_khr_external_memory(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_external_memory_capabilities" => loader.load_khr_external_memory_capabilities(handle.to_raw()),
-                    "VK_KHR_external_memory_fd" => loader.load_khr_external_memory_fd(handle.to_raw()),
-                    "VK_KHR_external_memory_win32" => loader.load_khr_external_memory_win32(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_external_semaphore" => loader.load_khr_external_semaphore(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_external_semaphore_capabilities" => loader.load_khr_external_semaphore_capabilities(handle.to_raw()),
-                    "VK_KHR_external_semaphore_fd" => loader.load_khr_external_semaphore_fd(handle.to_raw()),
-                    "VK_KHR_external_semaphore_win32" => loader.load_khr_external_semaphore_win32(handle.to_raw()),
-                    "VK_KHR_get_memory_requirements2" => loader.load_khr_get_memory_requirements2(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_get_physical_device_properties2" => loader.load_khr_get_physical_device_properties2(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_get_surface_capabilities2" => loader.load_khr_get_surface_capabilities2(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_image_format_list" => loader.load_khr_image_format_list(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_incremental_present" => loader.load_khr_incremental_present(handle.to_raw()),
-                    "VK_KHR_maintenance1" => loader.load_khr_maintenance1(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_maintenance2" => loader.load_khr_maintenance2(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_mir_surface" => loader.load_khr_mir_surface(handle.to_raw()),
-                    "VK_KHR_push_descriptor" => loader.load_khr_push_descriptor(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_relaxed_block_layout" => loader.load_khr_relaxed_block_layout(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_sampler_mirror_clamp_to_edge" => loader.load_khr_sampler_mirror_clamp_to_edge(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_sampler_ycbcr_conversion" => loader.load_khr_sampler_ycbcr_conversion(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_shader_draw_parameters" => loader.load_khr_shader_draw_parameters(handle.to_raw()),
-                    "VK_KHR_shared_presentable_image" => loader.load_khr_shared_presentable_image(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_storage_buffer_storage_class" => loader.load_khr_storage_buffer_storage_class(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_surface" => loader.load_khr_surface(handle.to_raw()),
-                    "VK_KHR_swapchain" => loader.load_khr_swapchain(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_variable_pointers" => loader.load_khr_variable_pointers(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_wayland_surface" => loader.load_khr_wayland_surface(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_win32_keyed_mutex" => loader.load_khr_win32_keyed_mutex(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_win32_surface" => loader.load_khr_win32_surface(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_xcb_surface" => loader.load_khr_xcb_surface(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHR_xlib_surface" => loader.load_khr_xlib_surface(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_acquire_xlib_display" => loader.load_ext_acquire_xlib_display(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_blend_operation_advanced" => loader.load_ext_blend_operation_advanced(handle.to_raw()),
-                    "VK_EXT_debug_marker" => loader.load_ext_debug_marker(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_debug_report" => loader.load_ext_debug_report(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_depth_range_unrestricted" => loader.load_ext_depth_range_unrestricted(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_direct_mode_display" => loader.load_ext_direct_mode_display(handle.to_raw()),
-                    "VK_EXT_discard_rectangles" => loader.load_ext_discard_rectangles(handle.to_raw()),
-                    "VK_EXT_display_control" => loader.load_ext_display_control(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_display_surface_counter" => loader.load_ext_display_surface_counter(handle.to_raw()),
-                    "VK_EXT_hdr_metadata" => loader.load_ext_hdr_metadata(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_post_depth_coverage" => loader.load_ext_post_depth_coverage(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_sample_locations" => loader.load_ext_sample_locations(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_sampler_filter_minmax" => loader.load_ext_sampler_filter_minmax(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_shader_stencil_export" => loader.load_ext_shader_stencil_export(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_shader_subgroup_ballot" => loader.load_ext_shader_subgroup_ballot(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_shader_subgroup_vote" => loader.load_ext_shader_subgroup_vote(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_shader_viewport_index_layer" => loader.load_ext_shader_viewport_index_layer(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_swapchain_colorspace" => loader.load_ext_swapchain_colorspace(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_validation_cache" => loader.load_ext_validation_cache(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_EXT_validation_flags" => loader.load_ext_validation_flags(handle.to_raw()),
-                    "VK_AMD_draw_indirect_count" => loader.load_amd_draw_indirect_count(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_gcn_shader" => loader.load_amd_gcn_shader(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_gpu_shader_half_float" => loader.load_amd_gpu_shader_half_float(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_gpu_shader_int16" => loader.load_amd_gpu_shader_int16(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_mixed_attachment_samples" => loader.load_amd_mixed_attachment_samples(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_negative_viewport_height" => loader.load_amd_negative_viewport_height(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_rasterization_order" => loader.load_amd_rasterization_order(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_shader_ballot" => loader.load_amd_shader_ballot(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_shader_explicit_vertex_parameter" => loader.load_amd_shader_explicit_vertex_parameter(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_shader_fragment_mask" => loader.load_amd_shader_fragment_mask(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_shader_image_load_store_lod" => loader.load_amd_shader_image_load_store_lod(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_shader_trinary_minmax" => loader.load_amd_shader_trinary_minmax(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_AMD_texture_gather_bias_lod" => loader.load_amd_texture_gather_bias_lod(handle.to_raw()),
-                    "VK_GOOGLE_display_timing" => loader.load_google_display_timing(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_IMG_filter_cubic" => loader.load_img_filter_cubic(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_IMG_format_pvrtc" => loader.load_img_format_pvrtc(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHX_device_group" => loader.load_khx_device_group(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHX_device_group_creation" => loader.load_khx_device_group_creation(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_KHX_multiview" => loader.load_khx_multiview(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_MVK_ios_surface" => loader.load_mvk_ios_surface(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_MVK_macos_surface" => loader.load_mvk_macos_surface(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NN_vi_surface" => loader.load_nn_vi_surface(handle.to_raw()),
-                    "VK_NV_clip_space_w_scaling" => loader.load_nv_clip_space_w_scaling(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_dedicated_allocation" => loader.load_nv_dedicated_allocation(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_external_memory" => loader.load_nv_external_memory(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_external_memory_capabilities" => loader.load_nv_external_memory_capabilities(handle.to_raw()),
-                    "VK_NV_external_memory_win32" => loader.load_nv_external_memory_win32(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_fill_rectangle" => loader.load_nv_fill_rectangle(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_fragment_coverage_to_color" => loader.load_nv_fragment_coverage_to_color(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_framebuffer_mixed_samples" => loader.load_nv_framebuffer_mixed_samples(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_geometry_shader_passthrough" => loader.load_nv_geometry_shader_passthrough(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_glsl_shader" => loader.load_nv_glsl_shader(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_sample_mask_override_coverage" => loader.load_nv_sample_mask_override_coverage(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_viewport_array2" => loader.load_nv_viewport_array2(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_viewport_swizzle" => loader.load_nv_viewport_swizzle(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NV_win32_keyed_mutex" => loader.load_nv_win32_keyed_mutex(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NVX_device_generated_commands" => loader.load_nvx_device_generated_commands(handle.to_raw()),
-                    #[cfg(feature = "unimplemented")]
-                    "VK_NVX_multiview_per_view_attributes" => loader.load_nvx_multiview_per_view_attributes(handle.to_raw()),
-                    &_ => (),
+            if let Some(extension_name_char_strs) = self.enabled_extension_names.as_ref() {
+                let extension_names = extension_name_char_strs.as_ptr_slice();
+                for &extension_name in extension_names {
+                    match CStr::from_ptr(extension_name).to_str().expect("invalid extension name") {
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_16bit_storage" => loader.load_khr_16bit_storage(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_android_surface" => loader.load_khr_android_surface(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_bind_memory2" => loader.load_khr_bind_memory2(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_dedicated_allocation" => loader.load_khr_dedicated_allocation(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_descriptor_update_template" => loader.load_khr_descriptor_update_template(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_display" => loader.load_khr_display(handle.to_raw()),
+                        "VK_KHR_display_swapchain" => loader.load_khr_display_swapchain(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_external_fence" => loader.load_khr_external_fence(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_external_fence_capabilities" => loader.load_khr_external_fence_capabilities(handle.to_raw()),
+                        "VK_KHR_external_fence_fd" => loader.load_khr_external_fence_fd(handle.to_raw()),
+                        "VK_KHR_external_fence_win32" => loader.load_khr_external_fence_win32(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_external_memory" => loader.load_khr_external_memory(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_external_memory_capabilities" => loader.load_khr_external_memory_capabilities(handle.to_raw()),
+                        "VK_KHR_external_memory_fd" => loader.load_khr_external_memory_fd(handle.to_raw()),
+                        "VK_KHR_external_memory_win32" => loader.load_khr_external_memory_win32(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_external_semaphore" => loader.load_khr_external_semaphore(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_external_semaphore_capabilities" => loader.load_khr_external_semaphore_capabilities(handle.to_raw()),
+                        "VK_KHR_external_semaphore_fd" => loader.load_khr_external_semaphore_fd(handle.to_raw()),
+                        "VK_KHR_external_semaphore_win32" => loader.load_khr_external_semaphore_win32(handle.to_raw()),
+                        "VK_KHR_get_memory_requirements2" => loader.load_khr_get_memory_requirements2(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_get_physical_device_properties2" => loader.load_khr_get_physical_device_properties2(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_get_surface_capabilities2" => loader.load_khr_get_surface_capabilities2(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_image_format_list" => loader.load_khr_image_format_list(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_incremental_present" => loader.load_khr_incremental_present(handle.to_raw()),
+                        "VK_KHR_maintenance1" => loader.load_khr_maintenance1(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_maintenance2" => loader.load_khr_maintenance2(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_mir_surface" => loader.load_khr_mir_surface(handle.to_raw()),
+                        "VK_KHR_push_descriptor" => loader.load_khr_push_descriptor(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_relaxed_block_layout" => loader.load_khr_relaxed_block_layout(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_sampler_mirror_clamp_to_edge" => loader.load_khr_sampler_mirror_clamp_to_edge(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_sampler_ycbcr_conversion" => loader.load_khr_sampler_ycbcr_conversion(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_shader_draw_parameters" => loader.load_khr_shader_draw_parameters(handle.to_raw()),
+                        "VK_KHR_shared_presentable_image" => loader.load_khr_shared_presentable_image(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_storage_buffer_storage_class" => loader.load_khr_storage_buffer_storage_class(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_surface" => loader.load_khr_surface(handle.to_raw()),
+                        "VK_KHR_swapchain" => loader.load_khr_swapchain(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_variable_pointers" => loader.load_khr_variable_pointers(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_wayland_surface" => loader.load_khr_wayland_surface(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_win32_keyed_mutex" => loader.load_khr_win32_keyed_mutex(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_win32_surface" => loader.load_khr_win32_surface(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_xcb_surface" => loader.load_khr_xcb_surface(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHR_xlib_surface" => loader.load_khr_xlib_surface(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_acquire_xlib_display" => loader.load_ext_acquire_xlib_display(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_blend_operation_advanced" => loader.load_ext_blend_operation_advanced(handle.to_raw()),
+                        "VK_EXT_debug_marker" => loader.load_ext_debug_marker(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_debug_report" => loader.load_ext_debug_report(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_depth_range_unrestricted" => loader.load_ext_depth_range_unrestricted(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_direct_mode_display" => loader.load_ext_direct_mode_display(handle.to_raw()),
+                        "VK_EXT_discard_rectangles" => loader.load_ext_discard_rectangles(handle.to_raw()),
+                        "VK_EXT_display_control" => loader.load_ext_display_control(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_display_surface_counter" => loader.load_ext_display_surface_counter(handle.to_raw()),
+                        "VK_EXT_hdr_metadata" => loader.load_ext_hdr_metadata(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_post_depth_coverage" => loader.load_ext_post_depth_coverage(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_sample_locations" => loader.load_ext_sample_locations(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_sampler_filter_minmax" => loader.load_ext_sampler_filter_minmax(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_shader_stencil_export" => loader.load_ext_shader_stencil_export(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_shader_subgroup_ballot" => loader.load_ext_shader_subgroup_ballot(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_shader_subgroup_vote" => loader.load_ext_shader_subgroup_vote(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_shader_viewport_index_layer" => loader.load_ext_shader_viewport_index_layer(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_swapchain_colorspace" => loader.load_ext_swapchain_colorspace(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_validation_cache" => loader.load_ext_validation_cache(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_EXT_validation_flags" => loader.load_ext_validation_flags(handle.to_raw()),
+                        "VK_AMD_draw_indirect_count" => loader.load_amd_draw_indirect_count(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_gcn_shader" => loader.load_amd_gcn_shader(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_gpu_shader_half_float" => loader.load_amd_gpu_shader_half_float(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_gpu_shader_int16" => loader.load_amd_gpu_shader_int16(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_mixed_attachment_samples" => loader.load_amd_mixed_attachment_samples(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_negative_viewport_height" => loader.load_amd_negative_viewport_height(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_rasterization_order" => loader.load_amd_rasterization_order(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_shader_ballot" => loader.load_amd_shader_ballot(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_shader_explicit_vertex_parameter" => loader.load_amd_shader_explicit_vertex_parameter(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_shader_fragment_mask" => loader.load_amd_shader_fragment_mask(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_shader_image_load_store_lod" => loader.load_amd_shader_image_load_store_lod(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_shader_trinary_minmax" => loader.load_amd_shader_trinary_minmax(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_AMD_texture_gather_bias_lod" => loader.load_amd_texture_gather_bias_lod(handle.to_raw()),
+                        "VK_GOOGLE_display_timing" => loader.load_google_display_timing(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_IMG_filter_cubic" => loader.load_img_filter_cubic(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_IMG_format_pvrtc" => loader.load_img_format_pvrtc(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHX_device_group" => loader.load_khx_device_group(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHX_device_group_creation" => loader.load_khx_device_group_creation(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_KHX_multiview" => loader.load_khx_multiview(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_MVK_ios_surface" => loader.load_mvk_ios_surface(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_MVK_macos_surface" => loader.load_mvk_macos_surface(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NN_vi_surface" => loader.load_nn_vi_surface(handle.to_raw()),
+                        "VK_NV_clip_space_w_scaling" => loader.load_nv_clip_space_w_scaling(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_dedicated_allocation" => loader.load_nv_dedicated_allocation(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_external_memory" => loader.load_nv_external_memory(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_external_memory_capabilities" => loader.load_nv_external_memory_capabilities(handle.to_raw()),
+                        "VK_NV_external_memory_win32" => loader.load_nv_external_memory_win32(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_fill_rectangle" => loader.load_nv_fill_rectangle(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_fragment_coverage_to_color" => loader.load_nv_fragment_coverage_to_color(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_framebuffer_mixed_samples" => loader.load_nv_framebuffer_mixed_samples(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_geometry_shader_passthrough" => loader.load_nv_geometry_shader_passthrough(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_glsl_shader" => loader.load_nv_glsl_shader(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_sample_mask_override_coverage" => loader.load_nv_sample_mask_override_coverage(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_viewport_array2" => loader.load_nv_viewport_array2(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_viewport_swizzle" => loader.load_nv_viewport_swizzle(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NV_win32_keyed_mutex" => loader.load_nv_win32_keyed_mutex(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NVX_device_generated_commands" => loader.load_nvx_device_generated_commands(handle.to_raw()),
+                        #[cfg(feature = "unimplemented")]
+                        "VK_NVX_multiview_per_view_attributes" => loader.load_nvx_multiview_per_view_attributes(handle.to_raw()),
+                        &_ => (),
+                    }
                 }
             }
         }

@@ -2,17 +2,15 @@
 use std::sync::Arc;
 use smallvec::SmallVec;
 use vks;
-use ::{VooResult, Device, Handle, CommandPool, CommandBufferUsageFlags, CommandBufferBeginInfo,
-    DeviceSize, PipelineStageFlags, DependencyFlags, MemoryBarrier,
-    BufferMemoryBarrier, ImageMemoryBarrier,
-    BufferImageCopy, ImageLayout, BufferCopy, CommandBufferResetFlags, PipelineBindPoint, Viewport,
-    Rect2d, StencilFaceFlags, DebugMarkerMarkerInfoExt, DescriptorSetHandle,
-    QueryResultFlags, ShaderStageFlags, RenderPassBeginInfo, SubpassContents, ImageCopy, IndexType,
-    ImageBlit, Filter, ClearColorValue, ImageSubresourceRange, ClearDepthStencilValue,
-    ClearAttachment, ImageResolve, QueryControlFlags, ClearRect, BufferHandle,
-    EventHandle,Buffer, Image, Event, QueryPool, PipelineLayout,
-    AnyPipelineHandle, DescriptorSet,
-};
+use ::{VdResult, Device, Handle, CommandPool, CommandBufferUsageFlags, CommandBufferBeginInfo,
+    DeviceSize, PipelineStageFlags, DependencyFlags, MemoryBarrier, BufferMemoryBarrier,
+    ImageMemoryBarrier, BufferImageCopy, ImageLayout, BufferCopy, CommandBufferResetFlags,
+    PipelineBindPoint, Viewport, Rect2d, StencilFaceFlags, DebugMarkerMarkerInfoExt,
+    DescriptorSetHandle, QueryResultFlags, ShaderStageFlags, RenderPassBeginInfo, SubpassContents,
+    ImageCopy, IndexType, ImageBlit, Filter, ClearColorValue, ImageSubresourceRange,
+    ClearDepthStencilValue, ClearAttachment, ImageResolve, QueryControlFlags, ClearRect,
+    BufferHandle, EventHandle,Buffer, Image, Event, QueryPool, PipelineLayout, DescriptorSet,
+    PipelineHandle};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -47,14 +45,14 @@ pub struct CommandBuffer {
 
 impl CommandBuffer {
     // pub fn allocate(cmd_pool: &CommandPool, alloc_info: &CommandBufferAllocateInfo)
-    //         -> VooResult<SmallVec<[CommandBuffer; 16]>> {
+    //         -> VdResult<SmallVec<[CommandBuffer; 16]>> {
     //     let handles = unsafe { cmd_pool.device().allocate_command_buffers(alloc_info)? };
     //     handles.iter().map(|&h| CommandBuffer::from_parts(cmd_pool.clone(), h)).collect()
     // }
 
     // FIXME: MAKE pub(crate)
     pub(crate) fn from_parts(command_pool: CommandPool, handle: CommandBufferHandle)
-            -> VooResult<CommandBuffer> {
+            -> VdResult<CommandBuffer> {
         Ok(CommandBuffer {
             inner: Arc::new(Inner {
                 command_pool,
@@ -74,7 +72,7 @@ impl CommandBuffer {
     }
 
     #[inline]
-    pub fn begin(&self, flags: CommandBufferUsageFlags) -> VooResult<()> {
+    pub fn begin(&self, flags: CommandBufferUsageFlags) -> VdResult<()> {
         let begin_info = CommandBufferBeginInfo::builder()
             .flags(flags)
             .build();
@@ -85,20 +83,20 @@ impl CommandBuffer {
     }
 
     #[inline]
-    pub fn end(&self) -> VooResult<()> {
+    pub fn end(&self) -> VdResult<()> {
         unsafe {
             self.inner.command_pool.device().end_command_buffer(self.inner.handle)
         }
     }
 
     #[inline]
-    pub fn reset(&self, flags: CommandBufferResetFlags) -> VooResult<()> {
+    pub fn reset(&self, flags: CommandBufferResetFlags) -> VdResult<()> {
         unsafe { self.device().cmd_reset_command_buffer(self.handle(), flags) }
     }
 
     #[inline]
     pub fn bind_pipeline<P>(&self, pipeline_bind_point: PipelineBindPoint,
-            pipeline: &P) where P: AnyPipelineHandle {
+            pipeline: &P) where P: Handle<Target=PipelineHandle> {
         unsafe { self.device().cmd_bind_pipeline(self.handle(), pipeline_bind_point,
             pipeline.handle()); }
     }

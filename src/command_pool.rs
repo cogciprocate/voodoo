@@ -4,7 +4,7 @@ use std::sync::Arc;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{ VooResult, Device, Handle, CommandPoolCreateInfo, CommandPoolCreateFlags,
+use ::{ VdResult, Device, Handle, CommandPoolCreateInfo, CommandPoolCreateFlags,
     CommandBufferAllocateInfo, CommandBufferHandle, CommandBufferLevel, CommandBuffer};
 
 
@@ -47,7 +47,7 @@ impl CommandPool {
     }
 
     fn allocate_command_buffer_handles(&self, level: CommandBufferLevel, count: u32)
-            -> VooResult<SmallVec<[CommandBufferHandle; 16]>> {
+            -> VdResult<SmallVec<[CommandBufferHandle; 16]>> {
         let alloc_info = CommandBufferAllocateInfo::builder()
             .command_pool(self.handle())
             .level(level)
@@ -67,13 +67,13 @@ impl CommandPool {
     }
 
     pub fn allocate_command_buffers(&self, level: CommandBufferLevel, count: u32)
-            -> VooResult<SmallVec<[CommandBuffer; 16]>> {
+            -> VdResult<SmallVec<[CommandBuffer; 16]>> {
         self.allocate_command_buffer_handles(level, count)?.iter().map(|&hndl| {
             CommandBuffer::from_parts(self.clone(), hndl)
         }).collect::<Result<SmallVec<_>, _>>()
     }
 
-    pub fn allocate_command_buffer(&self, level: CommandBufferLevel) -> VooResult<CommandBuffer> {
+    pub fn allocate_command_buffer(&self, level: CommandBufferLevel) -> VdResult<CommandBuffer> {
         self.allocate_command_buffers(level, 1).map(|mut cbs| cbs.remove(0))
     }
 
@@ -142,7 +142,7 @@ impl<'b> CommandPoolBuilder<'b> {
     }
 
     /// Creates and returns a new `CommandPool`
-    pub fn build(&self, device: Device) -> VooResult<CommandPool> {
+    pub fn build(&self, device: Device) -> VdResult<CommandPool> {
         // let mut handle = 0;
         // unsafe {
         //     ::check(device.proc_addr_loader().core.vkCreateCommandPool(device.handle().0,

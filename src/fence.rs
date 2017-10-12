@@ -1,7 +1,7 @@
 
 use std::sync::Arc;
 use vks;
-use ::{VooResult, CallResult, Handle, Device, FenceCreateFlags, FenceCreateInfo};
+use ::{VdResult, CallResult, Handle, Device, FenceCreateFlags, FenceCreateInfo};
 
 pub enum FenceStatus {
     Signaled,
@@ -67,7 +67,7 @@ pub struct Fence {
 }
 
 impl Fence {
-    pub fn new(device: Device, flags: FenceCreateFlags) -> VooResult<Fence> {
+    pub fn new(device: Device, flags: FenceCreateFlags) -> VdResult<Fence> {
         let create_info = FenceCreateInfo::builder()
             .flags(flags)
             .build();
@@ -86,7 +86,7 @@ impl Fence {
         self.inner.handle
     }
 
-    pub fn status(&self) -> VooResult<FenceStatus> {
+    pub fn status(&self) -> VdResult<FenceStatus> {
         unsafe { Ok(FenceStatus::from(self.inner.device.get_fence_status(self.handle())?)) }
     }
 }

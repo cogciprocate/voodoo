@@ -1,12 +1,9 @@
 
 use std::sync::Arc;
-// use std::ptr;
-// use std::ffi::CStr;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
-// use vks;
-use ::{VooResult, Device, PipelineLayoutHandle, PipelineHandle, RenderPassHandle,
-    Handle, GraphicsPipelineCreateInfo, AnyPipelineHandle};
+use ::{VdResult, Device, PipelineLayoutHandle, PipelineHandle, RenderPassHandle,
+    Handle, GraphicsPipelineCreateInfo};
 
 
 
@@ -30,7 +27,7 @@ impl GraphicsPipeline {
     /// Creates several graphics pipelines at once.
     #[deprecated(note = "use `Device::create_graphics_pipelines`")]
     pub fn create<'b, Gpb>(device: &Device, builders: &[Gpb])
-            -> VooResult<SmallVec<[GraphicsPipeline; 8]>>
+            -> VdResult<SmallVec<[GraphicsPipeline; 8]>>
             where Gpb: AsRef<::GraphicsPipelineCreateInfo<'b>> {
         let mut create_infos = SmallVec::<[GraphicsPipelineCreateInfo; 8]>::new();
         // let mut pipeline_handles = SmallVec::<[PipelineHandle; 8]>::new();
@@ -84,7 +81,7 @@ unsafe impl<'g> Handle for &'g GraphicsPipeline {
 //         self.inner.handle
 //     }
 // }
-unsafe impl<'g> AnyPipelineHandle for &'g GraphicsPipeline {}
+// unsafe impl<'g> AnyPipelineHandle for &'g GraphicsPipeline {}
 
 
 impl Drop for Inner {
@@ -270,7 +267,7 @@ impl<'b> GraphicsPipelineBuilder<'b> {
 
     /// Creates and returns a new `GraphicsPipeline`. Use
     /// `GraphicsPipeline::create` to create multiple pipelines in one call.
-    pub fn build(&self, device: Device) -> VooResult<GraphicsPipeline> {
+    pub fn build(&self, device: Device) -> VdResult<GraphicsPipeline> {
         let handle = unsafe {
             let create_infos = ::std::slice::from_raw_parts(&self.create_info, 1);
             *device.create_graphics_pipelines(None, create_infos, None)?.get_unchecked(0)

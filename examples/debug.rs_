@@ -20,7 +20,7 @@ use smallvec::SmallVec;
 use image::{ImageFormat, DynamicImage};
 use cgmath::{SquareMatrix, One, Rotation, Rotation3, Basis3, Matrix3, Matrix4, Vector3};
 use voo::winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
-use voo::{voodoo_winit, vks, util, device, queue, Result as VooResult, Version, Instance, Device,
+use voo::{voodoo_winit, vks, util, device, queue, Result as VdResult, Version, Instance, Device,
     SurfaceKhr, SwapchainKhr,
     ImageView, PipelineLayout, RenderPass, GraphicsPipeline, Framebuffer, CommandPool, Semaphore,
     Buffer, DeviceMemory, Vertex, DescriptorSetLayout, UniformBufferObject, DescriptorPool,
@@ -160,7 +160,7 @@ fn choose_swap_extent(capabilities: &voo::SurfaceCapabilitiesKhr,
 }
 
 fn find_supported_format(device: &Device, candidates: &[voo::Format], tiling: voo::ImageTiling,
-        features: voo::FormatFeatureFlags) -> VooResult<voo::Format> {
+        features: voo::FormatFeatureFlags) -> VdResult<voo::Format> {
     for &format in candidates {
         let props = device.instance().physical_device_format_properties(device.physical_device(),
             format);
@@ -177,7 +177,7 @@ fn find_supported_format(device: &Device, candidates: &[voo::Format], tiling: vo
     panic!("Failed to find supported format.")
 }
 
-fn find_depth_format(device: &Device) -> VooResult<voo::Format> {
+fn find_depth_format(device: &Device) -> VdResult<voo::Format> {
     find_supported_format(device, &[voo::Format::D32Sfloat, voo::Format::D32SfloatS8Uint,
         voo::Format::D24UnormS8Uint], voo::ImageTiling::Optimal,
         voo::FormatFeatureFlags::DEPTH_STENCIL_ATTACHMENT)
@@ -186,7 +186,7 @@ fn find_depth_format(device: &Device) -> VooResult<voo::Format> {
 
 
 #[allow(unused_unsafe)]
-pub unsafe fn make_everything() -> VooResult<()> {
+pub unsafe fn make_everything() -> VdResult<()> {
     // ############################ INSTANCE ###############################
     // let instance = init_instance()?;
     let app_name = CString::new("Hello Triangle").unwrap();
