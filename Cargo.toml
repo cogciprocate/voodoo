@@ -1,6 +1,6 @@
 [package]
 name = "voodoo"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Nick Sanders <cogciprocate@gmail.com>"]
 description = "An intuitive, idiomatic, unopinionated, zero-overhead Vulkan API"
 # documentation = "https://doc.cogciprocate.com/voodoo"
@@ -9,8 +9,8 @@ repository = "https://github.com/cogciprocate/voodoo"
 readme = "README.md"
 license = "MIT/Apache-2.0"
 exclude = ["target/*", "*.png", "bak/*"]
-# keywords = ["vulkan", "gpu", "gpgpu", "async"]
-# categories = ["asynchronous", "concurrency", "science", "api-bindings"]
+keywords = ["vulkan", "gpu", "gpgpu", "graphics"]
+categories = ["asynchronous", "rendering", "rendering::graphics-api", "api-bindings"]
 
 [features]
 # Experimental and unstable Vulkan stuff.

@@ -52,19 +52,14 @@ pub const ENABLE_VALIDATION_LAYERS: bool = true;
 #[cfg(not(debug_assertions))]
 pub const ENABLE_VALIDATION_LAYERS: bool = false;
 
-// static REQUIRED_INSTANCE_EXTENSIONS: &[&[u8]] = &[
-//     b"VK_KHR_surface\0",
-//     b"VK_KHR_win32_surface\0",
-// ];
-
 static REQUIRED_DEVICE_EXTENSIONS: &[&[u8]] = &[
     b"VK_KHR_swapchain\0",
 ];
 
-static MODEL_PATH: &str = "/src/shared_assets/models/chalet.obj";
+// static MODEL_PATH: &str = "/src/shared_assets/models/chalet.obj";
 // static TEXTURE_PATH: &str = "/src/shared_assets/textures/chalet.jpg";
-static TEXTURE_PATH: &str = "/src/shared_assets/textures/texture.jpg";
-
+// static TEXTURE_PATH: &str = "/src/shared_assets/textures/texture.jpg";
+static TEXTURE_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "examples/textures/texture.jpg");
 
 #[derive(Clone, Copy)]
 #[repr(C)]
@@ -333,7 +328,6 @@ fn create_swapchain(surface: SurfaceKhr, device: Device, queue_family_flags: Que
     let present_mode = choose_swap_present_mode(&swapchain_details.present_modes);
     let extent = choose_swap_extent(&swapchain_details.capabilities, window_size);
 
-    // TODO: REVISIT THIS: https://vulkan-tutorial.com/Drawing_a_triangle/Presentation/Swap_chain
     let mut image_count = swapchain_details.capabilities.min_image_count() + 1;
     if swapchain_details.capabilities.max_image_count() > 0 &&
             image_count > swapchain_details.capabilities.max_image_count() {
@@ -373,7 +367,6 @@ pub fn create_image_views(swapchain: &SwapchainKhr) -> VdResult<Vec<ImageView>> 
     swapchain.images().iter().map(|&image| {
         ImageView::builder()
             .image(image)
-            // .view_type(IMAGE_VIEW_TYPE_2D)
             .view_type(ImageViewType::Type2d)
             .format(swapchain.image_format())
             .components(ComponentMapping::default())
@@ -596,20 +589,6 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         .build();
 
     let input_assembly = PipelineInputAssemblyStateCreateInfo::builder()
-        // .sType(STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO)
-        // .pNext(ptr::null())
-        // .flags(0)
-        // * VK_PRIMITIVE_TOPOLOGY_POINT_LIST: points from vertices
-        // * VK_PRIMITIVE_TOPOLOGY_LINE_LIST: line from every 2 vertices
-        //   without reuse
-        // * VK_PRIMITIVE_TOPOLOGY_LINE_STRIP: the end vertex of every
-        //   line is used as start vertex for the next line
-        // * VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST: triangle from every 3
-        //   vertices without reuse
-        // * VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP: the second and third
-        //   vertex of every triangle are used as first two vertices of
-        //   the next triangle
-        // .topology(PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)
         .topology(PrimitiveTopology::TriangleList)
         .primitive_restart_enable(false)
         .build();
@@ -691,20 +670,6 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
             ColorComponentFlags::B | ColorComponentFlags::A)
         .build();
 
-    // ///////////////////////////////////////////////
-    // /////////// KEEPME (ALPHA BLENDING) ///////////
-    // let color_blend_attachment = PipelineColorBlendAttachmentState::builder()
-    //     blendEnable(false)
-    //     srcColorBlendFactor(BLEND_FACTOR_SRC_ALPHA)
-    //     dstColorBlendFactor(BLEND_FACTOR_ONE_MINUS_SRC_ALPHA)
-    //     colorBlendOp(BLEND_OP_ADD)
-    //     srcAlphaBlendFactor(BLEND_FACTOR_ONE)
-    //     dstAlphaBlendFactor(BLEND_FACTOR_ZERO)
-    //     alphaBlendOp(BLEND_OP_ADD)
-    //     colorWriteMask(COLOR_COMPONENT_R_BIT | COLOR_COMPONENT_G_BIT | COLOR_COMPONENT_B_BIT | COLOR_COMPONENT_A_BIT)
-    // }; ////////////////////////////////////////////
-    // ///////////////////////////////////////////////
-
     let attachments = [color_blend_attachment];
 
     let color_blending = PipelineColorBlendStateCreateInfo::builder()
@@ -713,18 +678,6 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         .attachments(&attachments)
         .blend_constants([0.0f32; 4])
         .build();
-
-    // ///////////////////////////////////////////////
-    // /////////// KEEPME (DYNAMIC STATES) ///////////
-    // let dynamic_states = [DYNAMIC_STATE_VIEWPORT) DYNAMIC_STATE_LINE_WIDTH];
-    // let dynamic_state = PipelineDynamicStateCreateInfo::builder()
-    //     sType(STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO)
-    //     pNext(ptr::null())
-    //     flags(0)
-    //     dynamicStateCount(2)
-    //     pDynamicStates(dynamic_states.as_ptr())
-    // }; ////////////////////////////////////////////
-    // ///////////////////////////////////////////////
 
     let shader_stages = &[vert_shader_stage_info, frag_shader_stage_info];
 
@@ -784,7 +737,6 @@ fn end_single_time_commands(device: &Device, command_buffer: CommandBuffer) -> V
     let submit_info = SubmitInfo::builder()
         .command_buffers(&command_buffers[..])
         .build();
-    // let cmd_buf_handles = [command_buffer.handle().to_raw()];
 
     unsafe { device.queue_submit(device.queue(0), &[submit_info], None)?; }
     device.queue_wait_idle(device.queue(0));
@@ -917,8 +869,8 @@ fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
 }
 
 
-fn load_model(device: &Device) -> VdResult<(Vec<Vertex>, Vec<u32>)> {
-    let (models, materials) = tobj::load_obj(&Path::new(MODEL_PATH))
+fn load_model(device: &Device, model_path: &Path) -> VdResult<(Vec<Vertex>, Vec<u32>)> {
+    let (models, materials) = tobj::load_obj(model_path)
         .expect("Error loading model");
 
     let mut vertices = Vec::with_capacity(4096);
@@ -963,18 +915,11 @@ fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &
         -> VdResult<(Buffer, DeviceMemory)> {
     let buffer_bytes = (mem::size_of::<Vertex>() * vertices.len()) as u64;
 
-    // Either:
-    // * Use a memory heap that is host coherent, indicated with
-    //   VK_MEMORY_PROPERTY_HOST_COHERENT_BIT (or)
-    // * Call vkFlushMappedMemoryRanges to after writing to the mapped
-    //   memory, and call vkInvalidateMappedMemoryRanges before reading from
-    //   the mapped memory
     let staging_buffer = Buffer::builder()
         .size(buffer_bytes)
         .usage(BufferUsageFlags::TRANSFER_SRC)
         .sharing_mode(SharingMode::Exclusive)
         .build(device.clone())?;
-
 
     let memory_requirements = staging_buffer.memory_requirements().clone();
     let memory_type_index = device.memory_type_index(memory_requirements.memory_type_bits(),
@@ -1225,14 +1170,6 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
             .zip(swapchain_framebuffers.iter())
     {
         let begin_info = CommandBufferBeginInfo::builder()
-            // * COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer
-            //   will be rerecorded right after executing it once.
-            // * COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: This is a
-            //   secondary command buffer that will be entirely within a
-            //   single render pass.
-            // * COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: The command buffer
-            //   can be resubmitted while it is also already pending
-            //   execution.
             .flags(CommandBufferUsageFlags::SIMULTANEOUS_USE)
             .build();
 
@@ -1351,7 +1288,7 @@ impl App {
         let texture_image_view = create_texture_image_view(device.clone(),
             &texture_image)?;
         let texture_sampler = create_texture_sampler(device.clone())?;
-        // let (vertices, indices) = load_model(&device)?;
+        // let (vertices, indices) = load_model(&device, &Path::new(MODEL_PATH))?;
         let vertices = VERTICES[..].to_owned();
         let indices = INDICES[..].to_owned();
         let (vertex_buffer, vertex_buffer_memory) = create_vertex_buffer(&device, &command_pool,
@@ -1593,13 +1530,13 @@ impl App {
 
 impl Drop for App {
     fn drop(&mut self) {
-        println!("Goodbye triangle.");
+        println!("Goodbye.");
     }
 }
 
 
 fn main() {
-    println!("Hello triangle!");
+    println!("Hello!");
     unsafe {
         let mut app = App::new().unwrap();
         app.main_loop().unwrap();
