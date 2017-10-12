@@ -115,7 +115,7 @@ impl<'b> SurfaceKhrBuilder<'b> {
             -> &'s mut SurfaceKhrBuilder<'b> {
         let mut ci = XlibSurfaceCreateInfoKhr::default();
         ci.set_dpy(dpy);
-        ci.set_window(window);
+        ci.set_window(window as _);
         self.create_info = CreateInfo::Xlib(ci);
         self
     }
@@ -125,7 +125,7 @@ impl<'b> SurfaceKhrBuilder<'b> {
             window: vks::xcb_window_t) -> &'s mut SurfaceKhrBuilder<'b> {
         let mut ci = XcbSurfaceCreateInfoKhr::default();
         ci.set_connection(connection);
-        ci.set_window(window);
+        ci.set_window(window as _);
         self.create_info = CreateInfo::Xcb(ci);
         self
     }
@@ -166,7 +166,7 @@ impl<'b> SurfaceKhrBuilder<'b> {
             window: *mut vks::ANativeWindow) -> &'s mut SurfaceKhrBuilder<'b> {
         let mut ci = AndroidSurfaceCreateInfoKhr::default();
         ci.set_flags(flags);
-        ci.set_window(window);
+        ci.set_window(window as _);
         self.create_info = CreateInfo::Android(ci);
         self
     }

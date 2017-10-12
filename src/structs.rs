@@ -20052,7 +20052,7 @@ impl<'s> XlibSurfaceCreateInfoKhr<'s> {
         self.raw.dpy
     }
 
-    pub fn window<'a>(&'a self) -> u32 {
+    pub fn window<'a>(&'a self) -> u64 {
         self.raw.window.into()
     }
 
@@ -20068,7 +20068,7 @@ impl<'s> XlibSurfaceCreateInfoKhr<'s> {
         self.raw.dpy = dpy;
     }
 
-    pub unsafe fn set_window<'m>(&mut self, window: u32) {
+    pub unsafe fn set_window<'m>(&mut self, window: u64) {
         self.raw.window = window.into();
     }
 
@@ -20116,7 +20116,7 @@ impl<'b> XlibSurfaceCreateInfoKhrBuilder<'b> {
         self
     }
 
-    pub unsafe fn window<'m>(mut self, window: u32) -> XlibSurfaceCreateInfoKhrBuilder<'b> {
+    pub unsafe fn window<'m>(mut self, window: u64) -> XlibSurfaceCreateInfoKhrBuilder<'b> {
         self.raw.window = window.into();
         self
     }
@@ -20134,7 +20134,7 @@ impl<'b> XlibSurfaceCreateInfoKhrBuilder<'b> {
         self.raw.dpy
     }
 
-    pub fn get_window<'a>(&'a self) -> u32 {
+    pub fn get_window<'a>(&'a self) -> u64 {
         self.raw.window.into()
     }
 

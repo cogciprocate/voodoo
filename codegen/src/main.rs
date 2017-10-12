@@ -154,7 +154,7 @@ fn to_voodoo_type(orig_type: &str) -> String {
         // "VkDisplayKHR" => "Display".to_string(),
         // "VkDisplayModeKHR" => "DisplayMode".to_string(),
         "VkDescriptorUpdateTemplateKHR" => "DescriptorUpdateTemplate".to_string(),
-        "Window" => "u32".to_string(),
+        "Window" => "u64".to_string(),
         other @ _ => {
             if other.len() > 2 && other.split_at(2).0 == "Vk" {
                 let mut out_str = replace_suffix(other.split_at(2).1);
@@ -1441,8 +1441,8 @@ fn write_get_mut_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_p
 /// Writes struct and corresponding builder definitions to an output file
 /// which is overwritten if it exists.
 fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> io::Result<()> {
-    let output_file_path = concat!(env!("CARGO_MANIFEST_DIR"), "/output/structs.rs");
-    // let output_file_path = "/src/voodoo/src/structs.rs";
+    // let output_file_path = concat!(env!("CARGO_MANIFEST_DIR"), "/output/structs.rs");
+    let output_file_path = "/src/voodoo/src/structs.rs";
 
     fs::create_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/output")).ok();
 
