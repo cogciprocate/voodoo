@@ -10,24 +10,18 @@ pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceK
 
     let mut sb = SurfaceKhr::builder();
     unsafe {
-        match (window.get_wayland_display(), window.get_wayland_surface()) {
-            (Some(display), Some(surface)) => {
-                sb.wayland(display as *mut wl_display, surface as *mut wl_surface);
-            },
-            _ => {
-                // if let Some(_) = instance.loader().instance_proc_addr_loader().khr_xlib_surface {
-                //     sb.xlib(window.get_xlib_display().unwrap(),
-                //         window.get_xlib_window().unwrap());
-                // }
-                // if let Some(_) = instance.loader().instance_proc_addr_loader().khr_xcb_surface {
-                //     sb.xcb(window.get_xcb_connection().unwrap(),
-                //         window.get_xlib_window().unwrap());
-                // }
-            },
+        if let (Some(display), Some(window)) = (window.get_xlib_display(), window.get_xlib_window()) {
+            sb.xlib(display as _, window as _);
+        } else if let (Some(display), Some(surface)) = (window.get_wayland_display(), window.get_wayland_surface()) {
+            sb.wayland(display as *mut wl_display, surface as *mut wl_surface);
         }
     }
+
+        
+
     sb.build(instance)
 }
+
 
 #[cfg(target_os = "windows")]
 pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
