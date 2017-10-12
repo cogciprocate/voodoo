@@ -13,6 +13,7 @@ pub enum ErrorKind {
     FromUtf8Error(::std::string::FromUtf8Error),
     UnspecifiedDimensions,
     IntoStringError(::std::ffi::IntoStringError),
+    FromBytesWithNulError(::std::ffi::FromBytesWithNulError)
 }
 
 
@@ -60,6 +61,7 @@ impl self::Error {
                 ErrorKind::Io(ref err) => write!(f, "{}", err.description()),
                 ErrorKind::FromUtf8Error(ref err) => write!(f, "{}", err.description()),
                 ErrorKind::IntoStringError(ref err) => write!(f, "{}", err.description()),
+                ErrorKind::FromBytesWithNulError(ref err) => write!(f, "{}", err.description()),
                 ErrorKind::String(ref desc) => write!(f, "{}", desc),
                 ErrorKind::UnspecifiedDimensions => write!(f, "Cannot convert to a valid set of \
                     dimensions. Please specify some dimensions."),
@@ -100,6 +102,7 @@ impl StdError for self::Error {
             ErrorKind::Io(ref err) => err.description(),
             ErrorKind::FromUtf8Error(ref err) => err.description(),
             ErrorKind::IntoStringError(ref err) => err.description(),
+            ErrorKind::FromBytesWithNulError(ref err) => err.description(),
             ErrorKind::String(ref desc) => desc.as_str(),
             ErrorKind::UnspecifiedDimensions => "Cannot convert to a valid set of dimensions. \
                 Please specify some dimensions.",
@@ -166,6 +169,12 @@ impl From<::std::string::FromUtf8Error> for self::Error {
 impl From<::std::ffi::IntoStringError> for self::Error {
     fn from(err: ::std::ffi::IntoStringError) -> Self {
         Error { kind: self::ErrorKind::IntoStringError(err), cause: None }
+    }
+}
+
+impl From<::std::ffi::FromBytesWithNulError> for self::Error {
+    fn from(err: ::std::ffi::FromBytesWithNulError) -> Self {
+        Error { kind: self::ErrorKind::FromBytesWithNulError(err), cause: None }
     }
 }
 

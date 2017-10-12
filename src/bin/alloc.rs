@@ -102,8 +102,8 @@ fn enabled_layer_names<'ln>(loader: &Loader)
 
 /// Initializes a loader and returns a new instance.
 fn init_instance() -> VooResult<Instance> {
-    let app_name = CString::new("Hello Triangle").unwrap();
-    let eng_name = CString::new("None").unwrap();
+    let app_name = CString::new("Hello Triangle")?;
+    let eng_name = CString::new("None")?;
 
     let app_info = ApplicationInfo::builder()
         .application_name(&app_name)
