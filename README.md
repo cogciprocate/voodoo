@@ -67,6 +67,8 @@ fn main() {
 
 ```
 
+See [`hello.rs`] for a complete, working example adapted from
+[https://vulkan-tutorial.com/](https://vulkan-tutorial.com/).
 
 
 ### Status
@@ -87,6 +89,7 @@ the [Vulkano] project.
 
 Other similar libraries include [dacite] and [ash].
 
+[`hello.rs`]: https://github.com/cogciprocate/voodoo/blob/master/examples/hello.rs
 [Vulkano]: https://github.com/vulkano-rs/vulkano
 [dacite]: https://gitlab.com/dennis-hamester/dacite/tree/master/dacite
 [vks]: https://gitlab.com/dennis-hamester/vks
