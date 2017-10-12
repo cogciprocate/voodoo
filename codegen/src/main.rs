@@ -7,7 +7,7 @@
 extern crate xml;
 
 use std::mem;
-use std::fs::{File, OpenOptions};
+use std::fs::{self, File, OpenOptions};
 use std::io::{self, Write, BufReader, BufWriter};
 use std::collections::HashMap;
 use xml::reader::{EventReader, XmlEvent};
@@ -148,13 +148,13 @@ fn to_voodoo_type(orig_type: &str) -> String {
         "VkBool32" => "bool".to_string(),
         "VkDeviceSize" => "u64".to_string(),
         "VkSampleMask" => "u32".to_string(),
-        "VkResult" => "ResultEnum".to_string(),
+        "VkResult" => "CallResult".to_string(),
         // "VkSurfaceKHR" => "Surface".to_string(),
         // "VkSwapchainKHR" => "Swapchain".to_string(),
         // "VkDisplayKHR" => "Display".to_string(),
         // "VkDisplayModeKHR" => "DisplayMode".to_string(),
         "VkDescriptorUpdateTemplateKHR" => "DescriptorUpdateTemplate".to_string(),
-        "Window" => "u32".to_string(),
+        "Window" => "u64".to_string(),
         other @ _ => {
             if other.len() > 2 && other.split_at(2).0 == "Vk" {
                 let mut out_str = replace_suffix(other.split_at(2).1);
@@ -1441,8 +1441,11 @@ fn write_get_mut_fn(o: &mut BufWriter<File>, s: &Struct, m: &Member, impl_type_p
 /// Writes struct and corresponding builder definitions to an output file
 /// which is overwritten if it exists.
 fn write_structs(structs: &HashMap<String,Struct>, struct_order: &[String]) -> io::Result<()> {
-    // let output_file_path = concat!(env!("CARGO_MANIFEST_DIR"), "/output/structs.rs");
-    let output_file_path = "/src/voodoo/src/structs.rs";
+    let output_file_path = concat!(env!("CARGO_MANIFEST_DIR"), "/output/structs.rs");
+    // let output_file_path = "/src/voodoo/src/structs.rs";
+
+    fs::create_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/output")).ok();
+
     let output_file = OpenOptions::new()
         .write(true)
         .truncate(true)

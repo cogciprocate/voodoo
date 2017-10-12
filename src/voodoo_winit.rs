@@ -1,6 +1,5 @@
-use std::ptr;
 use winit::Window;
-use ::{VooResult, Instance, SurfaceKhr};
+use ::{VooResult, Instance, SurfaceKhr, wl_display, wl_surface, };
 
 pub use winit;
 
@@ -13,17 +12,17 @@ pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceK
     unsafe {
         match (window.get_wayland_display(), window.get_wayland_surface()) {
             (Some(display), Some(surface)) => {
-                sb.wayland(display, surface)
+                sb.wayland(display as *mut wl_display, surface as *mut wl_surface);
             },
             _ => {
-                if let Some(_) = instance.proc_addr_loader().khr_xlib_surface {
-                    sb.xlib(window.get_xlib_display().unwrap(),
-                        window.get_xlib_window().unwrap());
-                }
-                if let Some(_) = instance.proc_addr_loader().khr_xcb_surface {
-                    sb.xcb(window.get_xcb_connection().unwrap(),
-                        window.get_xlib_window().unwrap());
-                }
+                // if let Some(_) = instance.loader().instance_proc_addr_loader().khr_xlib_surface {
+                //     sb.xlib(window.get_xlib_display().unwrap(),
+                //         window.get_xlib_window().unwrap());
+                // }
+                // if let Some(_) = instance.loader().instance_proc_addr_loader().khr_xcb_surface {
+                //     sb.xcb(window.get_xcb_connection().unwrap(),
+                //         window.get_xlib_window().unwrap());
+                // }
             },
         }
     }
@@ -33,6 +32,7 @@ pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceK
 #[cfg(target_os = "windows")]
 pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
     use winit::os::windows::WindowExt;
+    use std::ptr;
 
     unsafe {
         SurfaceKhr::builder()

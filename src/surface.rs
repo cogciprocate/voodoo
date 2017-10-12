@@ -113,7 +113,7 @@ impl<'b> SurfaceKhrBuilder<'b> {
     #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
     pub unsafe fn xlib<'s>(&'s mut self, dpy: *mut vks::Display, window: vks::Window)
             -> &'s mut SurfaceKhrBuilder<'b> {
-        let mut ci = vks::VkXlibSurfaceCreateInfoKHR::default();
+        let mut ci = XlibSurfaceCreateInfoKhr::default();
         ci.set_dpy(dpy);
         ci.set_window(window);
         self.create_info = CreateInfo::Xlib(ci);
@@ -123,7 +123,7 @@ impl<'b> SurfaceKhrBuilder<'b> {
     #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
     pub unsafe fn xcb<'s>(&'s mut self, connection: *mut vks::xcb_connection_t,
             window: vks::xcb_window_t) -> &'s mut SurfaceKhrBuilder<'b> {
-        let mut ci = vks::VkXcbSurfaceCreateInfoKHR::default();
+        let mut ci = XcbSurfaceCreateInfoKhr::default();
         ci.set_connection(connection);
         ci.set_window(window);
         self.create_info = CreateInfo::Xcb(ci);
@@ -132,8 +132,8 @@ impl<'b> SurfaceKhrBuilder<'b> {
 
     #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
     pub unsafe fn wayland<'s>(&'s mut self, display: *mut vks::wl_display, surface: *mut vks::wl_surface)
-            -> &'s mut SurfaceKhrBuilder {
-        let mut ci = vks::VkWaylandSurfaceCreateInfoKHR::default();
+            -> &'s mut SurfaceKhrBuilder<'b> {
+        let mut ci = WaylandSurfaceCreateInfoKhr::default();
         ci.set_display(display);
         ci.set_surface(surface);
         self.create_info = CreateInfo::Wayland(ci);
@@ -143,7 +143,7 @@ impl<'b> SurfaceKhrBuilder<'b> {
     #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
     pub unsafe fn mir<'s>(&'s mut self, connection: *mut vks::MirConnection,
             mir_surface: *mut vks::MirSurface) -> &'s mut SurfaceKhrBuilder<'b> {
-        let mut ci = vks::VkMirSurfaceCreateInfoKHR::default();
+        let mut ci = MirSurfaceCreateInfoKhr::default();
         ci.set_connection(connection);
         ci.set_mir_surface(mir_surface);
         self.create_info = CreateInfo::Mir(ci);
@@ -162,9 +162,9 @@ impl<'b> SurfaceKhrBuilder<'b> {
     }
 
     #[cfg(target_os = "android")]
-    pub unsafe fn android<'s>(&'s mut self, flags: vks::VkAndroidSurfaceCreateFlagsKHR,
+    pub unsafe fn android<'s>(&'s mut self, flags: AndroidSurfaceCreateFlagsKhr,
             window: *mut vks::ANativeWindow) -> &'s mut SurfaceKhrBuilder<'b> {
-        let mut ci = vks::VkAndroidSurfaceCreateInfoKHR::default();
+        let mut ci = AndroidSurfaceCreateInfoKhr::default();
         ci.set_flags(flags);
         ci.set_window(window);
         self.create_info = CreateInfo::Android(ci);
@@ -174,7 +174,7 @@ impl<'b> SurfaceKhrBuilder<'b> {
     #[cfg(target_os = "macos")]
     pub unsafe fn ios<'s>(&'s mut self, view: *const c_void)
             -> &'s mut SurfaceKhrBuilder<'b> {
-        let mut ci = vks::VkIOSSurfaceCreateInfoMVK::default();
+        let mut ci = IOSSurfaceCreateInfoMVK::default();
         ci.set_view(view);
         self.create_info = CreateInfo::Ios(ci);
         self
@@ -183,7 +183,7 @@ impl<'b> SurfaceKhrBuilder<'b> {
     #[cfg(target_os = "macos")]
     pub unsafe fn macos<'s>(&'s mut self, view: *const c_void)
             -> &'s mut SurfaceKhrBuilder<'b> {
-        let mut ci = vks::VkMacOSSurfaceCreateInfoMVK::default();
+        let mut ci = MacOSSurfaceCreateInfoMVK::default();
         ci.set_view(view);
         self.create_info = CreateInfo::MacOs(ci);
         self
