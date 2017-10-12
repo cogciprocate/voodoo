@@ -1,5 +1,5 @@
 use winit::Window;
-use ::{VooResult, Instance, SurfaceKhr, wl_display, wl_surface, };
+use ::{VooResult, Instance, SurfaceKhr};
 
 pub use winit;
 
@@ -7,6 +7,7 @@ pub use winit;
 #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
 pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceKhr> {
     use winit::os::unix::WindowExt;
+    use ::{wl_display, wl_surface};
 
     let mut sb = SurfaceKhr::builder();
     unsafe {
@@ -16,8 +17,6 @@ pub fn create_surface(instance: Instance, window: &Window) -> VooResult<SurfaceK
             sb.wayland(display as *mut wl_display, surface as *mut wl_surface);
         }
     }
-
-        
 
     sb.build(instance)
 }
