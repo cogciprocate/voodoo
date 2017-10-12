@@ -2,6 +2,7 @@ use std::sync::Arc;
 use std::mem;
 use std::ptr;
 use std::marker::PhantomData;
+use std::ffi::CStr;
 use libc::{c_void};
 use smallvec::SmallVec;
 use vks;
@@ -1862,28 +1863,195 @@ impl<'db> DeviceBuilder<'db> {
 
         unsafe {
             loader.load_core(handle.to_raw());
-            // create_info.enabled_extensions.load_device(&mut loader, handle);
-            // instance.loader().get_enabled_extensions().load_device(&mut loader, handle);
-            // loader.load_khr_sampler_mirror_clamp_to_edge(handle);
-            // loader.load_khr_draw_parameters(handle);
-            loader.load_khr_swapchain(handle.to_raw());
-            // loader.load_khr_maintenance1(handle);
-            // loader.load_amd_rasterization_order(handle);
-            // loader.load_amd_draw_indirect_count(handle);
-            // loader.load_amd_shader_ballot(handle);
-            // loader.load_amd_shader_trinary_minmax(handle);
-            // loader.load_amd_shader_explicit_vertex_parameter(handle);
-            // loader.load_amd_gcn_shader(handle);
-            // loader.load_amd_draw_indirect_count(handle);
-            // loader.load_amd_negative_viewport_height(handle);
-            // loader.load_amd_shader_info(handle);
-            // loader.load_amd_wave_limits(handle);
-            // loader.load_amd_texture_gather_bias_lod(handle);
-            // loader.load_amd_programmable_sample_locations(handle);
-            // loader.load_amd_mixed_attachment_samples(handle);
-            // loader.load_ext_shader_subgroup_vote(handle);
-            // loader.load_amd_gpa_interface(handle);
-            // loader.load_ext_shader_subgroup_ballot(handle);
+        }
+
+        unsafe {
+            for &extension_name in self.enabled_extension_names.as_ref()
+                    .expect("enabled extension names not set").as_ptr_slice() {
+                match CStr::from_ptr(extension_name).to_str().expect("invalid extension name") {
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_16bit_storage" => loader.load_khr_16bit_storage(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_android_surface" => loader.load_khr_android_surface(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_bind_memory2" => loader.load_khr_bind_memory2(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_dedicated_allocation" => loader.load_khr_dedicated_allocation(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_descriptor_update_template" => loader.load_khr_descriptor_update_template(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_display" => loader.load_khr_display(handle.to_raw()),
+                    "VK_KHR_display_swapchain" => loader.load_khr_display_swapchain(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_external_fence" => loader.load_khr_external_fence(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_external_fence_capabilities" => loader.load_khr_external_fence_capabilities(handle.to_raw()),
+                    "VK_KHR_external_fence_fd" => loader.load_khr_external_fence_fd(handle.to_raw()),
+                    "VK_KHR_external_fence_win32" => loader.load_khr_external_fence_win32(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_external_memory" => loader.load_khr_external_memory(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_external_memory_capabilities" => loader.load_khr_external_memory_capabilities(handle.to_raw()),
+                    "VK_KHR_external_memory_fd" => loader.load_khr_external_memory_fd(handle.to_raw()),
+                    "VK_KHR_external_memory_win32" => loader.load_khr_external_memory_win32(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_external_semaphore" => loader.load_khr_external_semaphore(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_external_semaphore_capabilities" => loader.load_khr_external_semaphore_capabilities(handle.to_raw()),
+                    "VK_KHR_external_semaphore_fd" => loader.load_khr_external_semaphore_fd(handle.to_raw()),
+                    "VK_KHR_external_semaphore_win32" => loader.load_khr_external_semaphore_win32(handle.to_raw()),
+                    "VK_KHR_get_memory_requirements2" => loader.load_khr_get_memory_requirements2(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_get_physical_device_properties2" => loader.load_khr_get_physical_device_properties2(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_get_surface_capabilities2" => loader.load_khr_get_surface_capabilities2(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_image_format_list" => loader.load_khr_image_format_list(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_incremental_present" => loader.load_khr_incremental_present(handle.to_raw()),
+                    "VK_KHR_maintenance1" => loader.load_khr_maintenance1(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_maintenance2" => loader.load_khr_maintenance2(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_mir_surface" => loader.load_khr_mir_surface(handle.to_raw()),
+                    "VK_KHR_push_descriptor" => loader.load_khr_push_descriptor(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_relaxed_block_layout" => loader.load_khr_relaxed_block_layout(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_sampler_mirror_clamp_to_edge" => loader.load_khr_sampler_mirror_clamp_to_edge(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_sampler_ycbcr_conversion" => loader.load_khr_sampler_ycbcr_conversion(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_shader_draw_parameters" => loader.load_khr_shader_draw_parameters(handle.to_raw()),
+                    "VK_KHR_shared_presentable_image" => loader.load_khr_shared_presentable_image(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_storage_buffer_storage_class" => loader.load_khr_storage_buffer_storage_class(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_surface" => loader.load_khr_surface(handle.to_raw()),
+                    "VK_KHR_swapchain" => loader.load_khr_swapchain(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_variable_pointers" => loader.load_khr_variable_pointers(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_wayland_surface" => loader.load_khr_wayland_surface(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_win32_keyed_mutex" => loader.load_khr_win32_keyed_mutex(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_win32_surface" => loader.load_khr_win32_surface(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_xcb_surface" => loader.load_khr_xcb_surface(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHR_xlib_surface" => loader.load_khr_xlib_surface(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_acquire_xlib_display" => loader.load_ext_acquire_xlib_display(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_blend_operation_advanced" => loader.load_ext_blend_operation_advanced(handle.to_raw()),
+                    "VK_EXT_debug_marker" => loader.load_ext_debug_marker(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_debug_report" => loader.load_ext_debug_report(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_depth_range_unrestricted" => loader.load_ext_depth_range_unrestricted(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_direct_mode_display" => loader.load_ext_direct_mode_display(handle.to_raw()),
+                    "VK_EXT_discard_rectangles" => loader.load_ext_discard_rectangles(handle.to_raw()),
+                    "VK_EXT_display_control" => loader.load_ext_display_control(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_display_surface_counter" => loader.load_ext_display_surface_counter(handle.to_raw()),
+                    "VK_EXT_hdr_metadata" => loader.load_ext_hdr_metadata(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_post_depth_coverage" => loader.load_ext_post_depth_coverage(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_sample_locations" => loader.load_ext_sample_locations(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_sampler_filter_minmax" => loader.load_ext_sampler_filter_minmax(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_shader_stencil_export" => loader.load_ext_shader_stencil_export(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_shader_subgroup_ballot" => loader.load_ext_shader_subgroup_ballot(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_shader_subgroup_vote" => loader.load_ext_shader_subgroup_vote(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_shader_viewport_index_layer" => loader.load_ext_shader_viewport_index_layer(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_swapchain_colorspace" => loader.load_ext_swapchain_colorspace(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_validation_cache" => loader.load_ext_validation_cache(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_EXT_validation_flags" => loader.load_ext_validation_flags(handle.to_raw()),
+                    "VK_AMD_draw_indirect_count" => loader.load_amd_draw_indirect_count(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_gcn_shader" => loader.load_amd_gcn_shader(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_gpu_shader_half_float" => loader.load_amd_gpu_shader_half_float(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_gpu_shader_int16" => loader.load_amd_gpu_shader_int16(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_mixed_attachment_samples" => loader.load_amd_mixed_attachment_samples(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_negative_viewport_height" => loader.load_amd_negative_viewport_height(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_rasterization_order" => loader.load_amd_rasterization_order(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_shader_ballot" => loader.load_amd_shader_ballot(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_shader_explicit_vertex_parameter" => loader.load_amd_shader_explicit_vertex_parameter(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_shader_fragment_mask" => loader.load_amd_shader_fragment_mask(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_shader_image_load_store_lod" => loader.load_amd_shader_image_load_store_lod(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_shader_trinary_minmax" => loader.load_amd_shader_trinary_minmax(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_AMD_texture_gather_bias_lod" => loader.load_amd_texture_gather_bias_lod(handle.to_raw()),
+                    "VK_GOOGLE_display_timing" => loader.load_google_display_timing(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_IMG_filter_cubic" => loader.load_img_filter_cubic(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_IMG_format_pvrtc" => loader.load_img_format_pvrtc(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHX_device_group" => loader.load_khx_device_group(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHX_device_group_creation" => loader.load_khx_device_group_creation(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_KHX_multiview" => loader.load_khx_multiview(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_MVK_ios_surface" => loader.load_mvk_ios_surface(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_MVK_macos_surface" => loader.load_mvk_macos_surface(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NN_vi_surface" => loader.load_nn_vi_surface(handle.to_raw()),
+                    "VK_NV_clip_space_w_scaling" => loader.load_nv_clip_space_w_scaling(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_dedicated_allocation" => loader.load_nv_dedicated_allocation(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_external_memory" => loader.load_nv_external_memory(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_external_memory_capabilities" => loader.load_nv_external_memory_capabilities(handle.to_raw()),
+                    "VK_NV_external_memory_win32" => loader.load_nv_external_memory_win32(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_fill_rectangle" => loader.load_nv_fill_rectangle(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_fragment_coverage_to_color" => loader.load_nv_fragment_coverage_to_color(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_framebuffer_mixed_samples" => loader.load_nv_framebuffer_mixed_samples(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_geometry_shader_passthrough" => loader.load_nv_geometry_shader_passthrough(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_glsl_shader" => loader.load_nv_glsl_shader(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_sample_mask_override_coverage" => loader.load_nv_sample_mask_override_coverage(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_viewport_array2" => loader.load_nv_viewport_array2(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_viewport_swizzle" => loader.load_nv_viewport_swizzle(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NV_win32_keyed_mutex" => loader.load_nv_win32_keyed_mutex(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NVX_device_generated_commands" => loader.load_nvx_device_generated_commands(handle.to_raw()),
+                    #[cfg(feature = "unimplemented")]
+                    "VK_NVX_multiview_per_view_attributes" => loader.load_nvx_multiview_per_view_attributes(handle.to_raw()),
+                    &_ => (),
+                }
+            }
         }
 
         let instance = physical_device.instance().clone();

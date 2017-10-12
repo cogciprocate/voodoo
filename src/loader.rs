@@ -7,7 +7,7 @@ use libc::{c_char};
 use lib;
 use smallvec::SmallVec;
 use vks::{self};
-use ::{VooResult, Handle, InstanceHandle};
+use ::{error, VooResult, Handle, InstanceHandle, CallResult};
 
 const PRINT: bool = false;
 
@@ -66,45 +66,58 @@ impl Loader {
         &mut self.instance_proc_addr_loader
     }
 
-    /// Returns all available instance extensions.
-    pub fn instance_extensions(&self) -> SmallVec<[vks::VkExtensionProperties; 64]> {
-        let mut avail_ext_count = 0u32;
-        let mut avail_exts = SmallVec::new();
+    /// Returns all available instance layers.
+    pub fn enumerate_instance_layer_properties(&self) -> VooResult<SmallVec<[vks::VkLayerProperties; 64]>> {
+        let mut property_count = 0u32;
+        let mut properties = SmallVec::new();
         unsafe {
-            ::check(self.core_global().vkEnumerateInstanceExtensionProperties(ptr::null(),
-                &mut avail_ext_count, ptr::null_mut()));
-            assert!(avail_ext_count as usize <= avail_exts.inline_size());
-            avail_exts.set_len(avail_ext_count as usize);
-            ::check(self.core_global().vkEnumerateInstanceExtensionProperties(ptr::null(),
-                &mut avail_ext_count, avail_exts.as_mut_ptr()));
+            let result = self.core_global().vkEnumerateInstanceLayerProperties(&mut property_count,
+                ptr::null_mut());
+            error::check(result, "vkEnumerateInstanceLayerProperties", ())?;
+            properties.reserve_exact(property_count as usize);
+            properties.set_len(property_count as usize);
+            loop {
+                let result = self.core_global().vkEnumerateInstanceLayerProperties(&mut property_count,
+                    properties.as_mut_ptr());
+                if result != CallResult::Incomplete as i32 {
+                    error::check(result, "vkEnumerateInstanceLayerProperties", ())?;
+                    break;
+                }
+            }
+        }
+        Ok(properties)
+    }
 
+    /// Returns all available instance extensions.
+    pub fn enumerate_instance_extension_properties(&self) -> VooResult<SmallVec<[vks::VkExtensionProperties; 64]>> {
+        let mut property_count = 0u32;
+        let mut properties = SmallVec::new();
+        unsafe {
+            let result = self.core_global().vkEnumerateInstanceExtensionProperties(ptr::null(),
+                &mut property_count, ptr::null_mut());
+            error::check(result, "vkEnumerateInstanceExtensionProperties", ())?;
+            properties.reserve_exact(property_count as usize);
+            properties.set_len(property_count as usize);
+            loop {
+                let result = self.core_global().vkEnumerateInstanceExtensionProperties(ptr::null(),
+                    &mut property_count, properties.as_mut_ptr());
+                if result != CallResult::Incomplete as i32 {
+                    error::check(result, "vkEnumerateInstanceExtensionProperties", ())?;
+                    break;
+                }
+            }
             // Print available:
-            for ext in avail_exts.iter() {
+            for ext in properties.iter() {
                 let name = (&ext.extensionName) as *const c_char;
                 if PRINT { println!("Available instance extension: '{}' (version: {})",
                     CStr::from_ptr(name).to_str().unwrap(), ext.specVersion); }
             }
         }
-        avail_exts
+        Ok(properties)
     }
 
-    /// Returns all available instance layers.
-    pub fn instance_layers(&self) -> SmallVec<[vks::VkLayerProperties; 64]> {
-        let mut layer_count = 0u32;
-        let mut available_layers = SmallVec::new();
-        unsafe {
-            ::check(self.core_global().vkEnumerateInstanceLayerProperties(&mut layer_count,
-                ptr::null_mut()));
-            assert!(layer_count as usize <= available_layers.inline_size());
-            available_layers.set_len(layer_count as usize);
-            ::check(self.core_global().vkEnumerateInstanceLayerProperties(&mut layer_count,
-                available_layers.as_mut_ptr()));
-        }
-        available_layers
-    }
-
-    pub fn check_validation_layer_support(&self) -> bool {
-        let available_layers = self.instance_layers();
+    pub fn check_validation_layer_support(&self) -> VooResult<bool> {
+        let available_layers = self.enumerate_instance_layer_properties()?;
         // Print available layers:
         for layer_props in &available_layers {
             unsafe {
@@ -128,9 +141,9 @@ impl Loader {
                     }
                 }
             }
-            if !layer_found { return false; }
+            if !layer_found { return Ok(false); }
         }
-        true
+        Ok(true)
     }
 
     pub fn validation_layer_names(&self) -> &'static [&'static [u8]] {

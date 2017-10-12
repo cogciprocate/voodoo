@@ -39,7 +39,7 @@ use voo::{voodoo_winit, vks, util, queue, Result as VooResult, Instance, Device,
     BufferUsageFlags, MemoryPropertyFlags, MemoryMapFlags, ImageType, Filter, SamplerMipmapMode,
     SamplerAddressMode, BorderColor, CommandBufferHandle, CommandBufferBeginInfo, ClearValue,
     ClearColorValue, RenderPassBeginInfo, SubpassContents, IndexType, SemaphoreCreateFlags,
-    CallResult, PresentInfoKhr, ErrorKind};
+    CallResult, PresentInfoKhr, ErrorKind, VALIDATION_LAYER_NAMES};
 use voodoo_winit::winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
 
 #[cfg(debug_assertions)]
@@ -47,10 +47,10 @@ pub const ENABLE_VALIDATION_LAYERS: bool = true;
 #[cfg(not(debug_assertions))]
 pub const ENABLE_VALIDATION_LAYERS: bool = false;
 
-static REQUIRED_INSTANCE_EXTENSIONS: &[&[u8]] = &[
-    b"VK_KHR_surface\0",
-    b"VK_KHR_win32_surface\0",
-];
+// static REQUIRED_INSTANCE_EXTENSIONS: &[&[u8]] = &[
+//     b"VK_KHR_surface\0",
+//     b"VK_KHR_win32_surface\0",
+// ];
 
 static REQUIRED_DEVICE_EXTENSIONS: &[&[u8]] = &[
     b"VK_KHR_swapchain\0",
@@ -89,11 +89,11 @@ fn init_window() -> (Window, EventsLoop) {
 /// Returns the list of layer names to be enabled.
 fn enabled_layer_names<'ln>(loader: &Loader)
         -> SmallVec<[&'ln CStr; 16]> {
-    if ENABLE_VALIDATION_LAYERS && !loader.check_validation_layer_support() {
+    if ENABLE_VALIDATION_LAYERS && !loader.check_validation_layer_support().unwrap() {
         panic!("Unable to enable validation layers.");
     }
     if ENABLE_VALIDATION_LAYERS {
-         (loader.validation_layer_names()).iter().map(|lyr_name|
+         VALIDATION_LAYER_NAMES.iter().map(|lyr_name|
             unsafe { CStr::from_ptr(lyr_name.as_ptr() as *const c_char) }).collect()
     } else {
         SmallVec::new()
@@ -118,8 +118,8 @@ fn init_instance() -> VooResult<Instance> {
     Instance::builder()
         .application_info(&app_info)
         .enabled_layer_names(enabled_layer_names(&loader).as_slice())
-        .enabled_extensions(loader.instance_extensions().as_slice())
-        .build(loader, ENABLE_VALIDATION_LAYERS)
+        .enabled_extensions(loader.enumerate_instance_extension_properties()?.as_slice())
+        .build(loader)
 }
 
 /// Returns true if the specified physical device has the required features,
