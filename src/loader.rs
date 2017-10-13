@@ -157,13 +157,13 @@ impl Loader {
         let mut device_count = 0;
         let mut devices_raw = SmallVec::new();
         unsafe {
-            error::check(self.instance_proc_addr_loader.vkEnumeratePhysicalDevices(instance.handle().0,
+            error::check(self.instance_proc_addr_loader.core.vkEnumeratePhysicalDevices(instance.handle().0,
                 &mut device_count, ptr::null_mut()), "vkEnumeratePhysicalDevices", ())?;
             if device_count == 0 { panic!("No physical devices found."); }
             assert!(device_count as usize <= devices_raw.inline_size());
             devices_raw.set_len(device_count as usize);
             loop {
-                let result = self.instance_proc_addr_loader.vkEnumeratePhysicalDevices(instance.handle().0,
+                let result = self.instance_proc_addr_loader.core.vkEnumeratePhysicalDevices(instance.handle().0,
                     &mut device_count, devices_raw.as_mut_ptr());
                 if result != CallResult::Incomplete as i32 {
                         error::check(result, "vkEnumeratePhysicalDevices", ())?;

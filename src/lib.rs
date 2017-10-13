@@ -69,9 +69,11 @@ pub mod vks {
     pub use vks_::ext_hdr_metadata::*;
     pub use vks_::ext_post_depth_coverage::*;
     pub use vks_::ext_sampler_filter_minmax::*;
+    #[cfg(feature = "unimplemented")]
     pub use vks_::ext_shader_stencil_export::*;
     pub use vks_::ext_shader_subgroup_ballot::*;
     pub use vks_::ext_shader_subgroup_vote::*;
+    #[cfg(feature = "unimplemented")]
     pub use vks_::ext_shader_viewport_index_layer::*;
     pub use vks_::ext_swapchain_colorspace::*;
     pub use vks_::ext_validation_flags::*;

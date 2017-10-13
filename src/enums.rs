@@ -232,6 +232,7 @@ pub enum StructureType {
     #[cfg(feature = "experimental")]
     DeviceGeneratedCommandsFeaturesNvx = vks::VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX as i32,
     PipelineViewportWScalingStateCreateInfoNv = vks::VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV as i32,
+    #[cfg(feature = "unimplemented")]
     SurfaceCapabilities2Ext = vks::VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT as i32,
     // VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT = vks::VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT as i32,
     DisplayPowerInfoExt = vks::VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT as i32,

@@ -59,7 +59,9 @@ static REQUIRED_DEVICE_EXTENSIONS: &[&[u8]] = &[
 // static MODEL_PATH: &str = "/src/shared_assets/models/chalet.obj";
 // static TEXTURE_PATH: &str = "/src/shared_assets/textures/chalet.jpg";
 // static TEXTURE_PATH: &str = "/src/shared_assets/textures/texture.jpg";
-static TEXTURE_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "examples/textures/texture.jpg");
+static TEXTURE_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/textures/texture.jpg");
+static VERT_SHADER_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/shaders/vert.spv");
+static FRAG_SHADER_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/shaders/frag.spv");
 
 #[derive(Clone, Copy)]
 #[repr(C)]
@@ -1274,8 +1276,8 @@ impl App {
         let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
         let pipeline_layout = create_pipeline_layout(device.clone(),
             Some(&descriptor_set_layout))?;
-        let vert_shader_code = util::read_spir_v_file("/src/voodoo/shaders/vert.spv")?;
-        let frag_shader_code = util::read_spir_v_file("/src/voodoo/shaders/frag.spv")?;
+        let vert_shader_code = util::read_spir_v_file(VERT_SHADER_PATH)?;
+        let frag_shader_code = util::read_spir_v_file(FRAG_SHADER_PATH)?;
         let graphics_pipeline = create_graphics_pipeline(device.clone(), &pipeline_layout,
             &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
         let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;

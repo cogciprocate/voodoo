@@ -21,18 +21,17 @@ unimplemented = []
 # default = ["experimental"]
 
 [dependencies]
-winit = "*"
-libloading = "*"
-# smallvec = "*"
-# smallvec = { git = "https://github.com/servo/rust-smallvec" }
-smallvec = { git = "https://github.com/c0gent/rust-smallvec" }
-vks = { git = "https://gitlab.com/dennis-hamester/vks.git" }
-# vks = { path = "../vks" }
-libc = "*"
-cgmath = "*"
-image = "*"
-tobj = "*"
-ordered-float = "*"
-bitflags = "1"
-enum-primitive-derive = "*"
-num-traits = "*"
+winit = "0.8"
+libloading = "0.4"
+# smallvec = { git = "https://github.com/c0gent/rust-smallvec" }
+smallvec = "0.4"
+# vks = { git = "https://gitlab.com/dennis-hamester/vks.git" }
+vks = "0.20"
+libc = "0.2"
+cgmath = "0.15"
+image = "0.16"
+tobj = "0.1"
+ordered-float = "0.5"
+bitflags = "1.0"
+enum-primitive-derive = "0.1"
+num-traits = "0.1"

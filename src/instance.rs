@@ -126,7 +126,7 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         unsafe {
             let mut props: FormatProperties = mem::uninitialized();
-            self.proc_addr_loader().vkGetPhysicalDeviceFormatProperties(physical_device.handle().to_raw(),
+            self.proc_addr_loader().core.vkGetPhysicalDeviceFormatProperties(physical_device.handle().to_raw(),
                 format.into(), &mut props as *mut _ as *mut vks::VkFormatProperties);
             props
         }
@@ -139,7 +139,7 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         unsafe {
             let mut image_format_properties = mem::uninitialized();
-            let result = self.proc_addr_loader().vkGetPhysicalDeviceImageFormatProperties(
+            let result = self.proc_addr_loader().core.vkGetPhysicalDeviceImageFormatProperties(
                 physical_device.handle().to_raw(), format.into(), type_.into(),
                 tiling.into(), usage.bits(), flags.bits(), &mut image_format_properties);
             error::check(result, "vkGetPhysicalDeviceImageFormatProperties", ImageFormatProperties::from_raw(image_format_properties))
@@ -152,7 +152,7 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         unsafe {
             let mut device_properties: vks::VkPhysicalDeviceProperties = mem::uninitialized();
-            self.proc_addr_loader().vkGetPhysicalDeviceProperties(physical_device.handle().to_raw(),
+            self.proc_addr_loader().core.vkGetPhysicalDeviceProperties(physical_device.handle().to_raw(),
                 &mut device_properties);
             PhysicalDeviceProperties::from_raw(device_properties)
         }
@@ -265,12 +265,12 @@ impl Instance {
         let mut property_count = 0u32;
         let mut properties = SmallVec::<[SparseImageFormatProperties; 8]>::new();
         unsafe {
-            self.proc_addr_loader().vkGetPhysicalDeviceSparseImageFormatProperties(
+            self.proc_addr_loader().core.vkGetPhysicalDeviceSparseImageFormatProperties(
                 physical_device.handle().to_raw(), format.into(), type_.into(),
                 samples.bits(), tiling.into(), usage.bits(), &mut property_count, ptr::null_mut());
             properties.reserve_exact(property_count as usize);
             properties.set_len(property_count as usize);
-            self.proc_addr_loader().vkGetPhysicalDeviceSparseImageFormatProperties(
+            self.proc_addr_loader().core.vkGetPhysicalDeviceSparseImageFormatProperties(
                 physical_device.handle().to_raw(), format.into(), type_.into(),
                 samples.bits(), tiling.into(), usage.bits(), &mut property_count,
                 properties.as_mut_ptr() as *mut vks::VkSparseImageFormatProperties);
@@ -360,13 +360,13 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut property_count = 0u32;
         let mut properties: SmallVec<[DisplayPropertiesKhr; 16]> = SmallVec::new();
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceDisplayPropertiesKHR(
+        let result = self.proc_addr_loader().khr_display.vkGetPhysicalDeviceDisplayPropertiesKHR(
             physical_device.handle().to_raw(), &mut property_count, ptr::null_mut());
         error::check(result, "vkGetPhysicalDeviceDisplayPropertiesKHR", ())?;
         properties.reserve_exact(property_count as usize);
         properties.set_len(property_count as usize);
         loop {
-            let result = self.proc_addr_loader().vkGetPhysicalDeviceDisplayPropertiesKHR(
+            let result = self.proc_addr_loader().khr_display.vkGetPhysicalDeviceDisplayPropertiesKHR(
                 physical_device.handle().to_raw(), &mut property_count,
                 properties.as_mut_ptr() as *mut vks::VkDisplayPropertiesKHR);
             if result != CallResult::Incomplete as i32 {
@@ -381,13 +381,13 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut property_count = 0u32;
         let mut properties: SmallVec<[DisplayPlanePropertiesKhr; 16]> = SmallVec::new();
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
+        let result = self.proc_addr_loader().khr_display.vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
             physical_device.handle().to_raw(), &mut property_count, ptr::null_mut());
         error::check(result, "vkGetPhysicalDeviceDisplayPlanePropertiesKHR", ())?;
         properties.reserve_exact(property_count as usize);
         properties.set_len(property_count as usize);
         loop {
-            let result = self.proc_addr_loader().vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
+            let result = self.proc_addr_loader().khr_display.vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
                 physical_device.handle().to_raw(), &mut property_count,
                 properties.as_mut_ptr() as *mut vks::VkDisplayPlanePropertiesKHR);
             if result != CallResult::Incomplete as i32 {
@@ -402,13 +402,13 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut display_count = 0u32;
         let mut displays: SmallVec<[DisplayKhr; 16]> = SmallVec::new();
-        let result = self.proc_addr_loader().vkGetDisplayPlaneSupportedDisplaysKHR(
+        let result = self.proc_addr_loader().khr_display.vkGetDisplayPlaneSupportedDisplaysKHR(
             physical_device.handle().to_raw(), plane_index, &mut display_count, ptr::null_mut());
         error::check(result, "vkGetDisplayPlaneSupportedDisplaysKHR", ())?;
         displays.reserve_exact(display_count as usize);
         displays.set_len(display_count as usize);
         loop {
-            let result = self.proc_addr_loader().vkGetDisplayPlaneSupportedDisplaysKHR(
+            let result = self.proc_addr_loader().khr_display.vkGetDisplayPlaneSupportedDisplaysKHR(
                 physical_device.handle().to_raw(), plane_index, &mut display_count,
                 displays.as_mut_ptr() as *mut vks::VkDisplayKHR);
             if result != CallResult::Incomplete as i32 {
@@ -423,13 +423,13 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle>, D: Handle<Target=DisplayKhrHandle> {
         let mut property_count = 0u32;
         let mut properties: SmallVec<[DisplayModePropertiesKhr; 16]> = SmallVec::new();
-        let result = self.proc_addr_loader().vkGetDisplayModePropertiesKHR(
+        let result = self.proc_addr_loader().khr_display.vkGetDisplayModePropertiesKHR(
             physical_device.handle().to_raw(), display.handle().to_raw(), &mut property_count, ptr::null_mut());
         error::check(result, "vkGetDisplayModePropertiesKHR", ())?;
         properties.reserve_exact(property_count as usize);
         properties.set_len(property_count as usize);
         loop {
-            let result = self.proc_addr_loader().vkGetDisplayModePropertiesKHR(
+            let result = self.proc_addr_loader().khr_display.vkGetDisplayModePropertiesKHR(
                 physical_device.handle().to_raw(), display.handle().to_raw(), &mut property_count,
                 properties.as_mut_ptr() as *mut vks::VkDisplayModePropertiesKHR);
             if result != CallResult::Incomplete as i32 {
@@ -445,7 +445,7 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle>, D: Handle<Target=DisplayKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut mode = 0;
-        let result = self.proc_addr_loader().vkCreateDisplayModeKHR(physical_device.handle().to_raw(),
+        let result = self.proc_addr_loader().khr_display.vkCreateDisplayModeKHR(physical_device.handle().to_raw(),
             display.handle().to_raw(), create_info.as_raw(), allocator, &mut mode);
         error::check(result, "vkCreateDisplayModeKHR", DisplayModeKhrHandle(mode))
     }
@@ -456,7 +456,7 @@ impl Instance {
             -> VdResult<DisplayPlaneCapabilitiesKhr>
             where Pd: Handle<Target=PhysicalDeviceHandle>, M: Handle<Target=DisplayModeKhrHandle> {
         let mut capabilities = mem::uninitialized();
-        let result = self.proc_addr_loader().vkGetDisplayPlaneCapabilitiesKHR(physical_device.handle().to_raw(),
+        let result = self.proc_addr_loader().khr_display.vkGetDisplayPlaneCapabilitiesKHR(physical_device.handle().to_raw(),
             mode.handle().to_raw(), plane_index, &mut capabilities);
         error::check(result, "vkGetDisplayPlaneCapabilitiesKHR",
             DisplayPlaneCapabilitiesKhr::from_raw(capabilities))
@@ -468,7 +468,7 @@ impl Instance {
             -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut surface = 0;
-        let result = self.proc_addr_loader().vkCreateDisplayPlaneSurfaceKHR(self.handle().to_raw(),
+        let result = self.proc_addr_loader().khr_display.vkCreateDisplayPlaneSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
         error::check(result, "vkCreateDisplayPlaneSurfaceKHR", SurfaceKhrHandle(surface))
     }
@@ -479,7 +479,7 @@ impl Instance {
             -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut surface = 0;
-        let result = self.proc_addr_loader().vkCreateXlibSurfaceKHR(self.handle().to_raw(),
+        let result = self.proc_addr_loader().khr_xlib_surface.vkCreateXlibSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
         error::check(result, "vkCreateXlibSurfaceKHR", SurfaceKhrHandle(surface))
     }
@@ -488,7 +488,7 @@ impl Instance {
     pub unsafe fn get_physical_device_xlib_presentation_support_khr<Pd>(&self, physical_device: Pd,
             queue_family_index: u32, dpy: *mut Display, visual_id: VisualID) -> bool
             where Pd: Handle<Target=PhysicalDeviceHandle> {
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceXlibPresentationSupportKHR(
+        let result = self.proc_addr_loader().khr_xlib_surface.vkGetPhysicalDeviceXlibPresentationSupportKHR(
             physical_device.handle().to_raw(), queue_family_index, dpy, visual_id);
         result != 0
     }
@@ -499,7 +499,7 @@ impl Instance {
             -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut surface = 0;
-        let result = self.proc_addr_loader().vkCreateXcbSurfaceKHR(self.handle().to_raw(),
+        let result = self.proc_addr_loader().khr_xcb_surface.vkCreateXcbSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
         error::check(result, "vkCreateXcbSurfaceKHR", SurfaceKhrHandle(surface))
     }
@@ -509,7 +509,7 @@ impl Instance {
         queue_family_index: u32, connection: *mut xcb_connection_t, visual_id: xcb_visualid_t)
              -> bool
             where Pd: Handle<Target=PhysicalDeviceHandle> {
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceXcbPresentationSupportKHR(
+        let result = self.proc_addr_loader().khr_xcb_surface.vkGetPhysicalDeviceXcbPresentationSupportKHR(
             physical_device.handle().to_raw(), queue_family_index, connection, visual_id);
         result != 0
 
@@ -521,7 +521,7 @@ impl Instance {
             -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut surface = 0;
-        let result = self.proc_addr_loader().vkCreateWaylandSurfaceKHR(self.handle().to_raw(),
+        let result = self.proc_addr_loader().khr_wayland_surface.vkCreateWaylandSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
         error::check(result, "vkCreateWaylandSurfaceKHR", SurfaceKhrHandle(surface))
     }
@@ -530,7 +530,7 @@ impl Instance {
     pub unsafe fn get_physical_device_wayland_presentation_support_khr<Pd>(&self,
             physical_device: Pd, queue_family_index: u32, display: *mut wl_display) -> bool
             where Pd: Handle<Target=PhysicalDeviceHandle> {
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceWaylandPresentationSupportKHR(
+        let result = self.proc_addr_loader().khr_wayland_surface.vkGetPhysicalDeviceWaylandPresentationSupportKHR(
             physical_device.handle().to_raw(), queue_family_index, display);
         result != 0
     }
@@ -541,7 +541,7 @@ impl Instance {
             -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut surface = 0;
-        let result = self.proc_addr_loader().vkCreateMirSurfaceKHR(self.handle().to_raw(),
+        let result = self.proc_addr_loader().khr_mir_surface.vkCreateMirSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
         error::check(result, "vkCreateMirSurfaceKHR", SurfaceKhrHandle(surface))
     }
@@ -550,7 +550,7 @@ impl Instance {
     pub unsafe fn get_physical_device_mir_presentation_support_khr<Pd>(&self,
             physical_device: Pd, queue_family_index: u32, connection: *mut MirConnection) -> bool
             where Pd: Handle<Target=PhysicalDeviceHandle> {
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceMirPresentationSupportKHR(
+        let result = self.proc_addr_loader().khr_mir_surface.vkGetPhysicalDeviceMirPresentationSupportKHR(
             physical_device.handle().to_raw(), queue_family_index, connection);
         result != 0
     }
@@ -561,7 +561,7 @@ impl Instance {
             -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut surface = 0;
-        let result = self.proc_addr_loader().vkCreateAndroidSurfaceKHR(self.handle().to_raw(),
+        let result = self.proc_addr_loader().khr_android_surface.vkCreateAndroidSurfaceKHR(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut surface);
         error::check(result, "vkCreateAndroidSurfaceKHR", SurfaceKhrHandle(surface))
     }
@@ -580,7 +580,7 @@ impl Instance {
     pub unsafe fn get_physical_device_win32_presentation_support_khr<Pd>(&self, physical_device: Pd,
             queue_family_index: u32) -> bool
             where Pd: Handle<Target=PhysicalDeviceHandle> {
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceWin32PresentationSupportKHR(
+        let result = self.proc_addr_loader().khr_win32_surface.vkGetPhysicalDeviceWin32PresentationSupportKHR(
             physical_device.handle().to_raw(), queue_family_index);
         result != 0
     }
@@ -591,7 +591,7 @@ impl Instance {
             -> PhysicalDeviceFeatures2Khr
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut features = mem::uninitialized();
-        self.proc_addr_loader().vkGetPhysicalDeviceFeatures2KHR(
+        self.proc_addr_loader().khr_get_physical_device_properties2.vkGetPhysicalDeviceFeatures2KHR(
             physical_device.handle().to_raw(), &mut features);
         PhysicalDeviceFeatures2Khr::from_raw(features)
     }
@@ -602,7 +602,7 @@ impl Instance {
             -> PhysicalDeviceProperties2Khr
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut properties = mem::uninitialized();
-        self.proc_addr_loader().vkGetPhysicalDeviceProperties2KHR(
+        self.proc_addr_loader().khr_get_physical_device_properties2.vkGetPhysicalDeviceProperties2KHR(
             physical_device.handle().to_raw(), &mut properties);
         PhysicalDeviceProperties2Khr::from_raw(properties)
     }
@@ -612,7 +612,7 @@ impl Instance {
             -> FormatProperties2Khr
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut props: FormatProperties2Khr = mem::uninitialized();
-        self.proc_addr_loader().vkGetPhysicalDeviceFormatProperties2KHR(
+        self.proc_addr_loader().khr_get_physical_device_properties2.vkGetPhysicalDeviceFormatProperties2KHR(
             physical_device.handle().to_raw(),
             format.into(), &mut props as *mut _ as *mut vks::VkFormatProperties2KHR);
         props
@@ -624,7 +624,7 @@ impl Instance {
             -> VdResult<ImageFormatProperties2Khr>
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut image_format_properties = mem::uninitialized();
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceImageFormatProperties2KHR(
+        let result = self.proc_addr_loader().khr_get_physical_device_properties2.vkGetPhysicalDeviceImageFormatProperties2KHR(
             physical_device.handle().to_raw(), image_format_info.as_raw(),
             &mut image_format_properties);
         error::check(result, "vkGetPhysicalDeviceImageFormatProperties2KHR",
@@ -637,11 +637,11 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut queue_family_count = 0u32;
         let mut queue_families = SmallVec::<[QueueFamilyProperties2Khr; 16]>::new();
-        self.proc_addr_loader().vkGetPhysicalDeviceQueueFamilyProperties2KHR(
+        self.proc_addr_loader().khr_get_physical_device_properties2.vkGetPhysicalDeviceQueueFamilyProperties2KHR(
             physical_device.handle().to_raw(), &mut queue_family_count, ptr::null_mut());
         queue_families.reserve_exact(queue_family_count as usize);
         queue_families.set_len(queue_family_count as usize);
-        self.proc_addr_loader().vkGetPhysicalDeviceQueueFamilyProperties2KHR(
+        self.proc_addr_loader().khr_get_physical_device_properties2.vkGetPhysicalDeviceQueueFamilyProperties2KHR(
             physical_device.handle().to_raw(), &mut queue_family_count,
             queue_families.as_mut_ptr() as *mut vks::VkQueueFamilyProperties2KHR);
         Ok(queue_families)
@@ -653,7 +653,7 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut mem_props: vks::VkPhysicalDeviceMemoryProperties2KHR;
         mem_props = mem::uninitialized();
-        self.proc_addr_loader().vkGetPhysicalDeviceMemoryProperties2KHR(
+        self.proc_addr_loader().khr_get_physical_device_properties2.vkGetPhysicalDeviceMemoryProperties2KHR(
             physical_device.handle().to_raw(), &mut mem_props);
         PhysicalDeviceMemoryProperties2Khr::from_raw(mem_props)
     }
@@ -665,12 +665,12 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut property_count = 0u32;
         let mut properties = SmallVec::<[SparseImageFormatProperties2Khr; 8]>::new();
-        self.proc_addr_loader().vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
+        self.proc_addr_loader().khr_get_physical_device_properties2.vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
             physical_device.handle().to_raw(), format_info.as_raw(), &mut property_count,
             ptr::null_mut());
         properties.reserve_exact(property_count as usize);
         properties.set_len(property_count as usize);
-        self.proc_addr_loader().vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
+        self.proc_addr_loader().khr_get_physical_device_properties2.vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
             physical_device.handle().to_raw(), format_info.as_raw(), &mut property_count,
             properties.as_mut_ptr() as *mut vks::VkSparseImageFormatProperties2KHR);
         properties
@@ -682,7 +682,7 @@ impl Instance {
             -> ExternalBufferPropertiesKhr
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut external_buffer_properties = mem::uninitialized();
-        self.proc_addr_loader().vkGetPhysicalDeviceExternalBufferPropertiesKHR(
+        self.proc_addr_loader().khr_external_memory_capabilities.vkGetPhysicalDeviceExternalBufferPropertiesKHR(
             physical_device.handle().to_raw(), external_buffer_info.as_raw(),
             &mut external_buffer_properties);
         ExternalBufferPropertiesKhr::from_raw(external_buffer_properties)
@@ -694,7 +694,7 @@ impl Instance {
             -> ExternalSemaphorePropertiesKhr
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut external_semaphore_properties = mem::uninitialized();
-        self.proc_addr_loader().vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(
+        self.proc_addr_loader().khr_external_semaphore_capabilities.vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(
             physical_device.handle().to_raw(), external_semaphore_info.as_raw(),
             &mut external_semaphore_properties);
         ExternalSemaphorePropertiesKhr::from_raw(external_semaphore_properties)
@@ -706,7 +706,7 @@ impl Instance {
             -> ExternalFencePropertiesKhr
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut external_fence_properties = mem::uninitialized();
-        self.proc_addr_loader().vkGetPhysicalDeviceExternalFencePropertiesKHR(
+        self.proc_addr_loader().khr_external_fence_capabilities.vkGetPhysicalDeviceExternalFencePropertiesKHR(
             physical_device.handle().to_raw(), external_fence_info.as_raw(),
             &mut external_fence_properties);
         ExternalFencePropertiesKhr::from_raw(external_fence_properties)
@@ -717,7 +717,7 @@ impl Instance {
             surface_info: &PhysicalDeviceSurfaceInfo2Khr) -> VdResult<SurfaceCapabilities2Khr>
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut capabilities = mem::uninitialized();
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceSurfaceCapabilities2KHR(
+        let result = self.proc_addr_loader().khr_get_surface_capabilities2.vkGetPhysicalDeviceSurfaceCapabilities2KHR(
             physical_device.handle().to_raw(), surface_info.as_raw(), &mut capabilities);
         error::check(result, "vkGetPhysicalDeviceSurfaceCapabilities2KHR",
             SurfaceCapabilities2Khr::from_raw(capabilities))
@@ -729,14 +729,14 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut format_count = 0u32;
         let mut formats: SmallVec<[::SurfaceFormat2Khr; 64]> = SmallVec::new();
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceSurfaceFormats2KHR(
+        let result = self.proc_addr_loader().khr_get_surface_capabilities2.vkGetPhysicalDeviceSurfaceFormats2KHR(
             physical_device.handle().to_raw(), surface_info.as_raw(), &mut format_count, ptr::null_mut());
         error::check(result, "vkGetPhysicalDeviceSurfaceFormats2KHR", ())?;
         formats.reserve_exact(format_count as usize);
         formats.set_len(format_count as usize);
         if format_count != 0 {
             loop {
-                let result = self.proc_addr_loader().vkGetPhysicalDeviceSurfaceFormats2KHR(
+                let result = self.proc_addr_loader().khr_get_surface_capabilities2.vkGetPhysicalDeviceSurfaceFormats2KHR(
                     physical_device.handle().to_raw(), surface_info.as_raw(), &mut format_count,
                     formats.as_mut_ptr() as *mut vks::VkSurfaceFormat2KHR);
                 if result != CallResult::Incomplete as i32 {
@@ -754,7 +754,7 @@ impl Instance {
             ->  VdResult<DebugReportCallbackExtHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut callback = 0;
-        let result = self.proc_addr_loader().vkCreateDebugReportCallbackEXT(self.handle().to_raw(),
+        let result = self.proc_addr_loader().ext_debug_report.vkCreateDebugReportCallbackEXT(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut callback);
         error::check(result, "vkCreateDebugReportCallbackEXT", DebugReportCallbackExtHandle(callback))
     }
@@ -764,7 +764,7 @@ impl Instance {
             callback: DebugReportCallbackExtHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().vkDestroyDebugReportCallbackEXT(
+        self.proc_addr_loader().ext_debug_report.vkDestroyDebugReportCallbackEXT(
             self.handle().to_raw(), callback.to_raw(), allocator);
     }
 
@@ -772,7 +772,7 @@ impl Instance {
     pub unsafe fn debug_report_message_ext(&self, flags: DebugReportFlagsExt,
             object_type: DebugReportObjectTypeExt, object: u64, location: usize, message_code: i32,
             layer_prefix: &CStr, message: &CStr) {
-        self.proc_addr_loader().vkDebugReportMessageEXT(self.handle().to_raw(), flags.bits(),
+        self.proc_addr_loader().ext_debug_report.vkDebugReportMessageEXT(self.handle().to_raw(), flags.bits(),
             object_type.into(), object, location, message_code, layer_prefix.as_ptr(),
             message.as_ptr());
     }
@@ -785,7 +785,7 @@ impl Instance {
             -> VdResult<ExternalImageFormatPropertiesNv>
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         let mut external_image_format_properties = mem::uninitialized();
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceExternalImageFormatPropertiesNV(
+        let result = self.proc_addr_loader().nv_external_memory_capabilities.vkGetPhysicalDeviceExternalImageFormatPropertiesNV(
             physical_device.handle().to_raw(), format.into(), type_.into(),
             tiling.into(), usage.bits(), flags.bits(), external_handle_type.bits(),
             &mut external_image_format_properties);
@@ -823,7 +823,7 @@ impl Instance {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut surface = 0;
-        let result = self.proc_addr_loader().vkCreateViSurfaceNN(
+        let result = self.proc_addr_loader().nn_vi_surface.vkCreateViSurfaceNN(
             self.handle().to_raw(), create_info.as_raw(), allocator, &mut surface);
         error::check(result, "vkCreateViSurfaceNN", SurfaceKhrHandle(surface))
     }
@@ -844,7 +844,7 @@ impl Instance {
     pub unsafe fn release_display_ext<Pd, D>(&self, physical_device: Pd, display: D)
             -> VdResult<()>
             where Pd: Handle<Target=PhysicalDeviceHandle>, D: Handle<Target=DisplayKhrHandle> {
-        let result = self.proc_addr_loader().vkReleaseDisplayEXT(
+        let result = self.proc_addr_loader().ext_direct_mode_display.vkReleaseDisplayEXT(
             physical_device.handle().to_raw(), display.handle().to_raw());
         error::check(result, "vkReleaseDisplayEXT", ())
     }
@@ -853,7 +853,7 @@ impl Instance {
     pub unsafe fn acquire_xlib_display_ext<Pd, D>(&self, physical_device: Pd, dpy: *mut Display, display: D)
             -> VdResult<()>
             where Pd: Handle<Target=PhysicalDeviceHandle>, D: Handle<Target=DisplayKhrHandle> {
-        let result = self.proc_addr_loader().vkAcquireXlibDisplayEXT(
+        let result = self.proc_addr_loader().ext_acquire_xlib_display.vkAcquireXlibDisplayEXT(
             physical_device.handle().to_raw(), dpy, display.handle().to_raw());
         error::check(result, "vkAcquireXlibDisplayEXT", ())
     }
@@ -863,7 +863,7 @@ impl Instance {
             dpy: *mut Display, rr_output: RROutput) -> VdResult<DisplayKhrHandle>
             where Pd: Handle<Target=PhysicalDeviceHandle>, D: Handle<Target=DisplayKhrHandle> {
         let mut display = 0;
-        let result = self.proc_addr_loader().vkGetRandROutputDisplayEXT(physical_device.handle().to_raw(),
+        let result = self.proc_addr_loader().ext_acquire_xlib_display.vkGetRandROutputDisplayEXT(physical_device.handle().to_raw(),
             dpy, rr_output, &mut display);
         error::check(result, "vkGetRandROutputDisplayEXT", DisplayKhrHandle(display))
     }
@@ -873,7 +873,7 @@ impl Instance {
             surface: S) -> VdResult<SurfaceCapabilities2Ext>
             where Pd: Handle<Target=PhysicalDeviceHandle>, S: Handle<Target=SurfaceKhrHandle> {
         let mut surface_capabilities = mem::uninitialized();
-        let result = self.proc_addr_loader().vkGetPhysicalDeviceSurfaceCapabilities2EXT(
+        let result = self.proc_addr_loader().ext_display_surface_counter.vkGetPhysicalDeviceSurfaceCapabilities2EXT(
             physical_device.handle().to_raw(), surface.handle().to_raw(),
             &mut surface_capabilities as *mut _ as *mut vks::VkSurfaceCapabilities2EXT);
         error::check(result, "vkGetPhysicalDeviceSurfaceCapabilities2EXT", surface_capabilities)
@@ -884,7 +884,7 @@ impl Instance {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut surface = 0;
-        let result = self.proc_addr_loader().vkCreateIOSSurfaceMVK(
+        let result = self.proc_addr_loader().mvk_ios_surface.vkCreateIOSSurfaceMVK(
             self.handle().to_raw(), create_info.as_raw(), allocator, &mut surface);
         error::check(result, "vkCreateIOSSurfaceMVK", SurfaceKhrHandle(surface))
     }
@@ -894,7 +894,7 @@ impl Instance {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut surface = 0;
-        let result = self.proc_addr_loader().vkCreateMacOSSurfaceMVK(
+        let result = self.proc_addr_loader().mvk_macos_surface.vkCreateMacOSSurfaceMVK(
             self.handle().to_raw(), create_info.as_raw(), allocator, &mut surface);
         error::check(result, "vkCreateMacOSSurfaceMVK", SurfaceKhrHandle(surface))
     }
