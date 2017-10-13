@@ -116,7 +116,8 @@ impl Loader {
         Ok(properties)
     }
 
-    pub fn check_validation_layer_support(&self) -> VdResult<bool> {
+    /// Verifies that each layer name listed is available.
+    pub fn check_layer_availability(&self, layer_names: &[&[u8]]) -> VdResult<bool> {
         let available_layers = self.enumerate_instance_layer_properties()?;
         // Print available layers:
         for layer_props in &available_layers {
@@ -127,7 +128,7 @@ impl Loader {
         }
 
         // Verify that validation layer is available:
-        for &layer_name in (&::VALIDATION_LAYER_NAMES[..]).iter() {
+        for &layer_name in layer_names {
             let mut layer_found = false;
             for layer_props in &available_layers {
                 unsafe {
@@ -144,10 +145,6 @@ impl Loader {
             if !layer_found { return Ok(false); }
         }
         Ok(true)
-    }
-
-    pub fn validation_layer_names(&self) -> &'static [&'static [u8]] {
-        ::VALIDATION_LAYER_NAMES
     }
 
     // *PFN_vkEnumeratePhysicalDevices)(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);

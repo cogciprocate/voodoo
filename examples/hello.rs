@@ -166,10 +166,12 @@ fn init_window() -> (Window, EventsLoop) {
 }
 
 /// Returns the list of layer names to be enabled.
-fn enabled_layer_names<'ln>(loader: &Loader)
-        -> SmallVec<[&'ln CStr; 16]> {
-    if ENABLE_VALIDATION_LAYERS && !loader.check_validation_layer_support().unwrap() {
-        panic!("Unable to enable validation layers.");
+fn enabled_layer_names<'ln>(loader: &Loader) -> SmallVec<[&'ln CStr; 16]> {
+    if ENABLE_VALIDATION_LAYERS && !loader.check_layer_availability(
+            VALIDATION_LAYER_NAMES).unwrap() {
+        println!("WARNING: One or more validation layers cannot be loaded. Debug report \
+            generation will be unavailable. Please install the LunarG Vulkan SDK from \
+            `https://vulkan.lunarg.com/` to enable validation layers.");
     }
     if ENABLE_VALIDATION_LAYERS {
          VALIDATION_LAYER_NAMES.iter().map(|lyr_name|
@@ -181,9 +183,9 @@ fn enabled_layer_names<'ln>(loader: &Loader)
 
 /// Initializes and returns a new loader and instance.
 ///
-/// If `ENABLE_VALIDATION_LAYER` is `true`, validation layers will be loaded
+/// If `ENABLE_VALIDATION_LAYERS` is `true`, validation layers will be loaded (if available)
 /// and debug reports will print to stdout. If the LunarG® SDK is not installed
-/// on your system, initialization will error.
+/// on your system, a warning will be printed to that effect.
 fn init_instance() -> VdResult<Instance> {
     let app_name = CString::new("Hello Rustaceans!")?;
     let eng_name = CString::new("Engine")?;
@@ -861,9 +863,6 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
 
 fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
         dst_buffer: &Buffer, size: DeviceSize)  -> VdResult<()> {
-    // TODO: Look into creating a separate command pool with the
-    // `VK_COMMAND_POOL_CREATE_TRANSIENT_BIT` flag for short lived command
-    // buffers like this.
     let command_buffer = begin_single_time_commands(command_pool)?;
 
     let copy_region = BufferCopy::builder()

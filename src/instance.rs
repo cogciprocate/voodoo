@@ -1228,22 +1228,6 @@ impl<'ib> InstanceBuilder<'ib> {
             }
         }
 
-        // unsafe {
-        //     loader.core_global().vkCreateInstance(&self.create_info, ptr::null(), &mut handle);
-        //     // [FIXME: do this properly] Load extension function pointers:
-        //     loader.instance_proc_addr_loader_mut().load_core(handle);
-        //     loader.instance_proc_addr_loader_mut().load_khr_surface(handle);
-        //     loader.instance_proc_addr_loader_mut().load_khr_win32_surface(handle);
-        //     loader.instance_proc_addr_loader_mut().load_khr_get_physical_device_properties2(handle);
-        //     loader.instance_proc_addr_loader_mut().load_khr_external_memory_capabilities(handle);
-        // }
-
-        // // TODO: Ensure that the debug extension is enabled by consulting the
-        // // enabled extension list instead.
-        // if enable_debug_callback { unsafe { loader.instance_proc_addr_loader_mut().load_ext_debug_report(handle); } }
-
-        // TODO: Ensure that the debug extension is enabled by consulting the
-        // enabled extension list instead.
         let debug_callback = if self.print_debug_report_enable {
             if enable_debug_callback {
                 let create_info = vks::VkDebugReportCallbackCreateInfoEXT {
@@ -1265,7 +1249,8 @@ impl<'ib> InstanceBuilder<'ib> {
                 Some(callback)
             } else {
                 println!("DEBUG_REPORT: WARNING: Debug report printing requested but the \
-                    'VK_EXT_debug_report' extension is not loaded.");
+                    'VK_EXT_debug_report' extension is not loaded. \
+                    Debug report printing is NOT enabled.");
                 None
             }
         } else {
