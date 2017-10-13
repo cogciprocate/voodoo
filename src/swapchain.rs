@@ -2,7 +2,8 @@ use std::sync::Arc;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{VdResult, SurfaceKhr, Device, PhysicalDevice, ImageHandle, Handle};
+use ::{VdResult, SurfaceKhr, Device, PhysicalDevice, Image, Handle,
+    Semaphore, Fence};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -54,7 +55,7 @@ struct Inner {
     device: Device,
     surface: SurfaceKhr,
     // TODO: Revisit whether we should simply store a handle.
-    images: SmallVec<[ImageHandle; 4]>,
+    images: SmallVec<[Image; 4]>,
     image_format: ::Format,
     extent: ::Extent2d,
 }
@@ -69,7 +70,7 @@ impl SwapchainKhr {
         SwapchainKhrBuilder::new()
     }
 
-    pub fn images(&self) -> &[ImageHandle] {
+    pub fn images(&self) -> &[Image] {
         &self.inner.images
     }
 
@@ -88,6 +89,14 @@ impl SwapchainKhr {
     /// Returns a reference to the associated device.
     pub fn device(&self) -> &Device {
         &self.inner.device
+    }
+
+    // *PFN_vkAcquireNextImageKHR)(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex);
+    #[inline]
+    pub fn acquire_next_image_khr(&self, timeout: u64, semaphore: Option<&Semaphore>,
+            fence: Option<&Fence>) -> VdResult<u32> {
+        unsafe { self.inner.device.acquire_next_image_khr(self.handle(), timeout,
+            semaphore.map(|s| s.handle()), fence.map(|f| f.handle())) }
     }
 }
 
@@ -305,7 +314,11 @@ impl<'b> SwapchainKhrBuilder<'b> {
 
         let handle = unsafe { device.create_swapchain_khr(&self.create_info, None)? };
 
-        let image_handles = unsafe { device.get_swapchain_images_khr(handle)? };
+        let images = unsafe {
+            device.get_swapchain_images_khr(handle)?.iter().map(|&h| {
+                Image::from_handle(device.clone(), h, true)
+            }).collect()
+        };
 
         Ok(SwapchainKhr {
             inner: Arc::new(Inner {
@@ -313,7 +326,7 @@ impl<'b> SwapchainKhrBuilder<'b> {
                 device,
                 surface: self.surface.cloned()
                     .expect("unable to create swapchain: no surface specified"),
-                images: image_handles,
+                images,
                 image_format: image_format,
                 extent,
             })

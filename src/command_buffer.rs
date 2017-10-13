@@ -44,12 +44,6 @@ pub struct CommandBuffer {
 }
 
 impl CommandBuffer {
-    // pub fn allocate(cmd_pool: &CommandPool, alloc_info: &CommandBufferAllocateInfo)
-    //         -> VdResult<SmallVec<[CommandBuffer; 16]>> {
-    //     let handles = unsafe { cmd_pool.device().allocate_command_buffers(alloc_info)? };
-    //     handles.iter().map(|&h| CommandBuffer::from_parts(cmd_pool.clone(), h)).collect()
-    // }
-
     // FIXME: MAKE pub(crate)
     pub(crate) fn from_parts(command_pool: CommandPool, handle: CommandBufferHandle)
             -> VdResult<CommandBuffer> {

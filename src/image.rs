@@ -31,6 +31,7 @@ struct Inner {
     handle: ImageHandle,
     memory_requirements: ::MemoryRequirements,
     device: Device,
+    is_swapchain_image: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -44,16 +45,17 @@ impl Image {
         ImageBuilder::new()
     }
 
-    pub fn from_handle(device: Device, handle: ImageHandle) -> VdResult<Image> {
-        let memory_requirements = unsafe { device.get_image_memory_requirements(handle) };
+    pub(crate) unsafe fn from_handle(device: Device, handle: ImageHandle, is_swapchain_image: bool) -> Image {
+        let memory_requirements = device.get_image_memory_requirements(handle);
 
-        Ok(Image {
+        Image {
             inner: Arc::new(Inner {
                 handle,
                 memory_requirements: memory_requirements.into(),
                 device,
+                is_swapchain_image,
             })
-        })
+        }
     }
 
     pub fn handle(&self) -> ImageHandle {
@@ -93,7 +95,9 @@ unsafe impl<'i> Handle for &'i Image {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            self.device.destroy_image(self.handle, None);
+            if !self.is_swapchain_image {
+                self.device.destroy_image(self.handle, None);
+            }
         }
     }
 }
@@ -216,10 +220,11 @@ impl<'b> ImageBuilder<'b> {
         self
     }
 
-
     //// Creates and returns a new `Image`
     pub fn build(&self, device: Device) -> VdResult<Image> {
-        let handle = unsafe { device.create_image(&self.create_info, None)? };
-        Image::from_handle(device, handle)
+        unsafe {
+            let handle = device.create_image(&self.create_info, None)?;
+            Ok(Image::from_handle(device, handle, false))
+        }
     }
 }

@@ -1264,12 +1264,11 @@ impl Device {
     }
 
     // *PFN_vkAcquireNextImageKHR)(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex);
-    pub unsafe fn acquire_next_image_khr(&self, swapchain: SwapchainKhrHandle, _timeout: u64,
-            semaphore: Option<SemaphoreHandle>, fence: Option<FenceHandle>, _image_index: u32)
-            -> VdResult<u32> {
+    pub unsafe fn acquire_next_image_khr(&self, swapchain: SwapchainKhrHandle, timeout: u64,
+            semaphore: Option<SemaphoreHandle>, fence: Option<FenceHandle>) -> VdResult<u32> {
         let mut image_index = 0;
         let result = self.proc_addr_loader().khr_swapchain.vkAcquireNextImageKHR(
-                self.handle().to_raw(), swapchain.to_raw(), u64::max_value(),
+                self.handle().to_raw(), swapchain.to_raw(), timeout,
                 semaphore.map(|s| s.to_raw()).unwrap_or(0),
                 fence.map(|f| f.to_raw()).unwrap_or(0), &mut image_index);
         error::check(result, "vkAcquireNextImageKHR", image_index)

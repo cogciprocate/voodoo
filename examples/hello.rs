@@ -38,7 +38,7 @@ use vd::{voodoo_winit, vks, util, Result as VdResult, Instance, Device, SurfaceK
     CommandBufferLevel, CommandBufferUsageFlags, SubmitInfo, ImageMemoryBarrier, DependencyFlags,
     ImageSubresourceLayers, BufferImageCopy, Offset3d, Extent3d, DeviceSize, BufferCopy,
     BufferUsageFlags, MemoryPropertyFlags, MemoryMapFlags, ImageType, Filter, SamplerMipmapMode,
-    SamplerAddressMode, BorderColor, CommandBufferHandle, CommandBufferBeginInfo, ClearValue,
+    SamplerAddressMode, BorderColor, CommandBufferHandle, ClearValue,
     ClearColorValue, RenderPassBeginInfo, SubpassContents, IndexType, SemaphoreCreateFlags,
     CallResult, PresentInfoKhr, ErrorKind, VertexInputBindingDescription, VertexInputRate,
     VertexInputAttributeDescription};
@@ -422,7 +422,7 @@ fn create_swapchain(surface: SurfaceKhr, device: Device, window_size: Option<Ext
 }
 
 pub fn create_image_views(swapchain: &SwapchainKhr) -> VdResult<Vec<ImageView>> {
-    swapchain.images().iter().map(|&image| {
+    swapchain.images().iter().map(|image| {
         ImageView::builder()
             .image(image)
             .view_type(ImageViewType::Type2d)
@@ -794,8 +794,6 @@ fn end_single_time_commands(device: &Device, command_buffer: CommandBuffer) -> V
         .command_buffers(&command_buffers[..])
         .build();
 
-    // unsafe { device.queue_submit(device.queue(0), &[submit_info], None)?; }
-    // device.queue_wait_idle(device.queue(0));
     device.queue(0).unwrap().submit(&[submit_info], None)?;
     device.queue(0).unwrap().wait_idle();
 
@@ -896,10 +894,8 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
         .image_extent(Extent3d::builder().width(width).height(height).depth(1).build())
         .build();
 
-    unsafe {
-        device.cmd_copy_buffer_to_image(command_buffer.handle(), buffer.handle(), image.handle(),
-            ImageLayout::TransferDstOptimal, &[region]);
-    }
+    command_buffer.copy_buffer_to_image(buffer, image, ImageLayout::TransferDstOptimal, &[region]);
+
     end_single_time_commands(device, command_buffer)
 }
 
@@ -913,10 +909,7 @@ fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
         .size(size)
         .build();
 
-    unsafe {
-        device.cmd_copy_buffer(command_buffer.handle(), src_buffer.handle(),
-            dst_buffer.handle(), &[copy_region]);
-    }
+    command_buffer.copy_buffer(src_buffer, dst_buffer, &[copy_region]);
     end_single_time_commands(device, command_buffer)
 }
 
@@ -1223,13 +1216,7 @@ pub fn create_command_buffers(device: &Device, command_pool: &CommandPool,
     for (cmd_buf, swapchain_framebuffer) in command_buffers.iter()
             .zip(swapchain_framebuffers.iter())
     {
-        let begin_info = CommandBufferBeginInfo::builder()
-            .flags(CommandBufferUsageFlags::SIMULTANEOUS_USE)
-            .build();
-
-        unsafe {
-            device.begin_command_buffer(cmd_buf.handle(), &begin_info)?;
-        }
+        cmd_buf.begin(CommandBufferUsageFlags::SIMULTANEOUS_USE)?;
 
         let clear_values = &[
             ClearValue { color: ClearColorValue {
@@ -1310,8 +1297,7 @@ struct App {
 }
 
 impl App {
-    #[allow(unused_unsafe)]
-    pub unsafe fn new() -> VdResult<App> {
+    pub fn new() -> VdResult<App> {
         let instance = init_instance()?;
         let (window, events_loop) = init_window();
         let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
@@ -1486,24 +1472,22 @@ impl App {
     }
 
     fn draw_frame(&mut self) -> VdResult<()> {
-        let image_index = unsafe {
-            match self.device.acquire_next_image_khr(
-                    self.swapchain.as_ref().unwrap().handle(), u64::max_value(),
-                    Some(self.image_available_semaphore.handle()), None, 0) {
-                Ok(idx) => idx,
-                Err(res) => {
-                    if let ErrorKind::ApiCall(call_res, _fn_name) = res.kind {
-                        if call_res == CallResult::ErrorOutOfDateKhr {
-                            let dims = self.window.get_inner_size_pixels().unwrap();
-                            self.recreate_swapchain(Extent2d::builder()
-                                .height(dims.0).width(dims.1).build())?;
-                            return Ok(());
-                        } else {
-                            panic!("Unable to present swap chain image");
-                        }
+        let acquire_result = self.swapchain.as_ref().unwrap().acquire_next_image_khr(
+            u64::max_value(), Some(&self.image_available_semaphore), None);
+        let image_index = match acquire_result {
+            Ok(idx) => idx,
+            Err(res) => {
+                if let ErrorKind::ApiCall(call_res, _fn_name) = res.kind {
+                    if call_res == CallResult::ErrorOutOfDateKhr {
+                        let dims = self.window.get_inner_size_pixels().unwrap();
+                        self.recreate_swapchain(Extent2d::builder()
+                            .height(dims.0).width(dims.1).build())?;
+                        return Ok(());
                     } else {
                         panic!("Unable to present swap chain image");
                     }
+                } else {
+                    panic!("Unable to present swap chain image");
                 }
             }
         };
@@ -1521,9 +1505,6 @@ impl App {
             .signal_semaphores(&signal_semaphores[..])
             .build();
 
-        // unsafe {
-        //     self.device.queue_submit(self.device.queue(0).unwrap(), &[submit_info], None)?;
-        // }
         let queue = self.device.queue(0).unwrap();
         queue.submit(&[submit_info], None)?;
 
@@ -1535,11 +1516,6 @@ impl App {
             .swapchains(&swapchains[..])
             .image_indices(&image_indices)
             .build();
-
-        // unsafe {
-        //     self.device.queue_present_khr(self.device.queue(0).unwrap(), &present_info)?;
-        //     self.device.queue_wait_idle(self.device.queue(0).unwrap());
-        // }
 
         queue.present_khr(&present_info)?;
         queue.wait_idle();
@@ -1590,8 +1566,6 @@ impl Drop for App {
 
 fn main() {
     println!("Hello!");
-    unsafe {
-        let mut app = App::new().unwrap();
-        app.main_loop().unwrap();
-    }
+    let mut app = App::new().unwrap();
+    app.main_loop().unwrap();
 }
