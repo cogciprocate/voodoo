@@ -58,8 +58,8 @@ static REQUIRED_DEVICE_EXTENSIONS: &[&[u8]] = &[
 
 // static MODEL_PATH: &str = "/src/shared_assets/models/chalet.obj";
 // static TEXTURE_PATH: &str = "/src/shared_assets/textures/chalet.jpg";
-// static TEXTURE_PATH: &str = "/src/shared_assets/textures/texture.jpg";
-static TEXTURE_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/textures/texture.jpg");
+static TEXTURE_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"),
+    "/examples/textures/rust-logo-512x512-blk.png");
 static VERT_SHADER_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/shaders/vert.spv");
 static FRAG_SHADER_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/shaders/frag.spv");
 
@@ -1086,7 +1086,8 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool)
 
     let texture_image = Image::builder()
         .image_type(ImageType::Type2d)
-        .format(Format::R8G8B8A8Unorm)
+        // .format(Format::R8G8B8A8Unorm)
+        .format(Format::R8G8B8A8Srgb)
         .extent(extent.clone())
         .mip_levels(1)
         .array_layers(1)
@@ -1120,7 +1121,8 @@ fn create_texture_image_view(device: Device, image: &Image) -> VdResult<ImageVie
     ImageView::builder()
         .image(image.handle())
         .view_type(ImageViewType::Type2d)
-        .format(Format::R8G8B8A8Unorm)
+        // .format(Format::R8G8B8A8Unorm)
+        .format(Format::R8G8B8A8Srgb)
         .components(ComponentMapping::default())
         .subresource_range(ImageSubresourceRange::builder()
             .aspect_mask(ImageAspectFlags::COLOR)
