@@ -1,14 +1,14 @@
-Version       (UNRELEASED)
+Version 0.1.1 (2017-10-13)
 ==========================
 
-New Features
-------------
+New
+---
 
 * Debug report printing can now be optionally enabled during instance creation
   by passing `true` to the `InstanceBuilder::print_debug_report` method.
   Enabling this automatically loads the necessary extensions and wires up a
   callback function which simply prints the messages to stdout.
-
+* Additional safe API functions have been added.
 
 Breaking Changes
 ----------------

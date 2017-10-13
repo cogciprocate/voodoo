@@ -388,9 +388,6 @@ fn create_swapchain(surface: SurfaceKhr, device: Device, window_size: Option<Ext
             image_count > swapchain_details.capabilities.max_image_count() {
         image_count = swapchain_details.capabilities.max_image_count();
     }
-    // let indices = find_queue_families(device.physical_device(), &surface)?;
-    // let queue_family_indices = [indices.flag_idxs[0] as u32,
-    //     indices.presentation_support_idxs[0] as u32];
 
     let indices;
 
