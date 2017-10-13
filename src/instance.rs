@@ -948,6 +948,7 @@ pub struct InstanceBuilder<'ib> {
     create_info: vks::VkInstanceCreateInfo,
     enabled_layer_names: Option<CharStrs<'ib>>,
     enabled_extension_names: Option<CharStrs<'ib>>,
+    print_debug_report_enable: bool,
     _p: PhantomData<&'ib ()>,
 }
 
@@ -958,6 +959,7 @@ impl<'ib> InstanceBuilder<'ib> {
             create_info: vks::VkInstanceCreateInfo::default(),
             enabled_layer_names: None,
             enabled_extension_names: None,
+            print_debug_report_enable: false,
             _p: PhantomData,
         }
     }
@@ -1024,6 +1026,19 @@ impl<'ib> InstanceBuilder<'ib> {
             self.create_info.ppEnabledExtensionNames = eens.as_ptr();
             self.create_info.enabledExtensionCount = eens.len() as u32;
         }
+        self
+    }
+
+    /// Creates a debug report callback which prints debug messages to stdout.
+    ///
+    /// If the `VK_EXT_debug_report` extension is not listed among the enabled
+    /// extensions, a warning message will be printed once instead.
+    ///
+    /// If the appropriate validation layers are not enabled, no messages will
+    /// be printed even if debug report printing is enabled.
+    ///
+    pub fn print_debug_report<'s>(&'s mut self, enable: bool) -> &'s mut InstanceBuilder<'ib> {
+        self.print_debug_report_enable = enable;
         self
     }
 
@@ -1229,24 +1244,30 @@ impl<'ib> InstanceBuilder<'ib> {
 
         // TODO: Ensure that the debug extension is enabled by consulting the
         // enabled extension list instead.
-        let debug_callback = if enable_debug_callback {
-            let create_info = vks::VkDebugReportCallbackCreateInfoEXT {
-                sType:  vks::VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
-                pNext: ptr::null(),
-                flags: vks::VK_DEBUG_REPORT_ERROR_BIT_EXT | vks::VK_DEBUG_REPORT_WARNING_BIT_EXT,
-                pfnCallback: Some(__debug_callback),
-                pUserData: ptr::null_mut(),
-            };
+        let debug_callback = if self.print_debug_report_enable {
+            if enable_debug_callback {
+                let create_info = vks::VkDebugReportCallbackCreateInfoEXT {
+                    sType:  vks::VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
+                    pNext: ptr::null(),
+                    flags: vks::VK_DEBUG_REPORT_ERROR_BIT_EXT | vks::VK_DEBUG_REPORT_WARNING_BIT_EXT,
+                    pfnCallback: Some(__debug_callback),
+                    pUserData: ptr::null_mut(),
+                };
 
-            let mut callback: vks::VkDebugReportCallbackEXT = 0;
-            if unsafe { loader.instance_proc_addr_loader().ext_debug_report.vkCreateDebugReportCallbackEXT(handle,
-                    &create_info, ptr::null(), &mut callback) } != vks::VK_SUCCESS
-            {
-                panic!("failed to set up debug callback");
+                let mut callback: vks::VkDebugReportCallbackEXT = 0;
+                if unsafe { loader.instance_proc_addr_loader().ext_debug_report.vkCreateDebugReportCallbackEXT(handle,
+                        &create_info, ptr::null(), &mut callback) } != vks::VK_SUCCESS
+                {
+                    panic!("failed to set up debug callback");
+                } else {
+                    println!("DEBUG_REPORT: Debug report printing enabled.");
+                }
+                Some(callback)
             } else {
-                if PRINT { println!("Debug report callback initialized."); }
+                println!("DEBUG_REPORT: WARNING: Debug report printing requested but the \
+                    'VK_EXT_debug_report' extension is not loaded.");
+                None
             }
-            Some(callback)
         } else {
             None
         };

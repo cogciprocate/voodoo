@@ -22,16 +22,15 @@ use cgmath::{Matrix3, Matrix4};
 use ordered_float::OrderedFloat;
 use voo::{voodoo_winit, vks, util, queue, Result as VdResult, Instance, Device, SurfaceKhr,
     SwapchainKhr, ImageView, PipelineLayout, RenderPass, GraphicsPipeline, Framebuffer,
-    CommandPool, Semaphore, Buffer, DeviceMemory, DescriptorSetLayout,
-    DescriptorPool, Image, Sampler, Loader, SwapchainSupportDetails, PhysicalDevice,
-    PhysicalDeviceFeatures, ShaderModule, QueueFlags, Format, ApplicationInfo,
-    DeviceQueueCreateInfo, SurfaceFormatKhr, ColorSpaceKhr, PresentModeKhr, SurfaceCapabilitiesKhr,
-    Extent2d, ImageUsageFlags, CompositeAlphaFlagsKhr, SharingMode, ImageViewType,
-    ComponentMapping, ImageSubresourceRange, ImageAspectFlags, ImageTiling, FormatFeatureFlags,
-    AttachmentDescription, SampleCountFlags, AttachmentLoadOp, AttachmentStoreOp, ImageLayout,
-    AttachmentReference, SubpassDescription, PipelineBindPoint, SubpassDependency,
-    PipelineStageFlags, AccessFlags, DescriptorSetLayoutBinding, DescriptorType, ShaderStageFlags,
-    DescriptorPoolSize, DescriptorSet, DescriptorBufferInfo, DescriptorImageInfo,
+    CommandPool, Semaphore, Buffer, DeviceMemory, DescriptorSetLayout, DescriptorPool, Image,
+    Sampler, Loader, SwapchainSupportDetails, PhysicalDevice, PhysicalDeviceFeatures, ShaderModule,
+    QueueFlags, Format, ApplicationInfo, DeviceQueueCreateInfo, SurfaceFormatKhr, ColorSpaceKhr,
+    PresentModeKhr, SurfaceCapabilitiesKhr, Extent2d, ImageUsageFlags, CompositeAlphaFlagsKhr,
+    SharingMode, ImageViewType, ComponentMapping, ImageSubresourceRange, ImageAspectFlags,
+    ImageTiling, FormatFeatureFlags, AttachmentDescription, SampleCountFlags, AttachmentLoadOp,
+    AttachmentStoreOp, ImageLayout, AttachmentReference, SubpassDescription, PipelineBindPoint,
+    SubpassDependency, PipelineStageFlags, AccessFlags, DescriptorSetLayoutBinding, DescriptorType,
+    ShaderStageFlags, DescriptorPoolSize, DescriptorSet, DescriptorBufferInfo, DescriptorImageInfo,
     WriteDescriptorSet, PipelineShaderStageCreateInfo, PipelineVertexInputStateCreateInfo,
     PipelineInputAssemblyStateCreateInfo, PrimitiveTopology, Viewport, Rect2d, Offset2d,
     PipelineViewportStateCreateInfo, PipelineRasterizationStateCreateInfo, PolygonMode,
@@ -43,14 +42,18 @@ use voo::{voodoo_winit, vks, util, queue, Result as VdResult, Instance, Device, 
     BufferUsageFlags, MemoryPropertyFlags, MemoryMapFlags, ImageType, Filter, SamplerMipmapMode,
     SamplerAddressMode, BorderColor, CommandBufferHandle, CommandBufferBeginInfo, ClearValue,
     ClearColorValue, RenderPassBeginInfo, SubpassContents, IndexType, SemaphoreCreateFlags,
-    CallResult, PresentInfoKhr, ErrorKind, VALIDATION_LAYER_NAMES,
-    VertexInputBindingDescription, VertexInputRate, VertexInputAttributeDescription};
+    CallResult, PresentInfoKhr, ErrorKind, VertexInputBindingDescription, VertexInputRate,
+    VertexInputAttributeDescription};
 use voodoo_winit::winit::{EventsLoop, WindowBuilder, Window, Event, WindowEvent};
 
 #[cfg(debug_assertions)]
 pub const ENABLE_VALIDATION_LAYERS: bool = true;
 #[cfg(not(debug_assertions))]
 pub const ENABLE_VALIDATION_LAYERS: bool = false;
+
+pub static VALIDATION_LAYER_NAMES: &[&[u8]] = &[
+    b"VK_LAYER_LUNARG_standard_validation\0"
+];
 
 static REQUIRED_DEVICE_EXTENSIONS: &[&[u8]] = &[
     b"VK_KHR_swapchain\0",
@@ -157,7 +160,7 @@ const INDICES: [u32; 12] = [
 fn init_window() -> (Window, EventsLoop) {
     let events_loop = EventsLoop::new();
     let window = WindowBuilder::new()
-        .with_title("Voodoo - Hello!")
+        .with_title("Voodoo - Hello Rustaceans!")
         .build(&events_loop).unwrap();
     (window, events_loop)
 }
@@ -177,8 +180,12 @@ fn enabled_layer_names<'ln>(loader: &Loader)
 }
 
 /// Initializes and returns a new loader and instance.
+///
+/// If `ENABLE_VALIDATION_LAYER` is `true`, validation layers will be loaded
+/// and debug reports will print to stdout. If the LunarG® SDK is not installed
+/// on your system, initialization will error.
 fn init_instance() -> VdResult<Instance> {
-    let app_name = CString::new("Hello!")?;
+    let app_name = CString::new("Hello Rustaceans!")?;
     let eng_name = CString::new("Engine")?;
 
     let app_info = ApplicationInfo::builder()
@@ -195,6 +202,7 @@ fn init_instance() -> VdResult<Instance> {
         .application_info(&app_info)
         .enabled_layer_names(enabled_layer_names(&loader).as_slice())
         .enabled_extensions(&loader.enumerate_instance_extension_properties()?)
+        .print_debug_report(ENABLE_VALIDATION_LAYERS)
         .build(loader)
 }
 
@@ -742,6 +750,8 @@ fn end_single_time_commands(device: &Device, command_buffer: CommandBuffer) -> V
 
     unsafe { device.queue_submit(device.queue(0), &[submit_info], None)?; }
     device.queue_wait_idle(device.queue(0));
+    // device.queue(0).submit(&[submit_info], None)?;
+    // device.queue(0).wait_idle();
 
     Ok(())
 }
@@ -814,11 +824,8 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
         panic!("unsupported layout transition");
     }
 
-    unsafe {
-        device.cmd_pipeline_barrier(command_buffer.handle(),
-            source_stage, destination_stage, DependencyFlags::empty(),
-            &[], &[], &[barrier]);
-    }
+    command_buffer.pipeline_barrier(source_stage, destination_stage,
+        DependencyFlags::empty(), &[], &[], &[barrier]);
 
     end_single_time_commands(device, command_buffer)
 }
@@ -847,6 +854,7 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
         device.cmd_copy_buffer_to_image(command_buffer.handle(), buffer.handle(), image.handle(),
             ImageLayout::TransferDstOptimal, &[region]);
     }
+
 
     end_single_time_commands(device, command_buffer)
 }

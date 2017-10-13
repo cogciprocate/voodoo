@@ -1,7 +1,7 @@
 // use std::ptr;
 use smallvec::SmallVec;
 use vks;
-use ::{VdResult, PhysicalDevice, Device, SurfaceKhr, QueueFlags, Handle};
+use ::{VdResult, PhysicalDevice, Device, SurfaceKhr, QueueFlags, Handle, SubmitInfo, FenceHandle};
 
 
 
@@ -124,6 +124,16 @@ impl Queue {
 
     pub fn index(&self) -> u32 {
         self.idx
+    }
+
+    /// Submits a sequence of semaphores or command buffers to this queue.
+    pub fn submit(&self, submit_info: &[SubmitInfo], fence: Option<FenceHandle>) -> VdResult<()> {
+        unsafe { self.device.queue_submit(self.handle, submit_info, fence) }
+    }
+
+    /// Waits for this queue to become idle.
+    pub fn wait_idle(&self) {
+        self.device.queue_wait_idle(self.handle)
     }
 }
 
