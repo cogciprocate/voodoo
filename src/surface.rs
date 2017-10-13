@@ -166,7 +166,7 @@ impl<'b> SurfaceKhrBuilder<'b> {
             window: *mut vks::ANativeWindow) -> &'s mut SurfaceKhrBuilder<'b> {
         let mut ci = AndroidSurfaceCreateInfoKhr::default();
         ci.set_flags(flags);
-        ci.set_window(window as _);
+        ci.set_window(window);
         self.create_info = CreateInfo::Android(ci);
         self
     }

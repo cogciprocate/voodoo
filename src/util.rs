@@ -97,21 +97,10 @@ impl<'cs> CharStrs<'cs> {
     }
 
     pub fn as_ptr_slice(&self) -> &'cs [*const c_char] {
-        // match *self {
-        //     CharStrs::Ptr { ptr, len } => unsafe { slice::from_raw_parts(ptr, len) },
-        //     CharStrs::RefPtr { ref ptrs } => ptrs,
-        //     CharStrs::OwnedPtr { ref ptrs } => ptrs.as_slice(),
-        //     CharStrs::OwnedOwned {ref ptrs, .. } => ptrs.as_slice(),
-        // }
         unsafe { slice::from_raw_parts(self.as_ptr(), self.len()) }
     }
 }
 
-// impl <'cs, 'p> From<(*const *const c_char, usize)> for CharStrs<'cs> where 'p: 'cs {
-//     fn from(ptrs: &'p [*const c_char]) -> CharStrs<'cs> {
-//         CharStrs::RefPtr { ptrs }
-//     }
-// }
 
 impl <'cs, 'p> From<&'p [*const c_char]> for CharStrs<'cs> where 'p: 'cs {
     fn from(ptrs: &'p [*const c_char]) -> CharStrs<'cs> {

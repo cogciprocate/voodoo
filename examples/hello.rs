@@ -5,7 +5,6 @@ extern crate voodoo as voo;
 extern crate cgmath;
 extern crate image;
 extern crate smallvec;
-extern crate libc;
 extern crate tobj;
 extern crate ordered_float;
 
@@ -16,7 +15,6 @@ use std::hash::{Hash, Hasher};
 use std::collections::HashMap;
 use std::ffi::{CStr, CString};
 use std::cmp;
-use libc::c_char;
 use smallvec::SmallVec;
 use cgmath::{Matrix3, Matrix4};
 use ordered_float::OrderedFloat;
@@ -51,12 +49,12 @@ pub const ENABLE_VALIDATION_LAYERS: bool = true;
 #[cfg(not(debug_assertions))]
 pub const ENABLE_VALIDATION_LAYERS: bool = false;
 
-pub static VALIDATION_LAYER_NAMES: &[&[u8]] = &[
-    b"VK_LAYER_LUNARG_standard_validation\0"
+pub static VALIDATION_LAYER_NAMES: &[&str] = &[
+    "VK_LAYER_LUNARG_standard_validation"
 ];
 
-static REQUIRED_DEVICE_EXTENSIONS: &[&[u8]] = &[
-    b"VK_KHR_swapchain\0",
+static REQUIRED_DEVICE_EXTENSIONS: &[&str] = &[
+    "VK_KHR_swapchain",
 ];
 
 // static MODEL_PATH: &str = "/src/shared_assets/models/chalet.obj";
@@ -166,16 +164,18 @@ fn init_window() -> (Window, EventsLoop) {
 }
 
 /// Returns the list of layer names to be enabled.
-fn enabled_layer_names<'ln>(loader: &Loader) -> SmallVec<[&'ln CStr; 16]> {
-    if ENABLE_VALIDATION_LAYERS && !loader.check_layer_availability(
-            VALIDATION_LAYER_NAMES).unwrap() {
-        println!("WARNING: One or more validation layers cannot be loaded. Debug report \
+///
+/// Enable additional layers by adding names to the returned list.
+fn enabled_layer_names<'ln>(loader: &Loader) -> SmallVec<[&'ln str; 16]> {
+    if ENABLE_VALIDATION_LAYERS {
+        if loader.verify_layer_availability(VALIDATION_LAYER_NAMES).unwrap() {
+            VALIDATION_LAYER_NAMES.iter().map(|&lyr_name| lyr_name).collect()
+        } else {
+            println!("WARNING: One or more validation layers cannot be loaded. Debug report \
             generation will be unavailable. Please install the LunarG Vulkan SDK from \
             `https://vulkan.lunarg.com/` to enable validation layers.");
-    }
-    if ENABLE_VALIDATION_LAYERS {
-         VALIDATION_LAYER_NAMES.iter().map(|lyr_name|
-            unsafe { CStr::from_ptr(lyr_name.as_ptr() as *const c_char) }).collect()
+            SmallVec::new()
+        }
     } else {
         SmallVec::new()
     }
@@ -215,11 +215,7 @@ fn device_is_suitable(surface: &SurfaceKhr,
         physical_device: &PhysicalDevice, queue_family_flags: QueueFlags) -> VdResult<bool> {
     let device_features = physical_device.features();
 
-    let reqd_exts: SmallVec<[_; 16]> = (&REQUIRED_DEVICE_EXTENSIONS[..]).iter().map(|ext_name| {
-        CStr::from_bytes_with_nul(ext_name).expect("invalid required extension name")
-    }).collect();
-
-    let extensions_supported = physical_device.verify_extensions_support(&reqd_exts[..])?;
+    let extensions_supported = physical_device.verify_extension_availability(REQUIRED_DEVICE_EXTENSIONS)?;
 
     let mut swap_chain_adequate = false;
     if extensions_supported {

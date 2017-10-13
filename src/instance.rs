@@ -28,7 +28,7 @@ use ::{error, PRINT, CallResult, VdResult, Loader, ApplicationInfo, PhysicalDevi
     SurfaceCapabilities2Khr, SurfaceFormat2Khr, PhysicalDeviceSurfaceInfo2Khr,
     ViSurfaceCreateInfoNn, IosSurfaceCreateInfoMvk, MacOsSurfaceCreateInfoMvk,
     ExternalImageFormatPropertiesNv, ExternalMemoryHandleTypeFlagsNv, SurfaceCapabilities2Ext,
-    RROutput};
+    RROutput, InstanceCreateInfo};
 
 #[cfg(feature = "experimental")]
 use ::{Rect2d, };
@@ -70,7 +70,8 @@ unsafe impl Handle for InstanceHandle {
 struct Inner {
     handle: InstanceHandle,
     loader: Loader,
-    debug_callback: Option<vks::VkDebugReportCallbackEXT>,
+    // debug_callback: Option<vks::VkDebugReportCallbackEXT>,
+    debug_callback: Option<DebugReportCallbackExtHandle>,
     // physical_devices: SmallVec<[PhysicalDevice; 16]>,
 }
 
@@ -927,12 +928,13 @@ impl Drop for Inner {
         unsafe {
             if PRINT { println!("Destroying debug callback..."); }
             if let Some(callback) = self.debug_callback {
-                self.loader.instance_proc_addr_loader().ext_debug_report.vkDestroyDebugReportCallbackEXT(self.handle.0,
-                    callback, ptr::null());
+                self.loader.instance_proc_addr_loader().ext_debug_report
+                    .vkDestroyDebugReportCallbackEXT(self.handle.0,
+                    callback.to_raw(), ptr::null());
             }
 
             if PRINT { println!("Destroying instance..."); }
-            self.loader.instance_proc_addr_loader().core.vkDestroyInstance(self.handle.0, ptr::null());
+            self.loader.destroy_instance(self.handle, None);
         }
     }
 }
@@ -945,7 +947,7 @@ unsafe impl Sync for Instance {}
 /// A builder used to create an `Instance`.
 #[derive(Debug, Clone)]
 pub struct InstanceBuilder<'ib> {
-    create_info: vks::VkInstanceCreateInfo,
+    create_info: InstanceCreateInfo<'ib>,
     enabled_layer_names: Option<CharStrs<'ib>>,
     enabled_extension_names: Option<CharStrs<'ib>>,
     print_debug_report_enable: bool,
@@ -956,7 +958,7 @@ impl<'ib> InstanceBuilder<'ib> {
     /// Returns a new instance builder.
     pub fn new() -> InstanceBuilder<'ib> {
         InstanceBuilder {
-            create_info: vks::VkInstanceCreateInfo::default(),
+            create_info: InstanceCreateInfo::default(),
             enabled_layer_names: None,
             enabled_extension_names: None,
             print_debug_report_enable: false,
@@ -968,19 +970,17 @@ impl<'ib> InstanceBuilder<'ib> {
     pub fn application_info<'ai, 's>(&'s mut self, application_info: &'ai ApplicationInfo)
             -> &'s mut InstanceBuilder<'ib>
             where 'ai: 'ib {
-        self.create_info.pApplicationInfo = application_info.as_raw();
+        self.create_info.set_application_info(application_info);
         self
     }
 
     /// Sets the enabled layer names.
-    // pub fn enabled_layer_names<'eln, 's>(&'s mut self, enabled_layer_names: &'eln [&'eln CStr])
     pub fn enabled_layer_names<'s, 'cs, Cs>(&'s mut self, enabled_layer_names: Cs)
             -> &'s mut InstanceBuilder<'ib>
             where 'cs: 'ib, Cs: 'cs + Into<CharStrs<'cs>> {
         self.enabled_layer_names = Some(enabled_layer_names.into());
         if let Some(ref elns) = self.enabled_layer_names {
-            self.create_info.ppEnabledLayerNames = elns.as_ptr();
-            self.create_info.enabledLayerCount = elns.len() as u32;
+            self.create_info.set_enabled_layer_names(elns.as_ptr_slice());
         }
         self
     }
@@ -988,19 +988,15 @@ impl<'ib> InstanceBuilder<'ib> {
     /// Sets the enabled extension names.
     ///
     /// May not be used with `::enabled_extensions`.
-    // pub fn enabled_extension_names<'een, 's>(&'s mut self, enabled_extension_names: &'een [&'een CStr])
-    //         -> &'s mut InstanceBuilder<'ib>
-    //         where 'een: 'ib {
     pub fn enabled_extension_names<'s, 'cs, Cs>(&'s mut self, enabled_extension_names: Cs)
             -> &'s mut InstanceBuilder<'ib>
             where 'cs: 'ib, Cs: 'cs + Into<CharStrs<'cs>> {
-        if !self.create_info.ppEnabledExtensionNames.is_null() {
+        if self.create_info.enabled_extension_names().len() != 0 {
             panic!("Enabled extension names have already been set.");
         }
         self.enabled_extension_names = Some(enabled_extension_names.into());
         if let Some(ref eens) = self.enabled_extension_names {
-            self.create_info.ppEnabledExtensionNames = eens.as_ptr();
-            self.create_info.enabledExtensionCount = eens.len() as u32;
+            self.create_info.set_enabled_extension_names(eens.as_ptr_slice());
         }
         self
     }
@@ -1011,7 +1007,7 @@ impl<'ib> InstanceBuilder<'ib> {
     pub fn enabled_extensions<'een, 's>(&'s mut self, enabled_extensions: &'een [vks::VkExtensionProperties])
             -> &'s mut InstanceBuilder<'ib>
             where 'een: 'ib {
-        if !self.create_info.ppEnabledExtensionNames.is_null() {
+        if self.create_info.enabled_extension_names().len() != 0 {
             panic!("Enabled extension names have already been set.");
         }
         let enabled_extension_name_ptrs: Vec<_> = enabled_extensions.iter().map(|eext| {
@@ -1023,8 +1019,7 @@ impl<'ib> InstanceBuilder<'ib> {
 
         self.enabled_extension_names = Some(CharStrs::OwnedPtr { ptrs: enabled_extension_name_ptrs });
         if let Some(ref eens) = self.enabled_extension_names {
-            self.create_info.ppEnabledExtensionNames = eens.as_ptr();
-            self.create_info.enabledExtensionCount = eens.len() as u32;
+            self.create_info.set_enabled_extension_names(eens.as_ptr_slice());
         }
         self
     }
@@ -1044,13 +1039,10 @@ impl<'ib> InstanceBuilder<'ib> {
 
     /// Builds and returns a new `Instance`.
     pub fn build(&self, mut loader: Loader) -> VdResult<Instance> {
-        let mut handle = ptr::null_mut();
         let mut enable_debug_callback = false;
 
-        unsafe {
-            loader.core_global().vkCreateInstance(&self.create_info, ptr::null(), &mut handle);
-            loader.instance_proc_addr_loader_mut().load_core(handle);
-        }
+        let handle = unsafe { loader.create_instance(&self.create_info, None)? };
+        unsafe { loader.instance_proc_addr_loader_mut().load_core(handle.to_raw()); }
 
         unsafe {
             if let Some(extension_name_char_strs) = self.enabled_extension_names.as_ref() {
@@ -1058,170 +1050,170 @@ impl<'ib> InstanceBuilder<'ib> {
                 for &extension_name in extension_names {
                     match CStr::from_ptr(extension_name).to_str().expect("invalid extension name") {
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_16bit_storage" => loader.instance_proc_addr_loader_mut().load_khr_16bit_storage(handle),
+                        "VK_KHR_16bit_storage" => loader.instance_proc_addr_loader_mut().load_khr_16bit_storage(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_android_surface" => loader.instance_proc_addr_loader_mut().load_khr_android_surface(handle),
+                        "VK_KHR_android_surface" => loader.instance_proc_addr_loader_mut().load_khr_android_surface(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_bind_memory2" => loader.instance_proc_addr_loader_mut().load_khr_bind_memory2(handle),
+                        "VK_KHR_bind_memory2" => loader.instance_proc_addr_loader_mut().load_khr_bind_memory2(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_dedicated_allocation" => loader.instance_proc_addr_loader_mut().load_khr_dedicated_allocation(handle),
-                        "VK_KHR_descriptor_update_template" => loader.instance_proc_addr_loader_mut().load_khr_descriptor_update_template(handle),
-                        "VK_KHR_display" => loader.instance_proc_addr_loader_mut().load_khr_display(handle),
+                        "VK_KHR_dedicated_allocation" => loader.instance_proc_addr_loader_mut().load_khr_dedicated_allocation(handle.to_raw()),
+                        "VK_KHR_descriptor_update_template" => loader.instance_proc_addr_loader_mut().load_khr_descriptor_update_template(handle.to_raw()),
+                        "VK_KHR_display" => loader.instance_proc_addr_loader_mut().load_khr_display(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_display_swapchain" => loader.instance_proc_addr_loader_mut().load_khr_display_swapchain(handle),
+                        "VK_KHR_display_swapchain" => loader.instance_proc_addr_loader_mut().load_khr_display_swapchain(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_external_fence" => loader.instance_proc_addr_loader_mut().load_khr_external_fence(handle),
-                        "VK_KHR_external_fence_capabilities" => loader.instance_proc_addr_loader_mut().load_khr_external_fence_capabilities(handle),
-                        "VK_KHR_external_fence_fd" => loader.instance_proc_addr_loader_mut().load_khr_external_fence_fd(handle),
+                        "VK_KHR_external_fence" => loader.instance_proc_addr_loader_mut().load_khr_external_fence(handle.to_raw()),
+                        "VK_KHR_external_fence_capabilities" => loader.instance_proc_addr_loader_mut().load_khr_external_fence_capabilities(handle.to_raw()),
+                        "VK_KHR_external_fence_fd" => loader.instance_proc_addr_loader_mut().load_khr_external_fence_fd(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_external_fence_win32" => loader.instance_proc_addr_loader_mut().load_khr_external_fence_win32(handle),
+                        "VK_KHR_external_fence_win32" => loader.instance_proc_addr_loader_mut().load_khr_external_fence_win32(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_external_memory" => loader.instance_proc_addr_loader_mut().load_khr_external_memory(handle),
-                        "VK_KHR_external_memory_capabilities" => loader.instance_proc_addr_loader_mut().load_khr_external_memory_capabilities(handle),
-                        "VK_KHR_external_memory_fd" => loader.instance_proc_addr_loader_mut().load_khr_external_memory_fd(handle),
-                        "VK_KHR_external_memory_win32" => loader.instance_proc_addr_loader_mut().load_khr_external_memory_win32(handle),
+                        "VK_KHR_external_memory" => loader.instance_proc_addr_loader_mut().load_khr_external_memory(handle.to_raw()),
+                        "VK_KHR_external_memory_capabilities" => loader.instance_proc_addr_loader_mut().load_khr_external_memory_capabilities(handle.to_raw()),
+                        "VK_KHR_external_memory_fd" => loader.instance_proc_addr_loader_mut().load_khr_external_memory_fd(handle.to_raw()),
+                        "VK_KHR_external_memory_win32" => loader.instance_proc_addr_loader_mut().load_khr_external_memory_win32(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_external_semaphore" => loader.instance_proc_addr_loader_mut().load_khr_external_semaphore(handle),
-                        "VK_KHR_external_semaphore_capabilities" => loader.instance_proc_addr_loader_mut().load_khr_external_semaphore_capabilities(handle),
-                        "VK_KHR_external_semaphore_fd" => loader.instance_proc_addr_loader_mut().load_khr_external_semaphore_fd(handle),
-                        "VK_KHR_external_semaphore_win32" => loader.instance_proc_addr_loader_mut().load_khr_external_semaphore_win32(handle),
-                        "VK_KHR_get_memory_requirements2" => loader.instance_proc_addr_loader_mut().load_khr_get_memory_requirements2(handle),
-                        "VK_KHR_get_physical_device_properties2" => loader.instance_proc_addr_loader_mut().load_khr_get_physical_device_properties2(handle),
-                        "VK_KHR_get_surface_capabilities2" => loader.instance_proc_addr_loader_mut().load_khr_get_surface_capabilities2(handle),
+                        "VK_KHR_external_semaphore" => loader.instance_proc_addr_loader_mut().load_khr_external_semaphore(handle.to_raw()),
+                        "VK_KHR_external_semaphore_capabilities" => loader.instance_proc_addr_loader_mut().load_khr_external_semaphore_capabilities(handle.to_raw()),
+                        "VK_KHR_external_semaphore_fd" => loader.instance_proc_addr_loader_mut().load_khr_external_semaphore_fd(handle.to_raw()),
+                        "VK_KHR_external_semaphore_win32" => loader.instance_proc_addr_loader_mut().load_khr_external_semaphore_win32(handle.to_raw()),
+                        "VK_KHR_get_memory_requirements2" => loader.instance_proc_addr_loader_mut().load_khr_get_memory_requirements2(handle.to_raw()),
+                        "VK_KHR_get_physical_device_properties2" => loader.instance_proc_addr_loader_mut().load_khr_get_physical_device_properties2(handle.to_raw()),
+                        "VK_KHR_get_surface_capabilities2" => loader.instance_proc_addr_loader_mut().load_khr_get_surface_capabilities2(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_image_format_list" => loader.instance_proc_addr_loader_mut().load_khr_image_format_list(handle),
+                        "VK_KHR_image_format_list" => loader.instance_proc_addr_loader_mut().load_khr_image_format_list(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_incremental_present" => loader.instance_proc_addr_loader_mut().load_khr_incremental_present(handle),
-                        "VK_KHR_maintenance1" => loader.instance_proc_addr_loader_mut().load_khr_maintenance1(handle),
+                        "VK_KHR_incremental_present" => loader.instance_proc_addr_loader_mut().load_khr_incremental_present(handle.to_raw()),
+                        "VK_KHR_maintenance1" => loader.instance_proc_addr_loader_mut().load_khr_maintenance1(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_maintenance2" => loader.instance_proc_addr_loader_mut().load_khr_maintenance2(handle),
-                        "VK_KHR_mir_surface" => loader.instance_proc_addr_loader_mut().load_khr_mir_surface(handle),
-                        "VK_KHR_push_descriptor" => loader.instance_proc_addr_loader_mut().load_khr_push_descriptor(handle),
+                        "VK_KHR_maintenance2" => loader.instance_proc_addr_loader_mut().load_khr_maintenance2(handle.to_raw()),
+                        "VK_KHR_mir_surface" => loader.instance_proc_addr_loader_mut().load_khr_mir_surface(handle.to_raw()),
+                        "VK_KHR_push_descriptor" => loader.instance_proc_addr_loader_mut().load_khr_push_descriptor(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_relaxed_block_layout" => loader.instance_proc_addr_loader_mut().load_khr_relaxed_block_layout(handle),
+                        "VK_KHR_relaxed_block_layout" => loader.instance_proc_addr_loader_mut().load_khr_relaxed_block_layout(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_sampler_mirror_clamp_to_edge" => loader.instance_proc_addr_loader_mut().load_khr_sampler_mirror_clamp_to_edge(handle),
+                        "VK_KHR_sampler_mirror_clamp_to_edge" => loader.instance_proc_addr_loader_mut().load_khr_sampler_mirror_clamp_to_edge(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_sampler_ycbcr_conversion" => loader.instance_proc_addr_loader_mut().load_khr_sampler_ycbcr_conversion(handle),
+                        "VK_KHR_sampler_ycbcr_conversion" => loader.instance_proc_addr_loader_mut().load_khr_sampler_ycbcr_conversion(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_shader_draw_parameters" => loader.instance_proc_addr_loader_mut().load_khr_shader_draw_parameters(handle),
-                        "VK_KHR_shared_presentable_image" => loader.instance_proc_addr_loader_mut().load_khr_shared_presentable_image(handle),
+                        "VK_KHR_shader_draw_parameters" => loader.instance_proc_addr_loader_mut().load_khr_shader_draw_parameters(handle.to_raw()),
+                        "VK_KHR_shared_presentable_image" => loader.instance_proc_addr_loader_mut().load_khr_shared_presentable_image(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_storage_buffer_storage_class" => loader.instance_proc_addr_loader_mut().load_khr_storage_buffer_storage_class(handle),
-                        "VK_KHR_surface" => loader.instance_proc_addr_loader_mut().load_khr_surface(handle),
-                        "VK_KHR_swapchain" => loader.instance_proc_addr_loader_mut().load_khr_swapchain(handle),
+                        "VK_KHR_storage_buffer_storage_class" => loader.instance_proc_addr_loader_mut().load_khr_storage_buffer_storage_class(handle.to_raw()),
+                        "VK_KHR_surface" => loader.instance_proc_addr_loader_mut().load_khr_surface(handle.to_raw()),
+                        "VK_KHR_swapchain" => loader.instance_proc_addr_loader_mut().load_khr_swapchain(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_variable_pointers" => loader.instance_proc_addr_loader_mut().load_khr_variable_pointers(handle),
-                        "VK_KHR_wayland_surface" => loader.instance_proc_addr_loader_mut().load_khr_wayland_surface(handle),
+                        "VK_KHR_variable_pointers" => loader.instance_proc_addr_loader_mut().load_khr_variable_pointers(handle.to_raw()),
+                        "VK_KHR_wayland_surface" => loader.instance_proc_addr_loader_mut().load_khr_wayland_surface(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHR_win32_keyed_mutex" => loader.instance_proc_addr_loader_mut().load_khr_win32_keyed_mutex(handle),
-                        "VK_KHR_win32_surface" => loader.instance_proc_addr_loader_mut().load_khr_win32_surface(handle),
-                        "VK_KHR_xcb_surface" => loader.instance_proc_addr_loader_mut().load_khr_xcb_surface(handle),
-                        "VK_KHR_xlib_surface" => loader.instance_proc_addr_loader_mut().load_khr_xlib_surface(handle),
-                        "VK_EXT_acquire_xlib_display" => loader.instance_proc_addr_loader_mut().load_ext_acquire_xlib_display(handle),
+                        "VK_KHR_win32_keyed_mutex" => loader.instance_proc_addr_loader_mut().load_khr_win32_keyed_mutex(handle.to_raw()),
+                        "VK_KHR_win32_surface" => loader.instance_proc_addr_loader_mut().load_khr_win32_surface(handle.to_raw()),
+                        "VK_KHR_xcb_surface" => loader.instance_proc_addr_loader_mut().load_khr_xcb_surface(handle.to_raw()),
+                        "VK_KHR_xlib_surface" => loader.instance_proc_addr_loader_mut().load_khr_xlib_surface(handle.to_raw()),
+                        "VK_EXT_acquire_xlib_display" => loader.instance_proc_addr_loader_mut().load_ext_acquire_xlib_display(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_blend_operation_advanced" => loader.instance_proc_addr_loader_mut().load_ext_blend_operation_advanced(handle),
-                        "VK_EXT_debug_marker" => loader.instance_proc_addr_loader_mut().load_ext_debug_marker(handle),
+                        "VK_EXT_blend_operation_advanced" => loader.instance_proc_addr_loader_mut().load_ext_blend_operation_advanced(handle.to_raw()),
+                        "VK_EXT_debug_marker" => loader.instance_proc_addr_loader_mut().load_ext_debug_marker(handle.to_raw()),
                         "VK_EXT_debug_report" => {
-                            loader.instance_proc_addr_loader_mut().load_ext_debug_report(handle);
+                            loader.instance_proc_addr_loader_mut().load_ext_debug_report(handle.to_raw());
                             enable_debug_callback = true;
                         },
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_depth_range_unrestricted" => loader.instance_proc_addr_loader_mut().load_ext_depth_range_unrestricted(handle),
-                        "VK_EXT_direct_mode_display" => loader.instance_proc_addr_loader_mut().load_ext_direct_mode_display(handle),
-                        "VK_EXT_discard_rectangles" => loader.instance_proc_addr_loader_mut().load_ext_discard_rectangles(handle),
-                        "VK_EXT_display_control" => loader.instance_proc_addr_loader_mut().load_ext_display_control(handle),
-                        "VK_EXT_display_surface_counter" => loader.instance_proc_addr_loader_mut().load_ext_display_surface_counter(handle),
-                        "VK_EXT_hdr_metadata" => loader.instance_proc_addr_loader_mut().load_ext_hdr_metadata(handle),
+                        "VK_EXT_depth_range_unrestricted" => loader.instance_proc_addr_loader_mut().load_ext_depth_range_unrestricted(handle.to_raw()),
+                        "VK_EXT_direct_mode_display" => loader.instance_proc_addr_loader_mut().load_ext_direct_mode_display(handle.to_raw()),
+                        "VK_EXT_discard_rectangles" => loader.instance_proc_addr_loader_mut().load_ext_discard_rectangles(handle.to_raw()),
+                        "VK_EXT_display_control" => loader.instance_proc_addr_loader_mut().load_ext_display_control(handle.to_raw()),
+                        "VK_EXT_display_surface_counter" => loader.instance_proc_addr_loader_mut().load_ext_display_surface_counter(handle.to_raw()),
+                        "VK_EXT_hdr_metadata" => loader.instance_proc_addr_loader_mut().load_ext_hdr_metadata(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_post_depth_coverage" => loader.instance_proc_addr_loader_mut().load_ext_post_depth_coverage(handle),
+                        "VK_EXT_post_depth_coverage" => loader.instance_proc_addr_loader_mut().load_ext_post_depth_coverage(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_sample_locations" => loader.instance_proc_addr_loader_mut().load_ext_sample_locations(handle),
+                        "VK_EXT_sample_locations" => loader.instance_proc_addr_loader_mut().load_ext_sample_locations(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_sampler_filter_minmax" => loader.instance_proc_addr_loader_mut().load_ext_sampler_filter_minmax(handle),
+                        "VK_EXT_sampler_filter_minmax" => loader.instance_proc_addr_loader_mut().load_ext_sampler_filter_minmax(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_shader_stencil_export" => loader.instance_proc_addr_loader_mut().load_ext_shader_stencil_export(handle),
+                        "VK_EXT_shader_stencil_export" => loader.instance_proc_addr_loader_mut().load_ext_shader_stencil_export(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_shader_subgroup_ballot" => loader.instance_proc_addr_loader_mut().load_ext_shader_subgroup_ballot(handle),
+                        "VK_EXT_shader_subgroup_ballot" => loader.instance_proc_addr_loader_mut().load_ext_shader_subgroup_ballot(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_shader_subgroup_vote" => loader.instance_proc_addr_loader_mut().load_ext_shader_subgroup_vote(handle),
+                        "VK_EXT_shader_subgroup_vote" => loader.instance_proc_addr_loader_mut().load_ext_shader_subgroup_vote(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_shader_viewport_index_layer" => loader.instance_proc_addr_loader_mut().load_ext_shader_viewport_index_layer(handle),
+                        "VK_EXT_shader_viewport_index_layer" => loader.instance_proc_addr_loader_mut().load_ext_shader_viewport_index_layer(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_swapchain_colorspace" => loader.instance_proc_addr_loader_mut().load_ext_swapchain_colorspace(handle),
+                        "VK_EXT_swapchain_colorspace" => loader.instance_proc_addr_loader_mut().load_ext_swapchain_colorspace(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_validation_cache" => loader.instance_proc_addr_loader_mut().load_ext_validation_cache(handle),
+                        "VK_EXT_validation_cache" => loader.instance_proc_addr_loader_mut().load_ext_validation_cache(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_EXT_validation_flags" => loader.instance_proc_addr_loader_mut().load_ext_validation_flags(handle),
-                        "VK_AMD_draw_indirect_count" => loader.instance_proc_addr_loader_mut().load_amd_draw_indirect_count(handle),
+                        "VK_EXT_validation_flags" => loader.instance_proc_addr_loader_mut().load_ext_validation_flags(handle.to_raw()),
+                        "VK_AMD_draw_indirect_count" => loader.instance_proc_addr_loader_mut().load_amd_draw_indirect_count(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_gcn_shader" => loader.instance_proc_addr_loader_mut().load_amd_gcn_shader(handle),
+                        "VK_AMD_gcn_shader" => loader.instance_proc_addr_loader_mut().load_amd_gcn_shader(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_gpu_shader_half_float" => loader.instance_proc_addr_loader_mut().load_amd_gpu_shader_half_float(handle),
+                        "VK_AMD_gpu_shader_half_float" => loader.instance_proc_addr_loader_mut().load_amd_gpu_shader_half_float(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_gpu_shader_int16" => loader.instance_proc_addr_loader_mut().load_amd_gpu_shader_int16(handle),
+                        "VK_AMD_gpu_shader_int16" => loader.instance_proc_addr_loader_mut().load_amd_gpu_shader_int16(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_mixed_attachment_samples" => loader.instance_proc_addr_loader_mut().load_amd_mixed_attachment_samples(handle),
+                        "VK_AMD_mixed_attachment_samples" => loader.instance_proc_addr_loader_mut().load_amd_mixed_attachment_samples(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_negative_viewport_height" => loader.instance_proc_addr_loader_mut().load_amd_negative_viewport_height(handle),
+                        "VK_AMD_negative_viewport_height" => loader.instance_proc_addr_loader_mut().load_amd_negative_viewport_height(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_rasterization_order" => loader.instance_proc_addr_loader_mut().load_amd_rasterization_order(handle),
+                        "VK_AMD_rasterization_order" => loader.instance_proc_addr_loader_mut().load_amd_rasterization_order(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_shader_ballot" => loader.instance_proc_addr_loader_mut().load_amd_shader_ballot(handle),
+                        "VK_AMD_shader_ballot" => loader.instance_proc_addr_loader_mut().load_amd_shader_ballot(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_shader_explicit_vertex_parameter" => loader.instance_proc_addr_loader_mut().load_amd_shader_explicit_vertex_parameter(handle),
+                        "VK_AMD_shader_explicit_vertex_parameter" => loader.instance_proc_addr_loader_mut().load_amd_shader_explicit_vertex_parameter(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_shader_fragment_mask" => loader.instance_proc_addr_loader_mut().load_amd_shader_fragment_mask(handle),
+                        "VK_AMD_shader_fragment_mask" => loader.instance_proc_addr_loader_mut().load_amd_shader_fragment_mask(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_shader_image_load_store_lod" => loader.instance_proc_addr_loader_mut().load_amd_shader_image_load_store_lod(handle),
+                        "VK_AMD_shader_image_load_store_lod" => loader.instance_proc_addr_loader_mut().load_amd_shader_image_load_store_lod(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_shader_trinary_minmax" => loader.instance_proc_addr_loader_mut().load_amd_shader_trinary_minmax(handle),
+                        "VK_AMD_shader_trinary_minmax" => loader.instance_proc_addr_loader_mut().load_amd_shader_trinary_minmax(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_AMD_texture_gather_bias_lod" => loader.instance_proc_addr_loader_mut().load_amd_texture_gather_bias_lod(handle),
+                        "VK_AMD_texture_gather_bias_lod" => loader.instance_proc_addr_loader_mut().load_amd_texture_gather_bias_lod(handle.to_raw()),
 
-                        "VK_GOOGLE_display_timing" => loader.instance_proc_addr_loader_mut().load_google_display_timing(handle),
+                        "VK_GOOGLE_display_timing" => loader.instance_proc_addr_loader_mut().load_google_display_timing(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_IMG_filter_cubic" => loader.instance_proc_addr_loader_mut().load_img_filter_cubic(handle),
+                        "VK_IMG_filter_cubic" => loader.instance_proc_addr_loader_mut().load_img_filter_cubic(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_IMG_format_pvrtc" => loader.instance_proc_addr_loader_mut().load_img_format_pvrtc(handle),
+                        "VK_IMG_format_pvrtc" => loader.instance_proc_addr_loader_mut().load_img_format_pvrtc(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHX_device_group" => loader.instance_proc_addr_loader_mut().load_khx_device_group(handle),
+                        "VK_KHX_device_group" => loader.instance_proc_addr_loader_mut().load_khx_device_group(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHX_device_group_creation" => loader.instance_proc_addr_loader_mut().load_khx_device_group_creation(handle),
+                        "VK_KHX_device_group_creation" => loader.instance_proc_addr_loader_mut().load_khx_device_group_creation(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_KHX_multiview" => loader.instance_proc_addr_loader_mut().load_khx_multiview(handle),
-                        "VK_MVK_ios_surface" => loader.instance_proc_addr_loader_mut().load_mvk_ios_surface(handle),
-                        "VK_MVK_macos_surface" => loader.instance_proc_addr_loader_mut().load_mvk_macos_surface(handle),
-                        "VK_NN_vi_surface" => loader.instance_proc_addr_loader_mut().load_nn_vi_surface(handle),
-                        "VK_NV_clip_space_w_scaling" => loader.instance_proc_addr_loader_mut().load_nv_clip_space_w_scaling(handle),
+                        "VK_KHX_multiview" => loader.instance_proc_addr_loader_mut().load_khx_multiview(handle.to_raw()),
+                        "VK_MVK_ios_surface" => loader.instance_proc_addr_loader_mut().load_mvk_ios_surface(handle.to_raw()),
+                        "VK_MVK_macos_surface" => loader.instance_proc_addr_loader_mut().load_mvk_macos_surface(handle.to_raw()),
+                        "VK_NN_vi_surface" => loader.instance_proc_addr_loader_mut().load_nn_vi_surface(handle.to_raw()),
+                        "VK_NV_clip_space_w_scaling" => loader.instance_proc_addr_loader_mut().load_nv_clip_space_w_scaling(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NV_dedicated_allocation" => loader.instance_proc_addr_loader_mut().load_nv_dedicated_allocation(handle),
+                        "VK_NV_dedicated_allocation" => loader.instance_proc_addr_loader_mut().load_nv_dedicated_allocation(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NV_external_memory" => loader.instance_proc_addr_loader_mut().load_nv_external_memory(handle),
-                        "VK_NV_external_memory_capabilities" => loader.instance_proc_addr_loader_mut().load_nv_external_memory_capabilities(handle),
-                        "VK_NV_external_memory_win32" => loader.instance_proc_addr_loader_mut().load_nv_external_memory_win32(handle),
+                        "VK_NV_external_memory" => loader.instance_proc_addr_loader_mut().load_nv_external_memory(handle.to_raw()),
+                        "VK_NV_external_memory_capabilities" => loader.instance_proc_addr_loader_mut().load_nv_external_memory_capabilities(handle.to_raw()),
+                        "VK_NV_external_memory_win32" => loader.instance_proc_addr_loader_mut().load_nv_external_memory_win32(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NV_fill_rectangle" => loader.instance_proc_addr_loader_mut().load_nv_fill_rectangle(handle),
+                        "VK_NV_fill_rectangle" => loader.instance_proc_addr_loader_mut().load_nv_fill_rectangle(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NV_fragment_coverage_to_color" => loader.instance_proc_addr_loader_mut().load_nv_fragment_coverage_to_color(handle),
+                        "VK_NV_fragment_coverage_to_color" => loader.instance_proc_addr_loader_mut().load_nv_fragment_coverage_to_color(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NV_framebuffer_mixed_samples" => loader.instance_proc_addr_loader_mut().load_nv_framebuffer_mixed_samples(handle),
+                        "VK_NV_framebuffer_mixed_samples" => loader.instance_proc_addr_loader_mut().load_nv_framebuffer_mixed_samples(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NV_geometry_shader_passthrough" => loader.instance_proc_addr_loader_mut().load_nv_geometry_shader_passthrough(handle),
+                        "VK_NV_geometry_shader_passthrough" => loader.instance_proc_addr_loader_mut().load_nv_geometry_shader_passthrough(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NV_glsl_shader" => loader.instance_proc_addr_loader_mut().load_nv_glsl_shader(handle),
+                        "VK_NV_glsl_shader" => loader.instance_proc_addr_loader_mut().load_nv_glsl_shader(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NV_sample_mask_override_coverage" => loader.instance_proc_addr_loader_mut().load_nv_sample_mask_override_coverage(handle),
+                        "VK_NV_sample_mask_override_coverage" => loader.instance_proc_addr_loader_mut().load_nv_sample_mask_override_coverage(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NV_viewport_array2" => loader.instance_proc_addr_loader_mut().load_nv_viewport_array2(handle),
+                        "VK_NV_viewport_array2" => loader.instance_proc_addr_loader_mut().load_nv_viewport_array2(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NV_viewport_swizzle" => loader.instance_proc_addr_loader_mut().load_nv_viewport_swizzle(handle),
+                        "VK_NV_viewport_swizzle" => loader.instance_proc_addr_loader_mut().load_nv_viewport_swizzle(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NV_win32_keyed_mutex" => loader.instance_proc_addr_loader_mut().load_nv_win32_keyed_mutex(handle),
+                        "VK_NV_win32_keyed_mutex" => loader.instance_proc_addr_loader_mut().load_nv_win32_keyed_mutex(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NVX_device_generated_commands" => loader.instance_proc_addr_loader_mut().load_nvx_device_generated_commands(handle),
+                        "VK_NVX_device_generated_commands" => loader.instance_proc_addr_loader_mut().load_nvx_device_generated_commands(handle.to_raw()),
                         #[cfg(feature = "unimplemented")]
-                        "VK_NVX_multiview_per_view_attributes" => loader.instance_proc_addr_loader_mut().load_nvx_multiview_per_view_attributes(handle),
+                        "VK_NVX_multiview_per_view_attributes" => loader.instance_proc_addr_loader_mut().load_nvx_multiview_per_view_attributes(handle.to_raw()),
                         &_ => (),
                     }
                 }
@@ -1239,18 +1231,19 @@ impl<'ib> InstanceBuilder<'ib> {
                 };
 
                 let mut callback: vks::VkDebugReportCallbackEXT = 0;
-                if unsafe { loader.instance_proc_addr_loader().ext_debug_report.vkCreateDebugReportCallbackEXT(handle,
+                if unsafe { loader.instance_proc_addr_loader().ext_debug_report
+                        .vkCreateDebugReportCallbackEXT(handle.to_raw(),
                         &create_info, ptr::null(), &mut callback) } != vks::VK_SUCCESS
                 {
                     panic!("failed to set up debug callback");
                 } else {
                     println!("DEBUG_REPORT: Debug report printing enabled.");
                 }
-                Some(callback)
+                Some(DebugReportCallbackExtHandle(callback))
             } else {
                 println!("DEBUG_REPORT: WARNING: Debug report printing requested but the \
-                    'VK_EXT_debug_report' extension is not loaded. \
-                    Debug report printing is NOT enabled.");
+                    'VK_EXT_debug_report' extension is not loaded. Debug report printing \
+                    is NOT enabled.");
                 None
             }
         } else {
@@ -1262,7 +1255,7 @@ impl<'ib> InstanceBuilder<'ib> {
 
         Ok(Instance {
             inner: Arc::new(Inner {
-                handle: InstanceHandle(handle),
+                handle,
                 loader,
                 debug_callback,
                 // physical_devices,

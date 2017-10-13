@@ -7,7 +7,8 @@ use libc::{c_char};
 use lib;
 use smallvec::SmallVec;
 use vks::{self};
-use ::{error, VdResult, Handle, InstanceHandle, CallResult};
+use ::{error, VdResult, Handle, InstanceHandle, CallResult, InstanceCreateInfo};
+use util::CharStrs;
 
 const PRINT: bool = false;
 
@@ -117,7 +118,8 @@ impl Loader {
     }
 
     /// Verifies that each layer name listed is available.
-    pub fn check_layer_availability(&self, layer_names: &[&[u8]]) -> VdResult<bool> {
+    pub fn verify_layer_availability<'a, 'cs, Cs>(&'a self, layer_names: Cs) -> VdResult<bool>
+            where 'cs: 'a, Cs: 'cs + Into<CharStrs<'cs>> {
         let available_layers = self.enumerate_instance_layer_properties()?;
         // Print available layers:
         for layer_props in &available_layers {
@@ -128,15 +130,13 @@ impl Loader {
         }
 
         // Verify that validation layer is available:
-        for &layer_name in layer_names {
+        for &layer_name in layer_names.into().as_ptr_slice() {
             let mut layer_found = false;
             for layer_props in &available_layers {
                 unsafe {
-                    if CStr::from_ptr(layer_name.as_ptr() as *const c_char) ==
-                        CStr::from_ptr(layer_props.layerName.as_ptr())
-                    {
-                        if PRINT { println!("Layer validated: '{}'", CStr::from_ptr(
-                            layer_name.as_ptr() as *const c_char).to_str().unwrap()); }
+                    if CStr::from_ptr(layer_name) == CStr::from_ptr(layer_props.layerName.as_ptr()) {
+                        if PRINT { println!("Layer validated: '{}'",
+                            CStr::from_ptr(layer_name).to_str().unwrap()); }
                         layer_found = true;
                         break;
                     }
@@ -172,16 +172,21 @@ impl Loader {
         Ok(devices_raw)
     }
 
-                // *PFN_vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
-
-    pub fn create_instance(&self) {
-
+    // *PFN_vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
+    pub unsafe fn create_instance(&self, create_info: &InstanceCreateInfo,
+            allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<InstanceHandle> {
+        let allocator = allocator.unwrap_or(ptr::null());
+        let mut handle = ptr::null_mut();
+        let result = self.core_global().vkCreateInstance(create_info.as_raw(), allocator, &mut handle);
+        error::check(result, "vkCreateInstance", InstanceHandle(handle))
     }
 
-                // *PFN_vkDestroyInstance)(VkInstance instance, const VkAllocationCallbacks* pAllocator);
-
-    pub fn destroy_instance(&self) {
-
+    // *PFN_vkDestroyInstance)(VkInstance instance, const VkAllocationCallbacks* pAllocator);
+    pub fn destroy_instance(&self, instance: InstanceHandle,
+            allocator: Option<*const vks::VkAllocationCallbacks>) {
+        let allocator = allocator.unwrap_or(ptr::null());
+        unsafe { self.instance_proc_addr_loader().core
+            .vkDestroyInstance(instance.to_raw(), allocator); }
     }
 }
 

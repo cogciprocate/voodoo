@@ -1,16 +1,12 @@
-// use std::sync::Arc;
-// use std::mem;
-// use std::ptr;
+
 use std::ffi::CStr;
-use libc::c_char;
 use smallvec::SmallVec;
 use vks;
 use ::{PRINT, VdResult, Instance, Handle, SurfaceFormatKhr, PhysicalDeviceFeatures,
     PhysicalDeviceProperties, QueueFamilyProperties, PhysicalDeviceMemoryProperties,
     ExtensionProperties, SurfaceCapabilitiesKhr, PresentModeKhr, FormatProperties, Format,
-    SurfaceKhr};
-// use queue::Queue;
-// use instance;
+    SurfaceKhr, CharStrs};
+
 
 
 
@@ -115,7 +111,8 @@ impl PhysicalDevice {
 
     /// Verifies that the extensions listed are supported by this physical device.
     #[inline]
-    pub fn verify_extensions_support(&self, extension_names: &[&CStr]) -> VdResult<bool> {
+    pub fn verify_extension_availability<'a, 'cs, Cs>(&'a self, extension_names: Cs) -> VdResult<bool>
+            where 'cs: 'a, Cs: 'cs + Into<CharStrs<'cs>> {
         let avail_exts = self.extension_properties()?;
         unsafe {
             // Print available:
@@ -124,12 +121,12 @@ impl PhysicalDevice {
                         ext.extension_name().to_str().unwrap(), ext.spec_version()); }
             };
 
-            for reqd_ext_name in extension_names {
+            for &reqd_ext_name in extension_names.into().as_ptr_slice() {
                 let mut ext_avail = false;
                 for avail_ext in &avail_exts {
-                    if reqd_ext_name == &avail_ext.extension_name() {
+                    if CStr::from_ptr(reqd_ext_name) == avail_ext.extension_name() {
                         if PRINT { println!("Required device extension available: '{}'",
-                            CStr::from_ptr(reqd_ext_name.as_ptr() as *const c_char).to_str().unwrap()); }
+                            CStr::from_ptr(reqd_ext_name).to_str().unwrap()); }
                         ext_avail = true;
                         break;
                     }
