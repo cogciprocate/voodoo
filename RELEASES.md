@@ -1,3 +1,25 @@
+Version       (UNRELEASED)
+==========================
+
+New Features
+------------
+
+* Debug report printing can now be optionally enabled during instance creation
+  by passing `true` to the `InstanceBuilder::print_debug_report` method.
+  Enabling this automatically loads the necessary extensions and wires up a
+  callback function which simply prints the messages to stdout.
+
+
+Breaking Changes
+----------------
+
+* The process of creating and accessing device queues has been redesigned. See
+  the [`hello.rs`] example for usage.
+
+
+[`hello.rs`]: https://github.com/cogciprocate/voodoo/blob/master/examples/hello.rs
+
+
 Version 0.1.0 (2017-10-12)
 ==========================
 
