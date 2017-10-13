@@ -1,7 +1,5 @@
-// use std::ptr;
-use smallvec::SmallVec;
 use vks;
-use ::{VdResult, PhysicalDevice, Device, SurfaceKhr, QueueFlags, Handle, SubmitInfo, FenceHandle};
+use ::{VdResult, Device, Handle, SubmitInfo, FenceHandle, BindSparseInfo, PresentInfoKhr};
 
 
 
@@ -25,70 +23,7 @@ unsafe impl Handle for QueueHandle {
     }
 }
 
-
-pub struct QueueFamilyIndices {
-    _physical_device: PhysicalDevice,
-    _flags: QueueFlags,
-    pub flag_idxs: SmallVec<[i32; 64]>,
-    pub presentation_support_idxs: SmallVec<[i32; 64]>,
-}
-
-impl QueueFamilyIndices {
-    pub fn new(_physical_device: PhysicalDevice, _flags: QueueFlags) -> QueueFamilyIndices {
-        QueueFamilyIndices {
-            flag_idxs: SmallVec::new(),
-            presentation_support_idxs: SmallVec::new(),
-            _physical_device,
-            _flags
-        }
-    }
-
-    pub fn is_complete(&self) -> bool {
-        self.flag_idxs.len() > 0
-    }
-
-    pub fn family_idxs(&self) -> &[i32] {
-        &self.flag_idxs
-
-        // let mut i = 0i32;
-        // for queue_family in &queue_families {
-        //     if (queue_family.queueCount > 0) && (queue_family.queueFlags & queue_flags) != 0 {
-        //         indices.family_idx = i;
-        //     }
-        //     if indices.is_complete() {
-        //         break;
-        //     }
-        //     i += 1;
-        // }
-        // indices
-    }
-}
-
-pub fn queue_families(surface: &SurfaceKhr, physical_device: &PhysicalDevice,
-        queue_flags: QueueFlags) -> VdResult<QueueFamilyIndices> {
-    let mut indices = QueueFamilyIndices::new(physical_device.clone(), queue_flags);
-    let queue_families = physical_device.queue_family_properties()?;
-
-    let mut i = 0i32;
-    for queue_family in &queue_families {
-        if queue_family.queue_count() > 0 && queue_family.queue_flags().contains(queue_flags) {
-            indices.flag_idxs.push(i);
-        }
-
-        let presentation_support = physical_device.surface_support_khr(i as u32, surface)?;
-        if queue_family.queue_count() > 0 && presentation_support {
-            indices.presentation_support_idxs.push(i);
-        }
-
-        if indices.is_complete() {
-            break;
-        }
-        i += 1;
-    }
-    Ok(indices)
-}
-
-
+#[derive(Clone, Debug)]
 pub struct Queue {
     handle: QueueHandle,
     device: Device,
@@ -97,21 +32,27 @@ pub struct Queue {
 }
 
 impl Queue {
-    // Queue families:
-    // QUEUE_COMPUTE_BIT
-    // QUEUE_FAMILY_IGNORED
-    // QUEUE_GRAPHICS_BIT
-    // QUEUE_SPARSE_BINDING_BIT
-    // QUEUE_TRANSFER_BIT
-    pub fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VdResult<Queue> {
-        let handle = device.get_device_queue(queue_family_index, queue_index);
+    // pub fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VdResult<Queue> {
+    //     let handle = device.get_device_queue(queue_family_index, queue_index)
+    //         .ok_or(Error::from(format!("Unable to get device queue with: family_index: {}, index: {}",
+    //             queue_family_index, queue_index)))?;
 
-        Ok(Queue {
+    //     Ok(Queue {
+    //         handle,
+    //         device,
+    //         family_idx: queue_family_index,
+    //         idx: queue_index,
+    //     })
+    // }
+
+    pub(crate) unsafe fn from_parts(handle: QueueHandle, device: Device, queue_family_index: u32,
+            queue_index: u32) -> Queue {
+        Queue {
             handle,
             device,
             family_idx: queue_family_index,
             idx: queue_index,
-        })
+        }
     }
 
     pub fn device(&self) -> &Device {
@@ -127,6 +68,7 @@ impl Queue {
     }
 
     /// Submits a sequence of semaphores or command buffers to this queue.
+    #[inline]
     pub fn submit(&self, submit_info: &[SubmitInfo], fence: Option<FenceHandle>) -> VdResult<()> {
         unsafe { self.device.queue_submit(self.handle, submit_info, fence) }
     }
@@ -135,9 +77,20 @@ impl Queue {
     pub fn wait_idle(&self) {
         self.device.queue_wait_idle(self.handle)
     }
+
+    #[inline]
+    pub fn bind_sparse<Q, F>(&self, bind_info: &[BindSparseInfo], fence: F) -> VdResult<()>
+            where Q: Handle<Target=QueueHandle>, F: Handle<Target=FenceHandle> {
+        unsafe { self.device.queue_bind_sparse(self.handle, bind_info, fence) }
+    }
+
+    #[inline]
+    pub fn present_khr(&self, present_info: &PresentInfoKhr) -> VdResult<()> {
+        unsafe { self.device.queue_present_khr(self.handle, present_info) }
+    }
 }
 
-unsafe impl Handle for Queue {
+unsafe impl<'a> Handle for &'a Queue {
     type Target = QueueHandle;
 
     #[inline(always)]

@@ -1,7 +1,7 @@
 #![allow(dead_code, unused_variables)]
 
 #[macro_use]
-extern crate voodoo as voo;
+extern crate voodoo as vd;
 extern crate cgmath;
 extern crate image;
 extern crate smallvec;
@@ -12,13 +12,13 @@ use std::mem;
 use std::time;
 use std::path::Path;
 use std::hash::{Hash, Hasher};
-use std::collections::HashMap;
+use std::collections::{HashMap, BTreeSet};
 use std::ffi::{CStr, CString};
 use std::cmp;
 use smallvec::SmallVec;
 use cgmath::{Matrix3, Matrix4};
 use ordered_float::OrderedFloat;
-use voo::{voodoo_winit, vks, util, queue, Result as VdResult, Instance, Device, SurfaceKhr,
+use vd::{voodoo_winit, vks, util, Result as VdResult, Instance, Device, SurfaceKhr,
     SwapchainKhr, ImageView, PipelineLayout, RenderPass, GraphicsPipeline, Framebuffer,
     CommandPool, Semaphore, Buffer, DeviceMemory, DescriptorSetLayout, DescriptorPool, Image,
     Sampler, Loader, SwapchainSupportDetails, PhysicalDevice, PhysicalDeviceFeatures, ShaderModule,
@@ -61,8 +61,25 @@ static REQUIRED_DEVICE_EXTENSIONS: &[&str] = &[
 // static TEXTURE_PATH: &str = "/src/shared_assets/textures/chalet.jpg";
 static TEXTURE_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"),
     "/examples/textures/rust-logo-512x512-blk.png");
-static VERT_SHADER_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/shaders/vert.spv");
-static FRAG_SHADER_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/shaders/frag.spv");
+static VERT_SHADER_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"),
+    "/examples/shaders/vert.spv");
+static FRAG_SHADER_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"),
+    "/examples/shaders/frag.spv");
+
+
+/// The queue indices this app will use.
+#[derive(Debug, Clone, Copy)]
+struct QueueFamilyIndices {
+    graphics_family_idx: u32,
+    present_family_idx: u32,
+}
+
+impl QueueFamilyIndices {
+    fn new(graphics_family_idx: u32, present_family_idx: u32) -> QueueFamilyIndices {
+        QueueFamilyIndices { graphics_family_idx, present_family_idx }
+    }
+}
+
 
 #[derive(Clone, Copy)]
 #[repr(C)]
@@ -127,7 +144,6 @@ impl PartialEq for Vertex {
 impl Eq for Vertex {}
 
 
-
 #[derive(Debug, Clone, Copy)]
 #[repr(C)]
 pub struct UniformBufferObject {
@@ -168,7 +184,7 @@ fn init_window() -> (Window, EventsLoop) {
 /// Enable additional layers by adding names to the returned list.
 fn enabled_layer_names<'ln>(loader: &Loader) -> SmallVec<[&'ln str; 16]> {
     if ENABLE_VALIDATION_LAYERS {
-        if loader.verify_layer_availability(VALIDATION_LAYER_NAMES).unwrap() {
+        if loader.verify_layer_support(VALIDATION_LAYER_NAMES).unwrap() {
             VALIDATION_LAYER_NAMES.iter().map(|&lyr_name| lyr_name).collect()
         } else {
             println!("WARNING: One or more validation layers cannot be loaded. Debug report \
@@ -184,7 +200,7 @@ fn enabled_layer_names<'ln>(loader: &Loader) -> SmallVec<[&'ln str; 16]> {
 /// Initializes and returns a new loader and instance.
 ///
 /// If `ENABLE_VALIDATION_LAYERS` is `true`, validation layers will be loaded (if available)
-/// and debug reports will print to stdout. If the LunarG® SDK is not installed
+/// and debug reports will print to stdout. If the LunarG SDK is not installed
 /// on your system, a warning will be printed to that effect.
 fn init_instance() -> VdResult<Instance> {
     let app_name = CString::new("Hello Rustaceans!")?;
@@ -208,14 +224,45 @@ fn init_instance() -> VdResult<Instance> {
         .build(loader)
 }
 
+
+/// Returns the queue family indices for the queue families supporting
+/// graphics and presentation on `physical_device`.
+fn find_queue_families(physical_device: &PhysicalDevice, surface: &SurfaceKhr)
+        -> VdResult<QueueFamilyIndices> {
+    let queue_families = physical_device.queue_family_properties()?;
+    let mut graphics_family_idx = None;
+    let mut present_family_idx = None;
+
+    let mut i = 0u32;
+    for queue_family in &queue_families {
+        if queue_family.queue_count() > 0 && queue_family.queue_flags()
+                .contains(QueueFlags::GRAPHICS) {
+            graphics_family_idx = Some(i);
+        }
+
+        let presentation_support = physical_device.surface_support_khr(i as u32, surface)?;
+        if queue_family.queue_count() > 0 && presentation_support {
+            present_family_idx = Some(i);
+        }
+
+        if let (Some(gf_idx), Some(pf_idx)) = (graphics_family_idx, present_family_idx) {
+            return Ok(QueueFamilyIndices::new(gf_idx, pf_idx));
+        }
+
+        i += 1;
+    }
+    Err("unable to find graphics and/or presentation queue family support".into())
+}
+
 /// Returns true if the specified physical device has the required features,
 /// extensions, queue families and if the supported swap chain has the correct
 /// presentation modes.
-fn device_is_suitable(surface: &SurfaceKhr,
-        physical_device: &PhysicalDevice, queue_family_flags: QueueFlags) -> VdResult<bool> {
+fn device_is_suitable(physical_device: &PhysicalDevice, surface: &SurfaceKhr)
+    -> VdResult<bool> {
     let device_features = physical_device.features();
 
-    let extensions_supported = physical_device.verify_extension_availability(REQUIRED_DEVICE_EXTENSIONS)?;
+    let extensions_supported = physical_device.verify_extension_support(
+        REQUIRED_DEVICE_EXTENSIONS)?;
 
     let mut swap_chain_adequate = false;
     if extensions_supported {
@@ -225,22 +272,20 @@ fn device_is_suitable(surface: &SurfaceKhr,
             !swap_chain_details.present_modes.is_empty()
     }
 
-    let queue_family_indices = queue::queue_families(surface,
-        &physical_device, queue_family_flags)?;
+    let queue_family_indices = find_queue_families(&physical_device, surface)?;
 
-    Ok(queue_family_indices.is_complete() &&
-        extensions_supported &&
+    Ok(extensions_supported &&
         swap_chain_adequate &&
         device_features.sampler_anisotropy())
 }
 
 /// Returns a physical device from the list of available physical devices if
 /// it meets the criteria specified in the above function.
-fn choose_physical_device(instance: &Instance, surface: &SurfaceKhr,
-        queue_family_flags: QueueFlags) -> VdResult<PhysicalDevice> {
+fn choose_physical_device(instance: &Instance, surface: &SurfaceKhr)
+        -> VdResult<PhysicalDevice> {
     let mut preferred_device = None;
     for device in instance.physical_devices()? {
-        if device_is_suitable(surface, &device, queue_family_flags)? {
+        if device_is_suitable(&device, surface)? {
             preferred_device = Some(device);
             break;
         }
@@ -252,23 +297,25 @@ fn choose_physical_device(instance: &Instance, surface: &SurfaceKhr,
     }
 }
 
-fn create_device(surface: &SurfaceKhr, physical_device: PhysicalDevice,
-        queue_familiy_flags: QueueFlags) -> VdResult<Device> {
-    let queue_family_idx = queue::queue_families(surface,
-        &physical_device, queue_familiy_flags)?.family_idxs()[0] as u32;
+fn create_device(surface: &SurfaceKhr, physical_device: PhysicalDevice) -> VdResult<Device> {
+    let queue_family_indices = find_queue_families(&physical_device, surface)?;
+    let unique_queue_family_idxs: BTreeSet<u32> = [queue_family_indices.graphics_family_idx,
+        queue_family_indices.present_family_idx].iter().map(|&i| i).collect();
 
     let queue_priorities = [1.0];
-    let queue_create_info = DeviceQueueCreateInfo::builder()
-        .queue_family_index(queue_family_idx)
-        .queue_priorities(&queue_priorities)
-        .build();
+    let queue_create_infos: SmallVec<[_; 2]> = unique_queue_family_idxs.iter().map(|&idx| {
+        DeviceQueueCreateInfo::builder()
+            .queue_family_index(idx)
+            .queue_priorities(&queue_priorities)
+            .build()
+    }).collect();
 
     let features = PhysicalDeviceFeatures::builder()
         .sampler_anisotropy(true)
         .build();
 
     Device::builder()
-        .queue_create_infos(&[queue_create_info.clone()])
+        .queue_create_infos(&queue_create_infos)
         .enabled_extension_names(REQUIRED_DEVICE_EXTENSIONS)
         .enabled_features(&features)
         .build(physical_device)
@@ -328,9 +375,9 @@ fn choose_swap_extent(capabilities: &SurfaceCapabilitiesKhr,
     }
 }
 
-fn create_swapchain(surface: SurfaceKhr, device: Device, queue_family_flags: QueueFlags,
-        window_size: Option<Extent2d>, old_swapchain: Option<&SwapchainKhr>)
-        -> VdResult<SwapchainKhr> {
+fn create_swapchain(surface: SurfaceKhr, device: Device, window_size: Option<Extent2d>,
+        old_swapchain: Option<&SwapchainKhr>) -> VdResult<SwapchainKhr> {
+    let queue_family_indices = find_queue_families(device.physical_device(), &surface)?;
     let swapchain_details = SwapchainSupportDetails::new(&surface, device.physical_device())?;
     let surface_format = choose_swap_surface_format(&swapchain_details.formats);
     let present_mode = choose_swap_present_mode(&swapchain_details.present_modes);
@@ -341,9 +388,11 @@ fn create_swapchain(surface: SurfaceKhr, device: Device, queue_family_flags: Que
             image_count > swapchain_details.capabilities.max_image_count() {
         image_count = swapchain_details.capabilities.max_image_count();
     }
-    let indices = queue::queue_families(&surface, device.physical_device(), queue_family_flags)?;
-    let queue_family_indices = [indices.flag_idxs[0] as u32,
-        indices.presentation_support_idxs[0] as u32];
+    // let indices = find_queue_families(device.physical_device(), &surface)?;
+    // let queue_family_indices = [indices.flag_idxs[0] as u32,
+    //     indices.presentation_support_idxs[0] as u32];
+
+    let indices;
 
     let mut bldr = SwapchainKhr::builder();
     bldr.surface(&surface)
@@ -362,9 +411,10 @@ fn create_swapchain(surface: SurfaceKhr, device: Device, queue_family_flags: Que
         bldr.old_swapchain(old_sc.handle());
     }
 
-    if queue_family_indices[0] != queue_family_indices[1] {
+    if queue_family_indices.graphics_family_idx != queue_family_indices.present_family_idx {
+        indices = [queue_family_indices.graphics_family_idx, queue_family_indices.present_family_idx];
         bldr.image_sharing_mode(SharingMode::Concurrent);
-        bldr.queue_family_indices(&queue_family_indices[..]);
+        bldr.queue_family_indices(&indices);
     } else {
         bldr.image_sharing_mode(SharingMode::Exclusive);
     }
@@ -459,7 +509,7 @@ fn create_render_pass(device: Device, swapchain_image_format: Format)
         .build();
 
     let dependency = SubpassDependency::builder()
-        .src_subpass(voo::SUBPASS_EXTERNAL)
+        .src_subpass(vd::SUBPASS_EXTERNAL)
         .dst_subpass(0)
         .src_stage_mask(PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT)
         .dst_stage_mask(PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT)
@@ -705,13 +755,11 @@ fn create_graphics_pipeline(device: Device, pipeline_layout: &PipelineLayout,
         .build(device)
 }
 
-fn create_command_pool(device: Device, surface: &SurfaceKhr, queue_family_flags: QueueFlags)
+fn create_command_pool(device: Device, surface: &SurfaceKhr)
         -> VdResult<CommandPool> {
-    let queue_family_idx = voo::queue_families(surface, device.physical_device(),
-        queue_family_flags)?.family_idxs()[0] as u32;
-
+    let queue_family_indices = find_queue_families(device.physical_device(), surface)?;
     CommandPool::builder()
-        .queue_family_index(queue_family_idx)
+        .queue_family_index(queue_family_indices.graphics_family_idx)
         .build(device)
 }
 
@@ -746,10 +794,10 @@ fn end_single_time_commands(device: &Device, command_buffer: CommandBuffer) -> V
         .command_buffers(&command_buffers[..])
         .build();
 
-    unsafe { device.queue_submit(device.queue(0), &[submit_info], None)?; }
-    device.queue_wait_idle(device.queue(0));
-    // device.queue(0).submit(&[submit_info], None)?;
-    // device.queue(0).wait_idle();
+    // unsafe { device.queue_submit(device.queue(0), &[submit_info], None)?; }
+    // device.queue_wait_idle(device.queue(0));
+    device.queue(0).unwrap().submit(&[submit_info], None)?;
+    device.queue(0).unwrap().wait_idle();
 
     Ok(())
 }
@@ -776,8 +824,8 @@ fn transition_image_layout(device: &Device, command_pool: &CommandPool, image: &
         .dst_access_mask(AccessFlags::empty())
         .old_layout(old_layout)
         .new_layout(new_layout)
-        .src_queue_family_index(voo::QUEUE_FAMILY_IGNORED)
-        .dst_queue_family_index(voo::QUEUE_FAMILY_IGNORED)
+        .src_queue_family_index(vd::QUEUE_FAMILY_IGNORED)
+        .dst_queue_family_index(vd::QUEUE_FAMILY_IGNORED)
         .image(image)
         .subresource_range(subresource_range)
         .build();
@@ -852,8 +900,6 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
         device.cmd_copy_buffer_to_image(command_buffer.handle(), buffer.handle(), image.handle(),
             ImageLayout::TransferDstOptimal, &[region]);
     }
-
-
     end_single_time_commands(device, command_buffer)
 }
 
@@ -867,9 +913,10 @@ fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
         .size(size)
         .build();
 
-    unsafe { device.cmd_copy_buffer(command_buffer.handle(), src_buffer.handle(),
-            dst_buffer.handle(), &[copy_region]); }
-
+    unsafe {
+        device.cmd_copy_buffer(command_buffer.handle(), src_buffer.handle(),
+            dst_buffer.handle(), &[copy_region]);
+    }
     end_single_time_commands(device, command_buffer)
 }
 
@@ -1232,7 +1279,6 @@ struct App {
     instance: Instance,
     window: Window,
     events_loop: EventsLoop,
-    queue_family_flags: QueueFlags,
     device: Device,
     surface: SurfaceKhr,
     descriptor_set_layout: DescriptorSetLayout,
@@ -1269,13 +1315,9 @@ impl App {
         let instance = init_instance()?;
         let (window, events_loop) = init_window();
         let surface = voodoo_winit::create_surface(instance.clone(), &window)?;
-        let queue_family_flags = QueueFlags::GRAPHICS;
-        let physical_device = choose_physical_device(&instance, &surface,
-            queue_family_flags)?;
-        let device = create_device(&surface, physical_device,
-            queue_family_flags)?;
-        let swapchain = create_swapchain(surface.clone(), device.clone(), queue_family_flags,
-            None, None)?;
+        let physical_device = choose_physical_device(&instance, &surface)?;
+        let device = create_device(&surface, physical_device)?;
+        let swapchain = create_swapchain(surface.clone(), device.clone(), None, None)?;
         let image_views = create_image_views(&swapchain)?;
         let render_pass = create_render_pass(device.clone(), swapchain.image_format())?;
         let descriptor_set_layout = create_descriptor_set_layout(device.clone())?;
@@ -1285,7 +1327,7 @@ impl App {
         let frag_shader_code = util::read_spir_v_file(FRAG_SHADER_PATH)?;
         let graphics_pipeline = create_graphics_pipeline(device.clone(), &pipeline_layout,
             &render_pass, swapchain.extent().clone(), &vert_shader_code, &frag_shader_code)?;
-        let command_pool = create_command_pool(device.clone(), &surface, queue_family_flags)?;
+        let command_pool = create_command_pool(device.clone(), &surface)?;
         let (depth_image, depth_image_memory, depth_image_view) = create_depth_resources(&device,
             &command_pool, swapchain.extent().clone())?;
         let framebuffers = create_framebuffers(&device, &render_pass,
@@ -1334,7 +1376,6 @@ impl App {
             instance,
             window: window,
             events_loop: events_loop,
-            queue_family_flags,
             device: device,
             surface: surface,
             descriptor_set_layout,
@@ -1376,7 +1417,7 @@ impl App {
         self.device.wait_idle();
 
         let swapchain = create_swapchain(self.surface.clone(), self.device.clone(),
-            self.queue_family_flags, Some(current_extent), self.swapchain.as_ref().take())?;
+            Some(current_extent), self.swapchain.as_ref().take())?;
 
         self.cleanup_swapchain();
 
@@ -1480,9 +1521,11 @@ impl App {
             .signal_semaphores(&signal_semaphores[..])
             .build();
 
-        unsafe {
-            self.device.queue_submit(self.device.queue(0), &[submit_info], None)?;
-        }
+        // unsafe {
+        //     self.device.queue_submit(self.device.queue(0).unwrap(), &[submit_info], None)?;
+        // }
+        let queue = self.device.queue(0).unwrap();
+        queue.submit(&[submit_info], None)?;
 
         let swapchains = [self.swapchain.as_ref().unwrap().handle()];
         let image_indices = [image_index];
@@ -1493,10 +1536,13 @@ impl App {
             .image_indices(&image_indices)
             .build();
 
-        unsafe {
-            self.device.queue_present_khr(self.device.queue(0), &present_info)?;
-            self.device.queue_wait_idle(self.device.queue(0));
-        }
+        // unsafe {
+        //     self.device.queue_present_khr(self.device.queue(0).unwrap(), &present_info)?;
+        //     self.device.queue_wait_idle(self.device.queue(0).unwrap());
+        // }
+
+        queue.present_khr(&present_info)?;
+        queue.wait_idle();
 
         Ok(())
     }

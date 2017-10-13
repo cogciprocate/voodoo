@@ -118,7 +118,7 @@ impl Loader {
     }
 
     /// Verifies that each layer name listed is available.
-    pub fn verify_layer_availability<'a, 'cs, Cs>(&'a self, layer_names: Cs) -> VdResult<bool>
+    pub fn verify_layer_support<'a, 'cs, Cs>(&'a self, layer_names: Cs) -> VdResult<bool>
             where 'cs: 'a, Cs: 'cs + Into<CharStrs<'cs>> {
         let available_layers = self.enumerate_instance_layer_properties()?;
         // Print available layers:

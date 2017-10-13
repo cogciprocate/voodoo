@@ -9,7 +9,6 @@ use ::{PRINT, VdResult, Instance, Handle, SurfaceFormatKhr, PhysicalDeviceFeatur
 
 
 
-
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct PhysicalDeviceHandle(pub(crate) vks::VkPhysicalDevice);
@@ -70,6 +69,7 @@ impl PhysicalDevice {
         self.instance().get_physical_device_properties(self)
     }
 
+    // Query the properties of queues available on this physical device.
     #[inline]
     pub fn queue_family_properties(&self) -> VdResult<SmallVec<[QueueFamilyProperties; 16]>> {
         self.instance().get_physical_device_queue_family_properties(self)
@@ -111,7 +111,7 @@ impl PhysicalDevice {
 
     /// Verifies that the extensions listed are supported by this physical device.
     #[inline]
-    pub fn verify_extension_availability<'a, 'cs, Cs>(&'a self, extension_names: Cs) -> VdResult<bool>
+    pub fn verify_extension_support<'a, 'cs, Cs>(&'a self, extension_names: Cs) -> VdResult<bool>
             where 'cs: 'a, Cs: 'cs + Into<CharStrs<'cs>> {
         let avail_exts = self.extension_properties()?;
         unsafe {

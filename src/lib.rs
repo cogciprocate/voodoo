@@ -172,7 +172,7 @@ pub use instance::{InstanceHandle, Instance, InstanceBuilder};
 pub use physical_device::{PhysicalDeviceHandle, PhysicalDevice};
 pub use device::{DeviceHandle, Device, DeviceBuilder};
 pub use surface::{SurfaceKhrHandle, SurfaceKhr, SurfaceKhrBuilder};
-pub use queue::{queue_families, QueueHandle, Queue};
+pub use queue::{QueueHandle, Queue};
 pub use swapchain::{SwapchainKhrHandle, SwapchainKhr, SwapchainKhrBuilder, SwapchainSupportDetails};
 pub use image_view::{ImageViewHandle, ImageView, ImageViewBuilder};
 pub use shader_module::{ShaderModuleHandle, ShaderModule};

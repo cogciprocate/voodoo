@@ -537,8 +537,8 @@ impl Instance {
     }
 
     // *PFN_vkCreateMirSurfaceKHR)(VkInstance instance, const VkMirSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
-    pub unsafe fn create_mir_surface_khr(&self,
-            create_info: &MirSurfaceCreateInfoKhr, allocator: Option<*const vks::VkAllocationCallbacks>)
+    pub unsafe fn create_mir_surface_khr(&self, create_info: &MirSurfaceCreateInfoKhr,
+            allocator: Option<*const vks::VkAllocationCallbacks>)
             -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut surface = 0;

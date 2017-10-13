@@ -35,7 +35,7 @@ use ::{error, VdResult, Instance, PhysicalDevice, DeviceQueueCreateInfo, CharStr
     FenceGetFdInfoKhr, ImageMemoryRequirementsInfo2Khr, ImageSparseMemoryRequirementsInfo2Khr,
     DebugMarkerObjectTagInfoExt, DebugMarkerObjectNameInfoExt, DisplayPowerInfoExt,
     DisplayKhrHandle, DeviceEventInfoExt, DisplayEventInfoExt, HdrMetadataExt,
-    SurfaceCounterFlagsExt,};
+    SurfaceCounterFlagsExt, Queue};
 
 // #[cfg(feature = "experimental")]
 // use ::{};
@@ -67,14 +67,27 @@ unsafe impl Handle for DeviceHandle {
     }
 }
 
+fn get_device_queue(proc_addr_loader: &vks::DeviceProcAddrLoader, device: DeviceHandle,
+        queue_family_index: u32, queue_index: u32) -> Option<QueueHandle> {
+    let mut handle = ptr::null_mut();
+    unsafe {
+        proc_addr_loader.core.vkGetDeviceQueue(device.to_raw(),
+            queue_family_index, queue_index, &mut handle);
+    }
+    if !handle.is_null() {
+        Some(QueueHandle(handle))
+    } else {
+        None
+    }
+}
+
 
 #[derive(Debug)]
 struct Inner {
     handle: DeviceHandle,
     physical_device: PhysicalDevice,
     // features: vks::VkPhysicalDeviceFeatures,
-    // queues: SmallVec<[u32; 32]>,
-    queue_family_indices: SmallVec<[u32; 16]>,
+    queues: SmallVec<[Queue; 16]>,
     instance: Instance,
     loader: vks::DeviceProcAddrLoader,
 }
@@ -90,11 +103,19 @@ impl Device {
         DeviceBuilder::new()
     }
 
+    /// Returns one of this device's associated queue.
+    ///
+    /// `device_queue_index` does not correspond to the queue family index or
+    /// any other index used when creating this device.
     #[inline]
-    pub fn queue(&self, queue_idx: u32) -> QueueHandle {
-        assert!(self.inner.queue_family_indices.len() == 1,
-            "Update this shitty queue family code.");
-        self.get_device_queue(self.inner.queue_family_indices[0], queue_idx)
+    pub fn queue(&self, device_queue_index: usize) -> Option<&Queue> {
+        self.inner.queues.get(device_queue_index)
+    }
+
+    /// Returns a list of all queues associated with this device.
+    #[inline]
+    pub fn queues(&self) -> &[Queue] {
+        &self.inner.queues
     }
 
     #[inline]
@@ -142,20 +163,9 @@ impl Device {
     }
 
     // *PFN_vkGetDeviceQueue)(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue);
-    pub fn get_device_queue(&self, queue_family_index: u32, queue_index: u32) -> QueueHandle {
-        let mut handle = ptr::null_mut();
-        unsafe {
-            self.proc_addr_loader().core.vkGetDeviceQueue(self.inner.handle.0,
-                queue_family_index, queue_index, &mut handle);
-        }
-        if !handle.is_null() {
-            QueueHandle(handle)
-        } else {
-            panic!("unable to get device queue with family index: {} and index: {}",
-                queue_family_index, queue_index);
-        }
+    pub fn get_device_queue(&self, queue_family_index: u32, queue_index: u32) -> Option<QueueHandle> {
+        get_device_queue(self.proc_addr_loader(), self.inner.handle, queue_family_index, queue_index)
     }
-
 
     // *PFN_vkQueueSubmit)(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence);
     //
@@ -168,10 +178,11 @@ impl Device {
     //
     // fence is an optional handle to a fence to be signaled. If fence is not
     // VK_NULL_HANDLE, it defines a fence signal operation.
-    pub unsafe fn queue_submit(&self, queue: QueueHandle, submit_info: &[SubmitInfo],
-            fence: Option<FenceHandle>) -> VdResult<()> {
+    pub unsafe fn queue_submit<Q>(&self, queue: Q, submit_info: &[SubmitInfo],
+            fence: Option<FenceHandle>) -> VdResult<()>
+            where Q: Handle<Target=QueueHandle> {
         let fence_handle_raw = fence.map(|f| f.to_raw()).unwrap_or(0);
-        let result = self.proc_addr_loader().core.vkQueueSubmit(queue.to_raw(),
+        let result = self.proc_addr_loader().core.vkQueueSubmit(queue.handle().to_raw(),
             submit_info.len() as u32, submit_info.as_ptr() as *const vks::VkSubmitInfo,
             fence_handle_raw);
         error::check(result, "vkQueueSubmit", ())
@@ -1265,10 +1276,11 @@ impl Device {
     }
 
     // *PFN_vkQueuePresentKHR)(VkQueue queue, const VkPresentInfoKHR* pPresentInfo);
-    pub unsafe fn queue_present_khr(&self, queue: QueueHandle, present_info: &PresentInfoKhr)
-            -> VdResult<()> {
-        let result = self.proc_addr_loader().khr_swapchain.vkQueuePresentKHR(queue.to_raw(),
-            present_info.as_raw());
+    pub unsafe fn queue_present_khr<Q>(&self, queue: Q, present_info: &PresentInfoKhr)
+            -> VdResult<()>
+            where Q: Handle<Target=QueueHandle> {
+        let result = self.proc_addr_loader().khr_swapchain.vkQueuePresentKHR(
+            queue.handle().to_raw(), present_info.as_raw());
         error::check(result, "vkQueuePresentKHR", ())
     }
 
@@ -1802,12 +1814,10 @@ impl<'db> DeviceBuilder<'db> {
             queue_create_infos: &'ci [DeviceQueueCreateInfo])
             -> &'s mut DeviceBuilder<'db>
             where 'ci: 'db {
-        // self.create_info.queueCreateInfoCount = queue_create_infos.len() as u32;
         debug_assert_eq!(mem::align_of::<DeviceQueueCreateInfo>(),
             mem::align_of::<vks::VkDeviceQueueCreateInfo>());
         debug_assert_eq!(mem::size_of::<DeviceQueueCreateInfo>(),
             mem::size_of::<vks::VkDeviceQueueCreateInfo>());
-        // self.create_info.queue_create_infos = queue_create_infos.as_ptr() as *const _;
         self.create_info.set_queue_create_infos(queue_create_infos);
         self
     }
@@ -1815,16 +1825,14 @@ impl<'db> DeviceBuilder<'db> {
     /// Specifies the layer names to enable.
     ///
     /// Ignored.
-    #[deprecated(note = "No longer used")]
+    #[deprecated(note = "ignored by Vulkan API")]
     pub fn enabled_layer_names<'s, 'cs, Cs>(&'s mut self, enabled_layer_names: Cs)
             -> &'s mut DeviceBuilder<'db>
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
         self.enabled_layer_names = Some(enabled_layer_names.into());
         if let Some(ref elns) = self.enabled_layer_names {
-            // self.create_info.set_enabled_layer_count(elns.len() as u32);
             self.create_info.set_enabled_layer_names(elns.as_ptr_slice());
         }
-        // self.create_info.set_enabled_layer_names(enabled_layer_names);
         self
     }
 
@@ -1835,11 +1843,8 @@ impl<'db> DeviceBuilder<'db> {
             where 'cs: 'db, Cs: 'cs + Into<CharStrs<'cs>> {
         self.enabled_extension_names = Some(enabled_extension_names.into());
         if let Some(ref eens) = self.enabled_extension_names {
-            // self.create_info.enabledExtensionCount = eens.len() as u32;
-            // self.create_info.enabled_extension_names = eens.as_ptr() as *const _;
             self.create_info.set_enabled_extension_names(eens.as_ptr_slice());
         }
-        // self.create_info.set_enabled_extension_names(enabled_extension_names);
         self
     }
 
@@ -2057,29 +2062,40 @@ impl<'db> DeviceBuilder<'db> {
         }
 
         let instance = physical_device.instance().clone();
-        let mut queue_family_indices = SmallVec::<[u32; 16]>::new();
-        // for i in 0..(self.create_info.queueCreateInfoCount as isize) {
-        //     unsafe {
-        //         let queue_create_info_ptr = self.create_info.pQueueCreateInfos.offset(i);
-        //         queue_family_indices.push((*queue_create_info_ptr).queueFamilyIndex);
-        //     }
-        // }
 
-        for queue_create_info in self.create_info.queue_create_infos() {
-            queue_family_indices.push(queue_create_info.queue_family_index())
-        }
-        assert!(queue_family_indices.len() == 1, "Update this shitty queue family code.");
-
-        Ok(Device {
+        let device = Device {
             inner: Arc::new(Inner {
-                // handle: DeviceHandle(handle),
                 handle,
                 physical_device,
-                // features,
-                queue_family_indices: queue_family_indices,
+                queues: SmallVec::new(),
                 instance,
                 loader,
             }),
-        })
+        };
+
+        let mut queues: SmallVec<[Queue; 16]> = SmallVec::new();
+
+        for qci in self.create_info.queue_create_infos() {
+            for q_idx in 0..qci.queue_priorities().len() as u32 {
+                match get_device_queue(&device.inner.loader, device.inner.handle,
+                        qci.queue_family_index(), q_idx) {
+                    Some(q_handle) => unsafe {
+                        queues.push(Queue::from_parts(q_handle, device.clone(),
+                            qci.queue_family_index(), q_idx))
+                    },
+                    None => {
+                        panic!("unable to get device queue (family_index: {}, index: {})",
+                            qci.queue_family_index(), q_idx);
+                    },
+                }
+            }
+        }
+
+        unsafe {
+            let inner_ptr = &(*device.inner) as *const Inner as *mut Inner;
+            (*inner_ptr).queues = queues;
+        }
+
+        Ok(device)
     }
 }
