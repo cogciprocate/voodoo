@@ -111,7 +111,7 @@ impl<'b> SurfaceKhrBuilder<'b> {
     }
 
     #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd"))]
-    pub unsafe fn xlib<'s>(&'s mut self, dpy: *mut vks::Display, window: vks::Window)
+    pub unsafe fn xlib<'s>(&'s mut self, dpy: *mut vks::Display, window: ::Window)
             -> &'s mut SurfaceKhrBuilder<'b> {
         let mut ci = XlibSurfaceCreateInfoKhr::default();
         ci.set_dpy(dpy);

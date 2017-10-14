@@ -1,6 +1,6 @@
 [root]
 name = "voodoo"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bitflags 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "cgmath 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",

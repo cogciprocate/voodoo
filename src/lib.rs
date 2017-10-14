@@ -643,11 +643,14 @@ unsafe impl<'h> Handle for &'h DisplayKhr {
 
 pub type ClearValue = vks::VkClearValue;
 pub type ClearColorValue = vks::VkClearColorValue;
+
 pub type DeviceSize = vks::VkDeviceSize;
 pub type Display = vks::Display;
+
 pub type Window = vks::Window;
 pub type VisualID = vks::VisualID;
 pub type RROutput = vks::RROutput;
+
 pub type MirConnection = vks::MirConnection;
 pub type MirSurface = vks::MirSurface;
 pub type ANativeWindow = vks::ANativeWindow;
@@ -661,10 +664,12 @@ pub type HINSTANCE = vks::HINSTANCE;
 pub type HWND = vks::HWND;
 #[allow(non_camel_case_types)]
 pub type xcb_connection_t = vks::xcb_connection_t;
+
 #[allow(non_camel_case_types)]
 pub type xcb_window_t = vks::xcb_window_t;
 #[allow(non_camel_case_types)]
 pub type xcb_visualid_t = vks::xcb_visualid_t;
+
 #[allow(non_camel_case_types)]
 pub type HANDLE = vks::HANDLE;
 #[allow(non_camel_case_types)]
