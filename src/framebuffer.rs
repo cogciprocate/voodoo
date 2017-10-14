@@ -21,6 +21,7 @@ impl FramebufferHandle {
 unsafe impl Handle for FramebufferHandle {
     type Target = FramebufferHandle;
 
+    /// Returns this object's handle.
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -46,6 +47,7 @@ impl Framebuffer {
         FramebufferBuilder::new()
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> FramebufferHandle {
         self.inner.handle
     }

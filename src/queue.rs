@@ -2,7 +2,6 @@ use vks;
 use ::{VdResult, Device, Handle, SubmitInfo, FenceHandle, BindSparseInfo, PresentInfoKhr};
 
 
-
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct QueueHandle(pub(crate) vks::VkQueue);
@@ -17,6 +16,7 @@ impl QueueHandle {
 unsafe impl Handle for QueueHandle {
     type Target = QueueHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
@@ -32,19 +32,7 @@ pub struct Queue {
 }
 
 impl Queue {
-    // pub fn new(device: Device, queue_family_index: u32, queue_index: u32) -> VdResult<Queue> {
-    //     let handle = device.get_device_queue(queue_family_index, queue_index)
-    //         .ok_or(Error::from(format!("Unable to get device queue with: family_index: {}, index: {}",
-    //             queue_family_index, queue_index)))?;
-
-    //     Ok(Queue {
-    //         handle,
-    //         device,
-    //         family_idx: queue_family_index,
-    //         idx: queue_index,
-    //     })
-    // }
-
+    /// Assembles and returns a new `Queue` from parts.
     pub(crate) unsafe fn from_parts(handle: QueueHandle, device: Device, queue_family_index: u32,
             queue_index: u32) -> Queue {
         Queue {
@@ -55,14 +43,17 @@ impl Queue {
         }
     }
 
+    /// Returns a reference to this object's associated device.
     pub fn device(&self) -> &Device {
         &self.device
     }
 
+    /// Returns this queue's family index.
     pub fn family_index(&self) -> u32 {
         self.family_idx
     }
 
+    /// Returns this queue's index within its family.
     pub fn index(&self) -> u32 {
         self.idx
     }
@@ -78,12 +69,20 @@ impl Queue {
         self.device.queue_wait_idle(self.handle)
     }
 
+    /// Binds device memory to a sparse resource object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkQueueBindSparse.html
+    //
     #[inline]
     pub fn bind_sparse<Q, F>(&self, bind_info: &[BindSparseInfo], fence: F) -> VdResult<()>
             where Q: Handle<Target=QueueHandle>, F: Handle<Target=FenceHandle> {
         unsafe { self.device.queue_bind_sparse(self.handle, bind_info, fence) }
     }
 
+    /// Queues an image for presentation.
+    ///
+    /// https://manned.org/vkQueuePresentKHR.3
+    //
     #[inline]
     pub fn present_khr(&self, present_info: &PresentInfoKhr) -> VdResult<()> {
         unsafe { self.device.queue_present_khr(self.handle, present_info) }
@@ -93,6 +92,7 @@ impl Queue {
 unsafe impl<'a> Handle for &'a Queue {
     type Target = QueueHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.handle

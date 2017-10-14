@@ -46,6 +46,7 @@ impl DescriptorPool {
         DescriptorPoolBuilder::new()
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> DescriptorPoolHandle {
         self.inner.handle
     }
@@ -75,6 +76,10 @@ impl DescriptorPool {
         Ok(descriptor_set_handles.iter().map(|&dsh| DescriptorSet(dsh)).collect())
     }
 
+    /// Updates the contents of a descriptor set object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkUpdateDescriptorSets.html
+    //
     pub fn update_descriptor_sets(&self, descriptor_writes: &[WriteDescriptorSet],
             descriptor_copies: &[CopyDescriptorSet]) {
         self.inner.device.update_descriptor_sets(descriptor_writes, descriptor_copies)

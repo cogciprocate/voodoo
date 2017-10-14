@@ -1,6 +1,5 @@
 
 use std::sync::Arc;
-// use std::ptr;
 use vks;
 use ::{VdResult, SwapchainKhr, Device, ImageHandle, Handle};
 
@@ -19,6 +18,7 @@ impl ImageViewHandle {
 unsafe impl Handle for ImageViewHandle {
     type Target = ImageViewHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
@@ -44,6 +44,7 @@ impl ImageView {
         ImageViewBuilder::new()
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> ImageViewHandle {
         self.inner.handle
     }

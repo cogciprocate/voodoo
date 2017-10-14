@@ -1,4 +1,3 @@
-
 use std::sync::Arc;
 use vks;
 use ::{VdResult, Device, Handle, SemaphoreCreateFlags, SemaphoreCreateInfo};
@@ -19,6 +18,7 @@ impl SemaphoreHandle {
 unsafe impl Handle for SemaphoreHandle {
     type Target = SemaphoreHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
@@ -38,34 +38,23 @@ pub struct Semaphore {
 }
 
 impl Semaphore {
+    /// Creates and returns a new `Semaphore`.
     pub fn new(device: Device, flags: SemaphoreCreateFlags) -> VdResult<Semaphore> {
-        // let create_info = vks::VkSemaphoreCreateInfo {
-        //     sType: vks::VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-        //     pNext: ptr::null(),
-        //     flags: 0,
-        // };
-
         let create_info = SemaphoreCreateInfo::builder()
             .flags(flags)
             .build();
-
-        // let mut handle = 0;
-        // unsafe {
-        //     ::check(device.proc_addr_loader().core.vkCreateSemaphore(device.handle().0, &create_info,
-        //         ptr::null(), &mut handle));
-        // }
 
         let handle = unsafe { device.create_semaphore(&create_info, None)? };
 
         Ok(Semaphore {
             inner: Arc::new(Inner {
-                // handle: SemaphoreHandle(handle),
                 handle,
                 device,
             })
         })
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> SemaphoreHandle {
         self.inner.handle
     }
@@ -88,8 +77,6 @@ unsafe impl<'h> Handle for &'h Semaphore {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().core.vkDestroySemaphore(self.device.handle().0,
-            //     self.handle.0, ptr::null());
             self.device.destroy_semaphore(self.handle, None);
         }
     }

@@ -1,9 +1,6 @@
 use std::sync::Arc;
-// use std::ffi::CStr;
-// use std::ptr;
 use std::marker::PhantomData;
 use vks;
-// use smallvec::SmallVec;
 use ::{VdResult, Device,  DescriptorSetLayoutHandle, Handle,
     PipelineLayoutCreateInfo, PushConstantRange};
 
@@ -22,6 +19,7 @@ impl PipelineLayoutHandle {
 unsafe impl Handle for PipelineLayoutHandle {
     type Target = PipelineLayoutHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
@@ -46,6 +44,7 @@ impl PipelineLayout {
         PipelineLayoutBuilder::new()
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> PipelineLayoutHandle {
         self.inner.handle
     }
@@ -68,8 +67,6 @@ unsafe impl<'h> Handle for &'h PipelineLayout {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().core.vkDestroyPipelineLayout(self.device.handle().0,
-            //     self.handle.0, ptr::null());
             self.device.destroy_pipeline_layout(self.handle, None);
         }
     }
@@ -77,17 +74,6 @@ impl Drop for Inner {
 
 
 /// A builder for `PipelineLayout`.
-//
-// typedef struct VkPipelineLayoutCreateInfo {
-//     VkStructureType                 sType;
-//     const void*                     pNext;
-//     VkPipelineLayoutCreateFlags     flags;
-//     uint32_t                        setLayoutCount;
-//     const VkDescriptorSetLayout*    pSetLayouts;
-//     uint32_t                        pushConstantRangeCount;
-//     const VkPushConstantRange*      pPushConstantRanges;
-// } VkPipelineLayoutCreateInfo;
-//
 #[derive(Debug, Clone)]
 pub struct PipelineLayoutBuilder<'b> {
     create_info: PipelineLayoutCreateInfo<'b>,
@@ -131,17 +117,10 @@ impl<'b> PipelineLayoutBuilder<'b> {
 
     /// Creates and returns a new `PipelineLayout`
     pub fn build(&self, device: Device) -> VdResult<PipelineLayout> {
-        // let mut handle = 0;
-        // unsafe {
-        //     ::check(device.proc_addr_loader().core.vkCreatePipelineLayout(device.handle().0,
-        //         &self.create_info, ptr::null(), &mut handle));
-        // }
-
         let handle = unsafe { device.create_pipeline_layout(&self.create_info, None)? };
 
         Ok(PipelineLayout {
             inner: Arc::new(Inner {
-                // handle: PipelineLayoutHandle(handle),
                 handle,
                 device,
             })

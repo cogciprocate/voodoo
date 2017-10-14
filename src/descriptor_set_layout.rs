@@ -43,6 +43,7 @@ impl DescriptorSetLayout {
         DescriptorSetLayoutBuilder::new()
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> DescriptorSetLayoutHandle {
         self.inner.handle
     }

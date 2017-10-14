@@ -40,6 +40,7 @@ impl FenceHandle {
 unsafe impl Handle for FenceHandle {
     type Target = FenceHandle;
 
+    /// Returns this object's handle.
     fn handle(&self) -> Self::Target {
         *self
     }
@@ -67,6 +68,7 @@ pub struct Fence {
 }
 
 impl Fence {
+    /// Creates and returns a new fence.
     pub fn new(device: Device, flags: FenceCreateFlags) -> VdResult<Fence> {
         let create_info = FenceCreateInfo::builder()
             .flags(flags)
@@ -82,10 +84,20 @@ impl Fence {
         })
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> FenceHandle {
         self.inner.handle
     }
 
+    /// Returns a reference to this object's associated device.
+    pub fn device(&self) -> &Device {
+        &self.inner.device
+    }
+
+    /// Returns the status of this fence.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetFenceStatus.html
+    //
     pub fn status(&self) -> VdResult<FenceStatus> {
         unsafe { Ok(FenceStatus::from(self.inner.device.get_fence_status(self.handle())?)) }
     }

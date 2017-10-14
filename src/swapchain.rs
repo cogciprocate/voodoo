@@ -2,8 +2,7 @@ use std::sync::Arc;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
-use ::{VdResult, SurfaceKhr, Device, PhysicalDevice, Image, Handle,
-    Semaphore, Fence};
+use ::{VdResult, SurfaceKhr, Device, PhysicalDevice, Image, Handle, Semaphore, Fence};
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -20,6 +19,7 @@ impl SwapchainKhrHandle {
 unsafe impl Handle for SwapchainKhrHandle {
     type Target = SwapchainKhrHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
@@ -54,7 +54,6 @@ struct Inner {
     handle: SwapchainKhrHandle,
     device: Device,
     surface: SurfaceKhr,
-    // TODO: Revisit whether we should simply store a handle.
     images: SmallVec<[Image; 4]>,
     image_format: ::Format,
     extent: ::Extent2d,
@@ -66,22 +65,27 @@ pub struct SwapchainKhr {
 }
 
 impl SwapchainKhr {
+    /// Returns a new `SwapchainKhrBuilder`.
     pub fn builder<'b>() -> SwapchainKhrBuilder<'b> {
         SwapchainKhrBuilder::new()
     }
 
+    /// Returns the images associated with this swapchain.
     pub fn images(&self) -> &[Image] {
         &self.inner.images
     }
 
+    /// Returns this swapchain's image format.
     pub fn image_format(&self) -> ::Format {
         self.inner.image_format
     }
 
+    /// Returns this swapchain's extent.
     pub fn extent(&self) -> &::Extent2d {
         &self.inner.extent
     }
 
+    /// Returns this swapchain's handle.
     pub fn handle(&self) -> SwapchainKhrHandle {
         self.inner.handle
     }
@@ -91,7 +95,10 @@ impl SwapchainKhr {
         &self.inner.device
     }
 
-    // *PFN_vkAcquireNextImageKHR)(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex);
+    /// Retrieves the index of the next available presentable image.
+    ///
+    /// https://manned.org/vkAcquireNextImageKHR.3
+    //
     #[inline]
     pub fn acquire_next_image_khr(&self, timeout: u64, semaphore: Option<&Semaphore>,
             fence: Option<&Fence>) -> VdResult<u32> {

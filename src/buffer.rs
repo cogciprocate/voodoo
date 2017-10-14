@@ -44,10 +44,12 @@ impl Buffer {
         BufferBuilder::new()
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> BufferHandle {
         self.inner.handle
     }
 
+    /// Returns this buffer's memory requirements.
     pub fn memory_requirements(&self) -> &::MemoryRequirements {
         &self.inner.memory_requirements
     }

@@ -83,18 +83,36 @@ impl Event {
         })
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> EventHandle {
         self.inner.handle
     }
 
+    /// Returns a reference to this object's associated device.
+    pub fn device(&self) -> &Device {
+        &self.inner.device
+    }
+
+    /// Sets this event to signaled state.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkSetEvent.html
+    //
     pub fn set(&self) -> VdResult<()> {
         unsafe { self.inner.device.set_event(self.handle()) }
     }
 
+    /// Resets this event to non-signaled state.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkResetEvent.html
+    //
     pub fn reset(&self) -> VdResult<()> {
         unsafe { self.inner.device.reset_event(self.handle()) }
     }
 
+    /// Retrieves the status of this event object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetEventStatus.html
+    //
     pub fn status(&self) -> VdResult<EventStatus> {
         unsafe { Ok(self.inner.device.get_event_status(self.handle())?.into()) }
     }

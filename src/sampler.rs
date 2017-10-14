@@ -19,6 +19,7 @@ impl SamplerHandle {
 unsafe impl Handle for SamplerHandle {
     type Target = SamplerHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
@@ -43,6 +44,7 @@ impl Sampler {
         SamplerBuilder::new()
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> SamplerHandle {
         self.inner.handle
     }

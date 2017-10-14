@@ -56,6 +56,7 @@ impl GraphicsPipeline {
         Ok(pipelines)
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> PipelineHandle {
         self.inner.handle
     }

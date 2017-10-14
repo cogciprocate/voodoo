@@ -1,9 +1,4 @@
 use std::sync::Arc;
-// use std::ffi::CStr;
-// use std::ptr;
-// use std::path::Path;
-// use std::fs::File;
-// use std::io::{};
 use vks;
 use ::{VdResult, Device, Handle, ShaderModuleCreateInfo};
 
@@ -22,6 +17,7 @@ impl ShaderModuleHandle {
 unsafe impl Handle for ShaderModuleHandle {
     type Target = ShaderModuleHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
@@ -49,35 +45,23 @@ pub struct ShaderModule {
 }
 
 impl ShaderModule {
+    /// Creates and returns a new `ShaderModule`.
     pub fn new(device: Device, code: &[u32]) -> VdResult<ShaderModule> {
-        // let create_info = vks::VkShaderModuleCreateInfo {
-        //     sType: vks::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-        //     pNext: ptr::null(),
-        //     flags: 0,
-        //     codeSize: code.len(),
-        //     pCode: code.as_ptr() as *const u32,
-        // };
-
         let create_info = ShaderModuleCreateInfo::builder()
             .code(code)
             .build();
 
-        // let mut handle = 0;
-        // unsafe {
-        //     ::check(device.proc_addr_loader().core.vkCreateShaderModule(device.handle().0, &create_info,
-        //         ptr::null(), &mut handle));
-        // }
         let handle = unsafe { device.create_shader_module(&create_info, None)? };
 
         Ok(ShaderModule {
             inner: Arc::new(Inner {
-                // handle: ShaderModuleHandle(handle),
                 handle,
                 device,
             })
         })
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> ShaderModuleHandle {
         self.inner.handle
     }
@@ -100,8 +84,6 @@ unsafe impl<'h> Handle for &'h ShaderModule {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().core.vkDestroyShaderModule(self.device.handle().0,
-            //     self.handle.0, ptr::null());
             self.device.destroy_shader_module(self.handle, None);
         }
     }

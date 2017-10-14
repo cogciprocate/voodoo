@@ -23,6 +23,7 @@ impl SurfaceKhrHandle {
 unsafe impl Handle for SurfaceKhrHandle {
     type Target = SurfaceKhrHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
@@ -43,10 +44,12 @@ pub struct SurfaceKhr {
 }
 
 impl SurfaceKhr {
+    /// Returns a new `SurfaceKhrBuilder`.
     pub fn builder<'b>() -> SurfaceKhrBuilder<'b> {
         SurfaceKhrBuilder::new()
     }
 
+    /// Assembles a new `SurfaceKhr` from parts.
     pub unsafe fn from_raw(instance: Instance, handle: SurfaceKhrHandle) -> VdResult<SurfaceKhr> {
         Ok(SurfaceKhr {
             inner: Arc::new(Inner {
@@ -57,8 +60,14 @@ impl SurfaceKhr {
         })
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> SurfaceKhrHandle {
         self.inner.handle
+    }
+
+    /// Returns a reference to this object's associated instance.
+    pub fn instance(&self) -> &Instance {
+        &self.inner.instance
     }
 }
 
@@ -73,10 +82,6 @@ unsafe impl<'s> Handle for &'s SurfaceKhr {
 
 impl Drop for Inner {
     fn drop(&mut self) {
-        // unsafe {
-        //     self.instance.proc_addr_loader().khr_surface.vkDestroySurfaceKHR(self.instance.handle().0,
-        //         self.handle.0, ptr::null());
-        // }
         unsafe { self.instance.destroy_surface_khr(self.handle, None); }
     }
 }

@@ -1,6 +1,4 @@
 use std::sync::Arc;
-// use std::ffi::CStr;
-// use std::ptr;
 use std::marker::PhantomData;
 use vks;
 use ::{VdResult, Device,  Handle};
@@ -20,6 +18,7 @@ impl RenderPassHandle {
 unsafe impl Handle for RenderPassHandle {
     type Target = RenderPassHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
@@ -45,6 +44,7 @@ impl RenderPass {
         RenderPassBuilder::new()
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> RenderPassHandle {
         self.inner.handle
     }
@@ -58,6 +58,7 @@ impl RenderPass {
 unsafe impl<'h> Handle for &'h RenderPass {
     type Target = RenderPassHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
@@ -67,8 +68,6 @@ unsafe impl<'h> Handle for &'h RenderPass {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().core.vkDestroyRenderPass(self.device.handle().0,
-            //     self.handle.0, ptr::null());
             self.device.destroy_render_pass(self.handle, None);
         }
     }
@@ -125,17 +124,10 @@ impl<'b> RenderPassBuilder<'b> {
 
     /// Builds and returns a new `RenderPass`
     pub fn build(&self, device: Device) -> VdResult<RenderPass> {
-        // let mut handle = 0;
-        // unsafe {
-        //     ::check(device.proc_addr_loader().core.vkCreateRenderPass(device.handle().0,
-        //         self.create_info.as_raw(), ptr::null(), &mut handle));
-        // }
-
         let handle = unsafe { device.create_render_pass(&self.create_info, None)? };
 
         Ok(RenderPass {
             inner: Arc::new(Inner {
-                // handle: RenderPassHandle(handle),
                 handle,
                 device,
             })

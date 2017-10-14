@@ -19,6 +19,7 @@ impl ImageHandle {
 unsafe impl Handle for ImageHandle {
     type Target = ImageHandle;
 
+    /// Returns this object's handle.
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         *self
@@ -58,10 +59,12 @@ impl Image {
         }
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> ImageHandle {
         self.inner.handle
     }
 
+    /// Returns this image's memory requirements.
     pub fn memory_requirements(&self) -> &::MemoryRequirements {
         &self.inner.memory_requirements
     }

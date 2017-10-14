@@ -140,7 +140,7 @@ impl DeviceMemory {
         unsafe { self.unmap_ptr() }
     }
 
-    /// Returns a handle.
+    /// Returns this object's handle.
     pub fn handle(&self) -> DeviceMemoryHandle {
         self.inner.handle
     }

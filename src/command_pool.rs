@@ -46,6 +46,10 @@ impl CommandPool {
         CommandPoolBuilder::new()
     }
 
+    /// Allocates command buffers from an existing command pool.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkAllocateCommandBuffers.html
+    //
     fn allocate_command_buffer_handles(&self, level: CommandBufferLevel, count: u32)
             -> VdResult<SmallVec<[CommandBufferHandle; 16]>> {
         let alloc_info = CommandBufferAllocateInfo::builder()
@@ -66,6 +70,10 @@ impl CommandPool {
         unsafe { self.inner.device.allocate_command_buffers(&alloc_info) }
     }
 
+    /// Allocates command buffers from an existing command pool.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkAllocateCommandBuffers.html
+    //
     pub fn allocate_command_buffers(&self, level: CommandBufferLevel, count: u32)
             -> VdResult<SmallVec<[CommandBuffer; 16]>> {
         self.allocate_command_buffer_handles(level, count)?.iter().map(|&hndl| {
@@ -73,10 +81,15 @@ impl CommandPool {
         }).collect::<Result<SmallVec<_>, _>>()
     }
 
+    /// Allocates a command buffer from an existing command pool.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkAllocateCommandBuffers.html
+    //
     pub fn allocate_command_buffer(&self, level: CommandBufferLevel) -> VdResult<CommandBuffer> {
         self.allocate_command_buffers(level, 1).map(|mut cbs| cbs.remove(0))
     }
 
+    /// Returns this object's handle.
     pub fn handle(&self) -> CommandPoolHandle {
         self.inner.handle
     }
