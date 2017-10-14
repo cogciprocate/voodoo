@@ -1,6 +1,6 @@
-use std::mem;
+// use std::mem;
 use winit::Window as WinitWindow;
-use ::{VdResult, Instance, SurfaceKhr, Window};
+use ::{VdResult, Instance, SurfaceKhr};
 
 pub use winit;
 
