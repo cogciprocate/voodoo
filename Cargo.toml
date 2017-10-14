@@ -1,6 +1,6 @@
 [package]
 name = "voodoo"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Nick Sanders <cogciprocate@gmail.com>"]
 description = "An intuitive, idiomatic, unopinionated, zero-overhead Vulkan API"
 documentation = "https://docs.rs/voodoo"

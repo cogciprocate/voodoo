@@ -1,12 +1,9 @@
 //! Voodoo - Vulkan, but rustier.
 
-
 extern crate libloading as lib;
 extern crate smallvec;
 extern crate vks as vks_;
 extern crate libc;
-// extern crate tobj;
-// extern crate ordered_float;
 #[macro_use]
 extern crate bitflags as bitflags_;
 #[macro_use]
@@ -27,7 +24,7 @@ mod render_pass;
 mod graphics_pipeline;
 mod framebuffer;
 mod surface;
-pub mod queue;
+mod queue;
 mod command_pool;
 mod command_buffer;
 mod semaphore;
@@ -42,6 +39,9 @@ mod enums;
 mod bitflags;
 mod event;
 mod fence;
+mod device;
+pub mod voodoo_winit;
+pub mod util;
 
 pub mod vks {
     pub use vks_::*;
@@ -156,13 +156,7 @@ pub mod vks {
     pub use vks_::experimental::nvx_multiview_per_view_attributes::*;
 }
 
-pub mod device;
-pub mod util;
-pub mod voodoo_winit;
 
-// use std::hash::{Hash, Hasher};
-// use std::mem;
-// use ordered_float::OrderedFloat;
 use error::{Result as VdResult};
 pub use util::{CharStr, CharStrs};
 pub use loader::Loader;
@@ -233,8 +227,6 @@ pub unsafe trait Handle {
 
     fn handle(&self) -> Self::Target;
 }
-
-
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -518,7 +510,6 @@ unsafe impl Handle for DescriptorUpdateTemplateKhrHandle {
         *self
     }
 }
-
 
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
