@@ -182,17 +182,17 @@ impl CommandBuffer {
     }
 
     #[inline]
-    pub fn draw_indirect(&self, buffer: &Buffer, offset: u64, draw_count: u32,
+    pub unsafe fn draw_indirect(&self, buffer: &Buffer, offset: u64, draw_count: u32,
             stride: u32) {
-        unsafe { self.device().cmd_draw_indirect(self.handle(),
-            buffer.handle(), offset, draw_count, stride); }
+        self.device().cmd_draw_indirect(self.handle(),
+            buffer.handle(), offset, draw_count, stride);
     }
 
     #[inline]
-    pub fn draw_indexed_indirect(&self, buffer: &Buffer, offset: u64, draw_count: u32,
+    pub unsafe fn draw_indexed_indirect(&self, buffer: &Buffer, offset: u64, draw_count: u32,
             stride: u32) {
-        unsafe { self.device().cmd_draw_indexed_indirect(self.handle(),
-            buffer.handle(), offset, draw_count, stride); }
+        self.device().cmd_draw_indexed_indirect(self.handle(),
+            buffer.handle(), offset, draw_count, stride);
     }
 
     pub fn dispatch(&self, group_count_x: u32, group_count_y: u32, group_count_z: u32) {
@@ -202,73 +202,71 @@ impl CommandBuffer {
     }
 
     #[inline]
-    pub fn dispatch_indirect(&self, buffer: &Buffer, offset: u64) {
-        unsafe {
+    pub unsafe fn dispatch_indirect(&self, buffer: &Buffer, offset: u64) {
             self.device().cmd_dispatch_indirect(self.handle(), buffer.handle(), offset);
-        }
     }
 
     #[inline]
-    pub fn copy_buffer(&self, src_buffer: &Buffer, dst_buffer: &Buffer,
+    pub unsafe fn copy_buffer(&self, src_buffer: &Buffer, dst_buffer: &Buffer,
             regions: &[BufferCopy]) {
-        unsafe { self.device().cmd_copy_buffer(self.handle(), src_buffer.handle(),
-            dst_buffer.handle(), regions); }
+        self.device().cmd_copy_buffer(self.handle(), src_buffer.handle(),
+            dst_buffer.handle(), regions);
     }
 
     #[inline]
-    pub fn copy_image(&self, src_image: &Image, src_image_layout: ImageLayout,
+    pub unsafe fn copy_image(&self, src_image: &Image, src_image_layout: ImageLayout,
             dst_image: &Image, dst_image_layout: ImageLayout, regions: &[ImageCopy]) {
-        unsafe { self.device().cmd_copy_image(self.handle(),
-            src_image.handle(), src_image_layout, dst_image.handle(), dst_image_layout, regions); }
+        self.device().cmd_copy_image(self.handle(),
+            src_image.handle(), src_image_layout, dst_image.handle(), dst_image_layout, regions);
     }
 
     #[inline]
-    pub fn blit_image(&self, src_image: &Image, src_image_layout: ImageLayout,
+    pub unsafe fn blit_image(&self, src_image: &Image, src_image_layout: ImageLayout,
             dst_image: &Image, dst_image_layout: ImageLayout, regions: &[ImageBlit],
             filter: Filter) {
-        unsafe { self.device().cmd_blit_image(self.handle(), src_image.handle(), src_image_layout,
-            dst_image.handle(), dst_image_layout, regions, filter); }
+        self.device().cmd_blit_image(self.handle(), src_image.handle(), src_image_layout,
+            dst_image.handle(), dst_image_layout, regions, filter);
     }
 
     #[inline]
-    pub fn copy_buffer_to_image(&self, src_buffer: &Buffer, dst_image: &Image,
+    pub unsafe fn copy_buffer_to_image(&self, src_buffer: &Buffer, dst_image: &Image,
             dst_image_layout: ImageLayout, regions: &[BufferImageCopy]) {
-        unsafe { self.device().cmd_copy_buffer_to_image(self.handle(), src_buffer.handle(),
-            dst_image.handle(), dst_image_layout, regions, ); }
+        self.device().cmd_copy_buffer_to_image(self.handle(), src_buffer.handle(),
+            dst_image.handle(), dst_image_layout, regions, );
     }
 
     #[inline]
-    pub fn copy_image_to_buffer(&self, src_image: &Image, src_image_layout: ImageLayout,
+    pub unsafe fn copy_image_to_buffer(&self, src_image: &Image, src_image_layout: ImageLayout,
             dst_buffer: &Buffer, regions: &[BufferImageCopy]) {
-        unsafe { self.device().cmd_copy_image_to_buffer(self.handle(),
-            src_image.handle(), src_image_layout, dst_buffer.handle(), regions); }
+        self.device().cmd_copy_image_to_buffer(self.handle(),
+            src_image.handle(), src_image_layout, dst_buffer.handle(), regions);
     }
 
     #[inline]
-    pub fn update_buffer(&self, dst_buffer: &Buffer, dst_offset: u64, data: &[u8]) {
-        unsafe { self.device().cmd_update_buffer(self.handle(),
-            dst_buffer.handle(), dst_offset, data); }
+    pub unsafe fn update_buffer(&self, dst_buffer: &Buffer, dst_offset: u64, data: &[u8]) {
+        self.device().cmd_update_buffer(self.handle(),
+            dst_buffer.handle(), dst_offset, data);
     }
 
     #[inline]
-    pub fn fill_buffer(&self, dst_buffer: &Buffer, dst_offset: u64,
+    pub unsafe fn fill_buffer(&self, dst_buffer: &Buffer, dst_offset: u64,
             size: Option<DeviceSize>, data: u32) {
-        unsafe { self.device().cmd_fill_buffer(self.handle(),
-            dst_buffer.handle(), dst_offset, size, data); }
+        self.device().cmd_fill_buffer(self.handle(),
+            dst_buffer.handle(), dst_offset, size, data);
     }
 
     #[inline]
-    pub fn clear_color_image(&self, image: &Image, image_layout: ImageLayout,
+    pub unsafe fn clear_color_image(&self, image: &Image, image_layout: ImageLayout,
             color: &ClearColorValue, ranges: &[ImageSubresourceRange]) {
-        unsafe { self.device().cmd_clear_color_image(self.handle(),
-            image.handle(), image_layout, color, ranges); }
+        self.device().cmd_clear_color_image(self.handle(),
+            image.handle(), image_layout, color, ranges);
     }
 
     #[inline]
-    pub fn clear_depth_stencil_image(&self, image: &Image, image_layout: ImageLayout,
+    pub unsafe fn clear_depth_stencil_image(&self, image: &Image, image_layout: ImageLayout,
             depth_stencil: &ClearDepthStencilValue, ranges: &[ImageSubresourceRange]) {
-        unsafe { self.device().cmd_clear_depth_stencil_image(self.handle(),
-            image.handle(), image_layout, depth_stencil, ranges); }
+        self.device().cmd_clear_depth_stencil_image(self.handle(),
+            image.handle(), image_layout, depth_stencil, ranges);
     }
 
     #[inline]
@@ -277,10 +275,10 @@ impl CommandBuffer {
     }
 
     #[inline]
-    pub fn resolve_image(&self, src_image: &Image, src_image_layout: ImageLayout, dst_image: &Image,
+    pub unsafe fn resolve_image(&self, src_image: &Image, src_image_layout: ImageLayout, dst_image: &Image,
             dst_image_layout: ImageLayout, regions: &[ImageResolve]) {
-        unsafe { self.device().cmd_resolve_image(self.handle(), src_image.handle(), src_image_layout,
-            dst_image.handle(), dst_image_layout, regions); }
+        self.device().cmd_resolve_image(self.handle(), src_image.handle(), src_image_layout,
+            dst_image.handle(), dst_image_layout, regions);
     }
 
     #[inline]
@@ -341,10 +339,10 @@ impl CommandBuffer {
     }
 
     #[inline]
-    pub fn copy_query_pool_results(&self, query_pool: &QueryPool, first_query: u32, query_count: u32,
+    pub unsafe fn copy_query_pool_results(&self, query_pool: &QueryPool, first_query: u32, query_count: u32,
             dst_buffer: &Buffer, dst_offset: u64, stride: u64, flags: QueryResultFlags) {
-        unsafe { self.device().cmd_copy_query_pool_results(self.handle(), query_pool.handle(),
-            first_query, query_count, dst_buffer.handle(), dst_offset, stride, flags); }
+        self.device().cmd_copy_query_pool_results(self.handle(), query_pool.handle(),
+            first_query, query_count, dst_buffer.handle(), dst_offset, stride, flags);
     }
 
     #[inline]

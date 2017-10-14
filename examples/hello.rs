@@ -891,7 +891,10 @@ fn copy_buffer_to_image(device: &Device, command_pool: &CommandPool, buffer: &Bu
         .image_extent(Extent3d::builder().width(width).height(height).depth(1).build())
         .build();
 
-    command_buffer.copy_buffer_to_image(buffer, image, ImageLayout::TransferDstOptimal, &[region]);
+    unsafe {
+        command_buffer.copy_buffer_to_image(buffer, image, ImageLayout::TransferDstOptimal,
+            &[region]);
+    }
 
     end_single_time_commands(device, command_buffer)
 }
@@ -906,7 +909,9 @@ fn copy_buffer(device: &Device, command_pool: &CommandPool, src_buffer: &Buffer,
         .size(size)
         .build();
 
-    command_buffer.copy_buffer(src_buffer, dst_buffer, &[copy_region]);
+    unsafe {
+        command_buffer.copy_buffer(src_buffer, dst_buffer, &[copy_region]);
+    }
     end_single_time_commands(device, command_buffer)
 }
 

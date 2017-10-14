@@ -50,20 +50,6 @@ pub fn create_surface(instance: Instance, window: &WinitWindow) -> VdResult<Surf
 #[cfg(target_os = "macos")]
 pub fn create_surface(instance: Instance, window: &WinitWindow) -> VdResult<SurfaceKhr> {
     use winit::os::macos::WindowExt;
-    let wnd: cocoa_id = mem::transmute(window.get_nswindow());
 
-    let layer = CAMetalLayer::new();
-    layer.set_edge_antialiasing_mask(0);
-    layer.set_presents_with_transaction(false);
-    layer.remove_all_animations();
-
-    let view = wnd.contentView();
-    view.setWantsLayer(YES);
-    view.setLayer(mem::transmute(layer.0));
-
-    unsafe {
-        SurfaceKhr::builder()
-            .macos(window.get_nsview() as *const _)
-            .build(instance)
-    }
+    unimplemented!();
 }
