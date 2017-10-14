@@ -45,6 +45,8 @@ unsafe extern "system" fn __debug_callback(_flags: vks::VkDebugReportFlagsEXT,
 }
 
 
+/// A Vulkan instance handle.
+//
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct InstanceHandle(pub(crate) vks::VkInstance);
@@ -75,32 +77,45 @@ struct Inner {
     // physical_devices: SmallVec<[PhysicalDevice; 16]>,
 }
 
+
+/// A Vulkan instance.
+//
 #[derive(Debug, Clone)]
 pub struct Instance {
     inner: Arc<Inner>,
 }
 
 impl Instance {
+    /// Returns an `InstanceBuilder` use to create an instance.
+    //
     #[inline]
     pub fn builder<'ib>() -> InstanceBuilder<'ib> {
         InstanceBuilder::new()
     }
 
+    /// Returns the handle to this instance.
+    //
     #[inline(always)]
     pub fn handle(&self) -> InstanceHandle {
         self.inner.handle
     }
 
+    /// Returns the `InstanceProcAddrLoader` associated with this instance.
+    //
     #[inline(always)]
     pub fn proc_addr_loader(&self) -> &vks::InstanceProcAddrLoader {
         self.inner.loader.instance_proc_addr_loader()
     }
 
+    /// Returns the `Loader` associated with this instance.
+    //
     #[inline]
     pub fn loader(&self) -> &Loader {
         &self.inner.loader
     }
 
+    /// Returns a list of all physical devices available.
+    //
     #[inline]
     pub fn physical_devices(&self) -> VdResult<SmallVec<[PhysicalDevice; 16]>> {
         Ok(self.loader().enumerate_physical_devices(self.inner.handle)?
@@ -109,7 +124,12 @@ impl Instance {
             }).collect())
     }
 
-    // *PFN_vkGetPhysicalDeviceFeatures)(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures);
+    /// Reports the capabilities of a physical device.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceFeatures.html
+    //
+    // *PFN_vkGetPhysicalDeviceFeatures)(VkPhysicalDevice physicalDevice,
+    // VkPhysicalDeviceFeatures* pFeatures);
     pub fn get_physical_device_features<Pd>(&self, physical_device: Pd)
             -> PhysicalDeviceFeatures
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -121,7 +141,13 @@ impl Instance {
         }
     }
 
-    // *PFN_vkGetPhysicalDeviceFormatProperties)(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties* pFormatProperties);
+    /// Lists a physical device's format capabilities.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceFormatProperties.html
+    //
+    // *PFN_vkGetPhysicalDeviceFormatProperties)(VkPhysicalDevice
+    // physicalDevice, VkFormat format, VkFormatProperties*
+    // pFormatProperties);
     pub fn get_physical_device_format_properties<Pd>(&self, physical_device: Pd, format: Format)
             -> FormatProperties
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -133,7 +159,14 @@ impl Instance {
         }
     }
 
-    // *PFN_vkGetPhysicalDeviceImageFormatProperties)(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkImageFormatProperties* pImageFormatProperties);
+    /// Lists a physical device's image format capabilities.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceImageFormatProperties.html
+    //
+    // *PFN_vkGetPhysicalDeviceImageFormatProperties)(VkPhysicalDevice
+    // physicalDevice, VkFormat format, VkImageType type, VkImageTiling
+    // tiling, VkImageUsageFlags usage, VkImageCreateFlags flags,
+    // VkImageFormatProperties* pImageFormatProperties);
     pub fn get_physical_device_image_format_properties<Pd>(&self, physical_device: Pd, format: Format,
             type_: ImageType, tiling: ImageTiling, usage: ImageUsageFlags, flags: ImageCreateFlags)
             -> VdResult<ImageFormatProperties>
@@ -147,7 +180,12 @@ impl Instance {
         }
     }
 
-    // *PFN_vkGetPhysicalDeviceProperties)(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties);
+    /// Returns the properties of a physical device.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceProperties.html
+    //
+    // *PFN_vkGetPhysicalDeviceProperties)(VkPhysicalDevice physicalDevice,
+    // VkPhysicalDeviceProperties* pProperties);
     pub fn get_physical_device_properties<Pd>(&self, physical_device: Pd)
             -> PhysicalDeviceProperties
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -159,7 +197,13 @@ impl Instance {
         }
     }
 
-    // *PFN_vkGetPhysicalDeviceQueueFamilyProperties)(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties* pQueueFamilyProperties);
+    /// Reports properties of the queues of the specified physical device.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceQueueFamilyProperties.html
+    //
+    // *PFN_vkGetPhysicalDeviceQueueFamilyProperties)(VkPhysicalDevice
+    // physicalDevice, uint32_t* pQueueFamilyPropertyCount,
+    // VkQueueFamilyProperties* pQueueFamilyProperties);
     pub fn get_physical_device_queue_family_properties<Pd>(&self, physical_device: Pd)
             -> VdResult<SmallVec<[QueueFamilyProperties; 16]>>
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -178,8 +222,13 @@ impl Instance {
         Ok(queue_families)
     }
 
-    // *PFN_vkGetPhysicalDeviceMemoryProperties)(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties);
-    /// Returns the memory properties for this device.
+    /// Reports memory information for the specified physical device.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceMemoryProperties.html
+    //
+    // *PFN_vkGetPhysicalDeviceMemoryProperties)(VkPhysicalDevice
+    //physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties); /
+    //Returns the memory properties for this device.
     pub fn get_physical_device_memory_properties<Pd>(&self, physical_device: Pd)
             -> PhysicalDeviceMemoryProperties
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -192,7 +241,13 @@ impl Instance {
         }
     }
 
-    // *PFN_vkCreateDevice)(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice);
+    /// Creates a new device instance.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateDevice.html
+    //
+    // *PFN_vkCreateDevice)(VkPhysicalDevice physicalDevice, const
+    // VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkDevice* pDevice);
     pub unsafe fn create_device(&self, physical_device: PhysicalDeviceHandle,
             create_info: &DeviceCreateInfo, allocator: Option<*const vks::VkAllocationCallbacks>)
             -> VdResult<DeviceHandle> {
@@ -203,14 +258,25 @@ impl Instance {
         error::check(result, "vkCreateDevice", DeviceHandle(handle))
     }
 
-    // *PFN_vkDestroyDevice)(VkDevice device, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a logical device.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyDevice.html
+    //
+    // *PFN_vkDestroyDevice)(VkDevice device, const VkAllocationCallbacks*
+    // pAllocator);
     pub unsafe fn destroy_device(&self, device: DeviceHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
         self.proc_addr_loader().core.vkDestroyDevice(device.to_raw(), allocator);
     }
 
-    // *PFN_vkEnumerateDeviceExtensionProperties)(VkPhysicalDevice physicalDevice, const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties);
+    /// Returns the properties of available physical device extensions.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkEnumerateDeviceExtensionProperties.html
+    //
+    // *PFN_vkEnumerateDeviceExtensionProperties)(VkPhysicalDevice
+    // physicalDevice, const char* pLayerName, uint32_t* pPropertyCount,
+    // VkExtensionProperties* pProperties);
     pub fn enumerate_device_extension_properties<Pd>(&self, physical_device: Pd,
             layer_name: Option<&CStr>)
             -> VdResult<SmallVec<[ExtensionProperties; 64]>>
@@ -235,7 +301,12 @@ impl Instance {
         }
     }
 
-    // *PFN_vkEnumerateDeviceLayerProperties)(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkLayerProperties* pProperties);
+    /// Returns the properties of available physical device layers.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkEnumerateDeviceLayerProperties.html
+    //
+    // *PFN_vkEnumerateDeviceLayerProperties)(VkPhysicalDevice physicalDevice,
+    // uint32_t* pPropertyCount, VkLayerProperties* pProperties);
     pub fn enumerate_device_layer_properties<Pd>(&self, physical_device: Pd)
             -> VdResult<SmallVec<[LayerProperties; 64]>>
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -258,7 +329,15 @@ impl Instance {
         }
     }
 
-    // *PFN_vkGetPhysicalDeviceSparseImageFormatProperties)(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling, uint32_t* pPropertyCount, VkSparseImageFormatProperties* pProperties);
+    /// Retrieves the properties of an image format applied to sparse images.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPhysicalDeviceSparseImageFormatProperties.html
+    //
+    // *PFN_vkGetPhysicalDeviceSparseImageFormatProperties)(VkPhysicalDevice
+    // physicalDevice, VkFormat format, VkImageType type,
+    // VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling
+    // tiling, uint32_t* pPropertyCount, VkSparseImageFormatProperties*
+    // pProperties);
     pub fn get_physical_device_sparse_image_format_properties<Pd>(&self, physical_device: Pd,
             format: Format, type_: ImageType, samples: SampleCountFlags, usage: ImageCreateFlags,
             tiling: ImageTiling) -> SmallVec<[SparseImageFormatProperties; 8]>
@@ -279,7 +358,12 @@ impl Instance {
         properties
     }
 
-    // *PFN_vkDestroySurfaceKHR)(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a VkSurfaceKHR object.
+    ///
+    /// https://manned.org/vkDestroySurfaceKHR/adcec40c
+    //
+    // *PFN_vkDestroySurfaceKHR)(VkInstance instance, VkSurfaceKHR surface,
+    // const VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_surface_khr(&self, surface: SurfaceKhrHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -287,7 +371,13 @@ impl Instance {
             surface.to_raw(), allocator);
     }
 
-    // *PFN_vkGetPhysicalDeviceSurfaceSupportKHR)(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported);
+    /// Queries if presentation is supported.
+    ///
+    /// https://manned.org/vkGetPhysicalDeviceSurfaceSupportKHR.3
+    //
+    // *PFN_vkGetPhysicalDeviceSurfaceSupportKHR)(VkPhysicalDevice
+    // physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface,
+    // VkBool32* pSupported);
     pub unsafe fn get_physical_device_surface_support_khr<Pd, Sk>(&self, physical_device: Pd,
             queue_family_index: u32, surface: Sk) -> VdResult<bool>
             where Pd: Handle<Target=PhysicalDeviceHandle>, Sk: Handle<Target=SurfaceKhrHandle> {
@@ -297,7 +387,13 @@ impl Instance {
         error::check(result, "vkGetPhysicalDeviceSurfaceSupportKHR", supported == vks::VK_TRUE)
     }
 
-    // *PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR)(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities);
+    /// Queries surface capabilities.
+    ///
+    /// https://manned.org/vkGetPhysicalDeviceSurfaceCapabilitiesKHR.3
+    //
+    // *PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR)(VkPhysicalDevice
+    // physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR*
+    // pSurfaceCapabilities);
     pub unsafe fn get_physical_device_surface_capabilities_khr<Pd, Sk>(&self, physical_device: Pd,
             surface: Sk) -> VdResult<SurfaceCapabilitiesKhr>
             where Pd: Handle<Target=PhysicalDeviceHandle>, Sk: Handle<Target=SurfaceKhrHandle> {
@@ -308,7 +404,13 @@ impl Instance {
             SurfaceCapabilitiesKhr::from_raw(capabilities))
     }
 
-    // *PFN_vkGetPhysicalDeviceSurfaceFormatsKHR)(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pSurfaceFormatCount, VkSurfaceFormatKHR* pSurfaceFormats);
+    /// Queries color formats supported by surface.
+    ///
+    /// https://manned.org/vkGetPhysicalDeviceSurfaceFormatsKHR.3
+    //
+    // *PFN_vkGetPhysicalDeviceSurfaceFormatsKHR)(VkPhysicalDevice
+    // physicalDevice, VkSurfaceKHR surface, uint32_t* pSurfaceFormatCount,
+    // VkSurfaceFormatKHR* pSurfaceFormats);
     pub unsafe fn get_physical_device_surface_formats_khr<Pd, Sk>(&self, physical_device: Pd,
             surface: Sk) -> VdResult<SmallVec<[SurfaceFormatKhr; 64]>>
             where Pd: Handle<Target=PhysicalDeviceHandle>, Sk: Handle<Target=SurfaceKhrHandle> {
@@ -330,7 +432,13 @@ impl Instance {
         }
     }
 
-    // *PFN_vkGetPhysicalDeviceSurfacePresentModesKHR)(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes);
+    /// Queries supported presentation modes.
+    ///
+    /// https://manned.org/vkGetPhysicalDeviceSurfacePresentModesKHR.3
+    //
+    // *PFN_vkGetPhysicalDeviceSurfacePresentModesKHR)(VkPhysicalDevice
+    // physicalDevice, VkSurfaceKHR surface, uint32_t* pPresentModeCount,
+    // VkPresentModeKHR* pPresentModes);
     pub unsafe fn get_physical_device_surface_present_modes_khr<Pd, Sk>(&self, physical_device: Pd,
             surface: Sk) -> VdResult<SmallVec<[PresentModeKhr; 16]>>
             where Pd: Handle<Target=PhysicalDeviceHandle>, Sk: Handle<Target=SurfaceKhrHandle> {
@@ -355,7 +463,13 @@ impl Instance {
         Ok(present_modes)
     }
 
-    // *PFN_vkGetPhysicalDeviceDisplayPropertiesKHR)(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPropertiesKHR* pProperties);
+    /// Queries information about the available displays.
+    ///
+    /// https://manned.org/vkGetPhysicalDeviceDisplayPropertiesKHR.3
+    //
+    // *PFN_vkGetPhysicalDeviceDisplayPropertiesKHR)(VkPhysicalDevice
+    // physicalDevice, uint32_t* pPropertyCount, VkDisplayPropertiesKHR*
+    // pProperties);
     pub unsafe fn get_physical_device_display_properties_khr<Pd>(&self, physical_device: Pd)
             -> VdResult<SmallVec<[DisplayPropertiesKhr; 16]>>
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -376,7 +490,13 @@ impl Instance {
         }
     }
 
-    // *PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR)(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlanePropertiesKHR* pProperties);
+    /// Queries the plane properties.
+    ///
+    /// https://manned.org/vkGetPhysicalDeviceDisplayPlanePropertiesKHR.3
+    //
+    // *PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR)(VkPhysicalDevice
+    // physicalDevice, uint32_t* pPropertyCount, VkDisplayPlanePropertiesKHR*
+    // pProperties);
     pub unsafe fn get_physical_device_display_plane_properties_khr<Pd>(&self, physical_device: Pd)
             -> VdResult<SmallVec<[DisplayPlanePropertiesKhr; 16]>>
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -397,7 +517,13 @@ impl Instance {
         }
     }
 
-    // *PFN_vkGetDisplayPlaneSupportedDisplaysKHR)(VkPhysicalDevice physicalDevice, uint32_t planeIndex, uint32_t* pDisplayCount, VkDisplayKHR* pDisplays);
+    /// Queries the list of displays a plane supports.
+    ///
+    /// https://manned.org/vkGetDisplayPlaneSupportedDisplaysKHR.3
+    //
+    // *PFN_vkGetDisplayPlaneSupportedDisplaysKHR)(VkPhysicalDevice
+    // physicalDevice, uint32_t planeIndex, uint32_t* pDisplayCount,
+    // VkDisplayKHR* pDisplays);
     pub unsafe fn get_display_plane_supported_displays_khr<Pd>(&self, physical_device: Pd, plane_index: u32)
             -> VdResult<SmallVec<[DisplayKhr; 16]>>
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -418,7 +544,13 @@ impl Instance {
         }
     }
 
-    // *PFN_vkGetDisplayModePropertiesKHR)(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModePropertiesKHR* pProperties);
+    /// Queries the set of mode properties supported by the display.
+    ///
+    /// https://manned.org/vkGetDisplayModePropertiesKHR.3
+    //
+    // *PFN_vkGetDisplayModePropertiesKHR)(VkPhysicalDevice physicalDevice,
+    // VkDisplayKHR display, uint32_t* pPropertyCount,
+    // VkDisplayModePropertiesKHR* pProperties);
     pub unsafe fn get_display_mode_properties_khr<Pd, D>(&self, physical_device: Pd, display: D)
             -> VdResult<SmallVec<[DisplayModePropertiesKhr; 16]>>
             where Pd: Handle<Target=PhysicalDeviceHandle>, D: Handle<Target=DisplayKhrHandle> {
@@ -439,7 +571,13 @@ impl Instance {
         }
     }
 
-    // *PFN_vkCreateDisplayModeKHR)(VkPhysicalDevice physicalDevice, VkDisplayKHR display, const VkDisplayModeCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDisplayModeKHR* pMode);
+    /// Creates a display mode.
+    ///
+    /// https://manned.org/vkCreateDisplayModeKHR.3
+    //
+    // *PFN_vkCreateDisplayModeKHR)(VkPhysicalDevice physicalDevice,
+    // VkDisplayKHR display, const VkDisplayModeCreateInfoKHR* pCreateInfo,
+    // const VkAllocationCallbacks* pAllocator, VkDisplayModeKHR* pMode);
     pub unsafe fn create_display_mode_khr<Pd, D>(&self, physical_device: Pd, display: D,
             create_info: &DisplayModeCreateInfoKhr, allocator: Option<*const vks::VkAllocationCallbacks>)
             -> VdResult<DisplayModeKhrHandle>
@@ -451,7 +589,13 @@ impl Instance {
         error::check(result, "vkCreateDisplayModeKHR", DisplayModeKhrHandle(mode))
     }
 
-    // *PFN_vkGetDisplayPlaneCapabilitiesKHR)(VkPhysicalDevice physicalDevice, VkDisplayModeKHR mode, uint32_t planeIndex, VkDisplayPlaneCapabilitiesKHR* pCapabilities);
+    /// Queries capabilities of a mode and plane combination.
+    ///
+    /// https://manned.org/vkGetDisplayPlaneCapabilitiesKHR.3
+    //
+    // *PFN_vkGetDisplayPlaneCapabilitiesKHR)(VkPhysicalDevice physicalDevice,
+    // VkDisplayModeKHR mode, uint32_t planeIndex,
+    // VkDisplayPlaneCapabilitiesKHR* pCapabilities);
     pub unsafe fn get_display_plane_capabilities_khr<Pd, M>(&self, physical_device: Pd, mode: M,
             plane_index: u32)
             -> VdResult<DisplayPlaneCapabilitiesKhr>
@@ -463,7 +607,13 @@ impl Instance {
             DisplayPlaneCapabilitiesKhr::from_raw(capabilities))
     }
 
-    // *PFN_vkCreateDisplayPlaneSurfaceKHR)(VkInstance instance, const VkDisplaySurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+    /// Creates a `SurfaceKhrHandle` structure representing a display plane and mode.
+    ///
+    /// https://manned.org/vkCreateDisplayPlaneSurfaceKHR.3
+    //
+    // *PFN_vkCreateDisplayPlaneSurfaceKHR)(VkInstance instance, const
+    // VkDisplaySurfaceCreateInfoKHR* pCreateInfo, const
+    // VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
     pub unsafe fn create_display_plane_surface_khr(&self, create_info: DisplaySurfaceCreateInfoKhr,
              allocator: Option<*const vks::VkAllocationCallbacks>)
             -> VdResult<SurfaceKhrHandle> {
@@ -474,7 +624,13 @@ impl Instance {
         error::check(result, "vkCreateDisplayPlaneSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
-    // *PFN_vkCreateXlibSurfaceKHR)(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+    /// Creates a `SurfaceKhrHandle` object for an X11 window, using the Xlib client-side library.
+    ///
+    /// https://manned.org/vkCreateXlibSurfaceKHR.3
+    //
+    // *PFN_vkCreateXlibSurfaceKHR)(VkInstance instance, const
+    // VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkSurfaceKHR* pSurface);
     pub unsafe fn create_xlib_surface_khr(&self, create_info: &XlibSurfaceCreateInfoKhr,
             allocator: Option<*const vks::VkAllocationCallbacks>)
             -> VdResult<SurfaceKhrHandle> {
@@ -485,7 +641,13 @@ impl Instance {
         error::check(result, "vkCreateXlibSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
-    // *PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR)(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID);
+    /// Queries physical device for presentation to X11 server using Xlib.
+    ///
+    /// https://manned.org/vkGetPhysicalDeviceXlibPresentationSupportKHR.3
+    //
+    // *PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR)(VkPhysicalDevice
+    // physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID
+    // visualID);
     pub unsafe fn get_physical_device_xlib_presentation_support_khr<Pd>(&self, physical_device: Pd,
             queue_family_index: u32, dpy: *mut Display, visual_id: VisualID) -> bool
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -494,7 +656,13 @@ impl Instance {
         result != 0
     }
 
-    // *PFN_vkCreateXcbSurfaceKHR)(VkInstance instance, const VkXcbSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+    /// Creates a `SurfaceKhrHandle` object for a X11 window, using the XCB client-side library.
+    ///
+    /// https://manned.org/vkCreateXcbSurfaceKHR.3
+    //
+    // *PFN_vkCreateXcbSurfaceKHR)(VkInstance instance, const
+    // VkXcbSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkSurfaceKHR* pSurface);
     pub unsafe fn create_xcb_surface_khr(&self, create_info: &XcbSurfaceCreateInfoKhr,
             allocator: Option<*const vks::VkAllocationCallbacks>)
             -> VdResult<SurfaceKhrHandle> {
@@ -505,7 +673,13 @@ impl Instance {
         error::check(result, "vkCreateXcbSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
-    // *PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR)(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, xcb_connection_t* connection, xcb_visualid_t visual_id);
+    /// Queries physical device for presentation to X11 server using XCB.
+    ///
+    /// https://manned.org/vkGetPhysicalDeviceXcbPresentationSupportKHR.3
+    //
+    // *PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR)(VkPhysicalDevice
+    // physicalDevice, uint32_t queueFamilyIndex, xcb_connection_t*
+    // connection, xcb_visualid_t visual_id);
     pub unsafe fn get_physical_device_xcb_presentation_support_khr<Pd>(&self, physical_device: Pd,
         queue_family_index: u32, connection: *mut xcb_connection_t, visual_id: xcb_visualid_t)
              -> bool
@@ -516,7 +690,13 @@ impl Instance {
 
     }
 
-    // *PFN_vkCreateWaylandSurfaceKHR)(VkInstance instance, const VkWaylandSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+    /// Creates a `SurfaceKhrHandle` object for a Wayland window.
+    ///
+    /// https://manned.org/vkCreateWaylandSurfaceKHR.3
+    //
+    // *PFN_vkCreateWaylandSurfaceKHR)(VkInstance instance, const
+    // VkWaylandSurfaceCreateInfoKHR* pCreateInfo, const
+    // VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
     pub unsafe fn create_wayland_surface_khr(&self, create_info: &WaylandSurfaceCreateInfoKhr,
             allocator: Option<*const vks::VkAllocationCallbacks>)
             -> VdResult<SurfaceKhrHandle> {
@@ -527,7 +707,12 @@ impl Instance {
         error::check(result, "vkCreateWaylandSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
-    // *PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR)(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct wl_display* display);
+    /// Queries physical device for presentation to Wayland.
+    ///
+    /// https://manned.org/vkGetPhysicalDeviceWaylandPresentationSupportKHR.3
+    //
+    // *PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR)(VkPhysicalDevice
+    // physicalDevice, uint32_t queueFamilyIndex, struct wl_display* display);
     pub unsafe fn get_physical_device_wayland_presentation_support_khr<Pd>(&self,
             physical_device: Pd, queue_family_index: u32, display: *mut wl_display) -> bool
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -536,7 +721,13 @@ impl Instance {
         result != 0
     }
 
-    // *PFN_vkCreateMirSurfaceKHR)(VkInstance instance, const VkMirSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+    /// Creates a `SurfaceKhrHandle` object for a Mir window.
+    ///
+    /// https://manned.org/vkCreateMirSurfaceKHR.3
+    //
+    // *PFN_vkCreateMirSurfaceKHR)(VkInstance instance, const
+    // VkMirSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkSurfaceKHR* pSurface);
     pub unsafe fn create_mir_surface_khr(&self, create_info: &MirSurfaceCreateInfoKhr,
             allocator: Option<*const vks::VkAllocationCallbacks>)
             -> VdResult<SurfaceKhrHandle> {
@@ -547,7 +738,12 @@ impl Instance {
         error::check(result, "vkCreateMirSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
-    // *PFN_vkGetPhysicalDeviceMirPresentationSupportKHR)(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, MirConnection* connection);
+    /// Queries physical device for presentation to Mir.
+    ///
+    /// https://manned.org/vkGetPhysicalDeviceMirPresentationSupportKHR.3
+    //
+    // *PFN_vkGetPhysicalDeviceMirPresentationSupportKHR)(VkPhysicalDevice
+    // physicalDevice, uint32_t queueFamilyIndex, MirConnection* connection);
     pub unsafe fn get_physical_device_mir_presentation_support_khr<Pd>(&self,
             physical_device: Pd, queue_family_index: u32, connection: *mut MirConnection) -> bool
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -556,7 +752,13 @@ impl Instance {
         result != 0
     }
 
-    // *PFN_vkCreateAndroidSurfaceKHR)(VkInstance instance, const VkAndroidSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+    /// Create a `SurfaceKhrHandle` object for an Android native window.
+    ///
+    /// https://manned.org/vkCreateAndroidSurfaceKHR.3
+    //
+    // *PFN_vkCreateAndroidSurfaceKHR)(VkInstance instance, const
+    // VkAndroidSurfaceCreateInfoKHR* pCreateInfo, const
+    // VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
     pub unsafe fn create_android_surface_khr(&self, create_info: &AndroidSurfaceCreateInfoKhr,
             allocator: Option<*const vks::VkAllocationCallbacks>)
             -> VdResult<SurfaceKhrHandle> {
@@ -567,7 +769,13 @@ impl Instance {
         error::check(result, "vkCreateAndroidSurfaceKHR", SurfaceKhrHandle(surface))
     }
 
-    // *PFN_vkCreateWin32SurfaceKHR)(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+    /// Creates a `SurfaceKhrHandle` object for an Win32 native window.
+    ///
+    /// https://manned.org/vkCreateWin32SurfaceKHR.3
+    //
+    // *PFN_vkCreateWin32SurfaceKHR)(VkInstance instance, const
+    // VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkSurfaceKHR* pSurface);
     pub unsafe fn create_win32_surface_khr(&self, create_info: &Win32SurfaceCreateInfoKhr,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -577,7 +785,12 @@ impl Instance {
         error::check(result, "vkCreateWin32SurfaceKHR", SurfaceKhrHandle(surface))
     }
 
-    // *PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR)(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex);
+    /// Queries queue family support for presentation on a Win32 display.
+    ///
+    /// https://manned.org/vkGetPhysicalDeviceWin32PresentationSupportKHR.3
+    //
+    // *PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR)(VkPhysicalDevice
+    // physicalDevice, uint32_t queueFamilyIndex);
     pub unsafe fn get_physical_device_win32_presentation_support_khr<Pd>(&self, physical_device: Pd,
             queue_family_index: u32) -> bool
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -586,8 +799,12 @@ impl Instance {
         result != 0
     }
 
-
-    // *PFN_vkGetPhysicalDeviceFeatures2KHR)(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2KHR* pFeatures);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceFeatures2KHR)(VkPhysicalDevice physicalDevice,
+    // VkPhysicalDeviceFeatures2KHR* pFeatures);
     pub unsafe fn get_physical_device_features_2_khr<Pd>(&self, physical_device: Pd)
             -> PhysicalDeviceFeatures2Khr
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -597,8 +814,12 @@ impl Instance {
         PhysicalDeviceFeatures2Khr::from_raw(features)
     }
 
-
-    // *PFN_vkGetPhysicalDeviceProperties2KHR)(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2KHR* pProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceProperties2KHR)(VkPhysicalDevice
+    // physicalDevice, VkPhysicalDeviceProperties2KHR* pProperties);
     pub unsafe fn get_physical_device_properties_2_khr<Pd>(&self, physical_device: Pd)
             -> PhysicalDeviceProperties2Khr
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -608,7 +829,13 @@ impl Instance {
         PhysicalDeviceProperties2Khr::from_raw(properties)
     }
 
-    // *PFN_vkGetPhysicalDeviceFormatProperties2KHR)(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2KHR* pFormatProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceFormatProperties2KHR)(VkPhysicalDevice
+    // physicalDevice, VkFormat format, VkFormatProperties2KHR*
+    // pFormatProperties);
     pub unsafe fn get_physical_device_format_properties_2_khr<Pd>(&self, physical_device: Pd, format: Format)
             -> FormatProperties2Khr
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -619,7 +846,13 @@ impl Instance {
         props
     }
 
-    // *PFN_vkGetPhysicalDeviceImageFormatProperties2KHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2KHR* pImageFormatInfo, VkImageFormatProperties2KHR* pImageFormatProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceImageFormatProperties2KHR)(VkPhysicalDevice
+    // physicalDevice, const VkPhysicalDeviceImageFormatInfo2KHR*
+    // pImageFormatInfo, VkImageFormatProperties2KHR* pImageFormatProperties);
     pub unsafe fn get_physical_device_image_format_properties_2_khr<Pd>(&self, physical_device: Pd,
             image_format_info: &PhysicalDeviceImageFormatInfo2Khr)
             -> VdResult<ImageFormatProperties2Khr>
@@ -632,7 +865,13 @@ impl Instance {
             ImageFormatProperties2Khr::from_raw(image_format_properties))
     }
 
-    // *PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR)(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2KHR* pQueueFamilyProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR)(VkPhysicalDevice
+    // physicalDevice, uint32_t* pQueueFamilyPropertyCount,
+    // VkQueueFamilyProperties2KHR* pQueueFamilyProperties);
     pub unsafe fn get_physical_device_queue_family_properties_2_khr<Pd>(&self, physical_device: Pd)
             -> VdResult<SmallVec<[QueueFamilyProperties2Khr; 16]>>
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -648,7 +887,14 @@ impl Instance {
         Ok(queue_families)
     }
 
-    // *PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2KHR* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2KHR* pProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR)(VkPhysicalDevice
+    // physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2KHR*
+    // pFormatInfo, uint32_t* pPropertyCount,
+    // VkSparseImageFormatProperties2KHR* pProperties);
     pub unsafe fn get_physical_device_memory_properties_2_khr<Pd>(&self, physical_device: Pd)
             -> PhysicalDeviceMemoryProperties2Khr
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -659,7 +905,15 @@ impl Instance {
         PhysicalDeviceMemoryProperties2Khr::from_raw(mem_props)
     }
 
-    // typedef void (VKAPI_PTR *PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2KHR* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2KHR* pProperties);
+    ///
+    ///
+    ///
+    //
+    // typedef void (VKAPI_PTR
+    // *PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR)(VkPhysicalDevice
+    // physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2KHR*
+    // pFormatInfo, uint32_t* pPropertyCount,
+    // VkSparseImageFormatProperties2KHR* pProperties);
     pub unsafe fn get_physical_device_sparse_image_format_properties_2_khr<Pd>(&self, physical_device: Pd,
             format_info: &PhysicalDeviceSparseImageFormatInfo2Khr)
             -> SmallVec<[SparseImageFormatProperties2Khr; 8]>
@@ -677,7 +931,14 @@ impl Instance {
         properties
     }
 
-    // *PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfoKHR* pExternalBufferInfo, VkExternalBufferPropertiesKHR* pExternalBufferProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR)(VkPhysicalDevice
+    // physicalDevice, const VkPhysicalDeviceExternalBufferInfoKHR*
+    // pExternalBufferInfo, VkExternalBufferPropertiesKHR*
+    // pExternalBufferProperties);
     pub unsafe fn get_physical_device_external_buffer_properties_khr<Pd>(&self,
             physical_device: Pd, external_buffer_info: &PhysicalDeviceExternalBufferInfoKhr)
             -> ExternalBufferPropertiesKhr
@@ -689,7 +950,14 @@ impl Instance {
         ExternalBufferPropertiesKhr::from_raw(external_buffer_properties)
     }
 
-    // *PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfoKHR* pExternalSemaphoreInfo, VkExternalSemaphorePropertiesKHR* pExternalSemaphoreProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR)(VkPhysicalDevice
+    // physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfoKHR*
+    // pExternalSemaphoreInfo, VkExternalSemaphorePropertiesKHR*
+    // pExternalSemaphoreProperties);
     pub unsafe fn get_physical_device_external_semaphore_properties_khr<Pd>(&self,
             physical_device: Pd, external_semaphore_info: &PhysicalDeviceExternalSemaphoreInfoKhr)
             -> ExternalSemaphorePropertiesKhr
@@ -701,7 +969,14 @@ impl Instance {
         ExternalSemaphorePropertiesKhr::from_raw(external_semaphore_properties)
     }
 
-    // *PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfoKHR* pExternalFenceInfo, VkExternalFencePropertiesKHR* pExternalFenceProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR)(VkPhysicalDevice
+    // physicalDevice, const VkPhysicalDeviceExternalFenceInfoKHR*
+    // pExternalFenceInfo, VkExternalFencePropertiesKHR*
+    // pExternalFenceProperties);
     pub unsafe fn get_physical_device_external_fence_properties_khr<Pd>(&self,
             physical_device: Pd, external_fence_info: &PhysicalDeviceExternalFenceInfoKhr)
             -> ExternalFencePropertiesKhr
@@ -713,7 +988,13 @@ impl Instance {
         ExternalFencePropertiesKhr::from_raw(external_fence_properties)
     }
 
-    // *PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR)(VkPhysicalDevice
+    // physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
+    // VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
     pub unsafe fn get_physical_device_surface_capabilities_2_khr<Pd>(&self, physical_device: Pd,
             surface_info: &PhysicalDeviceSurfaceInfo2Khr) -> VdResult<SurfaceCapabilities2Khr>
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -724,7 +1005,13 @@ impl Instance {
             SurfaceCapabilities2Khr::from_raw(capabilities))
     }
 
-    // *PFN_vkGetPhysicalDeviceSurfaceFormats2KHR)(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceSurfaceFormats2KHR)(VkPhysicalDevice
+    // physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
+    // uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats);
     pub unsafe fn get_physical_device_surface_formats_2_khr<Pd>(&self, physical_device: Pd,
             surface_info: &PhysicalDeviceSurfaceInfo2Khr) -> VdResult<SmallVec<[SurfaceFormat2Khr; 64]>>
             where Pd: Handle<Target=PhysicalDeviceHandle> {
@@ -748,7 +1035,14 @@ impl Instance {
         Ok(formats)
     }
 
-    // *PFN_vkCreateDebugReportCallbackEXT)(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCreateDebugReportCallbackEXT)(VkInstance instance, const
+    // VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const
+    // VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT*
+    // pCallback);
     pub unsafe fn create_debug_report_callback_ext(&self,
             create_info: &DebugReportCallbackCreateInfoExt,
             allocator: Option<*const vks::VkAllocationCallbacks>)
@@ -760,7 +1054,13 @@ impl Instance {
         error::check(result, "vkCreateDebugReportCallbackEXT", DebugReportCallbackExtHandle(callback))
     }
 
-    // *PFN_vkDestroyDebugReportCallbackEXT)(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkDestroyDebugReportCallbackEXT)(VkInstance instance,
+    // VkDebugReportCallbackEXT callback, const VkAllocationCallbacks*
+    // pAllocator);
     pub unsafe fn destroy_debug_report_callback_ext(&self,
             callback: DebugReportCallbackExtHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
@@ -769,7 +1069,14 @@ impl Instance {
             self.handle().to_raw(), callback.to_raw(), allocator);
     }
 
-    // *PFN_vkDebugReportMessageEXT)(VkInstance instance, VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkDebugReportMessageEXT)(VkInstance instance,
+    // VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType,
+    // uint64_t object, size_t location, int32_t messageCode, const char*
+    // pLayerPrefix, const char* pMessage);
     pub unsafe fn debug_report_message_ext(&self, flags: DebugReportFlagsExt,
             object_type: DebugReportObjectTypeExt, object: u64, location: usize, message_code: i32,
             layer_prefix: &CStr, message: &CStr) {
@@ -778,7 +1085,15 @@ impl Instance {
             message.as_ptr());
     }
 
-    // *PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV)(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkExternalMemoryHandleTypeFlagsNV externalHandleType, VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV)(VkPhysicalDevice
+    // physicalDevice, VkFormat format, VkImageType type, VkImageTiling
+    // tiling, VkImageUsageFlags usage, VkImageCreateFlags flags,
+    // VkExternalMemoryHandleTypeFlagsNV externalHandleType,
+    // VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties);
     pub unsafe fn get_physical_device_external_image_format_properties_nv<Pd>(&self,
             physical_device: Pd, format: Format, type_: ImageType, tiling: ImageTiling,
             usage: ImageUsageFlags, flags: ImageCreateFlags,
@@ -794,7 +1109,13 @@ impl Instance {
             ExternalImageFormatPropertiesNv::from_raw(external_image_format_properties))
     }
 
-    // *PFN_vkGetPhysicalDevicePresentRectanglesKHX)(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pRectCount, VkRect2D* pRects);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDevicePresentRectanglesKHX)(VkPhysicalDevice
+    // physicalDevice, VkSurfaceKHR surface, uint32_t* pRectCount, VkRect2D*
+    // pRects);
     #[cfg(feature = "experimental")]
     pub unsafe fn get_physical_device_present_rectangles_khx<Pd, S>(&self,
             physical_device: Pd, surface: S)
@@ -819,7 +1140,13 @@ impl Instance {
         Ok(rects)
     }
 
-    // *PFN_vkCreateViSurfaceNN)(VkInstance instance, const VkViSurfaceCreateInfoNN* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCreateViSurfaceNN)(VkInstance instance, const
+    // VkViSurfaceCreateInfoNN* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkSurfaceKHR* pSurface);
     pub unsafe fn create_vi_surface_nn(&self, create_info: &ViSurfaceCreateInfoNn,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -829,19 +1156,36 @@ impl Instance {
         error::check(result, "vkCreateViSurfaceNN", SurfaceKhrHandle(surface))
     }
 
-    // *PFN_vkEnumeratePhysicalDeviceGroupsKHX)(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupPropertiesKHX* pPhysicalDeviceGroupProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkEnumeratePhysicalDeviceGroupsKHX)(VkInstance instance, uint32_t*
+    // pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupPropertiesKHX*
+    // pPhysicalDeviceGroupProperties);
     #[cfg(feature = "experimental")]
     pub unsafe fn enumerate_physical_device_groups_khx(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX)(VkPhysicalDevice physicalDevice, VkDeviceGeneratedCommandsFeaturesNVX* pFeatures, VkDeviceGeneratedCommandsLimitsNVX* pLimits);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX)(VkPhysicalDevice
+    // physicalDevice, VkDeviceGeneratedCommandsFeaturesNVX* pFeatures,
+    // VkDeviceGeneratedCommandsLimitsNVX* pLimits);
     #[cfg(feature = "experimental")]
     pub unsafe fn get_physical_device_generated_commands_properties_nvx<Pd>(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkReleaseDisplayEXT)(VkPhysicalDevice physicalDevice, VkDisplayKHR display);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkReleaseDisplayEXT)(VkPhysicalDevice physicalDevice, VkDisplayKHR
+    // display);
     pub unsafe fn release_display_ext<Pd, D>(&self, physical_device: Pd, display: D)
             -> VdResult<()>
             where Pd: Handle<Target=PhysicalDeviceHandle>, D: Handle<Target=DisplayKhrHandle> {
@@ -850,7 +1194,12 @@ impl Instance {
         error::check(result, "vkReleaseDisplayEXT", ())
     }
 
-    // *PFN_vkAcquireXlibDisplayEXT)(VkPhysicalDevice physicalDevice, Display* dpy, VkDisplayKHR display);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkAcquireXlibDisplayEXT)(VkPhysicalDevice physicalDevice, Display*
+    // dpy, VkDisplayKHR display);
     pub unsafe fn acquire_xlib_display_ext<Pd, D>(&self, physical_device: Pd, dpy: *mut Display, display: D)
             -> VdResult<()>
             where Pd: Handle<Target=PhysicalDeviceHandle>, D: Handle<Target=DisplayKhrHandle> {
@@ -859,7 +1208,12 @@ impl Instance {
         error::check(result, "vkAcquireXlibDisplayEXT", ())
     }
 
-    // *PFN_vkGetRandROutputDisplayEXT)(VkPhysicalDevice physicalDevice, Display* dpy, RROutput rrOutput, VkDisplayKHR* pDisplay);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetRandROutputDisplayEXT)(VkPhysicalDevice physicalDevice,
+    // Display* dpy, RROutput rrOutput, VkDisplayKHR* pDisplay);
     pub unsafe fn get_rand_r_output_display_ext<Pd, D>(&self, physical_device: Pd,
             dpy: *mut Display, rr_output: RROutput) -> VdResult<DisplayKhrHandle>
             where Pd: Handle<Target=PhysicalDeviceHandle>, D: Handle<Target=DisplayKhrHandle> {
@@ -869,7 +1223,13 @@ impl Instance {
         error::check(result, "vkGetRandROutputDisplayEXT", DisplayKhrHandle(display))
     }
 
-    // *PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT)(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilities2EXT* pSurfaceCapabilities);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT)(VkPhysicalDevice
+    // physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilities2EXT*
+    // pSurfaceCapabilities);
     pub unsafe fn get_physical_device_surface_capabilities_2_ext<Pd, S>(&self, physical_device: Pd,
             surface: S) -> VdResult<SurfaceCapabilities2Ext>
             where Pd: Handle<Target=PhysicalDeviceHandle>, S: Handle<Target=SurfaceKhrHandle> {
@@ -880,7 +1240,13 @@ impl Instance {
         error::check(result, "vkGetPhysicalDeviceSurfaceCapabilities2EXT", surface_capabilities)
     }
 
-    // *PFN_vkCreateIOSSurfaceMVK)(VkInstance instance, const VkIOSSurfaceCreateInfoMVK* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCreateIOSSurfaceMVK)(VkInstance instance, const
+    // VkIOSSurfaceCreateInfoMVK* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkSurfaceKHR* pSurface);
     pub unsafe fn create_ios_surface_mvk(&self, create_info: &IosSurfaceCreateInfoMvk,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -890,7 +1256,13 @@ impl Instance {
         error::check(result, "vkCreateIOSSurfaceMVK", SurfaceKhrHandle(surface))
     }
 
-    // *PFN_vkCreateMacOSSurfaceMVK)(VkInstance instance, const VkMacOSSurfaceCreateInfoMVK* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCreateMacOSSurfaceMVK)(VkInstance instance, const
+    // VkMacOSSurfaceCreateInfoMVK* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkSurfaceKHR* pSurface);
     pub unsafe fn create_mac_os_surface_mvk(&self, create_info: &MacOsSurfaceCreateInfoMvk,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SurfaceKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -900,7 +1272,13 @@ impl Instance {
         error::check(result, "vkCreateMacOSSurfaceMVK", SurfaceKhrHandle(surface))
     }
 
-    // *PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT)(VkPhysicalDevice physicalDevice, VkSampleCountFlagBits samples, VkMultisamplePropertiesEXT* pMultisampleProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT)(VkPhysicalDevice
+    // physicalDevice, VkSampleCountFlagBits samples,
+    // VkMultisamplePropertiesEXT* pMultisampleProperties);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn get_physical_device_multisample_properties_ext<Pd>(&self, physical_device: Pd,
             samples: SampleCountFlags)

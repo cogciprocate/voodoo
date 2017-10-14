@@ -47,6 +47,8 @@ use ::{SamplerYcbcrConversionCreateInfoKhr, IndirectCommandsLayoutNvxCreateInfo,
     ValidationCacheExtHandle, ObjectTableNvxHandle, SampleLocationsInfoExt, ValidationCacheExt,};
 
 
+/// A logical device handle.
+//
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct DeviceHandle(pub(crate) vks::VkDevice);
@@ -92,6 +94,8 @@ struct Inner {
     loader: vks::DeviceProcAddrLoader,
 }
 
+/// A logical device.
+//
 #[derive(Debug, Clone)]
 pub struct Device {
     inner: Arc<Inner>,
@@ -118,26 +122,34 @@ impl Device {
         &self.inner.queues
     }
 
+    /// Returns a reference to the associated `DeviceProcAddrLoader`
     #[inline]
     pub fn proc_addr_loader(&self) -> &vks::DeviceProcAddrLoader {
         &self.inner.loader
     }
 
+    /// Returns the handle for this device.
     #[inline]
     pub fn handle(&self) -> DeviceHandle {
         self.inner.handle
     }
 
+    /// Returns a reference to the associated physical device.
     #[inline]
     pub fn physical_device(&self) -> &PhysicalDevice {
         &self.inner.physical_device
     }
 
+    /// Returns a reference to the associated instance.
     #[inline]
     pub fn instance(&self) -> &Instance {
         &self.inner.instance
     }
 
+    /// Waits for this device to become idle.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDeviceWaitIdle.html
+    //
     #[inline]
     pub fn wait_idle(&self) {
         self.device_wait_idle()
@@ -162,12 +174,24 @@ impl Device {
             type_filter, properties);
     }
 
-    // *PFN_vkGetDeviceQueue)(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue);
+
+    /// Get a queue handle from a device.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetDeviceQueue.html
+    //
+    // *PFN_vkGetDeviceQueue)(VkDevice device, uint32_t queueFamilyIndex,
+    // uint32_t queueIndex, VkQueue* pQueue);
     pub fn get_device_queue(&self, queue_family_index: u32, queue_index: u32) -> Option<QueueHandle> {
         get_device_queue(self.proc_addr_loader(), self.inner.handle, queue_family_index, queue_index)
     }
 
-    // *PFN_vkQueueSubmit)(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence);
+
+    /// Submits a sequence of semaphores or command buffers to a queue.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkQueueSubmit.html
+    //
+    // *PFN_vkQueueSubmit)(VkQueue queue, uint32_t submitCount, const
+    // VkSubmitInfo* pSubmits, VkFence fence);
     //
     // queue is the queue that the command buffers will be submitted to.
     //
@@ -188,6 +212,10 @@ impl Device {
         error::check(result, "vkQueueSubmit", ())
     }
 
+    /// Waits for a queue to become idle.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkQueueWaitIdle.html
+    //
     // *PFN_vkQueueWaitIdle)(VkQueue queue);
     pub fn queue_wait_idle<Q>(&self, queue: Q)
             where Q: Handle<Target=QueueHandle> {
@@ -196,6 +224,10 @@ impl Device {
         }
     }
 
+    /// Waits for this device to become idle.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDeviceWaitIdle.html
+    //
     // *PFN_vkDeviceWaitIdle)(VkDevice device);
     pub fn device_wait_idle(&self) {
         unsafe {
@@ -203,7 +235,13 @@ impl Device {
         }
     }
 
-    // *PFN_vkAllocateMemory)(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
+    /// Allocates GPU memory.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkAllocateMemory.html
+    //
+    // *PFN_vkAllocateMemory)(VkDevice device, const VkMemoryAllocateInfo*
+    // pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory*
+    // pMemory);
     pub unsafe fn allocate_memory(&self, allocate_info: &MemoryAllocateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<DeviceMemoryHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -213,7 +251,12 @@ impl Device {
         error::check(result, "vkAllocateMemory", DeviceMemoryHandle(handle))
     }
 
-    // *PFN_vkFreeMemory)(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator);
+    /// Frees GPU memory.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkFreeMemory.html
+    //
+    // *PFN_vkFreeMemory)(VkDevice device, VkDeviceMemory memory, const
+    // VkAllocationCallbacks* pAllocator);
     pub unsafe fn free_memory(&self, memory: DeviceMemoryHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -221,7 +264,12 @@ impl Device {
             memory.handle().to_raw(), allocator);
     }
 
-    // *PFN_vkMapMemory)(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData);
+    /// Maps a memory object into application address space.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkMapMemory.html
+    //
+    // *PFN_vkMapMemory)(VkDevice device, VkDeviceMemory memory, VkDeviceSize
+    // offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData);
     pub unsafe fn map_memory<T>(&self, memory: DeviceMemoryHandle, offset_bytes: u64, size_bytes: u64,
             flags: MemoryMapFlags) -> VdResult<*mut T> {
         let mut data = ptr::null_mut();
@@ -230,12 +278,21 @@ impl Device {
         error::check(result, "vkMapMemory", data as *mut T)
     }
 
+    /// Unmaps a previously mapped memory object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkUnmapMemory.html
+    //
     // *PFN_vkUnmapMemory)(VkDevice device, VkDeviceMemory memory);
     pub unsafe fn unmap_memory(&self, memory: DeviceMemoryHandle) {
         self.proc_addr_loader().core.vkUnmapMemory(self.handle().0, memory.to_raw());
     }
 
-    // *PFN_vkFlushMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
+    /// Flushes mapped memory ranges.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkFlushMappedMemoryRanges.html
+    //
+    // *PFN_vkFlushMappedMemoryRanges)(VkDevice device, uint32_t
+    // memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
     pub unsafe fn flush_mapped_memory_ranges(&self, memory_ranges: &[MappedMemoryRange])
             -> VdResult<()> {
         let result = self.proc_addr_loader().core.vkFlushMappedMemoryRanges(self.handle().to_raw(),
@@ -243,8 +300,12 @@ impl Device {
         error::check(result, "vkFlushMappedMemoryRanges", ())
     }
 
-
-    // *PFN_vkInvalidateMappedMemoryRanges)(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
+    /// Invalidates ranges of mapped memory objects.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkInvalidateMappedMemoryRanges.html
+    //
+    // *PFN_vkInvalidateMappedMemoryRanges)(VkDevice device, uint32_t
+    // memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
     pub unsafe fn invalidate_mapped_memory_ranges(&self, memory_ranges: &[MappedMemoryRange])
             -> VdResult<()> {
         let result = self.proc_addr_loader().core.vkInvalidateMappedMemoryRanges(self.handle().to_raw(),
@@ -252,7 +313,12 @@ impl Device {
         error::check(result, "vkInvalidateMappedMemoryRanges", ())
     }
 
-    // *PFN_vkGetDeviceMemoryCommitment)(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes);
+    /// Queries the current commitment for a VkDeviceMemory.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetDeviceMemoryCommitment.html
+    //
+    // *PFN_vkGetDeviceMemoryCommitment)(VkDevice device, VkDeviceMemory
+    // memory, VkDeviceSize* pCommittedMemoryInBytes);
     pub unsafe fn get_device_memory_commitment<Dm>(&self, memory: Dm)
             -> DeviceSize
             where Dm: Handle<Target=DeviceMemoryHandle> {
@@ -262,7 +328,12 @@ impl Device {
         committed_memory_in_bytes
     }
 
-    // *PFN_vkBindBufferMemory)(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset);
+    /// Binds device memory to a buffer object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkBindBufferMemory.html
+    //
+    // *PFN_vkBindBufferMemory)(VkDevice device, VkBuffer buffer,
+    // VkDeviceMemory memory, VkDeviceSize memoryOffset);
     pub unsafe fn bind_buffer_memory(&self, buffer: BufferHandle, memory: DeviceMemoryHandle,
             memory_offset: DeviceSize) -> VdResult<()> {
         let result = self.proc_addr_loader().core.vkBindBufferMemory(
@@ -270,7 +341,12 @@ impl Device {
         error::check(result, "vkBindBufferMemory", ())
     }
 
-    // *PFN_vkBindImageMemory)(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset);
+    /// Binds device memory to an image object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkBindImageMemory.html
+    //
+    // *PFN_vkBindImageMemory)(VkDevice device, VkImage image, VkDeviceMemory
+    // memory, VkDeviceSize memoryOffset);
     pub unsafe fn bind_image_memory(&self, image: ImageHandle, memory: DeviceMemoryHandle,
             memory_offset: DeviceSize) -> VdResult<()> {
         let result = self.proc_addr_loader().core.vkBindImageMemory(
@@ -278,7 +354,12 @@ impl Device {
         error::check(result, "vkBindImageMemory", ())
     }
 
-    // *PFN_vkGetBufferMemoryRequirements)(VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements);
+    /// Returns the memory requirements for specified Vulkan object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetBufferMemoryRequirements.html
+    //
+    // *PFN_vkGetBufferMemoryRequirements)(VkDevice device, VkBuffer buffer,
+    // VkMemoryRequirements* pMemoryRequirements);
     pub unsafe fn get_buffer_memory_requirements(&self, buffer: BufferHandle) -> MemoryRequirements {
         let mut memory_requirements: vks::VkMemoryRequirements;
         memory_requirements = mem::uninitialized();
@@ -287,7 +368,12 @@ impl Device {
         MemoryRequirements::from_raw(memory_requirements)
     }
 
-    // *PFN_vkGetImageMemoryRequirements)(VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements);
+    /// Returns the memory requirements for specified Vulkan object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetImageMemoryRequirements.html
+    //
+    // *PFN_vkGetImageMemoryRequirements)(VkDevice device, VkImage image,
+    // VkMemoryRequirements* pMemoryRequirements);
     pub unsafe fn get_image_memory_requirements<I>(&self, image: I) -> MemoryRequirements
             where I: Handle<Target=ImageHandle> {
         let mut memory_requirements: vks::VkMemoryRequirements;
@@ -297,7 +383,13 @@ impl Device {
         MemoryRequirements::from_raw(memory_requirements)
     }
 
-    // *PFN_vkGetImageSparseMemoryRequirements)(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements);
+    /// Queries the memory requirements for a sparse image.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetImageSparseMemoryRequirements.html
+    //
+    // *PFN_vkGetImageSparseMemoryRequirements)(VkDevice device, VkImage
+    // image, uint32_t* pSparseMemoryRequirementCount,
+    // VkSparseImageMemoryRequirements* pSparseMemoryRequirements);
     pub unsafe fn get_image_sparse_memory_requirements<I>(&self, image: I)
             -> SmallVec<[SparseImageMemoryRequirements; 32]>
             where I: Handle<Target=ImageHandle> {
@@ -313,7 +405,12 @@ impl Device {
         sparse_memory_requirements
     }
 
-    // *PFN_vkQueueBindSparse)(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence);
+    /// Binds device memory to a sparse resource object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkQueueBindSparse.html
+    //
+    // *PFN_vkQueueBindSparse)(VkQueue queue, uint32_t bindInfoCount, const
+    // VkBindSparseInfo* pBindInfo, VkFence fence);
     pub unsafe fn queue_bind_sparse<Q, F>(&self, queue: Q, bind_info: &[BindSparseInfo], fence: F)
             -> VdResult<()>
             where Q: Handle<Target=QueueHandle>, F: Handle<Target=FenceHandle> {
@@ -323,7 +420,12 @@ impl Device {
         error::check(result, "vkQueueBindSparse", ())
     }
 
-    // *PFN_vkCreateFence)(VkDevice device, const VkFenceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
+    /// Creates a new fence object
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateFence.html
+    //
+    // *PFN_vkCreateFence)(VkDevice device, const VkFenceCreateInfo*
+    // pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
     pub unsafe fn create_fence(&self, create_info: &FenceCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<FenceHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -333,7 +435,12 @@ impl Device {
         error::check(result, "vkCreateFence", FenceHandle(handle))
     }
 
-    // *PFN_vkDestroyFence)(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a fence object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyFence.html
+    //
+    // *PFN_vkDestroyFence)(VkDevice device, VkFence fence, const
+    // VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_fence(&self, fence: FenceHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -341,14 +448,22 @@ impl Device {
             fence.to_raw(), allocator);
     }
 
-    // *PFN_vkResetFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences);
+    /// Resets one or more fence objects.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkResetFences.html
+    //
+    // *PFN_vkResetFences)(VkDevice device, uint32_t fenceCount, const
+    // VkFence* pFences);
     pub unsafe fn reset_fences(&self, fences: &[FenceHandle]) -> VdResult<()> {
         let result = self.proc_addr_loader().core.vkResetFences(self.handle().to_raw(),
             fences.len() as u32, fences.as_ptr() as *const vks::VkFence);
         error::check(result, "vkResetFences", ())
     }
 
-
+    /// Returns the status of a fence.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetFenceStatus.html
+    //
     // *PFN_vkGetFenceStatus)(VkDevice device, VkFence fence);
     pub unsafe fn get_fence_status<F>(&self, fence: F) -> VdResult<CallResult>
             where F: Handle<Target=FenceHandle> {
@@ -356,7 +471,12 @@ impl Device {
         error::check(result, "vkGetFenceStatus", CallResult::from(result))
     }
 
-    // *PFN_vkWaitForFences)(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout);
+    /// Waits for one or more fences to become signaled.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkWaitForFences.html
+    //
+    // *PFN_vkWaitForFences)(VkDevice device, uint32_t fenceCount, const
+    // VkFence* pFences, VkBool32 waitAll, uint64_t timeout);
     pub unsafe fn wait_for_fences(&self, fences: &[FenceHandle], wait_all: bool, timeout: u64)
             -> VdResult<()> {
         let result = self.proc_addr_loader().core.vkWaitForFences(self.handle().to_raw(),
@@ -365,7 +485,13 @@ impl Device {
         error::check(result, "vkWaitForFences", ())
     }
 
-    // *PFN_vkCreateSemaphore)(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore);
+    /// Creates a new queue semaphore object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateSemaphore.html
+    //
+    // *PFN_vkCreateSemaphore)(VkDevice device, const VkSemaphoreCreateInfo*
+    // pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphore*
+    // pSemaphore);
     pub unsafe fn create_semaphore(&self, create_info: &SemaphoreCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SemaphoreHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -375,7 +501,12 @@ impl Device {
         error::check(result, "vkCreateSemaphore", SemaphoreHandle(handle))
     }
 
-    // *PFN_vkDestroySemaphore)(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a semaphore object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroySemaphore.html
+    //
+    // *PFN_vkDestroySemaphore)(VkDevice device, VkSemaphore semaphore, const
+    // VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_semaphore(&self, shader_module: SemaphoreHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -383,7 +514,12 @@ impl Device {
             shader_module.to_raw(), allocator);
     }
 
-    // *PFN_vkCreateEvent)(VkDevice device, const VkEventCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent);
+    /// Creates a new event object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateEvent.html
+    //
+    // *PFN_vkCreateEvent)(VkDevice device, const VkEventCreateInfo*
+    // pCreateInfo, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent);
     pub unsafe fn create_event(&self, create_info: &EventCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<EventHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -393,7 +529,12 @@ impl Device {
         error::check(result, "vkCreateEvent", EventHandle(handle))
     }
 
-    // *PFN_vkDestroyEvent)(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator);
+    /// Destroys an event object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyEvent.html
+    //
+    // *PFN_vkDestroyEvent)(VkDevice device, VkEvent event, const
+    // VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_event(&self, event: EventHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -401,6 +542,10 @@ impl Device {
             event.to_raw(), allocator);
     }
 
+    /// Retrieves the status of an event object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetEventStatus.html
+    //
     // *PFN_vkGetEventStatus)(VkDevice device, VkEvent event);
     pub unsafe fn get_event_status<E>(&self, event: E) -> VdResult<CallResult>
             where E: Handle<Target=EventHandle> {
@@ -409,6 +554,10 @@ impl Device {
         error::check(result, "vkGetEventStatus", CallResult::from(result))
     }
 
+    /// Sets an event to signaled state.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkSetEvent.html
+    //
     // *PFN_vkSetEvent)(VkDevice device, VkEvent event);
     pub unsafe fn set_event<E>(&self, event: E) -> VdResult<()>
             where E: Handle<Target=EventHandle> {
@@ -417,6 +566,10 @@ impl Device {
         error::check(result, "vkSetEvent", ())
     }
 
+    /// Resets an event to non-signaled state.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkResetEvent.html
+    //
     // *PFN_vkResetEvent)(VkDevice device, VkEvent event);
     pub unsafe fn reset_event<E>(&self, event: E) -> VdResult<()>
             where E: Handle<Target=EventHandle> {
@@ -425,7 +578,13 @@ impl Device {
         error::check(result, "vkResetEvent", ())
     }
 
-    // *PFN_vkCreateQueryPool)(VkDevice device, const VkQueryPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool);
+    /// Creates a new query pool object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateQueryPool.html
+    //
+    // *PFN_vkCreateQueryPool)(VkDevice device, const VkQueryPoolCreateInfo*
+    // pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool*
+    // pQueryPool);
     pub unsafe fn create_query_pool(&self, create_info: &QueryPoolCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<QueryPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -435,7 +594,12 @@ impl Device {
         error::check(result, "vkCreateQueryPool", QueryPoolHandle(handle))
     }
 
-    // *PFN_vkDestroyQueryPool)(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a query pool object
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyQueryPool.html
+    //
+    // *PFN_vkDestroyQueryPool)(VkDevice device, VkQueryPool queryPool, const
+    // VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_query_pool(&self, query_pool: QueryPoolHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -443,7 +607,13 @@ impl Device {
             query_pool.to_raw(), allocator);
     }
 
-    // *PFN_vkGetQueryPoolResults)(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags);
+    /// Copies results of queries in a query pool to a host memory region
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetQueryPoolResults.html
+    //
+    // *PFN_vkGetQueryPoolResults)(VkDevice device, VkQueryPool queryPool,
+    // uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData,
+    // VkDeviceSize stride, VkQueryResultFlags flags);
     pub unsafe fn get_query_pool_results<Q>(&self, query_pool: Q, first_query: u32, query_count: u32,
             data_size: usize, data: *mut c_void, stride: DeviceSize, flags: QueryResultFlags)
             -> VdResult<()>
@@ -454,7 +624,13 @@ impl Device {
         error::check(result, "vkGetQueryPoolResults", ())
     }
 
-    // *PFN_vkCreateBuffer)(VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer);
+    /// Creates a new buffer object
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateBuffer.html
+    //
+    // *PFN_vkCreateBuffer)(VkDevice device, const VkBufferCreateInfo*
+    // pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer*
+    // pBuffer);
     pub unsafe fn create_buffer(&self, create_info: &BufferCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<BufferHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -464,7 +640,12 @@ impl Device {
         error::check(result, "vkCreateBuffer", BufferHandle(handle))
     }
 
-    // *PFN_vkDestroyBuffer)(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a buffer object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyBuffer.html
+    //
+    // *PFN_vkDestroyBuffer)(VkDevice device, VkBuffer buffer, const
+    // VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_buffer(&self, buffer: BufferHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -472,7 +653,13 @@ impl Device {
             buffer.to_raw(), allocator);
     }
 
-    // *PFN_vkCreateBufferView)(VkDevice device, const VkBufferViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferView* pView);
+    /// Creates a new buffer view object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateBufferView.html
+    //
+    // *PFN_vkCreateBufferView)(VkDevice device, const VkBufferViewCreateInfo*
+    // pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferView*
+    // pView);
     pub unsafe fn create_buffer_view(&self, create_info: &BufferViewCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<BufferViewHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -482,7 +669,12 @@ impl Device {
         error::check(result, "vkCreateBufferView", BufferViewHandle(handle))
     }
 
-    // *PFN_vkDestroyBufferView)(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a buffer view object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyBufferView.html
+    //
+    // *PFN_vkDestroyBufferView)(VkDevice device, VkBufferView bufferView,
+    // const VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_buffer_view(&self, buffer_view: BufferViewHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -490,7 +682,12 @@ impl Device {
             buffer_view.to_raw(), allocator);
     }
 
-    // *PFN_vkCreateImage)(VkDevice device, const VkImageCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImage* pImage);
+    /// Creates a new image object
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateImage.html
+    //
+    // *PFN_vkCreateImage)(VkDevice device, const VkImageCreateInfo*
+    // pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImage* pImage);
     pub unsafe fn create_image(&self, create_info: &ImageCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<ImageHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -500,7 +697,12 @@ impl Device {
         error::check(result, "vkCreateImage", ImageHandle(handle))
     }
 
-    // *PFN_vkDestroyImage)(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator);
+    /// Destroys an image object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyImage.html
+    //
+    // *PFN_vkDestroyImage)(VkDevice device, VkImage image, const
+    // VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_image(&self, image: ImageHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -508,7 +710,12 @@ impl Device {
             image.to_raw(), allocator);
     }
 
-    // *PFN_vkGetImageSubresourceLayout)(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout);
+    /// Retrieves information about an image subresource.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetImageSubresourceLayout.html
+    //
+    // *PFN_vkGetImageSubresourceLayout)(VkDevice device, VkImage image, const
+    // VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout);
     pub unsafe fn get_image_subresource_layout<I>(&self, image: I, subresource: &ImageSubresource)
             -> SubresourceLayout
             where I: Handle<Target=ImageHandle> {
@@ -519,7 +726,13 @@ impl Device {
         layout
     }
 
-    // *PFN_vkCreateImageView)(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView);
+    /// Creates an image view from an existing image.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateImageView.html
+    //
+    // *PFN_vkCreateImageView)(VkDevice device, const VkImageViewCreateInfo*
+    // pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView*
+    // pView);
     pub unsafe fn create_image_view(&self, create_info: &ImageViewCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<ImageViewHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -529,7 +742,12 @@ impl Device {
         error::check(result, "vkCreateImageView", ImageViewHandle(handle))
     }
 
-    // *PFN_vkDestroyImageView)(VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator);
+    /// Destroys an image view object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyImageView.html
+    //
+    // *PFN_vkDestroyImageView)(VkDevice device, VkImageView imageView, const
+    // VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_image_view(&self, image_view: ImageViewHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -537,7 +755,13 @@ impl Device {
             image_view.to_raw(), allocator);
     }
 
-    // *PFN_vkCreateShaderModule)(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule);
+    /// Creates a new shader module object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateShaderModule.html
+    //
+    // *PFN_vkCreateShaderModule)(VkDevice device, const
+    // VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkShaderModule* pShaderModule);
     pub unsafe fn create_shader_module(&self, create_info: &ShaderModuleCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<ShaderModuleHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -547,7 +771,12 @@ impl Device {
         error::check(result, "vkCreateShaderModule", ShaderModuleHandle(handle))
     }
 
-    // *PFN_vkDestroyShaderModule)(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a shader module module.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyShaderModule.html
+    //
+    // *PFN_vkDestroyShaderModule)(VkDevice device, VkShaderModule
+    // shaderModule, const VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_shader_module(&self, shader_module: ShaderModuleHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -555,7 +784,13 @@ impl Device {
             shader_module.to_raw(), allocator);
     }
 
-    // *PFN_vkCreatePipelineCache)(VkDevice device, const VkPipelineCacheCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineCache* pPipelineCache);
+    /// Creates a new pipeline cache
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreatePipelineCache.html
+    //
+    // *PFN_vkCreatePipelineCache)(VkDevice device, const
+    // VkPipelineCacheCreateInfo* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkPipelineCache* pPipelineCache);
     pub unsafe fn create_pipeline_cache(&self, create_info: &PipelineCacheCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<PipelineCacheHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -565,7 +800,12 @@ impl Device {
         error::check(result, "vkCreatePipelineCache", PipelineCacheHandle(handle))
     }
 
-    // *PFN_vkDestroyPipelineCache)(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a pipeline cache object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyPipelineCache.html
+    //
+    // *PFN_vkDestroyPipelineCache)(VkDevice device, VkPipelineCache
+    // pipelineCache, const VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_pipeline_cache(&self, pipeline_cache: PipelineCacheHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -573,7 +813,12 @@ impl Device {
             pipeline_cache.to_raw(), allocator);
     }
 
-    // *PFN_vkGetPipelineCacheData)(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData);
+    /// Gets the data store from a pipeline cache.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetPipelineCacheData.html
+    //
+    // *PFN_vkGetPipelineCacheData)(VkDevice device, VkPipelineCache
+    // pipelineCache, size_t* pDataSize, void* pData);
     pub unsafe fn get_pipeline_cache_data<Pc>(&self, pipeline_cache: Pc, data_size: *mut usize,
             data: *mut c_void) -> VdResult<()>
             where Pc: Handle<Target=PipelineCacheHandle> {
@@ -582,7 +827,12 @@ impl Device {
         error::check(result, "vkGetPipelineCacheData", ())
     }
 
-    // *PFN_vkMergePipelineCaches)(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches);
+    /// Combines the data stores of pipeline caches.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkMergePipelineCaches.html
+    //
+    // *PFN_vkMergePipelineCaches)(VkDevice device, VkPipelineCache dstCache,
+    // uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches);
     pub unsafe fn merge_pipeline_caches<Pc>(&self, dst_cache: Pc, src_caches: &[PipelineCacheHandle])
             -> VdResult<()>
             where Pc: Handle<Target=PipelineCacheHandle> {
@@ -592,7 +842,14 @@ impl Device {
         error::check(result, "vkMergePipelineCaches", ())
     }
 
-    // *PFN_vkCreateGraphicsPipelines)(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkGraphicsPipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines);
+    /// Creates graphics pipelines.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateGraphicsPipelines.html
+    //
+    // *PFN_vkCreateGraphicsPipelines)(VkDevice device, VkPipelineCache
+    // pipelineCache, uint32_t createInfoCount, const
+    // VkGraphicsPipelineCreateInfo* pCreateInfos, const
+    // VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines);
     pub unsafe fn create_graphics_pipelines(&self, pipeline_cache: Option<PipelineCacheHandle>,
             create_infos: &[GraphicsPipelineCreateInfo],
             allocator: Option<*const vks::VkAllocationCallbacks>)
@@ -610,7 +867,14 @@ impl Device {
         error::check(result, "vkCreateGraphicsPipelines", pipelines)
     }
 
-    // *PFN_vkCreateComputePipelines)(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkComputePipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines);
+    /// Creates a new compute pipeline object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateComputePipelines.html
+    //
+    // *PFN_vkCreateComputePipelines)(VkDevice device, VkPipelineCache
+    // pipelineCache, uint32_t createInfoCount, const
+    // VkComputePipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks*
+    // pAllocator, VkPipeline* pPipelines);
     pub unsafe fn create_compute_pipelines(&self, pipeline_cache: Option<PipelineCacheHandle>,
             create_infos: &[ComputePipelineCreateInfo],
             allocator: Option<*const vks::VkAllocationCallbacks>)
@@ -628,7 +892,12 @@ impl Device {
         error::check(result, "vkCreateComputePipelines", pipelines)
     }
 
-    // *PFN_vkDestroyPipeline)(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a pipeline object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyPipeline.html
+    //
+    // *PFN_vkDestroyPipeline)(VkDevice device, VkPipeline pipeline, const
+    // VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_pipeline(&self, pipeline: PipelineHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -636,7 +905,13 @@ impl Device {
             pipeline.to_raw(), allocator);
     }
 
-    // *PFN_vkCreatePipelineLayout)(VkDevice device, const VkPipelineLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineLayout* pPipelineLayout);
+    /// Creates a new pipeline layout object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreatePipelineLayout.html
+    //
+    // *PFN_vkCreatePipelineLayout)(VkDevice device, const
+    // VkPipelineLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkPipelineLayout* pPipelineLayout);
     pub unsafe fn create_pipeline_layout(&self, create_info: &PipelineLayoutCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<PipelineLayoutHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -646,7 +921,12 @@ impl Device {
         error::check(result, "vkCreatePipelineLayout", PipelineLayoutHandle(handle))
     }
 
-    // *PFN_vkDestroyPipelineLayout)(VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a pipeline layout object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyPipelineLayout.html
+    //
+    // *PFN_vkDestroyPipelineLayout)(VkDevice device, VkPipelineLayout
+    // pipelineLayout, const VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_pipeline_layout(&self, pipeline_layout: PipelineLayoutHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -654,7 +934,13 @@ impl Device {
             pipeline_layout.to_raw(), allocator);
     }
 
-    // *PFN_vkCreateSampler)(VkDevice device, const VkSamplerCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSampler* pSampler);
+    /// Creates a new sampler object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateSampler.html
+    //
+    // *PFN_vkCreateSampler)(VkDevice device, const VkSamplerCreateInfo*
+    // pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSampler*
+    // pSampler);
     pub unsafe fn create_sampler(&self, create_info: &SamplerCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SamplerHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -664,7 +950,12 @@ impl Device {
         error::check(result, "vkCreateSampler", SamplerHandle(handle))
     }
 
-    // *PFN_vkDestroySampler)(VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a sampler object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroySampler.html
+    //
+    // *PFN_vkDestroySampler)(VkDevice device, VkSampler sampler, const
+    // VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_sampler(&self, sampler: SamplerHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -672,7 +963,13 @@ impl Device {
             sampler.to_raw(), allocator);
     }
 
-    // *PFN_vkCreateDescriptorSetLayout)(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorSetLayout* pSetLayout);
+    /// Creates a new descriptor set layout.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateDescriptorSetLayout.html
+    //
+    // *PFN_vkCreateDescriptorSetLayout)(VkDevice device, const
+    // VkDescriptorSetLayoutCreateInfo* pCreateInfo, const
+    // VkAllocationCallbacks* pAllocator, VkDescriptorSetLayout* pSetLayout);
     pub unsafe fn create_descriptor_set_layout(&self, create_info: &DescriptorSetLayoutCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<DescriptorSetLayoutHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -682,7 +979,13 @@ impl Device {
         error::check(result, "vkCreateDescriptorSetLayout", DescriptorSetLayoutHandle(handle))
     }
 
-    // *PFN_vkDestroyDescriptorSetLayout)(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a descriptor set layout object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyDescriptorSetLayout.html
+    //
+    // *PFN_vkDestroyDescriptorSetLayout)(VkDevice device,
+    // VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks*
+    // pAllocator);
     pub unsafe fn destroy_descriptor_set_layout(&self, descriptor_set_layout: DescriptorSetLayoutHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -690,7 +993,13 @@ impl Device {
             descriptor_set_layout.to_raw(), allocator);
     }
 
-    // *PFN_vkCreateDescriptorPool)(VkDevice device, const VkDescriptorPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorPool* pDescriptorPool);
+    /// Creates a descriptor pool object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateDescriptorPool.html
+    //
+    // *PFN_vkCreateDescriptorPool)(VkDevice device, const
+    // VkDescriptorPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkDescriptorPool* pDescriptorPool);
     pub unsafe fn create_descriptor_pool(&self, create_info: &DescriptorPoolCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<DescriptorPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -700,7 +1009,12 @@ impl Device {
         error::check(result, "vkCreateDescriptorPool", DescriptorPoolHandle(handle))
     }
 
-    // *PFN_vkDestroyDescriptorPool)(VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a descriptor pool object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyDescriptorPool.html
+    //
+    // *PFN_vkDestroyDescriptorPool)(VkDevice device, VkDescriptorPool
+    // descriptorPool, const VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_descriptor_pool(&self, descriptor_pool: DescriptorPoolHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -708,7 +1022,12 @@ impl Device {
             descriptor_pool.to_raw(), allocator);
     }
 
-    // *PFN_vkResetDescriptorPool)(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags);
+    /// Resets a descriptor pool object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkResetDescriptorPool.html
+    //
+    // *PFN_vkResetDescriptorPool)(VkDevice device, VkDescriptorPool
+    // descriptorPool, VkDescriptorPoolResetFlags flags);
     pub unsafe fn reset_descriptor_pool<Dp>(&self, descriptor_pool: Dp,
             flags: DescriptorPoolResetFlags) -> VdResult<()>
             where Dp: Handle<Target=DescriptorPoolHandle> {
@@ -717,7 +1036,13 @@ impl Device {
         error::check(result, "vkResetDescriptorPool", ())
     }
 
-    // *PFN_vkAllocateDescriptorSets)(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets);
+    /// Allocates one or more descriptor sets.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkAllocateDescriptorSets.html
+    //
+    // *PFN_vkAllocateDescriptorSets)(VkDevice device, const
+    // VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet*
+    // pDescriptorSets);
     pub unsafe fn allocate_descriptor_sets(&self, allocate_info: &DescriptorSetAllocateInfo)
             -> VdResult<SmallVec<[DescriptorSetHandle; 8]>> {
         let mut descriptor_sets = SmallVec::<[DescriptorSetHandle; 8]>::new();
@@ -730,7 +1055,13 @@ impl Device {
         error::check(result, "vkAllocateDescriptorSets", descriptor_sets)
     }
 
-    // *PFN_vkFreeDescriptorSets)(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets);
+    /// Frees one or more descriptor sets.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkFreeDescriptorSets.html
+    //
+    // *PFN_vkFreeDescriptorSets)(VkDevice device, VkDescriptorPool
+    // descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet*
+    // pDescriptorSets);
     pub unsafe fn free_descriptor_sets<Dp>(&self, descriptor_pool: Dp,
             descriptor_sets: &[DescriptorSetHandle]) -> VdResult<()>
             where Dp: Handle<Target=DescriptorPoolHandle> {
@@ -740,8 +1071,14 @@ impl Device {
         error::check(result, "vkFreeDescriptorSets", ())
     }
 
-    // *PFN_vkUpdateDescriptorSets)(VkDevice device, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, const VkCopyDescriptorSet* pDescriptorCopies);
-    /// Updates descriptor sets.
+    /// Updates the contents of a descriptor set object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkUpdateDescriptorSets.html
+    //
+    // *PFN_vkUpdateDescriptorSets)(VkDevice device, uint32_t
+    //descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites,
+    //uint32_t descriptorCopyCount, const VkCopyDescriptorSet*
+    //pDescriptorCopies); / Updates descriptor sets.
     pub fn update_descriptor_sets(&self, descriptor_writes: &[WriteDescriptorSet],
             descriptor_copies: &[CopyDescriptorSet]) {
         unsafe {
@@ -753,7 +1090,13 @@ impl Device {
         }
     }
 
-    // *PFN_vkCreateFramebuffer)(VkDevice device, const VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer);
+    /// Creates a new framebuffer object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateFramebuffer.html
+    //
+    // *PFN_vkCreateFramebuffer)(VkDevice device, const
+    // VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkFramebuffer* pFramebuffer);
     pub unsafe fn create_framebuffer(&self, create_info: &FramebufferCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<FramebufferHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -763,7 +1106,12 @@ impl Device {
         error::check(result, "vkCreateFramebuffer", FramebufferHandle(handle))
     }
 
-    // *PFN_vkDestroyFramebuffer)(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a framebuffer object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyFramebuffer.html
+    //
+    // *PFN_vkDestroyFramebuffer)(VkDevice device, VkFramebuffer framebuffer,
+    // const VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_framebuffer(&self, framebuffer: FramebufferHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -771,7 +1119,13 @@ impl Device {
             framebuffer.to_raw(), allocator);
     }
 
-    // *PFN_vkCreateRenderPass)(VkDevice device, const VkRenderPassCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass);
+    /// Creates a new render pass object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateRenderPass.html
+    //
+    // *PFN_vkCreateRenderPass)(VkDevice device, const VkRenderPassCreateInfo*
+    // pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass*
+    // pRenderPass);
     pub unsafe fn create_render_pass(&self, create_info: &RenderPassCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<RenderPassHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -781,7 +1135,12 @@ impl Device {
         error::check(result, "vkCreateRenderPass", RenderPassHandle(handle))
     }
 
-    // *PFN_vkDestroyRenderPass)(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a render pass object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyRenderPass.html
+    //
+    // *PFN_vkDestroyRenderPass)(VkDevice device, VkRenderPass renderPass,
+    // const VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_render_pass(&self, render_pass: RenderPassHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -789,7 +1148,12 @@ impl Device {
             render_pass.to_raw(), allocator);
     }
 
-    // *PFN_vkGetRenderAreaGranularity)(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity);
+    /// Returns the granularity for optimal render area.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetRenderAreaGranularity.html
+    //
+    // *PFN_vkGetRenderAreaGranularity)(VkDevice device, VkRenderPass
+    // renderPass, VkExtent2D* pGranularity);
     pub unsafe fn get_render_area_granularity<Rp>(&self, render_pass: Rp)
             -> Extent2d
             where Rp: Handle<Target=RenderPassHandle> {
@@ -799,7 +1163,13 @@ impl Device {
         granularity
     }
 
-    // *PFN_vkCreateCommandPool)(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool);
+    /// Creates a new command pool object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateCommandPool.html
+    //
+    // *PFN_vkCreateCommandPool)(VkDevice device, const
+    // VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkCommandPool* pCommandPool);
     pub unsafe fn create_command_pool(&self, create_info: &CommandPoolCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<CommandPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -809,7 +1179,12 @@ impl Device {
         error::check(result, "vkCreateCommandPool", CommandPoolHandle(handle))
     }
 
-    // *PFN_vkDestroyCommandPool)(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a command pool object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyCommandPool.html
+    //
+    // *PFN_vkDestroyCommandPool)(VkDevice device, VkCommandPool commandPool,
+    // const VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_command_pool(&self, command_pool: CommandPoolHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -817,7 +1192,12 @@ impl Device {
             command_pool.to_raw(), allocator);
     }
 
-    // *PFN_vkResetCommandPool)(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags);
+    /// Resets a command pool.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkResetCommandPool.html
+    //
+    // *PFN_vkResetCommandPool)(VkDevice device, VkCommandPool commandPool,
+    // VkCommandPoolResetFlags flags);
     pub unsafe fn reset_command_pool<Cp>(&self, command_pool: Cp, flags: CommandPoolResetFlags)
             -> VdResult<()>
             where Cp: Handle<Target=CommandPoolHandle> {
@@ -826,7 +1206,13 @@ impl Device {
         error::check(result, "vkResetCommandPool", ())
     }
 
-    // *PFN_vkAllocateCommandBuffers)(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers);
+    /// Allocates command buffers from an existing command pool.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkAllocateCommandBuffers.html
+    //
+    // *PFN_vkAllocateCommandBuffers)(VkDevice device, const
+    // VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer*
+    // pCommandBuffers);
     pub unsafe fn allocate_command_buffers(&self, allocate_info: &CommandBufferAllocateInfo)
             -> VdResult<SmallVec<[CommandBufferHandle; 16]>> {
         let mut command_buffers: SmallVec<[CommandBufferHandle; 16]> = SmallVec::new();
@@ -838,7 +1224,12 @@ impl Device {
         error::check(result, "vkAllocateCommandBuffers", command_buffers)
     }
 
-    // *PFN_vkFreeCommandBuffers)(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers);
+    /// Frees command buffers.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkFreeCommandBuffers.html
+    //
+    // *PFN_vkFreeCommandBuffers)(VkDevice device, VkCommandPool commandPool,
+    // uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers);
     pub unsafe fn free_command_buffers<Cp>(&self, command_pool: Cp, command_buffers: &[CommandBufferHandle])
             where Cp: Handle<Target=CommandPoolHandle> {
         self.proc_addr_loader().core.vkFreeCommandBuffers(self.handle().to_raw(),
@@ -846,97 +1237,169 @@ impl Device {
             command_buffers.as_ptr() as *const vks::VkCommandBuffer);
     }
 
-    // *PFN_vkBeginCommandBuffer)(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo);
+    /// Starts recording a command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkBeginCommandBuffer.html
+    //
+    // *PFN_vkBeginCommandBuffer)(VkCommandBuffer commandBuffer, const
+    // VkCommandBufferBeginInfo* pBeginInfo);
     pub unsafe fn begin_command_buffer(&self, command_buffer: CommandBufferHandle,
             begin_info: &CommandBufferBeginInfo) -> VdResult<()> {
         let result = self.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer.to_raw(), begin_info.as_raw());
         error::check(result, "vkBeginCommandBuffer", ())
     }
 
+    /// Finishes recording a command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkEndCommandBuffer.html
+    //
     // *PFN_vkEndCommandBuffer)(VkCommandBuffer commandBuffer);
     pub unsafe fn end_command_buffer(&self, command_buffer: CommandBufferHandle) -> VdResult<()> {
         let result = self.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.to_raw());
         error::check(result, "vkEndCommandBuffer", ())
     }
 
-
-    // *PFN_vkResetCommandBuffer)(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags);
+    /// Resets a command buffer to the initial state.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkResetCommandBuffer.html
+    //
+    // *PFN_vkResetCommandBuffer)(VkCommandBuffer commandBuffer,
+    // VkCommandBufferResetFlags flags);
     pub unsafe fn cmd_reset_command_buffer(&self, command_buffer: CommandBufferHandle,
             flags: CommandBufferResetFlags) -> VdResult<()> {
         let result = self.proc_addr_loader().core.vkResetCommandBuffer(command_buffer.to_raw(), flags.bits());
         error::check(result, "vkResetCommandBuffer", ())
     }
 
-
-    // *PFN_vkCmdBindPipeline)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline);
+    /// Binds a pipeline object to a command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdBindPipeline.html
+    //
+    // *PFN_vkCmdBindPipeline)(VkCommandBuffer commandBuffer,
+    // VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline);
     pub unsafe fn cmd_bind_pipeline(&self, command_buffer: CommandBufferHandle,
             pipeline_bind_point: PipelineBindPoint, pipeline: PipelineHandle) {
         self.proc_addr_loader().core.vkCmdBindPipeline(command_buffer.to_raw(),
             pipeline_bind_point.into(), pipeline.handle().to_raw());
     }
 
-    // *PFN_vkCmdSetViewport)(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* pViewports);
+    /// Sets the viewport on a command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdSetViewport.html
+    //
+    // *PFN_vkCmdSetViewport)(VkCommandBuffer commandBuffer, uint32_t
+    // firstViewport, uint32_t viewportCount, const VkViewport* pViewports);
     pub unsafe fn cmd_set_viewport(&self, command_buffer: CommandBufferHandle,
             first_viewport: u32, viewports: &[Viewport]) {
         self.proc_addr_loader().core.vkCmdSetViewport(command_buffer.to_raw(),
             first_viewport, viewports.len() as u32, viewports.as_ptr() as *const vks::VkViewport);
     }
 
-    // *PFN_vkCmdSetScissor)(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* pScissors);
+    /// Sets the dynamic scissor rectangles on a command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdSetScissor.html
+    //
+    // *PFN_vkCmdSetScissor)(VkCommandBuffer commandBuffer, uint32_t
+    // firstScissor, uint32_t scissorCount, const VkRect2D* pScissors);
     pub unsafe fn cmd_set_scissor(&self, command_buffer: CommandBufferHandle, first_scissor: u32,
             scissors: &[Rect2d]) {
         self.proc_addr_loader().core.vkCmdSetScissor(command_buffer.to_raw(),
             first_scissor, scissors.len() as u32, scissors.as_ptr() as *const vks::VkRect2D);
     }
 
-    // *PFN_vkCmdSetLineWidth)(VkCommandBuffer commandBuffer, float lineWidth);
+    /// Sets the dynamic line width state.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdSetLineWidth.html
+    //
+    // *PFN_vkCmdSetLineWidth)(VkCommandBuffer commandBuffer, float
+    // lineWidth);
     pub unsafe fn cmd_set_line_width(&self, command_buffer: CommandBufferHandle, line_width: f32) {
         self.proc_addr_loader().core.vkCmdSetLineWidth(command_buffer.to_raw(), line_width);
     }
 
-    // *PFN_vkCmdSetDepthBias)(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor);
+
+    /// Sets the depth bias dynamic state.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdSetDepthBias.html
+    //
+    // *PFN_vkCmdSetDepthBias)(VkCommandBuffer commandBuffer, float
+    // depthBiasConstantFactor, float depthBiasClamp, float
+    // depthBiasSlopeFactor);
     pub unsafe fn cmd_set_depth_bias(&self, command_buffer: CommandBufferHandle,
             depth_bias_constant_factor: f32, depth_bias_clamp: f32, depth_bias_slope_factor: f32) {
         self.proc_addr_loader().core.vkCmdSetDepthBias(command_buffer.to_raw(),
             depth_bias_constant_factor, depth_bias_clamp, depth_bias_slope_factor);
     }
 
-    // *PFN_vkCmdSetBlendConstants)(VkCommandBuffer commandBuffer, const float blendConstants[4]);
+    /// Sets the values of blend constants.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdSetBlendConstants.html
+    //
+    // *PFN_vkCmdSetBlendConstants)(VkCommandBuffer commandBuffer, const float
+    // blendConstants[4]);
     pub unsafe fn cmd_set_blend_constants(&self, command_buffer: CommandBufferHandle,
             blend_constants: [f32; 4]) {
         self.proc_addr_loader().core.vkCmdSetBlendConstants(command_buffer.to_raw(),
             blend_constants.as_ptr());
     }
 
-    // *PFN_vkCmdSetDepthBounds)(VkCommandBuffer commandBuffer, float minDepthBounds, float maxDepthBounds);
+    /// Sets the depth bounds test values for a command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdSetDepthBounds.html
+    //
+    // *PFN_vkCmdSetDepthBounds)(VkCommandBuffer commandBuffer, float
+    // minDepthBounds, float maxDepthBounds);
     pub unsafe fn cmd_set_depth_bounds(&self, command_buffer: CommandBufferHandle,
             min_depth_bounds: f32, max_depth_bounds: f32) {
         self.proc_addr_loader().core.vkCmdSetDepthBounds(command_buffer.to_raw(),
             min_depth_bounds, max_depth_bounds);
     }
 
-    // *PFN_vkCmdSetStencilCompareMask)(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t compareMask);
+    /// Sets the stencil compare mask dynamic state.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdSetStencilCompareMask.html
+    //
+    // *PFN_vkCmdSetStencilCompareMask)(VkCommandBuffer commandBuffer,
+    // VkStencilFaceFlags faceMask, uint32_t compareMask);
     pub unsafe fn cmd_set_stencil_compare_mask(&self, command_buffer: CommandBufferHandle,
             face_mask: StencilFaceFlags, compare_mask: u32) {
         self.proc_addr_loader().core.vkCmdSetStencilCompareMask(command_buffer.to_raw(),
             face_mask.bits(), compare_mask);
     }
 
-    // *PFN_vkCmdSetStencilWriteMask)(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t writeMask);
+    /// Sets the stencil write mask dynamic state
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdSetStencilWriteMask.html
+    //
+    // *PFN_vkCmdSetStencilWriteMask)(VkCommandBuffer commandBuffer,
+    // VkStencilFaceFlags faceMask, uint32_t writeMask);
     pub unsafe fn cmd_set_stencil_write_mask(&self, command_buffer: CommandBufferHandle,
             face_mask: StencilFaceFlags, write_mask: u32) {
         self.proc_addr_loader().core.vkCmdSetStencilWriteMask(command_buffer.to_raw(),
             face_mask.bits(), write_mask);
     }
 
-    // *PFN_vkCmdSetStencilReference)(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t reference);
+    /// Sets the stencil reference dynamic state.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdSetStencilReference.html
+    //
+    // *PFN_vkCmdSetStencilReference)(VkCommandBuffer commandBuffer,
+    // VkStencilFaceFlags faceMask, uint32_t reference);
     pub unsafe fn cmd_set_stencil_reference(&self, command_buffer: CommandBufferHandle,
             face_mask: StencilFaceFlags, reference: u32) {
         self.proc_addr_loader().core.vkCmdSetStencilReference(command_buffer.to_raw(),
             face_mask.bits(), reference);
     }
 
-    // *PFN_vkCmdBindDescriptorSets)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets);
+    /// Binds descriptor sets to a command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdBindDescriptorSets.html
+    //
+    // *PFN_vkCmdBindDescriptorSets)(VkCommandBuffer commandBuffer,
+    // VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout,
+    // uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet*
+    // pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t*
+    // pDynamicOffsets);
     pub unsafe fn cmd_bind_descriptor_sets(&self, command_buffer: CommandBufferHandle,
             pipeline_bind_point: PipelineBindPoint, layout: PipelineLayoutHandle,
             first_set: u32, descriptor_sets: &[DescriptorSetHandle],
@@ -947,14 +1410,25 @@ impl Device {
             dynamic_offsets.len() as u32, dynamic_offsets.as_ptr());
     }
 
-    // *PFN_vkCmdBindIndexBuffer)(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType);
+    /// Binds an index buffer to a command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdBindIndexBuffer.html
+    //
+    // *PFN_vkCmdBindIndexBuffer)(VkCommandBuffer commandBuffer, VkBuffer
+    // buffer, VkDeviceSize offset, VkIndexType indexType);
     pub unsafe fn cmd_bind_index_buffer(&self, command_buffer: CommandBufferHandle, buffer: BufferHandle,
             offset: u64, index_type: IndexType) {
             self.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer.to_raw(),
                 buffer.handle().to_raw(), offset, index_type.into());
     }
 
-    // *PFN_vkCmdBindVertexBuffers)(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets);
+    /// Binds vertex buffers to a command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdBindVertexBuffers.html
+    //
+    // *PFN_vkCmdBindVertexBuffers)(VkCommandBuffer commandBuffer, uint32_t
+    // firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const
+    // VkDeviceSize* pOffsets);
     pub unsafe fn cmd_bind_vertex_buffers(&self, command_buffer: CommandBufferHandle, first_binding: u32,
             buffers: &[BufferHandle], offsets: &[u64]) {
         self.proc_addr_loader().core.vkCmdBindVertexBuffers(command_buffer.to_raw(),
@@ -962,49 +1436,86 @@ impl Device {
             offsets.as_ptr());
     }
 
-    // *PFN_vkCmdDraw)(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
+    /// Draws primitives.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdDraw.html
+    //
+    // *PFN_vkCmdDraw)(VkCommandBuffer commandBuffer, uint32_t vertexCount,
+    // uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
     pub unsafe fn cmd_draw(&self, command_buffer: CommandBufferHandle, vertex_count: u32, instance_count: u32,
             first_vertex: u32, first_instance: u32) {
         self.proc_addr_loader().core.vkCmdDraw(command_buffer.to_raw(), vertex_count, instance_count,
             first_vertex, first_instance);
     }
 
-    // *PFN_vkCmdDrawIndexed)(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance);
+    /// Issues an indexed draw into a command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdDrawIndexed.html
+    //
+    // *PFN_vkCmdDrawIndexed)(VkCommandBuffer commandBuffer, uint32_t
+    // indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t
+    // vertexOffset, uint32_t firstInstance);
     pub unsafe fn cmd_draw_indexed(&self, command_buffer: CommandBufferHandle, index_count: u32,
             instance_count: u32, first_index: u32, vertex_offset: i32, first_instance: u32) {
         self.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer.to_raw(), index_count,
             instance_count, first_index, vertex_offset, first_instance);
     }
 
-    // *PFN_vkCmdDrawIndirect)(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride);
+    /// Issues an indirect draw into a command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdDrawIndirect.html
+    //
+    // *PFN_vkCmdDrawIndirect)(VkCommandBuffer commandBuffer, VkBuffer buffer,
+    // VkDeviceSize offset, uint32_t drawCount, uint32_t stride);
     pub unsafe fn cmd_draw_indirect(&self, command_buffer: CommandBufferHandle, buffer: BufferHandle,
             offset: u64, draw_count: u32, stride: u32) {
         self.proc_addr_loader().core.vkCmdDrawIndirect(command_buffer.to_raw(),
             buffer.handle().to_raw(), offset, draw_count, stride);
     }
 
-    // *PFN_vkCmdDrawIndexedIndirect)(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride);
+    /// Performs an indexed indirect draw.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdDrawIndexedIndirect.html
+    //
+    // *PFN_vkCmdDrawIndexedIndirect)(VkCommandBuffer commandBuffer, VkBuffer
+    // buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride);
     pub unsafe fn cmd_draw_indexed_indirect(&self, command_buffer: CommandBufferHandle, buffer: BufferHandle,
             offset: u64, draw_count: u32, stride: u32) {
         self.proc_addr_loader().core.vkCmdDrawIndexedIndirect(command_buffer.to_raw(),
             buffer.handle().to_raw(), offset, draw_count, stride);
     }
 
-    // *PFN_vkCmdDispatch)(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
+    /// Dispatches compute work items.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdDispatch.html
+    //
+    // *PFN_vkCmdDispatch)(VkCommandBuffer commandBuffer, uint32_t
+    // groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
     pub unsafe fn cmd_dispatch(&self, command_buffer: CommandBufferHandle, group_count_x: u32,
             group_count_y: u32, group_count_z: u32) {
         self.proc_addr_loader().core.vkCmdDispatch(command_buffer.to_raw(), group_count_x,
             group_count_y, group_count_z);
     }
 
-    // *PFN_vkCmdDispatchIndirect)(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset);
+    /// Dispatches compute work items using indirect parameters.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdDispatchIndirect.html
+    //
+    // *PFN_vkCmdDispatchIndirect)(VkCommandBuffer commandBuffer, VkBuffer
+    // buffer, VkDeviceSize offset);
     pub unsafe fn cmd_dispatch_indirect(&self, command_buffer: CommandBufferHandle, buffer: BufferHandle,
             offset: u64) {
         self.proc_addr_loader().core.vkCmdDispatchIndirect(command_buffer.to_raw(),
             buffer.handle().to_raw(), offset);
     }
 
-    // *PFN_vkCmdCopyBuffer)(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferCopy* pRegions);
+    /// Copies data between buffer regions.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdCopyBuffer.html
+    //
+    // *PFN_vkCmdCopyBuffer)(VkCommandBuffer commandBuffer, VkBuffer
+    // srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const
+    // VkBufferCopy* pRegions);
     pub unsafe fn cmd_copy_buffer(&self, command_buffer: CommandBufferHandle, src_buffer: BufferHandle,
             dst_buffer: BufferHandle, regions: &[BufferCopy]) {
         self.proc_addr_loader().core.vkCmdCopyBuffer(
@@ -1016,7 +1527,13 @@ impl Device {
         );
     }
 
-    // *PFN_vkCmdCopyImage)(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions);
+    /// Copies data between images.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdCopyImage.html
+    //
+    // *PFN_vkCmdCopyImage)(VkCommandBuffer commandBuffer, VkImage srcImage,
+    // VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout
+    // dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions);
     pub unsafe fn cmd_copy_image(&self, command_buffer: CommandBufferHandle, src_image: ImageHandle,
             src_image_layout: ImageLayout, dst_image: ImageHandle, dst_image_layout: ImageLayout,
             regions: &[ImageCopy]) {
@@ -1025,7 +1542,14 @@ impl Device {
         regions.len() as u32, regions.as_ptr() as *const vks::VkImageCopy);
     }
 
-    // *PFN_vkCmdBlitImage)(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageBlit* pRegions, VkFilter filter);
+    /// Copies regions of an image, potentially performing format conversion.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdBlitImage.html
+    //
+    // *PFN_vkCmdBlitImage)(VkCommandBuffer commandBuffer, VkImage srcImage,
+    // VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout
+    // dstImageLayout, uint32_t regionCount, const VkImageBlit* pRegions,
+    // VkFilter filter);
     pub unsafe fn cmd_blit_image(&self, command_buffer: CommandBufferHandle, src_image: ImageHandle,
             src_image_layout: ImageLayout, dst_image: ImageHandle, dst_image_layout: ImageLayout,
             regions: &[ImageBlit], filter: Filter) {
@@ -1035,7 +1559,13 @@ impl Device {
             regions.as_ptr() as *const vks::VkImageBlit, filter.into());
     }
 
-    // *PFN_vkCmdCopyBufferToImage)(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkBufferImageCopy* pRegions);
+    /// Copies data from a buffer into an image.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdCopyBufferToImage.html
+    //
+    // *PFN_vkCmdCopyBufferToImage)(VkCommandBuffer commandBuffer, VkBuffer
+    // srcBuffer, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t
+    // regionCount, const VkBufferImageCopy* pRegions);
     pub unsafe fn cmd_copy_buffer_to_image(&self, command_buffer: CommandBufferHandle,
             src_buffer: BufferHandle, dst_image: ImageHandle, dst_image_layout: ImageLayout,
             regions: &[BufferImageCopy]) {
@@ -1049,7 +1579,13 @@ impl Device {
         );
     }
 
-    // *PFN_vkCmdCopyImageToBuffer)(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions);
+    /// Copies image data into a buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdCopyImageToBuffer.html
+    //
+    // *PFN_vkCmdCopyImageToBuffer)(VkCommandBuffer commandBuffer, VkImage
+    // srcImage, VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t
+    // regionCount, const VkBufferImageCopy* pRegions);
     pub unsafe fn cmd_copy_image_to_buffer(&self, command_buffer: CommandBufferHandle,
             src_image: ImageHandle, src_image_layout: ImageLayout, dst_buffer: BufferHandle,
             regions: &[BufferImageCopy]) {
@@ -1058,21 +1594,38 @@ impl Device {
             regions.as_ptr() as *const vks::VkBufferImageCopy);
     }
 
-    // *PFN_vkCmdUpdateBuffer)(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize dataSize, const void* pData);
+    /// Updates a buffer's contents from host memory.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdUpdateBuffer.html
+    //
+    // *PFN_vkCmdUpdateBuffer)(VkCommandBuffer commandBuffer, VkBuffer
+    // dstBuffer, VkDeviceSize dstOffset, VkDeviceSize dataSize, const void*
+    // pData);
     pub unsafe fn cmd_update_buffer(&self, command_buffer: CommandBufferHandle, dst_buffer: BufferHandle,
             dst_offset: u64, data: &[u8]) {
         self.proc_addr_loader().core.vkCmdUpdateBuffer(command_buffer.to_raw(),
             dst_buffer.to_raw(), dst_offset, data.len() as u64, data.as_ptr() as *const _);
     }
 
-    // *PFN_vkCmdFillBuffer)(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data);
+    /// Fills a region of a buffer with a fixed value.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdFillBuffer.html
+    //
+    // *PFN_vkCmdFillBuffer)(VkCommandBuffer commandBuffer, VkBuffer
+    // dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data);
     pub unsafe fn cmd_fill_buffer(&self,command_buffer: CommandBufferHandle,  dst_buffer: BufferHandle,
             dst_offset: u64, size: Option<DeviceSize>, data: u32) {
         self.proc_addr_loader().core.vkCmdFillBuffer(command_buffer.to_raw(),
             dst_buffer.to_raw(), dst_offset, size.unwrap_or(0), data);
     }
 
-    // *PFN_vkCmdClearColorImage)(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearColorValue* pColor, uint32_t rangeCount, const VkImageSubresourceRange* pRanges);
+    /// Clears regions of a color image.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdClearColorImage.html
+    //
+    // *PFN_vkCmdClearColorImage)(VkCommandBuffer commandBuffer, VkImage
+    // image, VkImageLayout imageLayout, const VkClearColorValue* pColor,
+    // uint32_t rangeCount, const VkImageSubresourceRange* pRanges);
     pub unsafe fn cmd_clear_color_image(&self, command_buffer: CommandBufferHandle, image: ImageHandle,
             image_layout: ImageLayout, color: &ClearColorValue, ranges: &[ImageSubresourceRange]) {
         self.proc_addr_loader().core.vkCmdClearColorImage(command_buffer.to_raw(),
@@ -1080,7 +1633,14 @@ impl Device {
             ranges.as_ptr() as *const vks::VkImageSubresourceRange);
     }
 
-    // *PFN_vkCmdClearDepthStencilImage)(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearDepthStencilValue* pDepthStencil, uint32_t rangeCount, const VkImageSubresourceRange* pRanges);
+    /// Fills regions of a combined depth/stencil image.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdClearDepthStencilImage.html
+    //
+    // *PFN_vkCmdClearDepthStencilImage)(VkCommandBuffer commandBuffer,
+    // VkImage image, VkImageLayout imageLayout, const
+    // VkClearDepthStencilValue* pDepthStencil, uint32_t rangeCount, const
+    // VkImageSubresourceRange* pRanges);
     pub unsafe fn cmd_clear_depth_stencil_image(&self, command_buffer: CommandBufferHandle,
             image: ImageHandle, image_layout: ImageLayout, depth_stencil: &ClearDepthStencilValue,
             ranges: &[ImageSubresourceRange]) {
@@ -1089,7 +1649,13 @@ impl Device {
             ranges.as_ptr() as *const vks::VkImageSubresourceRange);
     }
 
-    // *PFN_vkCmdClearAttachments)(VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkClearAttachment* pAttachments, uint32_t rectCount, const VkClearRect* pRects);
+    /// Clears regions within currently bound framebuffer attachments.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdClearAttachments.html
+    //
+    // *PFN_vkCmdClearAttachments)(VkCommandBuffer commandBuffer, uint32_t
+    // attachmentCount, const VkClearAttachment* pAttachments, uint32_t
+    // rectCount, const VkClearRect* pRects);
     pub unsafe fn cmd_clear_attachments(&self, command_buffer: CommandBufferHandle,
             attachments: &[ClearAttachment], rects: &[ClearRect]) {
         self.proc_addr_loader().core.vkCmdClearAttachments(command_buffer.to_raw(),
@@ -1097,7 +1663,13 @@ impl Device {
             rects.len() as u32, rects.as_ptr() as *const vks::VkClearRect);
     }
 
-    // *PFN_vkCmdResolveImage)(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageResolve* pRegions);
+    /// Resolves regions of an image.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdResolveImage.html
+    //
+    // *PFN_vkCmdResolveImage)(VkCommandBuffer commandBuffer, VkImage
+    // srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout
+    // dstImageLayout, uint32_t regionCount, const VkImageResolve* pRegions);
     pub unsafe fn cmd_resolve_image(&self, command_buffer: CommandBufferHandle,
             src_image: ImageHandle, src_image_layout: ImageLayout, dst_image: ImageHandle,
             dst_image_layout: ImageLayout, regions: &[ImageResolve]) {
@@ -1107,21 +1679,41 @@ impl Device {
             regions.as_ptr() as *const vks::VkImageResolve);
     }
 
-    // *PFN_vkCmdSetEvent)(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask);
+    /// Sets an event object to signaled state.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdSetEvent.html
+    //
+    // *PFN_vkCmdSetEvent)(VkCommandBuffer commandBuffer, VkEvent event,
+    // VkPipelineStageFlags stageMask);
     pub unsafe fn cmd_set_event(&self, command_buffer: CommandBufferHandle, event: EventHandle,
             stage_mask: PipelineStageFlags) {
         self.proc_addr_loader().core.vkCmdSetEvent(command_buffer.to_raw(),
             event.to_raw(), stage_mask.bits());
     }
 
-    // *PFN_vkCmdResetEvent)(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask);
+    /// Resets an event object to non-signaled state.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdResetEvent.html
+    //
+    // *PFN_vkCmdResetEvent)(VkCommandBuffer commandBuffer, VkEvent event,
+    // VkPipelineStageFlags stageMask);
     pub unsafe fn cmd_reset_event(&self, command_buffer: CommandBufferHandle, event: EventHandle,
             stage_mask: PipelineStageFlags) {
         self.proc_addr_loader().core.vkCmdResetEvent(command_buffer.to_raw(),
             event.to_raw(), stage_mask.bits());
     }
 
-    // *PFN_vkCmdWaitEvents)(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers);
+    /// Waits for one or more events and insert a set of memory.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdWaitEvents.html
+    //
+    // *PFN_vkCmdWaitEvents)(VkCommandBuffer commandBuffer, uint32_t
+    // eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask,
+    // VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const
+    // VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount,
+    // const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t
+    // imageMemoryBarrierCount, const VkImageMemoryBarrier*
+    // pImageMemoryBarriers);
     pub unsafe fn cmd_wait_events(&self, command_buffer: CommandBufferHandle,
             events: &[EventHandle],
             src_stage_mask: PipelineStageFlags, dst_stage_mask: PipelineStageFlags,
@@ -1139,7 +1731,17 @@ impl Device {
         );
     }
 
-    // *PFN_vkCmdPipelineBarrier)(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers);
+    /// Inserts a memory dependency.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdPipelineBarrier.html
+    //
+    // *PFN_vkCmdPipelineBarrier)(VkCommandBuffer commandBuffer,
+    // VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask,
+    // VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const
+    // VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount,
+    // const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t
+    // imageMemoryBarrierCount, const VkImageMemoryBarrier*
+    // pImageMemoryBarriers);
     pub unsafe fn cmd_pipeline_barrier(&self, command_buffer: CommandBufferHandle,
             src_stage_mask: PipelineStageFlags, dst_stage_mask: PipelineStageFlags,
             dependency_flags: DependencyFlags, memory_barriers: &[MemoryBarrier],
@@ -1155,35 +1757,63 @@ impl Device {
         );
     }
 
-    // *PFN_vkCmdBeginQuery)(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags);
+    /// Begins a query.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdBeginQuery.html
+    //
+    // *PFN_vkCmdBeginQuery)(VkCommandBuffer commandBuffer, VkQueryPool
+    // queryPool, uint32_t query, VkQueryControlFlags flags);
     pub unsafe fn cmd_begin_query(&self, command_buffer: CommandBufferHandle,
             query_pool: QueryPoolHandle, query: u32, flags: QueryControlFlags) {
         self.proc_addr_loader().core.vkCmdBeginQuery(command_buffer.to_raw(),
             query_pool.to_raw(), query, flags.bits());
     }
 
-    // *PFN_vkCmdEndQuery)(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query);
+    /// Ends a query.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdEndQuery.html
+    //
+    // *PFN_vkCmdEndQuery)(VkCommandBuffer commandBuffer, VkQueryPool
+    // queryPool, uint32_t query);
     pub unsafe fn cmd_end_query(&self, command_buffer: CommandBufferHandle,
             query_pool: QueryPoolHandle, query: u32) {
         self.proc_addr_loader().core.vkCmdEndQuery(command_buffer.to_raw(),
             query_pool.to_raw(), query);
     }
 
-    // *PFN_vkCmdResetQueryPool)(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount);
+    /// Resets queries in a query pool.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdResetQueryPool.html
+    //
+    // *PFN_vkCmdResetQueryPool)(VkCommandBuffer commandBuffer, VkQueryPool
+    // queryPool, uint32_t firstQuery, uint32_t queryCount);
     pub unsafe fn cmd_reset_query_pool(&self, command_buffer: CommandBufferHandle,
             query_pool: QueryPoolHandle, first_query: u32, query_count: u32) {
         self.proc_addr_loader().core.vkCmdResetQueryPool(command_buffer.to_raw(),
             query_pool.to_raw(), first_query, query_count);
     }
 
-    // *PFN_vkCmdWriteTimestamp)(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t query);
+    /// Writes a device timestamp into a query object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdWriteTimestamp.html
+    //
+    // *PFN_vkCmdWriteTimestamp)(VkCommandBuffer commandBuffer,
+    // VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t
+    // query);
     pub unsafe fn cmd_write_timestamp(&self, command_buffer: CommandBufferHandle,
         pipeline_stage: PipelineStageFlags, query_pool: QueryPoolHandle, query: u32) {
         self.proc_addr_loader().core.vkCmdWriteTimestamp(command_buffer.to_raw(),
             pipeline_stage.bits(), query_pool.to_raw(), query);
     }
 
-    // *PFN_vkCmdCopyQueryPoolResults)(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags);
+    /// Copies the results of queries in a query pool to a buffer object.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdCopyQueryPoolResults.html
+    //
+    // *PFN_vkCmdCopyQueryPoolResults)(VkCommandBuffer commandBuffer,
+    // VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount,
+    // VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride,
+    // VkQueryResultFlags flags);
     pub unsafe fn cmd_copy_query_pool_results(&self, command_buffer: CommandBufferHandle,
             query_pool: QueryPoolHandle, first_query: u32, query_count: u32,
             dst_buffer: BufferHandle, dst_offset: u64, stride: u64, flags: QueryResultFlags) {
@@ -1192,7 +1822,13 @@ impl Device {
             flags.bits());
     }
 
-    // *PFN_vkCmdPushConstants)(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues);
+    /// Updates the values of push constants.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdPushConstants.html
+    //
+    // *PFN_vkCmdPushConstants)(VkCommandBuffer commandBuffer,
+    // VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t
+    // offset, uint32_t size, const void* pValues);
     pub unsafe fn cmd_push_constants(&self, command_buffer: CommandBufferHandle,
             layout: PipelineLayoutHandle, stage_flags: ShaderStageFlags, offset: u32,
             values: &[u8]) {
@@ -1201,32 +1837,57 @@ impl Device {
             stage_flags.bits(), offset, values.len() as u32, values.as_ptr() as *const c_void);
     }
 
-    // *PFN_vkCmdBeginRenderPass)(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents);
+    /// Begins a new render pass.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdBeginRenderPass.html
+    //
+    // *PFN_vkCmdBeginRenderPass)(VkCommandBuffer commandBuffer, const
+    // VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents);
     pub unsafe fn cmd_begin_render_pass(&self, command_buffer: CommandBufferHandle,
             render_pass_begin: &RenderPassBeginInfo, contents: SubpassContents) {
         self.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer.to_raw(),
             render_pass_begin.as_raw(), contents.into());
     }
 
-    // *PFN_vkCmdNextSubpass)(VkCommandBuffer commandBuffer, VkSubpassContents contents);
+    /// Transitions to the next subpass of a render pass.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdNextSubpass.html
+    //
+    // *PFN_vkCmdNextSubpass)(VkCommandBuffer commandBuffer, VkSubpassContents
+    // contents);
     pub unsafe fn cmd_next_subpass(&self, command_buffer: CommandBufferHandle,
             contents: SubpassContents) {
         self.proc_addr_loader().core.vkCmdNextSubpass(command_buffer.to_raw(), contents.into());
     }
 
+    /// Ends the current render pass.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdEndRenderPass.html
+    //
     // *PFN_vkCmdEndRenderPass)(VkCommandBuffer commandBuffer);
     pub unsafe fn cmd_end_render_pass(&self, command_buffer: CommandBufferHandle, ) {
         self.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer.to_raw());
     }
 
-    // *PFN_vkCmdExecuteCommands)(VkCommandBuffer commandBuffer, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers);
+    /// Executes a secondary command buffer from a primary command buffer.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCmdExecuteCommands.html
+    //
+    // *PFN_vkCmdExecuteCommands)(VkCommandBuffer commandBuffer, uint32_t
+    // commandBufferCount, const VkCommandBuffer* pCommandBuffers);
     pub unsafe fn cmd_execute_commands(&self, command_buffer: CommandBufferHandle,
             command_buffers: &[CommandBufferHandle]) {
         self.proc_addr_loader().core.vkCmdExecuteCommands(command_buffer.to_raw(),
             command_buffers.len() as u32, command_buffers.as_ptr() as *const vks::VkCommandBuffer);
     }
 
-    // *PFN_vkCreateSwapchainKHR)(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain);
+    /// Creates a swapchain.
+    ///
+    /// https://manned.org/vkCreateSwapchainKHR.3
+    //
+    // *PFN_vkCreateSwapchainKHR)(VkDevice device, const
+    // VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkSwapchainKHR* pSwapchain);
     pub unsafe fn create_swapchain_khr(&self, create_info: &SwapchainCreateInfoKhr,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SwapchainKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -1236,7 +1897,12 @@ impl Device {
         error::check(result, "vkCreateSwapchainKHR", SwapchainKhrHandle(handle))
     }
 
-    // *PFN_vkDestroySwapchainKHR)(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator);
+    /// Destroys a swapchain object.
+    ///
+    /// https://manned.org/vkDestroySwapchainKHR.3
+    //
+    // *PFN_vkDestroySwapchainKHR)(VkDevice device, VkSwapchainKHR swapchain,
+    // const VkAllocationCallbacks* pAllocator);
     pub unsafe fn destroy_swapchain_khr(&mut self, swapchain: SwapchainKhrHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let _allocator = allocator.unwrap_or(ptr::null());
@@ -1244,7 +1910,12 @@ impl Device {
             swapchain.to_raw(), ptr::null());
     }
 
-    // *PFN_vkGetSwapchainImagesKHR)(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages);
+    /// Obtains the array of presentable images associated with a swapchain.
+    ///
+    /// https://manned.org/vkGetSwapchainImagesKHR.3
+    //
+    // *PFN_vkGetSwapchainImagesKHR)(VkDevice device, VkSwapchainKHR
+    // swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages);
     pub unsafe fn get_swapchain_images_khr(&self, swapchain: SwapchainKhrHandle)
             -> VdResult<SmallVec<[ImageHandle; 4]>> {
         let mut image_count = 0;
@@ -1263,7 +1934,13 @@ impl Device {
         }
     }
 
-    // *PFN_vkAcquireNextImageKHR)(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex);
+    /// Retrieves the index of the next available presentable image.
+    ///
+    /// https://manned.org/vkAcquireNextImageKHR.3
+    //
+    // *PFN_vkAcquireNextImageKHR)(VkDevice device, VkSwapchainKHR swapchain,
+    // uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t*
+    // pImageIndex);
     pub unsafe fn acquire_next_image_khr(&self, swapchain: SwapchainKhrHandle, timeout: u64,
             semaphore: Option<SemaphoreHandle>, fence: Option<FenceHandle>) -> VdResult<u32> {
         let mut image_index = 0;
@@ -1274,6 +1951,10 @@ impl Device {
         error::check(result, "vkAcquireNextImageKHR", image_index)
     }
 
+    /// Queues an image for presentation.
+    ///
+    /// https://manned.org/vkQueuePresentKHR.3
+    //
     // *PFN_vkQueuePresentKHR)(VkQueue queue, const VkPresentInfoKHR* pPresentInfo);
     pub unsafe fn queue_present_khr<Q>(&self, queue: Q, present_info: &PresentInfoKhr)
             -> VdResult<()>
@@ -1283,7 +1964,13 @@ impl Device {
         error::check(result, "vkQueuePresentKHR", ())
     }
 
-    // *PFN_vkCreateSharedSwapchainsKHR)(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains);
+    /// Creates multiple swapchains that share presentable images.
+    ///
+    /// https://manned.org/vkCreateSharedSwapchainsKHR.3
+    //
+    // *PFN_vkCreateSharedSwapchainsKHR)(VkDevice device, uint32_t
+    // swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const
+    // VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains);
     pub unsafe fn create_shared_swapchains_khr(&self, create_infos: &[SwapchainCreateInfoKhr],
             allocator: Option<*const vks::VkAllocationCallbacks>)
             -> VdResult<SmallVec<[SwapchainKhrHandle; 4]>> {
@@ -1297,7 +1984,12 @@ impl Device {
         error::check(result, "vkCreateSharedSwapchainsKHR", swapchains)
     }
 
-    // *PFN_vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlagsKHR flags);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkTrimCommandPoolKHR)(VkDevice device, VkCommandPool commandPool,
+    // VkCommandPoolTrimFlagsKHR flags);
     pub unsafe fn trim_command_pool_khr<P>(&self, _command_pool: P, _flags: CommandPoolTrimFlagsKhr)
              -> VdResult<()>
             where P: Handle<Target=CommandPoolHandle> {
@@ -1306,7 +1998,12 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkGetMemoryWin32HandleKHR)(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetMemoryWin32HandleKHR)(VkDevice device, const
+    // VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
     pub unsafe fn get_memory_win32_handle_khr(&self,
             _get_win32_handle_info: &MemoryGetWin32HandleInfoKhr)
              -> VdResult<()> {
@@ -1315,7 +2012,13 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkGetMemoryWin32HandlePropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetMemoryWin32HandlePropertiesKHR)(VkDevice device,
+    // VkExternalMemoryHandleTypeFlagBitsKHR handleType, HANDLE handle,
+    // VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
     pub unsafe fn get_memory_win32_handle_properties_khr(&self,
             _handle_type: ExternalMemoryHandleTypeFlagsKhr, _handle: HANDLE) -> VdResult<()> {
         // self.proc_addr_loader().
@@ -1323,7 +2026,12 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkGetMemoryFdKHR)(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetMemoryFdKHR)(VkDevice device, const VkMemoryGetFdInfoKHR*
+    // pGetFdInfo, int* pFd);
     pub unsafe fn get_memory_fd_khr(&self, _get_fd_info: &MemoryGetFdInfoKhr, _fd: &mut i32)
             -> VdResult<()> {
         // self.proc_addr_loader().
@@ -1331,7 +2039,13 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkGetMemoryFdPropertiesKHR)(VkDevice device, VkExternalMemoryHandleTypeFlagBitsKHR handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetMemoryFdPropertiesKHR)(VkDevice device,
+    // VkExternalMemoryHandleTypeFlagBitsKHR handleType, int fd,
+    // VkMemoryFdPropertiesKHR* pMemoryFdProperties);
     pub unsafe fn get_memory_fd_properties_khr(&self, _handle_type: ExternalMemoryHandleTypeFlagsKhr,
             _fd: i32) -> VdResult<()> {
         // self.proc_addr_loader().
@@ -1339,7 +2053,12 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkImportSemaphoreWin32HandleKHR)(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkImportSemaphoreWin32HandleKHR)(VkDevice device, const
+    // VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo);
     pub unsafe fn import_semaphore_win32_handle_khr(&self,
             _import_semaphore_win32_handle_info: &ImportSemaphoreWin32HandleInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
@@ -1347,7 +2066,13 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkGetSemaphoreWin32HandleKHR)(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetSemaphoreWin32HandleKHR)(VkDevice device, const
+    // VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE*
+    // pHandle);
     pub unsafe fn get_semaphore_win32_handle_khr(&self,
             _get_win32_handle_info: &SemaphoreGetWin32HandleInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
@@ -1355,7 +2080,12 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkImportSemaphoreFdKHR)(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkImportSemaphoreFdKHR)(VkDevice device, const
+    // VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
     pub unsafe fn import_semaphore_fd_khr(&self,
             _import_semaphore_fd_info: &ImportSemaphoreFdInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
@@ -1363,7 +2093,12 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkGetSemaphoreFdKHR)(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetSemaphoreFdKHR)(VkDevice device, const
+    // VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
     pub unsafe fn get_semaphore_fd_khr(&self, _get_fd_info: &SemaphoreGetFdInfoKhr)
             -> VdResult<()> {
         // self.proc_addr_loader().
@@ -1371,7 +2106,14 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkCmdPushDescriptorSetKHR)(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdPushDescriptorSetKHR)(VkCommandBuffer commandBuffer,
+    // VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout,
+    // uint32_t set, uint32_t descriptorWriteCount, const
+    // VkWriteDescriptorSet* pDescriptorWrites);
     pub unsafe fn cmd_push_descriptor_set_khr<Cb>(&self, _command_buffer: Cb,
             _pipeline_bind_point: PipelineBindPoint, _layout: PipelineLayout, _set: u32,
             _descriptor_writes: &[WriteDescriptorSet]) -> VdResult<()>
@@ -1381,7 +2123,14 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkCreateDescriptorUpdateTemplateKHR)(VkDevice device, const VkDescriptorUpdateTemplateCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplateKHR* pDescriptorUpdateTemplate);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCreateDescriptorUpdateTemplateKHR)(VkDevice device, const
+    // VkDescriptorUpdateTemplateCreateInfoKHR* pCreateInfo, const
+    // VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplateKHR*
+    // pDescriptorUpdateTemplate);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn create_descriptor_update_template_khr(&self,
             create_info: &DescriptorUpdateTemplateKhrCreateInfo,
@@ -1395,7 +2144,13 @@ impl Device {
             DescriptorUpdateTemplateKhrHandle(handle))
     }
 
-    // *PFN_vkDestroyDescriptorUpdateTemplateKHR)(VkDevice device, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkDestroyDescriptorUpdateTemplateKHR)(VkDevice device,
+    // VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const
+    // VkAllocationCallbacks* pAllocator);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn destroy_descriptor_update_template_khr(&self,
             descriptor_update_template_khr: DescriptorUpdateTemplateKhrHandle,
@@ -1405,7 +2160,13 @@ impl Device {
             descriptor_update_template_khr.to_raw(), allocator);
     }
 
-    // *PFN_vkUpdateDescriptorSetWithTemplateKHR)(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, const void* pData);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkUpdateDescriptorSetWithTemplateKHR)(VkDevice device,
+    // VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplateKHR
+    // descriptorUpdateTemplate, const void* pData);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn update_descriptor_set_with_template_khr<Ds>(&self, descriptor_set: Ds,
             descriptor_update_template: DescriptorUpdateTemplateKhrHandle, data: *const c_void)
@@ -1415,7 +2176,13 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdPushDescriptorSetWithTemplateKHR)(VkCommandBuffer
+    // commandBuffer, VkDescriptorUpdateTemplateKHR descriptorUpdateTemplate,
+    // VkPipelineLayout layout, uint32_t set, const void* pData);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn cmd_push_descriptor_set_with_template_khr<Cb, Pl>(&self, command_buffer: Cb,
             descriptor_update_template: DescriptorUpdateTemplateKhr, layout: Pl, set: u32,
@@ -1426,7 +2193,12 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkGetSwapchainStatusKHR)(VkDevice device, VkSwapchainKHR swapchain);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetSwapchainStatusKHR)(VkDevice device, VkSwapchainKHR
+    // swapchain);
     pub unsafe fn get_swapchain_status_khr<Sk>(&self, _swapchain: Sk) -> VdResult<()>
             where Sk: Handle<Target=SwapchainKhrHandle> {
         // self.proc_addr_loader().
@@ -1434,7 +2206,12 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkImportFenceWin32HandleKHR)(VkDevice device, const VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkImportFenceWin32HandleKHR)(VkDevice device, const
+    // VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo);
     pub unsafe fn import_fence_win32_handle_khr(&self,
             _import_fence_win32_handle_info: &ImportFenceWin32HandleInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
@@ -1442,7 +2219,12 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkGetFenceWin32HandleKHR)(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetFenceWin32HandleKHR)(VkDevice device, const
+    // VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle);
     pub unsafe fn get_fence_win32_handle_khr(&self,
             _get_win32_handle_info: &FenceGetWin32HandleInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
@@ -1450,7 +2232,12 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkImportFenceFdKHR)(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkImportFenceFdKHR)(VkDevice device, const VkImportFenceFdInfoKHR*
+    // pImportFenceFdInfo);
     pub unsafe fn import_fence_fd_khr(&self, _import_fence_fd_info: &ImportFenceFdInfoKhr)
             -> VdResult<()> {
         // self.proc_addr_loader().
@@ -1458,32 +2245,63 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR*
+    // pGetFdInfo, int* pFd);
     pub unsafe fn get_fence_fd_khr(&self, _get_fd_info: &FenceGetFdInfoKhr) -> VdResult<()> {
         // self.proc_addr_loader().
         //     vkGetFenceFdKHR)(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd);
         unimplemented!();
     }
 
-    // *PFN_vkGetImageMemoryRequirements2KHR)(VkDevice device, const VkImageMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetImageMemoryRequirements2KHR)(VkDevice device, const
+    // VkImageMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR*
+    // pMemoryRequirements);
     pub unsafe fn get_image_memory_requirements_2_khr(&self,
             _info: &ImageMemoryRequirementsInfo2Khr) -> VdResult<()> {
         unimplemented!();
     }
 
-    // *PFN_vkGetBufferMemoryRequirements2KHR)(VkDevice device, const VkBufferMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetBufferMemoryRequirements2KHR)(VkDevice device, const
+    // VkBufferMemoryRequirementsInfo2KHR* pInfo, VkMemoryRequirements2KHR*
+    // pMemoryRequirements);
     pub fn get_buffer_memory_requirements_2_khr(&self, _info: &BufferMemoryRequirementsInfo2Khr)
             -> VdResult<()> {
         unimplemented!();
     }
 
-    // *PFN_vkGetImageSparseMemoryRequirements2KHR)(VkDevice device, const VkImageSparseMemoryRequirementsInfo2KHR* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2KHR* pSparseMemoryRequirements);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetImageSparseMemoryRequirements2KHR)(VkDevice device, const
+    // VkImageSparseMemoryRequirementsInfo2KHR* pInfo, uint32_t*
+    // pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2KHR*
+    // pSparseMemoryRequirements);
     pub unsafe fn get_image_sparse_memory_requirements_2_khr(&self,
             _info: &ImageSparseMemoryRequirementsInfo2Khr) -> VdResult<()> {
         unimplemented!();
     }
 
-    // *PFN_vkCreateSamplerYcbcrConversionKHR)(VkDevice device, const VkSamplerYcbcrConversionCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversionKHR* pYcbcrConversion);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCreateSamplerYcbcrConversionKHR)(VkDevice device, const
+    // VkSamplerYcbcrConversionCreateInfoKHR* pCreateInfo, const
+    // VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversionKHR*
+    // pYcbcrConversion);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn create_sampler_ycbcr_conversion_khr(&self,
             create_info: &SamplerYcbcrConversionKhrCreateInfo,
@@ -1497,7 +2315,13 @@ impl Device {
             SamplerYcbcrConversionKhrHandle(handle))
     }
 
-    // *PFN_vkDestroySamplerYcbcrConversionKHR)(VkDevice device, VkSamplerYcbcrConversionKHR ycbcrConversion, const VkAllocationCallbacks* pAllocator);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkDestroySamplerYcbcrConversionKHR)(VkDevice device,
+    // VkSamplerYcbcrConversionKHR ycbcrConversion, const
+    // VkAllocationCallbacks* pAllocator);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn destroy_sampler_ycbcr_conversion_khr(&self,
             sampler_ycbcr_conversion_khr: SamplerYcbcrConversionKhrHandle,
@@ -1507,103 +2331,204 @@ impl Device {
             sampler_ycbcr_conversion_khr.to_raw(), allocator);
     }
 
-    // *PFN_vkBindBufferMemory2KHR)(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfoKHR* pBindInfos);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkBindBufferMemory2KHR)(VkDevice device, uint32_t bindInfoCount,
+    // const VkBindBufferMemoryInfoKHR* pBindInfos);
     pub unsafe fn bind_buffer_memory_2_khr(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkBindImageMemory2KHR)(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfoKHR* pBindInfos);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkBindImageMemory2KHR)(VkDevice device, uint32_t bindInfoCount,
+    // const VkBindImageMemoryInfoKHR* pBindInfos);
     pub unsafe fn bind_image_memory_2_khr(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkDebugMarkerSetObjectTagEXT)(VkDevice device, const VkDebugMarkerObjectTagInfoEXT* pTagInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkDebugMarkerSetObjectTagEXT)(VkDevice device, const
+    // VkDebugMarkerObjectTagInfoEXT* pTagInfo);
     pub unsafe fn debug_marker_set_object_tag_ext(&self, _tag_info: &DebugMarkerObjectTagInfoExt)
             -> VdResult<()> {
         unimplemented!();
     }
 
-    // *PFN_vkDebugMarkerSetObjectNameEXT)(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkDebugMarkerSetObjectNameEXT)(VkDevice device, const
+    // VkDebugMarkerObjectNameInfoEXT* pNameInfo);
     pub unsafe fn debug_marker_set_object_name_ext(&self, _name_info: &DebugMarkerObjectNameInfoExt)
             -> VdResult<()> {
         unimplemented!();
     }
 
-    // *PFN_vkCmdDebugMarkerBeginEXT)(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdDebugMarkerBeginEXT)(VkCommandBuffer commandBuffer, const
+    // VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
     pub unsafe fn cmd_debug_marker_begin_ext(&self, command_buffer: CommandBufferHandle,
             marker_info: &DebugMarkerMarkerInfoExt) {
         self.proc_addr_loader().ext_debug_marker.vkCmdDebugMarkerBeginEXT(command_buffer.to_raw(),
             marker_info.as_raw());
     }
 
+    ///
+    ///
+    ///
+    //
     // *PFN_vkCmdDebugMarkerEndEXT)(VkCommandBuffer commandBuffer);
     pub unsafe fn cmd_debug_marker_end_ext(&self, command_buffer: CommandBufferHandle) {
         self.proc_addr_loader().ext_debug_marker.vkCmdDebugMarkerEndEXT(command_buffer.to_raw());
     }
 
-    // *PFN_vkCmdDebugMarkerInsertEXT)(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdDebugMarkerInsertEXT)(VkCommandBuffer commandBuffer, const
+    // VkDebugMarkerMarkerInfoEXT* pMarkerInfo);
     pub unsafe fn cmd_debug_marker_insert_ext(&self, command_buffer: CommandBufferHandle,
             marker_info: &DebugMarkerMarkerInfoExt) {
         self.proc_addr_loader().ext_debug_marker.vkCmdDebugMarkerInsertEXT(command_buffer.to_raw(),
             marker_info.as_raw());
     }
 
-    // *PFN_vkCmdDrawIndirectCountAMD)(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdDrawIndirectCountAMD)(VkCommandBuffer commandBuffer, VkBuffer
+    // buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize
+    // countBufferOffset, uint32_t maxDrawCount, uint32_t stride);
     pub unsafe fn cmd_draw_indirect_count_amd(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkCmdDrawIndexedIndirectCountAMD)(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdDrawIndexedIndirectCountAMD)(VkCommandBuffer commandBuffer,
+    // VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer,
+    // VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t
+    // stride);
     pub unsafe fn cmd_draw_indexed_indirect_count_amd(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkGetMemoryWin32HandleNV)(VkDevice device, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE* pHandle);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetMemoryWin32HandleNV)(VkDevice device, VkDeviceMemory memory,
+    // VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE* pHandle);
     pub unsafe fn get_memory_win32_handle_nv(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkGetDeviceGroupPeerMemoryFeaturesKHX)(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlagsKHX* pPeerMemoryFeatures);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetDeviceGroupPeerMemoryFeaturesKHX)(VkDevice device, uint32_t
+    // heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex,
+    // VkPeerMemoryFeatureFlagsKHX* pPeerMemoryFeatures);
     pub unsafe fn get_device_group_peer_memory_features_khx(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkCmdSetDeviceMaskKHX)(VkCommandBuffer commandBuffer, uint32_t deviceMask);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdSetDeviceMaskKHX)(VkCommandBuffer commandBuffer, uint32_t
+    // deviceMask);
     pub unsafe fn cmd_set_device_mask_khx(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkCmdDispatchBaseKHX)(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdDispatchBaseKHX)(VkCommandBuffer commandBuffer, uint32_t
+    // baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t
+    // groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
     pub unsafe fn cmd_dispatch_base_khx(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkGetDeviceGroupPresentCapabilitiesKHX)(VkDevice device, VkDeviceGroupPresentCapabilitiesKHX* pDeviceGroupPresentCapabilities);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetDeviceGroupPresentCapabilitiesKHX)(VkDevice device,
+    // VkDeviceGroupPresentCapabilitiesKHX* pDeviceGroupPresentCapabilities);
     pub unsafe fn get_device_group_present_capabilities_khx(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkGetDeviceGroupSurfacePresentModesKHX)(VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHX* pModes);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetDeviceGroupSurfacePresentModesKHX)(VkDevice device,
+    // VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHX* pModes);
     pub unsafe fn get_device_group_surface_present_modes_khx(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkAcquireNextImage2KHX)(VkDevice device, const VkAcquireNextImageInfoKHX* pAcquireInfo, uint32_t* pImageIndex);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkAcquireNextImage2KHX)(VkDevice device, const
+    // VkAcquireNextImageInfoKHX* pAcquireInfo, uint32_t* pImageIndex);
     pub unsafe fn acquire_next_image2_khx(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkCmdProcessCommandsNVX)(VkCommandBuffer commandBuffer, const VkCmdProcessCommandsInfoNVX* pProcessCommandsInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdProcessCommandsNVX)(VkCommandBuffer commandBuffer, const
+    // VkCmdProcessCommandsInfoNVX* pProcessCommandsInfo);
     pub unsafe fn cmd_process_commands_nvx(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkCmdReserveSpaceForCommandsNVX)(VkCommandBuffer commandBuffer, const VkCmdReserveSpaceForCommandsInfoNVX* pReserveSpaceInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdReserveSpaceForCommandsNVX)(VkCommandBuffer commandBuffer,
+    // const VkCmdReserveSpaceForCommandsInfoNVX* pReserveSpaceInfo);
     pub unsafe fn cmd_reserve_space_for_commands_nvx(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkCreateIndirectCommandsLayoutNVX)(VkDevice device, const VkIndirectCommandsLayoutCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutNVX* pIndirectCommandsLayout);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCreateIndirectCommandsLayoutNVX)(VkDevice device, const
+    // VkIndirectCommandsLayoutCreateInfoNVX* pCreateInfo, const
+    // VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutNVX*
+    // pIndirectCommandsLayout);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn create_indirect_commands_layout_nvx(&self,
             create_info: &IndirectCommandsLayoutNvxCreateInfo,
@@ -1617,7 +2542,13 @@ impl Device {
             IndirectCommandsLayoutNvxHandle(handle))
     }
 
-    // *PFN_vkDestroyIndirectCommandsLayoutNVX)(VkDevice device, VkIndirectCommandsLayoutNVX indirectCommandsLayout, const VkAllocationCallbacks* pAllocator);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkDestroyIndirectCommandsLayoutNVX)(VkDevice device,
+    // VkIndirectCommandsLayoutNVX indirectCommandsLayout, const
+    // VkAllocationCallbacks* pAllocator);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn destroy_indirect_commands_layout_nvx(&self,
             indirect_commands_layout_nvx: IndirectCommandsLayoutNvxHandle,
@@ -1627,7 +2558,13 @@ impl Device {
             indirect_commands_layout_nvx.to_raw(), allocator);
     }
 
-    // *PFN_vkCreateObjectTableNVX)(VkDevice device, const VkObjectTableCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkObjectTableNVX* pObjectTable);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCreateObjectTableNVX)(VkDevice device, const
+    // VkObjectTableCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks*
+    // pAllocator, VkObjectTableNVX* pObjectTable);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn create_object_table_nvx(&self, create_info: &ObjectTableNvxCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>)
@@ -1639,7 +2576,12 @@ impl Device {
         error::check(result, "vkCreateObjectTableNvx", ObjectTableNvxHandle(handle))
     }
 
-    // *PFN_vkDestroyObjectTableNVX)(VkDevice device, VkObjectTableNVX objectTable, const VkAllocationCallbacks* pAllocator);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkDestroyObjectTableNVX)(VkDevice device, VkObjectTableNVX
+    // objectTable, const VkAllocationCallbacks* pAllocator);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn destroy_object_table_nvx(&self, object_table_nvx: ObjectTableNvxHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
@@ -1648,36 +2590,71 @@ impl Device {
             object_table_nvx.to_raw(), allocator);
     }
 
-    // *PFN_vkRegisterObjectsNVX)(VkDevice device, VkObjectTableNVX objectTable, uint32_t objectCount, const VkObjectTableEntryNVX* const*    ppObjectTableEntries, const uint32_t* pObjectIndices);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkRegisterObjectsNVX)(VkDevice device, VkObjectTableNVX
+    // objectTable, uint32_t objectCount, const VkObjectTableEntryNVX* const*
+    // ppObjectTableEntries, const uint32_t* pObjectIndices);
     pub unsafe fn register_objects_nvx(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkUnregisterObjectsNVX)(VkDevice device, VkObjectTableNVX objectTable, uint32_t objectCount, const VkObjectEntryTypeNVX* pObjectEntryTypes, const uint32_t* pObjectIndices);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkUnregisterObjectsNVX)(VkDevice device, VkObjectTableNVX
+    // objectTable, uint32_t objectCount, const VkObjectEntryTypeNVX*
+    // pObjectEntryTypes, const uint32_t* pObjectIndices);
     pub unsafe fn unregister_objects_nvx(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkCmdSetViewportWScalingNV)(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportWScalingNV* pViewportWScalings);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdSetViewportWScalingNV)(VkCommandBuffer commandBuffer,
+    // uint32_t firstViewport, uint32_t viewportCount, const
+    // VkViewportWScalingNV* pViewportWScalings);
     pub unsafe fn cmd_set_viewport_w_scaling_nv(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkDisplayPowerControlEXT)(VkDevice device, VkDisplayKHR display, const VkDisplayPowerInfoEXT* pDisplayPowerInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkDisplayPowerControlEXT)(VkDevice device, VkDisplayKHR display,
+    // const VkDisplayPowerInfoEXT* pDisplayPowerInfo);
     pub unsafe fn display_power_control_ext<Dk>(&self, _display: Dk,
             _display_power_info: &DisplayPowerInfoExt)
             where Dk: Handle<Target=DisplayKhrHandle> {
         unimplemented!();
     }
 
-    // *PFN_vkRegisterDeviceEventEXT)(VkDevice device, const VkDeviceEventInfoEXT* pDeviceEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkRegisterDeviceEventEXT)(VkDevice device, const
+    // VkDeviceEventInfoEXT* pDeviceEventInfo, const VkAllocationCallbacks*
+    // pAllocator, VkFence* pFence);
     pub unsafe fn register_device_event_ext(&self, _device_event_info: &DeviceEventInfoExt,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<()> {
         let _allocator = allocator.unwrap_or(ptr::null());
         unimplemented!();
     }
 
-    // *PFN_vkRegisterDisplayEventEXT)(VkDevice device, VkDisplayKHR display, const VkDisplayEventInfoEXT* pDisplayEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkRegisterDisplayEventEXT)(VkDevice device, VkDisplayKHR display,
+    // const VkDisplayEventInfoEXT* pDisplayEventInfo, const
+    // VkAllocationCallbacks* pAllocator, VkFence* pFence);
     pub unsafe fn register_display_event_ext<Dk>(&self, _display: Dk,
             _display_event_info: &DisplayEventInfoExt,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<()>
@@ -1686,24 +2663,47 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkGetSwapchainCounterEXT)(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetSwapchainCounterEXT)(VkDevice device, VkSwapchainKHR
+    // swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t*
+    // pCounterValue);
     pub unsafe fn get_swapchain_counter_ext<Sk>(&self, _swapchain: Sk,
             _counter: SurfaceCounterFlagsExt) -> VdResult<u64>
             where Sk: Handle<Target=SwapchainKhrHandle> {
         unimplemented!();
     }
 
-    // *PFN_vkGetRefreshCycleDurationGOOGLE)(VkDevice device, VkSwapchainKHR swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetRefreshCycleDurationGOOGLE)(VkDevice device, VkSwapchainKHR
+    // swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties);
     pub unsafe fn get_refresh_cycle_duration_google(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkGetPastPresentationTimingGOOGLE)(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pPresentationTimingCount, VkPastPresentationTimingGOOGLE* pPresentationTimings);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetPastPresentationTimingGOOGLE)(VkDevice device, VkSwapchainKHR
+    // swapchain, uint32_t* pPresentationTimingCount,
+    // VkPastPresentationTimingGOOGLE* pPresentationTimings);
     pub unsafe fn get_past_presentation_timing_google(&self) {
         unimplemented!();
     }
 
-    // *PFN_vkCmdSetDiscardRectangleEXT)(VkCommandBuffer commandBuffer, uint32_t firstDiscardRectangle, uint32_t discardRectangleCount, const VkRect2D* pDiscardRectangles);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdSetDiscardRectangleEXT)(VkCommandBuffer commandBuffer,
+    // uint32_t firstDiscardRectangle, uint32_t discardRectangleCount, const
+    // VkRect2D* pDiscardRectangles);
     pub unsafe fn cmd_set_discard_rectangle_ext<Cb>(&self, _command_buffer: Cb,
             _first_discard_rectangle: u32, _discard_rectangle_count: u32, _discard_rectangles: &Rect2d)
             -> VdResult<()>
@@ -1711,13 +2711,23 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkSetHdrMetadataEXT)(VkDevice device, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const VkHdrMetadataEXT* pMetadata);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkSetHdrMetadataEXT)(VkDevice device, uint32_t swapchainCount,
+    // const VkSwapchainKHR* pSwapchains, const VkHdrMetadataEXT* pMetadata);
     pub unsafe fn set_hdr_metadata_ext(&self, _swapchains: &[SwapchainKhrHandle],
             _metadata: &HdrMetadataExt) -> VdResult<()> {
         unimplemented!();
     }
 
-    // *PFN_vkCmdSetSampleLocationsEXT)(VkCommandBuffer commandBuffer, const VkSampleLocationsInfoEXT* pSampleLocationsInfo);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCmdSetSampleLocationsEXT)(VkCommandBuffer commandBuffer, const
+    // VkSampleLocationsInfoEXT* pSampleLocationsInfo);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn cmd_set_sample_locations_ext<Cb>(&self, command_buffer: Cb,
             sample_locations_info: &SampleLocationsInfoExt) -> VdResult<()>
@@ -1725,7 +2735,14 @@ impl Device {
         unimplemented!();
     }
 
-    // *PFN_vkCreateValidationCacheEXT)(VkDevice device, const VkValidationCacheCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkValidationCacheEXT* pValidationCache);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkCreateValidationCacheEXT)(VkDevice device, const
+    // VkValidationCacheCreateInfoEXT* pCreateInfo, const
+    // VkAllocationCallbacks* pAllocator, VkValidationCacheEXT*
+    // pValidationCache);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn create_validation_cache_ext(&self,
             create_info: &ValidationCacheExtCreateInfo,
@@ -1739,7 +2756,12 @@ impl Device {
         error::check(result, "vkCreateValidationCacheExt", ValidationCacheExtHandle(handle))
     }
 
-    // *PFN_vkDestroyValidationCacheEXT)(VkDevice device, VkValidationCacheEXT validationCache, const VkAllocationCallbacks* pAllocator);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkDestroyValidationCacheEXT)(VkDevice device, VkValidationCacheEXT
+    // validationCache, const VkAllocationCallbacks* pAllocator);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn destroy_validation_cache_ext(&self,
             validation_cache_ext: ValidationCacheExtHandle,
@@ -1749,14 +2771,25 @@ impl Device {
             validation_cache_ext.to_raw(), allocator);
     }
 
-    // *PFN_vkMergeValidationCachesEXT)(VkDevice device, VkValidationCacheEXT dstCache, uint32_t srcCacheCount, const VkValidationCacheEXT* pSrcCaches);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkMergeValidationCachesEXT)(VkDevice device, VkValidationCacheEXT
+    // dstCache, uint32_t srcCacheCount, const VkValidationCacheEXT*
+    // pSrcCaches);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn merge_validation_caches_ext(&self, dst_cache: ValidationCacheExt,
             src_caches: &[ValidationCacheExt]) -> VdResult<()> {
         unimplemented!();
     }
 
-    // *PFN_vkGetValidationCacheDataEXT)(VkDevice device, VkValidationCacheEXT validationCache, size_t* pDataSize, void* pData);
+    ///
+    ///
+    ///
+    //
+    // *PFN_vkGetValidationCacheDataEXT)(VkDevice device, VkValidationCacheEXT
+    // validationCache, size_t* pDataSize, void* pData);
     #[cfg(feature = "unimplemented")]
     pub unsafe fn get_validation_cache_data_ext(&self, validation_cache: ValidationCacheExt,
             data_size: *mut usize, data: *mut c_void) -> VdResult<()> {

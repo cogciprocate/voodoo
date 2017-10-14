@@ -13,7 +13,6 @@
 * A minimum of boilerplate
 * Non-opinionated and nothing hidden
 * Complete API coverage
-* Useful documentation
 
 
 ### Getting Started

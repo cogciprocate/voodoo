@@ -12,6 +12,8 @@ use util::CharStrs;
 
 const PRINT: bool = false;
 
+
+/// A loaded library and `InstanceProcAddrLoader`.
 pub struct Loader {
     _vk_lib: lib::Library,
     vk_get_instance_proc_addr: vks::PFN_vkGetInstanceProcAddr,
@@ -19,6 +21,8 @@ pub struct Loader {
 }
 
 impl Loader {
+    /// Loads the vulkan library (`libvulkan.so`, etc), and the
+    /// `InstanceProcAddrLoader` with all core function pointers.
     pub fn new() -> VdResult<Loader> {
         let lib_filename = if cfg!(not(any(target_os = "macos", target_os = "ios"))) {
             if cfg!(all(unix, not(target_os = "android"), not(target_os = "macos"))) { "libvulkan.so.1" }
@@ -45,6 +49,7 @@ impl Loader {
         Ok(Loader { _vk_lib: vk_lib, vk_get_instance_proc_addr, instance_proc_addr_loader })
     }
 
+    /// Returns the `vkGetInstanceProcAddr` function pointer.
     #[inline]
     pub fn get_instance_proc_addr(&self)
             -> Option<unsafe extern "system" fn(*mut vks::VkInstance_T, *const i8)
@@ -52,16 +57,19 @@ impl Loader {
         self.vk_get_instance_proc_addr
     }
 
+    /// Returns the core global function pointer struct.
     #[inline]
     pub fn core_global(&self) -> &vks::instance_proc_addr_loader::CoreGlobal {
         &self.instance_proc_addr_loader.core_global
     }
 
+    /// Returns a reference to the `InstanceProcAddrLoader`.
     #[inline]
     pub fn instance_proc_addr_loader(&self) -> &vks::InstanceProcAddrLoader {
         &self.instance_proc_addr_loader
     }
 
+    /// Returns a mutable reference to the `InstanceProcAddrLoader`.
     #[inline]
     pub fn instance_proc_addr_loader_mut(&mut self) -> &mut vks::InstanceProcAddrLoader {
         &mut self.instance_proc_addr_loader
@@ -147,7 +155,12 @@ impl Loader {
         Ok(true)
     }
 
-    // *PFN_vkEnumeratePhysicalDevices)(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
+    /// Enumerates the physical devices accessible to a Vulkan instance.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkEnumeratePhysicalDevices.html
+    //
+    // *PFN_vkEnumeratePhysicalDevices)(VkInstance instance, uint32_t*
+    // pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
     pub fn enumerate_physical_devices<I>(&self, instance: I)
             -> VdResult<SmallVec<[vks::VkPhysicalDevice; 16]>>
             where I: Handle<Target=InstanceHandle> {
@@ -172,7 +185,12 @@ impl Loader {
         Ok(devices_raw)
     }
 
-    // *PFN_vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
+    /// Creates and returns a new Vulkan instance.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkCreateInstance.html
+    //
+    // *PFN_vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const
+    // VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
     pub unsafe fn create_instance(&self, create_info: &InstanceCreateInfo,
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<InstanceHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
@@ -181,7 +199,13 @@ impl Loader {
         error::check(result, "vkCreateInstance", InstanceHandle(handle))
     }
 
-    // *PFN_vkDestroyInstance)(VkInstance instance, const VkAllocationCallbacks* pAllocator);
+
+    /// Destroys a Vulkan instance.
+    ///
+    /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkDestroyInstance.html
+    //
+    // *PFN_vkDestroyInstance)(VkInstance instance, const
+    // VkAllocationCallbacks* pAllocator);
     pub fn destroy_instance(&self, instance: InstanceHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
