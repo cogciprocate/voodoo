@@ -6,6 +6,14 @@ TODO: Xlib `Window` type fixes (remove temporary cast)
 
 
 
+Version 0.1.2 (2017-10-14)
+==========================
+
+Fixes
+-----
+* Xlib types are temporarily fixed.
+
+
 Version 0.1.1 (2017-10-13)
 ==========================
 

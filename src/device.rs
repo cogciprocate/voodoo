@@ -158,7 +158,6 @@ impl Device {
     /// Returns the memory type index on this device matching the provided
     /// type filter and properties.
     //
-    // [HELPER]
     pub fn memory_type_index(&self, type_filter: u32, properties: ::MemoryPropertyFlags)
             -> VdResult<u32> {
         let mem_props = self.physical_device().memory_properties();
