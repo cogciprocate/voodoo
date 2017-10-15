@@ -1,6 +1,6 @@
 [package]
 name = "voodoo"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["Nick Sanders <cogciprocate@gmail.com>"]
 description = "An intuitive, idiomatic, unopinionated, zero-overhead Vulkan API"
 documentation = "https://docs.rs/voodoo"
@@ -21,12 +21,10 @@ unimplemented = []
 # default = ["experimental"]
 
 [dependencies]
-winit = "0.8"
 libloading = "0.4"
-# smallvec = { git = "https://github.com/c0gent/rust-smallvec" }
 smallvec = "0.4"
 # vks = { git = "https://gitlab.com/dennis-hamester/vks.git" }
-vks = "0.20"
+vks = "0.21"
 libc = "0.2"
 cgmath = "0.15"
 image = "0.16"
@@ -35,3 +33,6 @@ ordered-float = "0.5"
 bitflags = "1.0"
 enum-primitive-derive = "0.1"
 num-traits = "0.1"
+
+[dev-dependencies]
+voodoo_winit = { path = "voodoo_winit" }

@@ -88,7 +88,7 @@ unsafe impl<'g> Handle for &'g GraphicsPipeline {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().core.vkDestroyPipeline(self.device.handle().0,
+            // self.device.proc_addr_loader().vk.vkDestroyPipeline(self.device.handle().0,
             //     self.handle.0, ptr::null());
             self.device.destroy_pipeline(self.handle, None);
         }

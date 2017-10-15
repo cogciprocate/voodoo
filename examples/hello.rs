@@ -2,6 +2,7 @@
 
 #[macro_use]
 extern crate voodoo as vd;
+extern crate voodoo_winit;
 extern crate cgmath;
 extern crate image;
 extern crate smallvec;
@@ -18,7 +19,7 @@ use std::cmp;
 use smallvec::SmallVec;
 use cgmath::{Matrix3, Matrix4};
 use ordered_float::OrderedFloat;
-use vd::{voodoo_winit, vks, util, Result as VdResult, Instance, Device, SurfaceKhr,
+use vd::{vks, util, Result as VdResult, Instance, Device, SurfaceKhr,
     SwapchainKhr, ImageView, PipelineLayout, RenderPass, GraphicsPipeline, Framebuffer,
     CommandPool, Semaphore, Buffer, DeviceMemory, DescriptorSetLayout, DescriptorPool, Image,
     Sampler, Loader, SwapchainSupportDetails, PhysicalDevice, PhysicalDeviceFeatures, ShaderModule,

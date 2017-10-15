@@ -62,7 +62,7 @@ impl CommandPool {
         // command_buffers.reserve_exact(count as usize);
         // unsafe {
         //     command_buffers.set_len(count as usize);
-        //     ::check(self.inner.device.proc_addr_loader().core.vkAllocateCommandBuffers(
+        //     ::check(self.inner.device.proc_addr_loader().vk.vkAllocateCommandBuffers(
         //         self.inner.device.handle().0, alloc_info.as_raw(),
         //         command_buffers.as_mut_ptr() as *mut vks::VkCommandBuffer));
         // }
@@ -112,7 +112,7 @@ unsafe impl<'h> Handle for &'h CommandPool {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().core.vkDestroyCommandPool(self.device.handle().0,
+            // self.device.proc_addr_loader().vk.vkDestroyCommandPool(self.device.handle().0,
             //     self.handle.0, ptr::null());
             self.device.destroy_command_pool(self.handle, None);
         }
@@ -158,7 +158,7 @@ impl<'b> CommandPoolBuilder<'b> {
     pub fn build(&self, device: Device) -> VdResult<CommandPool> {
         // let mut handle = 0;
         // unsafe {
-        //     ::check(device.proc_addr_loader().core.vkCreateCommandPool(device.handle().0,
+        //     ::check(device.proc_addr_loader().vk.vkCreateCommandPool(device.handle().0,
         //         self.create_info.as_raw(), ptr::null(), &mut handle));
         // }
 

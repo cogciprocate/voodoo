@@ -135,7 +135,7 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         unsafe {
             let mut features: vks::VkPhysicalDeviceFeatures = mem::uninitialized();
-            self.proc_addr_loader().core.vkGetPhysicalDeviceFeatures(physical_device.handle().to_raw(),
+            self.proc_addr_loader().vk.vkGetPhysicalDeviceFeatures(physical_device.handle().to_raw(),
                 &mut features);
             PhysicalDeviceFeatures::from_raw(features)
         }
@@ -153,7 +153,7 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         unsafe {
             let mut props: FormatProperties = mem::uninitialized();
-            self.proc_addr_loader().core.vkGetPhysicalDeviceFormatProperties(physical_device.handle().to_raw(),
+            self.proc_addr_loader().vk.vkGetPhysicalDeviceFormatProperties(physical_device.handle().to_raw(),
                 format.into(), &mut props as *mut _ as *mut vks::VkFormatProperties);
             props
         }
@@ -173,7 +173,7 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         unsafe {
             let mut image_format_properties = mem::uninitialized();
-            let result = self.proc_addr_loader().core.vkGetPhysicalDeviceImageFormatProperties(
+            let result = self.proc_addr_loader().vk.vkGetPhysicalDeviceImageFormatProperties(
                 physical_device.handle().to_raw(), format.into(), type_.into(),
                 tiling.into(), usage.bits(), flags.bits(), &mut image_format_properties);
             error::check(result, "vkGetPhysicalDeviceImageFormatProperties", ImageFormatProperties::from_raw(image_format_properties))
@@ -191,7 +191,7 @@ impl Instance {
             where Pd: Handle<Target=PhysicalDeviceHandle> {
         unsafe {
             let mut device_properties: vks::VkPhysicalDeviceProperties = mem::uninitialized();
-            self.proc_addr_loader().core.vkGetPhysicalDeviceProperties(physical_device.handle().to_raw(),
+            self.proc_addr_loader().vk.vkGetPhysicalDeviceProperties(physical_device.handle().to_raw(),
                 &mut device_properties);
             PhysicalDeviceProperties::from_raw(device_properties)
         }
@@ -210,11 +210,11 @@ impl Instance {
         let mut queue_family_count = 0u32;
         let mut queue_families = SmallVec::<[::QueueFamilyProperties; 16]>::new();
         unsafe {
-            self.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(
+            self.proc_addr_loader().vk.vkGetPhysicalDeviceQueueFamilyProperties(
                 physical_device.handle().to_raw(), &mut queue_family_count, ptr::null_mut());
             queue_families.reserve_exact(queue_family_count as usize);
             queue_families.set_len(queue_family_count as usize);
-            self.proc_addr_loader().core.vkGetPhysicalDeviceQueueFamilyProperties(
+            self.proc_addr_loader().vk.vkGetPhysicalDeviceQueueFamilyProperties(
                 physical_device.handle().to_raw(), &mut queue_family_count,
                 queue_families.as_mut_ptr() as *mut vks::VkQueueFamilyProperties);
         }
@@ -235,7 +235,7 @@ impl Instance {
         let mut mem_props: vks::VkPhysicalDeviceMemoryProperties;
         unsafe {
             mem_props = mem::uninitialized();
-            self.proc_addr_loader().core.vkGetPhysicalDeviceMemoryProperties(
+            self.proc_addr_loader().vk.vkGetPhysicalDeviceMemoryProperties(
                 physical_device.handle().to_raw(), &mut mem_props);
             PhysicalDeviceMemoryProperties::from_raw(mem_props)
         }
@@ -253,7 +253,7 @@ impl Instance {
             -> VdResult<DeviceHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = ptr::null_mut();
-        let result = self.proc_addr_loader().core.vkCreateDevice(physical_device.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateDevice(physical_device.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateDevice", DeviceHandle(handle))
     }
@@ -267,7 +267,7 @@ impl Instance {
     pub unsafe fn destroy_device(&self, device: DeviceHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyDevice(device.to_raw(), allocator);
+        self.proc_addr_loader().vk.vkDestroyDevice(device.to_raw(), allocator);
     }
 
     /// Returns the properties of available physical device extensions.
@@ -285,13 +285,13 @@ impl Instance {
         let mut property_count = 0u32;
         let mut properties = SmallVec::<[ExtensionProperties; 64]>::new();
         unsafe {
-            let result = self.proc_addr_loader().core.vkEnumerateDeviceExtensionProperties(
+            let result = self.proc_addr_loader().vk.vkEnumerateDeviceExtensionProperties(
                 physical_device.handle().to_raw(), layer_name, &mut property_count, ptr::null_mut());
             error::check(result, "vkEnumerateDeviceExtensionProperties", ())?;
             properties.reserve_exact(property_count as usize);
             properties.set_len(property_count as usize);
             loop {
-                let result = self.proc_addr_loader().core.vkEnumerateDeviceExtensionProperties(
+                let result = self.proc_addr_loader().vk.vkEnumerateDeviceExtensionProperties(
                     physical_device.handle().to_raw(), layer_name, &mut property_count,
                     properties.as_mut_ptr() as *mut vks::VkExtensionProperties);
                 if result != CallResult::Incomplete as i32 {
@@ -313,13 +313,13 @@ impl Instance {
         let mut property_count = 0u32;
         let mut properties = SmallVec::<[LayerProperties; 64]>::new();
         unsafe {
-            let result = self.proc_addr_loader().core.vkEnumerateDeviceLayerProperties(
+            let result = self.proc_addr_loader().vk.vkEnumerateDeviceLayerProperties(
                 physical_device.handle().to_raw(), &mut property_count, ptr::null_mut());
             error::check(result, "vkEnumerateDeviceLayerProperties", ())?;
             properties.reserve_exact(property_count as usize);
             properties.set_len(property_count as usize);
             loop {
-                let result = self.proc_addr_loader().core.vkEnumerateDeviceLayerProperties(
+                let result = self.proc_addr_loader().vk.vkEnumerateDeviceLayerProperties(
                     physical_device.handle().to_raw(), &mut property_count,
                     properties.as_mut_ptr() as *mut vks::VkLayerProperties);
                 if result != CallResult::Incomplete as i32 {
@@ -345,12 +345,12 @@ impl Instance {
         let mut property_count = 0u32;
         let mut properties = SmallVec::<[SparseImageFormatProperties; 8]>::new();
         unsafe {
-            self.proc_addr_loader().core.vkGetPhysicalDeviceSparseImageFormatProperties(
+            self.proc_addr_loader().vk.vkGetPhysicalDeviceSparseImageFormatProperties(
                 physical_device.handle().to_raw(), format.into(), type_.into(),
                 samples.bits(), tiling.into(), usage.bits(), &mut property_count, ptr::null_mut());
             properties.reserve_exact(property_count as usize);
             properties.set_len(property_count as usize);
-            self.proc_addr_loader().core.vkGetPhysicalDeviceSparseImageFormatProperties(
+            self.proc_addr_loader().vk.vkGetPhysicalDeviceSparseImageFormatProperties(
                 physical_device.handle().to_raw(), format.into(), type_.into(),
                 samples.bits(), tiling.into(), usage.bits(), &mut property_count,
                 properties.as_mut_ptr() as *mut vks::VkSparseImageFormatProperties);
@@ -1420,7 +1420,7 @@ impl<'ib> InstanceBuilder<'ib> {
         let mut enable_debug_callback = false;
 
         let handle = unsafe { loader.create_instance(&self.create_info, None)? };
-        unsafe { loader.instance_proc_addr_loader_mut().load_core(handle.to_raw()); }
+        unsafe { loader.instance_proc_addr_loader_mut().load_vk(handle.to_raw()); }
 
         unsafe {
             if let Some(extension_name_char_strs) = self.enabled_extension_names.as_ref() {

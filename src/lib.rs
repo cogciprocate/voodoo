@@ -9,7 +9,7 @@ extern crate bitflags as bitflags_;
 #[macro_use]
 extern crate enum_primitive_derive;
 extern crate num_traits;
-pub extern crate winit;
+// pub extern crate winit;
 
 mod error;
 mod version;
@@ -40,12 +40,12 @@ mod bitflags;
 mod event;
 mod fence;
 mod device;
-pub mod voodoo_winit;
+// pub mod voodoo_winit;
 pub mod util;
 
 pub mod vks {
     pub use vks_::*;
-    pub use vks_::core::*;
+    pub use vks_::vk::*;
     pub use vks_::amd_draw_indirect_count::*;
     pub use vks_::amd_gcn_shader::*;
     pub use vks_::amd_gpu_shader_half_float::*;
@@ -69,11 +69,9 @@ pub mod vks {
     pub use vks_::ext_hdr_metadata::*;
     pub use vks_::ext_post_depth_coverage::*;
     pub use vks_::ext_sampler_filter_minmax::*;
-    #[cfg(feature = "unimplemented")]
     pub use vks_::ext_shader_stencil_export::*;
     pub use vks_::ext_shader_subgroup_ballot::*;
     pub use vks_::ext_shader_subgroup_vote::*;
-    #[cfg(feature = "unimplemented")]
     pub use vks_::ext_shader_viewport_index_layer::*;
     pub use vks_::ext_swapchain_colorspace::*;
     pub use vks_::ext_validation_flags::*;

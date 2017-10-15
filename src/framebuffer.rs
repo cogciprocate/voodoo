@@ -69,7 +69,7 @@ unsafe impl<'h> Handle for &'h Framebuffer {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().core.vkDestroyFramebuffer(self.device.handle().0,
+            // self.device.proc_addr_loader().vk.vkDestroyFramebuffer(self.device.handle().0,
             //     self.handle.0, ptr::null());
             self.device.destroy_framebuffer(self.handle, None);
         }

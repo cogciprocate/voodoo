@@ -73,7 +73,7 @@ fn get_device_queue(proc_addr_loader: &vks::DeviceProcAddrLoader, device: Device
         queue_family_index: u32, queue_index: u32) -> Option<QueueHandle> {
     let mut handle = ptr::null_mut();
     unsafe {
-        proc_addr_loader.core.vkGetDeviceQueue(device.to_raw(),
+        proc_addr_loader.vk.vkGetDeviceQueue(device.to_raw(),
             queue_family_index, queue_index, &mut handle);
     }
     if !handle.is_null() {
@@ -205,7 +205,7 @@ impl Device {
             fence: Option<FenceHandle>) -> VdResult<()>
             where Q: Handle<Target=QueueHandle> {
         let fence_handle_raw = fence.map(|f| f.to_raw()).unwrap_or(0);
-        let result = self.proc_addr_loader().core.vkQueueSubmit(queue.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkQueueSubmit(queue.handle().to_raw(),
             submit_info.len() as u32, submit_info.as_ptr() as *const vks::VkSubmitInfo,
             fence_handle_raw);
         error::check(result, "vkQueueSubmit", ())
@@ -219,7 +219,7 @@ impl Device {
     pub fn queue_wait_idle<Q>(&self, queue: Q)
             where Q: Handle<Target=QueueHandle> {
         unsafe {
-            self.proc_addr_loader().core.vkQueueWaitIdle(queue.handle().to_raw());
+            self.proc_addr_loader().vk.vkQueueWaitIdle(queue.handle().to_raw());
         }
     }
 
@@ -230,7 +230,7 @@ impl Device {
     // *PFN_vkDeviceWaitIdle)(VkDevice device);
     pub fn device_wait_idle(&self) {
         unsafe {
-            self.proc_addr_loader().core.vkDeviceWaitIdle(self.handle().to_raw());
+            self.proc_addr_loader().vk.vkDeviceWaitIdle(self.handle().to_raw());
         }
     }
 
@@ -245,7 +245,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<DeviceMemoryHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkAllocateMemory(self.handle().0,
+        let result = self.proc_addr_loader().vk.vkAllocateMemory(self.handle().0,
             allocate_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkAllocateMemory", DeviceMemoryHandle(handle))
     }
@@ -259,7 +259,7 @@ impl Device {
     pub unsafe fn free_memory(&self, memory: DeviceMemoryHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkFreeMemory(self.handle().0,
+        self.proc_addr_loader().vk.vkFreeMemory(self.handle().0,
             memory.handle().to_raw(), allocator);
     }
 
@@ -272,7 +272,7 @@ impl Device {
     pub unsafe fn map_memory<T>(&self, memory: DeviceMemoryHandle, offset_bytes: u64, size_bytes: u64,
             flags: MemoryMapFlags) -> VdResult<*mut T> {
         let mut data = ptr::null_mut();
-        let result = self.proc_addr_loader().core.vkMapMemory(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkMapMemory(self.handle().to_raw(),
             memory.to_raw(), offset_bytes, size_bytes, flags.bits(), &mut data);
         error::check(result, "vkMapMemory", data as *mut T)
     }
@@ -283,7 +283,7 @@ impl Device {
     //
     // *PFN_vkUnmapMemory)(VkDevice device, VkDeviceMemory memory);
     pub unsafe fn unmap_memory(&self, memory: DeviceMemoryHandle) {
-        self.proc_addr_loader().core.vkUnmapMemory(self.handle().0, memory.to_raw());
+        self.proc_addr_loader().vk.vkUnmapMemory(self.handle().0, memory.to_raw());
     }
 
     /// Flushes mapped memory ranges.
@@ -294,7 +294,7 @@ impl Device {
     // memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
     pub unsafe fn flush_mapped_memory_ranges(&self, memory_ranges: &[MappedMemoryRange])
             -> VdResult<()> {
-        let result = self.proc_addr_loader().core.vkFlushMappedMemoryRanges(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkFlushMappedMemoryRanges(self.handle().to_raw(),
             memory_ranges.len() as u32, memory_ranges.as_ptr() as *const vks::VkMappedMemoryRange);
         error::check(result, "vkFlushMappedMemoryRanges", ())
     }
@@ -307,7 +307,7 @@ impl Device {
     // memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
     pub unsafe fn invalidate_mapped_memory_ranges(&self, memory_ranges: &[MappedMemoryRange])
             -> VdResult<()> {
-        let result = self.proc_addr_loader().core.vkInvalidateMappedMemoryRanges(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkInvalidateMappedMemoryRanges(self.handle().to_raw(),
             memory_ranges.len() as u32, memory_ranges.as_ptr() as *const vks::VkMappedMemoryRange);
         error::check(result, "vkInvalidateMappedMemoryRanges", ())
     }
@@ -322,7 +322,7 @@ impl Device {
             -> DeviceSize
             where Dm: Handle<Target=DeviceMemoryHandle> {
         let mut committed_memory_in_bytes = 0;
-        self.proc_addr_loader().core.vkGetDeviceMemoryCommitment(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkGetDeviceMemoryCommitment(self.handle().to_raw(),
             memory.handle().to_raw(), &mut committed_memory_in_bytes);
         committed_memory_in_bytes
     }
@@ -335,7 +335,7 @@ impl Device {
     // VkDeviceMemory memory, VkDeviceSize memoryOffset);
     pub unsafe fn bind_buffer_memory(&self, buffer: BufferHandle, memory: DeviceMemoryHandle,
             memory_offset: DeviceSize) -> VdResult<()> {
-        let result = self.proc_addr_loader().core.vkBindBufferMemory(
+        let result = self.proc_addr_loader().vk.vkBindBufferMemory(
             self.handle().to_raw(), buffer.to_raw(), memory.to_raw(), memory_offset);
         error::check(result, "vkBindBufferMemory", ())
     }
@@ -348,7 +348,7 @@ impl Device {
     // memory, VkDeviceSize memoryOffset);
     pub unsafe fn bind_image_memory(&self, image: ImageHandle, memory: DeviceMemoryHandle,
             memory_offset: DeviceSize) -> VdResult<()> {
-        let result = self.proc_addr_loader().core.vkBindImageMemory(
+        let result = self.proc_addr_loader().vk.vkBindImageMemory(
             self.handle().to_raw(), image.to_raw(), memory.to_raw(), memory_offset);
         error::check(result, "vkBindImageMemory", ())
     }
@@ -362,7 +362,7 @@ impl Device {
     pub unsafe fn get_buffer_memory_requirements(&self, buffer: BufferHandle) -> MemoryRequirements {
         let mut memory_requirements: vks::VkMemoryRequirements;
         memory_requirements = mem::uninitialized();
-        self.proc_addr_loader().core.vkGetBufferMemoryRequirements(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkGetBufferMemoryRequirements(self.handle().to_raw(),
             buffer.to_raw(), &mut memory_requirements);
         MemoryRequirements::from_raw(memory_requirements)
     }
@@ -377,7 +377,7 @@ impl Device {
             where I: Handle<Target=ImageHandle> {
         let mut memory_requirements: vks::VkMemoryRequirements;
         memory_requirements = mem::uninitialized();
-        self.proc_addr_loader().core.vkGetImageMemoryRequirements(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkGetImageMemoryRequirements(self.handle().to_raw(),
             image.handle().to_raw(), &mut memory_requirements);
         MemoryRequirements::from_raw(memory_requirements)
     }
@@ -394,11 +394,11 @@ impl Device {
             where I: Handle<Target=ImageHandle> {
         let mut sparse_memory_requirement_count = 0u32;
         let mut sparse_memory_requirements: SmallVec<[SparseImageMemoryRequirements; 32]> = SmallVec::new();
-        self.proc_addr_loader().core.vkGetImageSparseMemoryRequirements(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkGetImageSparseMemoryRequirements(self.handle().to_raw(),
             image.handle().to_raw(), &mut sparse_memory_requirement_count, ptr::null_mut());
         sparse_memory_requirements.reserve_exact(sparse_memory_requirement_count as usize);
         sparse_memory_requirements.set_len(sparse_memory_requirement_count as usize);
-        self.proc_addr_loader().core.vkGetImageSparseMemoryRequirements(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkGetImageSparseMemoryRequirements(self.handle().to_raw(),
             image.handle().to_raw(), &mut sparse_memory_requirement_count,
             sparse_memory_requirements.as_mut_ptr() as *mut vks::VkSparseImageMemoryRequirements);
         sparse_memory_requirements
@@ -413,7 +413,7 @@ impl Device {
     pub unsafe fn queue_bind_sparse<Q, F>(&self, queue: Q, bind_info: &[BindSparseInfo], fence: F)
             -> VdResult<()>
             where Q: Handle<Target=QueueHandle>, F: Handle<Target=FenceHandle> {
-        let result = self.proc_addr_loader().core.vkQueueBindSparse(queue.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkQueueBindSparse(queue.handle().to_raw(),
             bind_info.len() as u32, bind_info.as_ptr() as *const _ as *const vks::VkBindSparseInfo,
             fence.handle().to_raw());
         error::check(result, "vkQueueBindSparse", ())
@@ -429,7 +429,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<FenceHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateFence(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateFence(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateFence", FenceHandle(handle))
     }
@@ -443,7 +443,7 @@ impl Device {
     pub unsafe fn destroy_fence(&self, fence: FenceHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyFence(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyFence(self.handle().to_raw(),
             fence.to_raw(), allocator);
     }
 
@@ -454,7 +454,7 @@ impl Device {
     // *PFN_vkResetFences)(VkDevice device, uint32_t fenceCount, const
     // VkFence* pFences);
     pub unsafe fn reset_fences(&self, fences: &[FenceHandle]) -> VdResult<()> {
-        let result = self.proc_addr_loader().core.vkResetFences(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkResetFences(self.handle().to_raw(),
             fences.len() as u32, fences.as_ptr() as *const vks::VkFence);
         error::check(result, "vkResetFences", ())
     }
@@ -466,7 +466,7 @@ impl Device {
     // *PFN_vkGetFenceStatus)(VkDevice device, VkFence fence);
     pub unsafe fn get_fence_status<F>(&self, fence: F) -> VdResult<CallResult>
             where F: Handle<Target=FenceHandle> {
-        let result = self.proc_addr_loader().core.vkGetFenceStatus(self.handle().to_raw(), fence.handle().to_raw());
+        let result = self.proc_addr_loader().vk.vkGetFenceStatus(self.handle().to_raw(), fence.handle().to_raw());
         error::check(result, "vkGetFenceStatus", CallResult::from(result))
     }
 
@@ -478,7 +478,7 @@ impl Device {
     // VkFence* pFences, VkBool32 waitAll, uint64_t timeout);
     pub unsafe fn wait_for_fences(&self, fences: &[FenceHandle], wait_all: bool, timeout: u64)
             -> VdResult<()> {
-        let result = self.proc_addr_loader().core.vkWaitForFences(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkWaitForFences(self.handle().to_raw(),
             fences.len() as u32, fences.as_ptr() as *const vks::VkFence,
             wait_all as vks::VkBool32, timeout);
         error::check(result, "vkWaitForFences", ())
@@ -495,7 +495,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SemaphoreHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateSemaphore(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateSemaphore(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateSemaphore", SemaphoreHandle(handle))
     }
@@ -509,7 +509,7 @@ impl Device {
     pub unsafe fn destroy_semaphore(&self, shader_module: SemaphoreHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroySemaphore(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroySemaphore(self.handle().to_raw(),
             shader_module.to_raw(), allocator);
     }
 
@@ -523,7 +523,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<EventHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateEvent(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateEvent(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateEvent", EventHandle(handle))
     }
@@ -537,7 +537,7 @@ impl Device {
     pub unsafe fn destroy_event(&self, event: EventHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyEvent(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyEvent(self.handle().to_raw(),
             event.to_raw(), allocator);
     }
 
@@ -548,7 +548,7 @@ impl Device {
     // *PFN_vkGetEventStatus)(VkDevice device, VkEvent event);
     pub unsafe fn get_event_status<E>(&self, event: E) -> VdResult<CallResult>
             where E: Handle<Target=EventHandle> {
-        let result = self.proc_addr_loader().core.vkGetEventStatus(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkGetEventStatus(self.handle().to_raw(),
             event.handle().to_raw());
         error::check(result, "vkGetEventStatus", CallResult::from(result))
     }
@@ -560,7 +560,7 @@ impl Device {
     // *PFN_vkSetEvent)(VkDevice device, VkEvent event);
     pub unsafe fn set_event<E>(&self, event: E) -> VdResult<()>
             where E: Handle<Target=EventHandle> {
-        let result = self.proc_addr_loader().core.vkSetEvent(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkSetEvent(self.handle().to_raw(),
             event.handle().to_raw());
         error::check(result, "vkSetEvent", ())
     }
@@ -572,7 +572,7 @@ impl Device {
     // *PFN_vkResetEvent)(VkDevice device, VkEvent event);
     pub unsafe fn reset_event<E>(&self, event: E) -> VdResult<()>
             where E: Handle<Target=EventHandle> {
-        let result = self.proc_addr_loader().core.vkResetEvent(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkResetEvent(self.handle().to_raw(),
             event.handle().to_raw());
         error::check(result, "vkResetEvent", ())
     }
@@ -588,7 +588,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<QueryPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateQueryPool(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateQueryPool(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateQueryPool", QueryPoolHandle(handle))
     }
@@ -602,7 +602,7 @@ impl Device {
     pub unsafe fn destroy_query_pool(&self, query_pool: QueryPoolHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyQueryPool(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyQueryPool(self.handle().to_raw(),
             query_pool.to_raw(), allocator);
     }
 
@@ -617,7 +617,7 @@ impl Device {
             data_size: usize, data: *mut c_void, stride: DeviceSize, flags: QueryResultFlags)
             -> VdResult<()>
             where Q: Handle<Target=QueryPoolHandle> {
-        let result = self.proc_addr_loader().core.vkGetQueryPoolResults(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkGetQueryPoolResults(self.handle().to_raw(),
             query_pool.handle().to_raw(), first_query, query_count, data_size, data, stride,
             flags.bits());
         error::check(result, "vkGetQueryPoolResults", ())
@@ -634,7 +634,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<BufferHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateBuffer(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateBuffer(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateBuffer", BufferHandle(handle))
     }
@@ -648,7 +648,7 @@ impl Device {
     pub unsafe fn destroy_buffer(&self, buffer: BufferHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyBuffer(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyBuffer(self.handle().to_raw(),
             buffer.to_raw(), allocator);
     }
 
@@ -663,7 +663,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<BufferViewHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateBufferView(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateBufferView(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateBufferView", BufferViewHandle(handle))
     }
@@ -677,7 +677,7 @@ impl Device {
     pub unsafe fn destroy_buffer_view(&self, buffer_view: BufferViewHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyBufferView(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyBufferView(self.handle().to_raw(),
             buffer_view.to_raw(), allocator);
     }
 
@@ -691,7 +691,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<ImageHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateImage(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateImage(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateImage", ImageHandle(handle))
     }
@@ -705,7 +705,7 @@ impl Device {
     pub unsafe fn destroy_image(&self, image: ImageHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyImage(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyImage(self.handle().to_raw(),
             image.to_raw(), allocator);
     }
 
@@ -719,7 +719,7 @@ impl Device {
             -> SubresourceLayout
             where I: Handle<Target=ImageHandle> {
         let mut layout = mem::uninitialized();
-        self.proc_addr_loader().core.vkGetImageSubresourceLayout(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkGetImageSubresourceLayout(self.handle().to_raw(),
             image.handle().to_raw(), subresource.as_raw(),
             &mut layout as *mut _ as *mut vks::VkSubresourceLayout);
         layout
@@ -736,7 +736,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<ImageViewHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateImageView(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateImageView(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateImageView", ImageViewHandle(handle))
     }
@@ -750,7 +750,7 @@ impl Device {
     pub unsafe fn destroy_image_view(&self, image_view: ImageViewHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyImageView(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyImageView(self.handle().to_raw(),
             image_view.to_raw(), allocator);
     }
 
@@ -765,7 +765,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<ShaderModuleHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateShaderModule(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateShaderModule(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateShaderModule", ShaderModuleHandle(handle))
     }
@@ -779,7 +779,7 @@ impl Device {
     pub unsafe fn destroy_shader_module(&self, shader_module: ShaderModuleHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyShaderModule(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyShaderModule(self.handle().to_raw(),
             shader_module.to_raw(), allocator);
     }
 
@@ -794,7 +794,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<PipelineCacheHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreatePipelineCache(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreatePipelineCache(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreatePipelineCache", PipelineCacheHandle(handle))
     }
@@ -808,7 +808,7 @@ impl Device {
     pub unsafe fn destroy_pipeline_cache(&self, pipeline_cache: PipelineCacheHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyPipelineCache(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyPipelineCache(self.handle().to_raw(),
             pipeline_cache.to_raw(), allocator);
     }
 
@@ -821,7 +821,7 @@ impl Device {
     pub unsafe fn get_pipeline_cache_data<Pc>(&self, pipeline_cache: Pc, data_size: *mut usize,
             data: *mut c_void) -> VdResult<()>
             where Pc: Handle<Target=PipelineCacheHandle> {
-        let result = self.proc_addr_loader().core.vkGetPipelineCacheData(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkGetPipelineCacheData(self.handle().to_raw(),
             pipeline_cache.handle().to_raw(), data_size, data);
         error::check(result, "vkGetPipelineCacheData", ())
     }
@@ -835,7 +835,7 @@ impl Device {
     pub unsafe fn merge_pipeline_caches<Pc>(&self, dst_cache: Pc, src_caches: &[PipelineCacheHandle])
             -> VdResult<()>
             where Pc: Handle<Target=PipelineCacheHandle> {
-        let result = self.proc_addr_loader(). core.vkMergePipelineCaches(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkMergePipelineCaches(self.handle().to_raw(),
             dst_cache.handle().to_raw(), src_caches.len() as u32,
             src_caches.as_ptr() as *const vks::VkPipelineCache);
         error::check(result, "vkMergePipelineCaches", ())
@@ -858,7 +858,7 @@ impl Device {
         let mut pipelines = SmallVec::<[PipelineHandle; 4]>::new();
         pipelines.reserve_exact(create_infos.len());
         pipelines.set_len(create_infos.len());
-        let result = self.proc_addr_loader().core.vkCreateGraphicsPipelines(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateGraphicsPipelines(self.handle().to_raw(),
             pipeline_cache, create_infos.len() as u32,
             create_infos.as_ptr() as *const vks::VkGraphicsPipelineCreateInfo,
             allocator,
@@ -883,7 +883,7 @@ impl Device {
         let mut pipelines = SmallVec::<[PipelineHandle; 4]>::new();
         pipelines.reserve_exact(create_infos.len());
         pipelines.set_len(create_infos.len());
-        let result = self.proc_addr_loader().core.vkCreateComputePipelines(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateComputePipelines(self.handle().to_raw(),
             pipeline_cache, create_infos.len() as u32,
             create_infos.as_ptr() as *const vks::VkComputePipelineCreateInfo,
             allocator,
@@ -900,7 +900,7 @@ impl Device {
     pub unsafe fn destroy_pipeline(&self, pipeline: PipelineHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyPipeline(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyPipeline(self.handle().to_raw(),
             pipeline.to_raw(), allocator);
     }
 
@@ -915,7 +915,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<PipelineLayoutHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreatePipelineLayout(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreatePipelineLayout(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreatePipelineLayout", PipelineLayoutHandle(handle))
     }
@@ -929,7 +929,7 @@ impl Device {
     pub unsafe fn destroy_pipeline_layout(&self, pipeline_layout: PipelineLayoutHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyPipelineLayout(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyPipelineLayout(self.handle().to_raw(),
             pipeline_layout.to_raw(), allocator);
     }
 
@@ -944,7 +944,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<SamplerHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateSampler(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateSampler(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateSampler", SamplerHandle(handle))
     }
@@ -958,7 +958,7 @@ impl Device {
     pub unsafe fn destroy_sampler(&self, sampler: SamplerHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroySampler(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroySampler(self.handle().to_raw(),
             sampler.to_raw(), allocator);
     }
 
@@ -973,7 +973,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<DescriptorSetLayoutHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateDescriptorSetLayout(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateDescriptorSetLayout(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateDescriptorSetLayout", DescriptorSetLayoutHandle(handle))
     }
@@ -988,7 +988,7 @@ impl Device {
     pub unsafe fn destroy_descriptor_set_layout(&self, descriptor_set_layout: DescriptorSetLayoutHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyDescriptorSetLayout(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyDescriptorSetLayout(self.handle().to_raw(),
             descriptor_set_layout.to_raw(), allocator);
     }
 
@@ -1003,7 +1003,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<DescriptorPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateDescriptorPool(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateDescriptorPool(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateDescriptorPool", DescriptorPoolHandle(handle))
     }
@@ -1017,7 +1017,7 @@ impl Device {
     pub unsafe fn destroy_descriptor_pool(&self, descriptor_pool: DescriptorPoolHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyDescriptorPool(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyDescriptorPool(self.handle().to_raw(),
             descriptor_pool.to_raw(), allocator);
     }
 
@@ -1030,7 +1030,7 @@ impl Device {
     pub unsafe fn reset_descriptor_pool<Dp>(&self, descriptor_pool: Dp,
             flags: DescriptorPoolResetFlags) -> VdResult<()>
             where Dp: Handle<Target=DescriptorPoolHandle> {
-        let result = self.proc_addr_loader().core.vkResetDescriptorPool(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkResetDescriptorPool(self.handle().to_raw(),
             descriptor_pool.handle().to_raw(), flags.bits());
         error::check(result, "vkResetDescriptorPool", ())
     }
@@ -1048,7 +1048,7 @@ impl Device {
         let count = allocate_info.set_layouts().len();
         descriptor_sets.reserve_exact(count);
         descriptor_sets.set_len(count);
-        let result = self.proc_addr_loader().core.vkAllocateDescriptorSets(
+        let result = self.proc_addr_loader().vk.vkAllocateDescriptorSets(
             self.handle().to_raw(), allocate_info.as_raw(),
             descriptor_sets.as_mut_ptr() as *mut vks::VkDescriptorSet);
         error::check(result, "vkAllocateDescriptorSets", descriptor_sets)
@@ -1064,7 +1064,7 @@ impl Device {
     pub unsafe fn free_descriptor_sets<Dp>(&self, descriptor_pool: Dp,
             descriptor_sets: &[DescriptorSetHandle]) -> VdResult<()>
             where Dp: Handle<Target=DescriptorPoolHandle> {
-        let result = self.proc_addr_loader().core.vkFreeDescriptorSets(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkFreeDescriptorSets(self.handle().to_raw(),
             descriptor_pool.handle().to_raw(), descriptor_sets.len() as u32,
             descriptor_sets.as_ptr() as *const vks::VkDescriptorSet);
         error::check(result, "vkFreeDescriptorSets", ())
@@ -1081,7 +1081,7 @@ impl Device {
     pub fn update_descriptor_sets(&self, descriptor_writes: &[WriteDescriptorSet],
             descriptor_copies: &[CopyDescriptorSet]) {
         unsafe {
-            self.proc_addr_loader().core.vkUpdateDescriptorSets(self.handle().0,
+            self.proc_addr_loader().vk.vkUpdateDescriptorSets(self.handle().0,
                 descriptor_writes.len() as u32,
                 descriptor_writes.as_ptr() as *const vks::VkWriteDescriptorSet,
                 descriptor_copies.len() as u32,
@@ -1100,7 +1100,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<FramebufferHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateFramebuffer(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateFramebuffer(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateFramebuffer", FramebufferHandle(handle))
     }
@@ -1114,7 +1114,7 @@ impl Device {
     pub unsafe fn destroy_framebuffer(&self, framebuffer: FramebufferHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyFramebuffer(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyFramebuffer(self.handle().to_raw(),
             framebuffer.to_raw(), allocator);
     }
 
@@ -1129,7 +1129,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<RenderPassHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateRenderPass(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateRenderPass(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateRenderPass", RenderPassHandle(handle))
     }
@@ -1143,7 +1143,7 @@ impl Device {
     pub unsafe fn destroy_render_pass(&self, render_pass: RenderPassHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyRenderPass(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyRenderPass(self.handle().to_raw(),
             render_pass.to_raw(), allocator);
     }
 
@@ -1157,7 +1157,7 @@ impl Device {
             -> Extent2d
             where Rp: Handle<Target=RenderPassHandle> {
         let mut granularity = mem::uninitialized();
-        self.proc_addr_loader().core.vkGetRenderAreaGranularity(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkGetRenderAreaGranularity(self.handle().to_raw(),
             render_pass.handle().to_raw(), &mut granularity as *mut _ as *mut vks::VkExtent2D);
         granularity
     }
@@ -1173,7 +1173,7 @@ impl Device {
             allocator: Option<*const vks::VkAllocationCallbacks>) -> VdResult<CommandPoolHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateCommandPool(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateCommandPool(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateCommandPool", CommandPoolHandle(handle))
     }
@@ -1187,7 +1187,7 @@ impl Device {
     pub unsafe fn destroy_command_pool(&self, command_pool: CommandPoolHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyCommandPool(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyCommandPool(self.handle().to_raw(),
             command_pool.to_raw(), allocator);
     }
 
@@ -1200,7 +1200,7 @@ impl Device {
     pub unsafe fn reset_command_pool<Cp>(&self, command_pool: Cp, flags: CommandPoolResetFlags)
             -> VdResult<()>
             where Cp: Handle<Target=CommandPoolHandle> {
-        let result = self.proc_addr_loader().core.vkResetCommandPool(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkResetCommandPool(self.handle().to_raw(),
             command_pool.handle().to_raw(), flags.bits());
         error::check(result, "vkResetCommandPool", ())
     }
@@ -1217,7 +1217,7 @@ impl Device {
         let mut command_buffers: SmallVec<[CommandBufferHandle; 16]> = SmallVec::new();
         command_buffers.reserve_exact(allocate_info.command_buffer_count() as usize);
         command_buffers.set_len(allocate_info.command_buffer_count() as usize);
-        let result = self.proc_addr_loader().core.vkAllocateCommandBuffers(
+        let result = self.proc_addr_loader().vk.vkAllocateCommandBuffers(
             self.handle().to_raw(), allocate_info.as_raw(),
             command_buffers.as_mut_ptr() as *mut vks::VkCommandBuffer);
         error::check(result, "vkAllocateCommandBuffers", command_buffers)
@@ -1231,7 +1231,7 @@ impl Device {
     // uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers);
     pub unsafe fn free_command_buffers<Cp>(&self, command_pool: Cp, command_buffers: &[CommandBufferHandle])
             where Cp: Handle<Target=CommandPoolHandle> {
-        self.proc_addr_loader().core.vkFreeCommandBuffers(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkFreeCommandBuffers(self.handle().to_raw(),
             command_pool.handle().to_raw(), command_buffers.len() as u32,
             command_buffers.as_ptr() as *const vks::VkCommandBuffer);
     }
@@ -1244,7 +1244,7 @@ impl Device {
     // VkCommandBufferBeginInfo* pBeginInfo);
     pub unsafe fn begin_command_buffer(&self, command_buffer: CommandBufferHandle,
             begin_info: &CommandBufferBeginInfo) -> VdResult<()> {
-        let result = self.proc_addr_loader().core.vkBeginCommandBuffer(command_buffer.to_raw(), begin_info.as_raw());
+        let result = self.proc_addr_loader().vk.vkBeginCommandBuffer(command_buffer.to_raw(), begin_info.as_raw());
         error::check(result, "vkBeginCommandBuffer", ())
     }
 
@@ -1254,7 +1254,7 @@ impl Device {
     //
     // *PFN_vkEndCommandBuffer)(VkCommandBuffer commandBuffer);
     pub unsafe fn end_command_buffer(&self, command_buffer: CommandBufferHandle) -> VdResult<()> {
-        let result = self.proc_addr_loader().core.vkEndCommandBuffer(command_buffer.to_raw());
+        let result = self.proc_addr_loader().vk.vkEndCommandBuffer(command_buffer.to_raw());
         error::check(result, "vkEndCommandBuffer", ())
     }
 
@@ -1266,7 +1266,7 @@ impl Device {
     // VkCommandBufferResetFlags flags);
     pub unsafe fn cmd_reset_command_buffer(&self, command_buffer: CommandBufferHandle,
             flags: CommandBufferResetFlags) -> VdResult<()> {
-        let result = self.proc_addr_loader().core.vkResetCommandBuffer(command_buffer.to_raw(), flags.bits());
+        let result = self.proc_addr_loader().vk.vkResetCommandBuffer(command_buffer.to_raw(), flags.bits());
         error::check(result, "vkResetCommandBuffer", ())
     }
 
@@ -1278,7 +1278,7 @@ impl Device {
     // VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline);
     pub unsafe fn cmd_bind_pipeline(&self, command_buffer: CommandBufferHandle,
             pipeline_bind_point: PipelineBindPoint, pipeline: PipelineHandle) {
-        self.proc_addr_loader().core.vkCmdBindPipeline(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdBindPipeline(command_buffer.to_raw(),
             pipeline_bind_point.into(), pipeline.handle().to_raw());
     }
 
@@ -1290,7 +1290,7 @@ impl Device {
     // firstViewport, uint32_t viewportCount, const VkViewport* pViewports);
     pub unsafe fn cmd_set_viewport(&self, command_buffer: CommandBufferHandle,
             first_viewport: u32, viewports: &[Viewport]) {
-        self.proc_addr_loader().core.vkCmdSetViewport(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdSetViewport(command_buffer.to_raw(),
             first_viewport, viewports.len() as u32, viewports.as_ptr() as *const vks::VkViewport);
     }
 
@@ -1302,7 +1302,7 @@ impl Device {
     // firstScissor, uint32_t scissorCount, const VkRect2D* pScissors);
     pub unsafe fn cmd_set_scissor(&self, command_buffer: CommandBufferHandle, first_scissor: u32,
             scissors: &[Rect2d]) {
-        self.proc_addr_loader().core.vkCmdSetScissor(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdSetScissor(command_buffer.to_raw(),
             first_scissor, scissors.len() as u32, scissors.as_ptr() as *const vks::VkRect2D);
     }
 
@@ -1313,7 +1313,7 @@ impl Device {
     // *PFN_vkCmdSetLineWidth)(VkCommandBuffer commandBuffer, float
     // lineWidth);
     pub unsafe fn cmd_set_line_width(&self, command_buffer: CommandBufferHandle, line_width: f32) {
-        self.proc_addr_loader().core.vkCmdSetLineWidth(command_buffer.to_raw(), line_width);
+        self.proc_addr_loader().vk.vkCmdSetLineWidth(command_buffer.to_raw(), line_width);
     }
 
 
@@ -1326,7 +1326,7 @@ impl Device {
     // depthBiasSlopeFactor);
     pub unsafe fn cmd_set_depth_bias(&self, command_buffer: CommandBufferHandle,
             depth_bias_constant_factor: f32, depth_bias_clamp: f32, depth_bias_slope_factor: f32) {
-        self.proc_addr_loader().core.vkCmdSetDepthBias(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdSetDepthBias(command_buffer.to_raw(),
             depth_bias_constant_factor, depth_bias_clamp, depth_bias_slope_factor);
     }
 
@@ -1338,7 +1338,7 @@ impl Device {
     // blendConstants[4]);
     pub unsafe fn cmd_set_blend_constants(&self, command_buffer: CommandBufferHandle,
             blend_constants: [f32; 4]) {
-        self.proc_addr_loader().core.vkCmdSetBlendConstants(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdSetBlendConstants(command_buffer.to_raw(),
             blend_constants.as_ptr());
     }
 
@@ -1350,7 +1350,7 @@ impl Device {
     // minDepthBounds, float maxDepthBounds);
     pub unsafe fn cmd_set_depth_bounds(&self, command_buffer: CommandBufferHandle,
             min_depth_bounds: f32, max_depth_bounds: f32) {
-        self.proc_addr_loader().core.vkCmdSetDepthBounds(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdSetDepthBounds(command_buffer.to_raw(),
             min_depth_bounds, max_depth_bounds);
     }
 
@@ -1362,7 +1362,7 @@ impl Device {
     // VkStencilFaceFlags faceMask, uint32_t compareMask);
     pub unsafe fn cmd_set_stencil_compare_mask(&self, command_buffer: CommandBufferHandle,
             face_mask: StencilFaceFlags, compare_mask: u32) {
-        self.proc_addr_loader().core.vkCmdSetStencilCompareMask(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdSetStencilCompareMask(command_buffer.to_raw(),
             face_mask.bits(), compare_mask);
     }
 
@@ -1374,7 +1374,7 @@ impl Device {
     // VkStencilFaceFlags faceMask, uint32_t writeMask);
     pub unsafe fn cmd_set_stencil_write_mask(&self, command_buffer: CommandBufferHandle,
             face_mask: StencilFaceFlags, write_mask: u32) {
-        self.proc_addr_loader().core.vkCmdSetStencilWriteMask(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdSetStencilWriteMask(command_buffer.to_raw(),
             face_mask.bits(), write_mask);
     }
 
@@ -1386,7 +1386,7 @@ impl Device {
     // VkStencilFaceFlags faceMask, uint32_t reference);
     pub unsafe fn cmd_set_stencil_reference(&self, command_buffer: CommandBufferHandle,
             face_mask: StencilFaceFlags, reference: u32) {
-        self.proc_addr_loader().core.vkCmdSetStencilReference(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdSetStencilReference(command_buffer.to_raw(),
             face_mask.bits(), reference);
     }
 
@@ -1403,7 +1403,7 @@ impl Device {
             pipeline_bind_point: PipelineBindPoint, layout: PipelineLayoutHandle,
             first_set: u32, descriptor_sets: &[DescriptorSetHandle],
             dynamic_offsets: &[u32]) {
-        self.proc_addr_loader().core.vkCmdBindDescriptorSets(command_buffer.to_raw(), pipeline_bind_point.into(),
+        self.proc_addr_loader().vk.vkCmdBindDescriptorSets(command_buffer.to_raw(), pipeline_bind_point.into(),
             layout.handle().to_raw(), first_set, descriptor_sets.len() as u32,
             descriptor_sets.as_ptr() as *const vks::VkDescriptorSet,
             dynamic_offsets.len() as u32, dynamic_offsets.as_ptr());
@@ -1417,7 +1417,7 @@ impl Device {
     // buffer, VkDeviceSize offset, VkIndexType indexType);
     pub unsafe fn cmd_bind_index_buffer(&self, command_buffer: CommandBufferHandle, buffer: BufferHandle,
             offset: u64, index_type: IndexType) {
-            self.proc_addr_loader().core.vkCmdBindIndexBuffer(command_buffer.to_raw(),
+            self.proc_addr_loader().vk.vkCmdBindIndexBuffer(command_buffer.to_raw(),
                 buffer.handle().to_raw(), offset, index_type.into());
     }
 
@@ -1430,7 +1430,7 @@ impl Device {
     // VkDeviceSize* pOffsets);
     pub unsafe fn cmd_bind_vertex_buffers(&self, command_buffer: CommandBufferHandle, first_binding: u32,
             buffers: &[BufferHandle], offsets: &[u64]) {
-        self.proc_addr_loader().core.vkCmdBindVertexBuffers(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdBindVertexBuffers(command_buffer.to_raw(),
             first_binding, buffers.len() as u32, buffers.as_ptr() as *const vks::VkBuffer,
             offsets.as_ptr());
     }
@@ -1443,7 +1443,7 @@ impl Device {
     // uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
     pub unsafe fn cmd_draw(&self, command_buffer: CommandBufferHandle, vertex_count: u32, instance_count: u32,
             first_vertex: u32, first_instance: u32) {
-        self.proc_addr_loader().core.vkCmdDraw(command_buffer.to_raw(), vertex_count, instance_count,
+        self.proc_addr_loader().vk.vkCmdDraw(command_buffer.to_raw(), vertex_count, instance_count,
             first_vertex, first_instance);
     }
 
@@ -1456,7 +1456,7 @@ impl Device {
     // vertexOffset, uint32_t firstInstance);
     pub unsafe fn cmd_draw_indexed(&self, command_buffer: CommandBufferHandle, index_count: u32,
             instance_count: u32, first_index: u32, vertex_offset: i32, first_instance: u32) {
-        self.proc_addr_loader().core.vkCmdDrawIndexed(command_buffer.to_raw(), index_count,
+        self.proc_addr_loader().vk.vkCmdDrawIndexed(command_buffer.to_raw(), index_count,
             instance_count, first_index, vertex_offset, first_instance);
     }
 
@@ -1468,7 +1468,7 @@ impl Device {
     // VkDeviceSize offset, uint32_t drawCount, uint32_t stride);
     pub unsafe fn cmd_draw_indirect(&self, command_buffer: CommandBufferHandle, buffer: BufferHandle,
             offset: u64, draw_count: u32, stride: u32) {
-        self.proc_addr_loader().core.vkCmdDrawIndirect(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdDrawIndirect(command_buffer.to_raw(),
             buffer.handle().to_raw(), offset, draw_count, stride);
     }
 
@@ -1480,7 +1480,7 @@ impl Device {
     // buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride);
     pub unsafe fn cmd_draw_indexed_indirect(&self, command_buffer: CommandBufferHandle, buffer: BufferHandle,
             offset: u64, draw_count: u32, stride: u32) {
-        self.proc_addr_loader().core.vkCmdDrawIndexedIndirect(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdDrawIndexedIndirect(command_buffer.to_raw(),
             buffer.handle().to_raw(), offset, draw_count, stride);
     }
 
@@ -1492,7 +1492,7 @@ impl Device {
     // groupCountX, uint32_t groupCountY, uint32_t groupCountZ);
     pub unsafe fn cmd_dispatch(&self, command_buffer: CommandBufferHandle, group_count_x: u32,
             group_count_y: u32, group_count_z: u32) {
-        self.proc_addr_loader().core.vkCmdDispatch(command_buffer.to_raw(), group_count_x,
+        self.proc_addr_loader().vk.vkCmdDispatch(command_buffer.to_raw(), group_count_x,
             group_count_y, group_count_z);
     }
 
@@ -1504,7 +1504,7 @@ impl Device {
     // buffer, VkDeviceSize offset);
     pub unsafe fn cmd_dispatch_indirect(&self, command_buffer: CommandBufferHandle, buffer: BufferHandle,
             offset: u64) {
-        self.proc_addr_loader().core.vkCmdDispatchIndirect(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdDispatchIndirect(command_buffer.to_raw(),
             buffer.handle().to_raw(), offset);
     }
 
@@ -1517,7 +1517,7 @@ impl Device {
     // VkBufferCopy* pRegions);
     pub unsafe fn cmd_copy_buffer(&self, command_buffer: CommandBufferHandle, src_buffer: BufferHandle,
             dst_buffer: BufferHandle, regions: &[BufferCopy]) {
-        self.proc_addr_loader().core.vkCmdCopyBuffer(
+        self.proc_addr_loader().vk.vkCmdCopyBuffer(
             command_buffer.to_raw(),
             src_buffer.to_raw(),
             dst_buffer.to_raw(),
@@ -1536,7 +1536,7 @@ impl Device {
     pub unsafe fn cmd_copy_image(&self, command_buffer: CommandBufferHandle, src_image: ImageHandle,
             src_image_layout: ImageLayout, dst_image: ImageHandle, dst_image_layout: ImageLayout,
             regions: &[ImageCopy]) {
-        self.proc_addr_loader().core.vkCmdCopyImage(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdCopyImage(command_buffer.to_raw(),
         src_image.to_raw(), src_image_layout.into(), dst_image.to_raw(), dst_image_layout.into(),
         regions.len() as u32, regions.as_ptr() as *const vks::VkImageCopy);
     }
@@ -1552,7 +1552,7 @@ impl Device {
     pub unsafe fn cmd_blit_image(&self, command_buffer: CommandBufferHandle, src_image: ImageHandle,
             src_image_layout: ImageLayout, dst_image: ImageHandle, dst_image_layout: ImageLayout,
             regions: &[ImageBlit], filter: Filter) {
-        self.proc_addr_loader().core.vkCmdBlitImage(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdBlitImage(command_buffer.to_raw(),
             src_image.to_raw(), src_image_layout.into(), dst_image.to_raw(),
             dst_image_layout.into(), regions.len() as u32,
             regions.as_ptr() as *const vks::VkImageBlit, filter.into());
@@ -1568,7 +1568,7 @@ impl Device {
     pub unsafe fn cmd_copy_buffer_to_image(&self, command_buffer: CommandBufferHandle,
             src_buffer: BufferHandle, dst_image: ImageHandle, dst_image_layout: ImageLayout,
             regions: &[BufferImageCopy]) {
-        self.proc_addr_loader().core.vkCmdCopyBufferToImage(
+        self.proc_addr_loader().vk.vkCmdCopyBufferToImage(
             command_buffer.to_raw(),
             src_buffer.to_raw(),
             dst_image.to_raw(),
@@ -1588,7 +1588,7 @@ impl Device {
     pub unsafe fn cmd_copy_image_to_buffer(&self, command_buffer: CommandBufferHandle,
             src_image: ImageHandle, src_image_layout: ImageLayout, dst_buffer: BufferHandle,
             regions: &[BufferImageCopy]) {
-        self.proc_addr_loader().core.vkCmdCopyImageToBuffer(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdCopyImageToBuffer(command_buffer.to_raw(),
             src_image.to_raw(), src_image_layout.into(), dst_buffer.to_raw(), regions.len() as u32,
             regions.as_ptr() as *const vks::VkBufferImageCopy);
     }
@@ -1602,7 +1602,7 @@ impl Device {
     // pData);
     pub unsafe fn cmd_update_buffer(&self, command_buffer: CommandBufferHandle, dst_buffer: BufferHandle,
             dst_offset: u64, data: &[u8]) {
-        self.proc_addr_loader().core.vkCmdUpdateBuffer(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdUpdateBuffer(command_buffer.to_raw(),
             dst_buffer.to_raw(), dst_offset, data.len() as u64, data.as_ptr() as *const _);
     }
 
@@ -1614,7 +1614,7 @@ impl Device {
     // dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data);
     pub unsafe fn cmd_fill_buffer(&self,command_buffer: CommandBufferHandle,  dst_buffer: BufferHandle,
             dst_offset: u64, size: Option<DeviceSize>, data: u32) {
-        self.proc_addr_loader().core.vkCmdFillBuffer(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdFillBuffer(command_buffer.to_raw(),
             dst_buffer.to_raw(), dst_offset, size.unwrap_or(0), data);
     }
 
@@ -1627,7 +1627,7 @@ impl Device {
     // uint32_t rangeCount, const VkImageSubresourceRange* pRanges);
     pub unsafe fn cmd_clear_color_image(&self, command_buffer: CommandBufferHandle, image: ImageHandle,
             image_layout: ImageLayout, color: &ClearColorValue, ranges: &[ImageSubresourceRange]) {
-        self.proc_addr_loader().core.vkCmdClearColorImage(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdClearColorImage(command_buffer.to_raw(),
             image.to_raw(), image_layout.into(), color, ranges.len() as u32,
             ranges.as_ptr() as *const vks::VkImageSubresourceRange);
     }
@@ -1643,7 +1643,7 @@ impl Device {
     pub unsafe fn cmd_clear_depth_stencil_image(&self, command_buffer: CommandBufferHandle,
             image: ImageHandle, image_layout: ImageLayout, depth_stencil: &ClearDepthStencilValue,
             ranges: &[ImageSubresourceRange]) {
-        self.proc_addr_loader().core.vkCmdClearDepthStencilImage(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdClearDepthStencilImage(command_buffer.to_raw(),
             image.to_raw(), image_layout.into(), depth_stencil.as_raw(), ranges.len() as u32,
             ranges.as_ptr() as *const vks::VkImageSubresourceRange);
     }
@@ -1657,7 +1657,7 @@ impl Device {
     // rectCount, const VkClearRect* pRects);
     pub unsafe fn cmd_clear_attachments(&self, command_buffer: CommandBufferHandle,
             attachments: &[ClearAttachment], rects: &[ClearRect]) {
-        self.proc_addr_loader().core.vkCmdClearAttachments(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdClearAttachments(command_buffer.to_raw(),
             attachments.len() as u32, attachments.as_ptr() as *const vks::VkClearAttachment,
             rects.len() as u32, rects.as_ptr() as *const vks::VkClearRect);
     }
@@ -1672,7 +1672,7 @@ impl Device {
     pub unsafe fn cmd_resolve_image(&self, command_buffer: CommandBufferHandle,
             src_image: ImageHandle, src_image_layout: ImageLayout, dst_image: ImageHandle,
             dst_image_layout: ImageLayout, regions: &[ImageResolve]) {
-        self.proc_addr_loader().core.vkCmdResolveImage(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdResolveImage(command_buffer.to_raw(),
             src_image.to_raw(), src_image_layout.into(), dst_image.to_raw(),
             dst_image_layout.into(), regions.len() as u32,
             regions.as_ptr() as *const vks::VkImageResolve);
@@ -1686,7 +1686,7 @@ impl Device {
     // VkPipelineStageFlags stageMask);
     pub unsafe fn cmd_set_event(&self, command_buffer: CommandBufferHandle, event: EventHandle,
             stage_mask: PipelineStageFlags) {
-        self.proc_addr_loader().core.vkCmdSetEvent(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdSetEvent(command_buffer.to_raw(),
             event.to_raw(), stage_mask.bits());
     }
 
@@ -1698,7 +1698,7 @@ impl Device {
     // VkPipelineStageFlags stageMask);
     pub unsafe fn cmd_reset_event(&self, command_buffer: CommandBufferHandle, event: EventHandle,
             stage_mask: PipelineStageFlags) {
-        self.proc_addr_loader().core.vkCmdResetEvent(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdResetEvent(command_buffer.to_raw(),
             event.to_raw(), stage_mask.bits());
     }
 
@@ -1719,7 +1719,7 @@ impl Device {
             memory_barriers: &[MemoryBarrier],
             buffer_memory_barriers: &[BufferMemoryBarrier],
             image_memory_barriers: &[ImageMemoryBarrier]) {
-        self.proc_addr_loader().core.vkCmdWaitEvents(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdWaitEvents(command_buffer.to_raw(),
             events.len() as u32, events.as_ptr() as *const vks::VkEvent,
             src_stage_mask.bits(), dst_stage_mask.bits(),
             memory_barriers.len() as u32, memory_barriers.as_ptr() as *const vks::VkMemoryBarrier,
@@ -1746,7 +1746,7 @@ impl Device {
             dependency_flags: DependencyFlags, memory_barriers: &[MemoryBarrier],
             buffer_memory_barriers: &[BufferMemoryBarrier],
             image_memory_barriers: &[ImageMemoryBarrier]) {
-        self.proc_addr_loader().core.vkCmdPipelineBarrier(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdPipelineBarrier(command_buffer.to_raw(),
             src_stage_mask.bits(), dst_stage_mask.bits(), dependency_flags.bits(),
             memory_barriers.len() as u32, memory_barriers.as_ptr() as *const vks::VkMemoryBarrier,
             buffer_memory_barriers.len() as u32,
@@ -1764,7 +1764,7 @@ impl Device {
     // queryPool, uint32_t query, VkQueryControlFlags flags);
     pub unsafe fn cmd_begin_query(&self, command_buffer: CommandBufferHandle,
             query_pool: QueryPoolHandle, query: u32, flags: QueryControlFlags) {
-        self.proc_addr_loader().core.vkCmdBeginQuery(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdBeginQuery(command_buffer.to_raw(),
             query_pool.to_raw(), query, flags.bits());
     }
 
@@ -1776,7 +1776,7 @@ impl Device {
     // queryPool, uint32_t query);
     pub unsafe fn cmd_end_query(&self, command_buffer: CommandBufferHandle,
             query_pool: QueryPoolHandle, query: u32) {
-        self.proc_addr_loader().core.vkCmdEndQuery(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdEndQuery(command_buffer.to_raw(),
             query_pool.to_raw(), query);
     }
 
@@ -1788,7 +1788,7 @@ impl Device {
     // queryPool, uint32_t firstQuery, uint32_t queryCount);
     pub unsafe fn cmd_reset_query_pool(&self, command_buffer: CommandBufferHandle,
             query_pool: QueryPoolHandle, first_query: u32, query_count: u32) {
-        self.proc_addr_loader().core.vkCmdResetQueryPool(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdResetQueryPool(command_buffer.to_raw(),
             query_pool.to_raw(), first_query, query_count);
     }
 
@@ -1801,7 +1801,7 @@ impl Device {
     // query);
     pub unsafe fn cmd_write_timestamp(&self, command_buffer: CommandBufferHandle,
         pipeline_stage: PipelineStageFlags, query_pool: QueryPoolHandle, query: u32) {
-        self.proc_addr_loader().core.vkCmdWriteTimestamp(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdWriteTimestamp(command_buffer.to_raw(),
             pipeline_stage.bits(), query_pool.to_raw(), query);
     }
 
@@ -1816,7 +1816,7 @@ impl Device {
     pub unsafe fn cmd_copy_query_pool_results(&self, command_buffer: CommandBufferHandle,
             query_pool: QueryPoolHandle, first_query: u32, query_count: u32,
             dst_buffer: BufferHandle, dst_offset: u64, stride: u64, flags: QueryResultFlags) {
-        self.proc_addr_loader().core.vkCmdCopyQueryPoolResults(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdCopyQueryPoolResults(command_buffer.to_raw(),
             query_pool.to_raw(), first_query, query_count, dst_buffer.to_raw(), dst_offset, stride,
             flags.bits());
     }
@@ -1831,7 +1831,7 @@ impl Device {
     pub unsafe fn cmd_push_constants(&self, command_buffer: CommandBufferHandle,
             layout: PipelineLayoutHandle, stage_flags: ShaderStageFlags, offset: u32,
             values: &[u8]) {
-        self.proc_addr_loader().core.vkCmdPushConstants(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdPushConstants(command_buffer.to_raw(),
             layout.to_raw(),
             stage_flags.bits(), offset, values.len() as u32, values.as_ptr() as *const c_void);
     }
@@ -1844,7 +1844,7 @@ impl Device {
     // VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents);
     pub unsafe fn cmd_begin_render_pass(&self, command_buffer: CommandBufferHandle,
             render_pass_begin: &RenderPassBeginInfo, contents: SubpassContents) {
-        self.proc_addr_loader().core.vkCmdBeginRenderPass(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdBeginRenderPass(command_buffer.to_raw(),
             render_pass_begin.as_raw(), contents.into());
     }
 
@@ -1856,7 +1856,7 @@ impl Device {
     // contents);
     pub unsafe fn cmd_next_subpass(&self, command_buffer: CommandBufferHandle,
             contents: SubpassContents) {
-        self.proc_addr_loader().core.vkCmdNextSubpass(command_buffer.to_raw(), contents.into());
+        self.proc_addr_loader().vk.vkCmdNextSubpass(command_buffer.to_raw(), contents.into());
     }
 
     /// Ends the current render pass.
@@ -1865,7 +1865,7 @@ impl Device {
     //
     // *PFN_vkCmdEndRenderPass)(VkCommandBuffer commandBuffer);
     pub unsafe fn cmd_end_render_pass(&self, command_buffer: CommandBufferHandle, ) {
-        self.proc_addr_loader().core.vkCmdEndRenderPass(command_buffer.to_raw());
+        self.proc_addr_loader().vk.vkCmdEndRenderPass(command_buffer.to_raw());
     }
 
     /// Executes a secondary command buffer from a primary command buffer.
@@ -1876,7 +1876,7 @@ impl Device {
     // commandBufferCount, const VkCommandBuffer* pCommandBuffers);
     pub unsafe fn cmd_execute_commands(&self, command_buffer: CommandBufferHandle,
             command_buffers: &[CommandBufferHandle]) {
-        self.proc_addr_loader().core.vkCmdExecuteCommands(command_buffer.to_raw(),
+        self.proc_addr_loader().vk.vkCmdExecuteCommands(command_buffer.to_raw(),
             command_buffers.len() as u32, command_buffers.as_ptr() as *const vks::VkCommandBuffer);
     }
 
@@ -2137,7 +2137,7 @@ impl Device {
             -> VdResult<DescriptorUpdateTemplateKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateDescriptorUpdateTemplateKhr(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateDescriptorUpdateTemplateKhr(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateDescriptorUpdateTemplateKhr",
             DescriptorUpdateTemplateKhrHandle(handle))
@@ -2155,7 +2155,7 @@ impl Device {
             descriptor_update_template_khr: DescriptorUpdateTemplateKhrHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyDescriptorUpdateTemplateKhr(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyDescriptorUpdateTemplateKhr(self.handle().to_raw(),
             descriptor_update_template_khr.to_raw(), allocator);
     }
 
@@ -2308,7 +2308,7 @@ impl Device {
             -> VdResult<SamplerYcbcrConversionKhrHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateSamplerYcbcrConversionKhr(
+        let result = self.proc_addr_loader().vk.vkCreateSamplerYcbcrConversionKhr(
             self.handle().to_raw(), create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateSamplerYcbcrConversionKhr",
             SamplerYcbcrConversionKhrHandle(handle))
@@ -2326,7 +2326,7 @@ impl Device {
             sampler_ycbcr_conversion_khr: SamplerYcbcrConversionKhrHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroySamplerYcbcrConversionKhr(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroySamplerYcbcrConversionKhr(self.handle().to_raw(),
             sampler_ycbcr_conversion_khr.to_raw(), allocator);
     }
 
@@ -2535,7 +2535,7 @@ impl Device {
             -> VdResult<IndirectCommandsLayoutNvxHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateIndirectCommandsLayoutNvx(
+        let result = self.proc_addr_loader().vk.vkCreateIndirectCommandsLayoutNvx(
             self.handle().to_raw(), create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateIndirectCommandsLayoutNvx",
             IndirectCommandsLayoutNvxHandle(handle))
@@ -2553,7 +2553,7 @@ impl Device {
             indirect_commands_layout_nvx: IndirectCommandsLayoutNvxHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyIndirectCommandsLayoutNvx(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyIndirectCommandsLayoutNvx(self.handle().to_raw(),
             indirect_commands_layout_nvx.to_raw(), allocator);
     }
 
@@ -2570,7 +2570,7 @@ impl Device {
             -> VdResult<ObjectTableNvxHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateObjectTableNvx(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateObjectTableNvx(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         error::check(result, "vkCreateObjectTableNvx", ObjectTableNvxHandle(handle))
     }
@@ -2585,7 +2585,7 @@ impl Device {
     pub unsafe fn destroy_object_table_nvx(&self, object_table_nvx: ObjectTableNvxHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyObjectTableNvx(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyObjectTableNvx(self.handle().to_raw(),
             object_table_nvx.to_raw(), allocator);
     }
 
@@ -2749,7 +2749,7 @@ impl Device {
             -> VdResult<ValidationCacheExtHandle> {
         let allocator = allocator.unwrap_or(ptr::null());
         let mut handle = 0;
-        let result = self.proc_addr_loader().core.vkCreateValidationCacheExt(self.handle().to_raw(),
+        let result = self.proc_addr_loader().vk.vkCreateValidationCacheExt(self.handle().to_raw(),
             create_info.as_raw(), allocator, &mut handle);
         // Ok(ValidationCacheExtHandle(handle))
         error::check(result, "vkCreateValidationCacheExt", ValidationCacheExtHandle(handle))
@@ -2766,7 +2766,7 @@ impl Device {
             validation_cache_ext: ValidationCacheExtHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        self.proc_addr_loader().core.vkDestroyValidationCacheExt(self.handle().to_raw(),
+        self.proc_addr_loader().vk.vkDestroyValidationCacheExt(self.handle().to_raw(),
             validation_cache_ext.to_raw(), allocator);
     }
 
@@ -2895,10 +2895,10 @@ impl<'db> DeviceBuilder<'db> {
         };
 
         let mut loader = vks::DeviceProcAddrLoader::from_get_device_proc_addr(
-            physical_device.instance().proc_addr_loader().core.pfn_vkGetDeviceProcAddr);
+            physical_device.instance().proc_addr_loader().vk.pfn_vkGetDeviceProcAddr);
 
         unsafe {
-            loader.load_core(handle.to_raw());
+            loader.load_vk(handle.to_raw());
         }
 
         unsafe {

@@ -41,7 +41,7 @@ impl Loader {
 
         let mut instance_proc_addr_loader = vks::InstanceProcAddrLoader::from_get_instance_proc_addr(vk_get_instance_proc_addr);
         unsafe {
-            instance_proc_addr_loader.load_core_global();
+            instance_proc_addr_loader.load_vk_global();
         }
 
         Ok(Loader { _vk_lib: vk_lib, vk_get_instance_proc_addr, instance_proc_addr_loader })
@@ -57,8 +57,8 @@ impl Loader {
 
     /// Returns the core global function pointer struct.
     #[inline]
-    pub fn core_global(&self) -> &vks::instance_proc_addr_loader::CoreGlobal {
-        &self.instance_proc_addr_loader.core_global
+    pub fn core_global(&self) -> &vks::instance_proc_addr_loader::VkGlobal {
+        &self.instance_proc_addr_loader.vk_global
     }
 
     /// Returns a reference to the `InstanceProcAddrLoader`.
@@ -165,13 +165,13 @@ impl Loader {
         let mut device_count = 0;
         let mut devices_raw = SmallVec::new();
         unsafe {
-            error::check(self.instance_proc_addr_loader.core.vkEnumeratePhysicalDevices(instance.handle().0,
+            error::check(self.instance_proc_addr_loader.vk.vkEnumeratePhysicalDevices(instance.handle().0,
                 &mut device_count, ptr::null_mut()), "vkEnumeratePhysicalDevices", ())?;
             if device_count == 0 { panic!("No physical devices found."); }
             assert!(device_count as usize <= devices_raw.inline_size());
             devices_raw.set_len(device_count as usize);
             loop {
-                let result = self.instance_proc_addr_loader.core.vkEnumeratePhysicalDevices(instance.handle().0,
+                let result = self.instance_proc_addr_loader.vk.vkEnumeratePhysicalDevices(instance.handle().0,
                     &mut device_count, devices_raw.as_mut_ptr());
                 if result != CallResult::Incomplete as i32 {
                         error::check(result, "vkEnumeratePhysicalDevices", ())?;
@@ -207,7 +207,7 @@ impl Loader {
     pub fn destroy_instance(&self, instance: InstanceHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
-        unsafe { self.instance_proc_addr_loader().core
+        unsafe { self.instance_proc_addr_loader().vk
             .vkDestroyInstance(instance.to_raw(), allocator); }
     }
 }

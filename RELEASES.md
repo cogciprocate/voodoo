@@ -1,9 +1,10 @@
-Version       (UNRELEASED)
+Version 0.2.0 (2017-10-14)
 ==========================
 
-TODO: Update vks version.
-TODO: Xlib `Window` type fixes (remove temporary cast)
-
+Breaking Changes
+----------------
+* `vks` has been updated to 0.21.0.
+* The `Window` type and a few other xlib types have changed.
 
 
 Version 0.1.2 (2017-10-14)
