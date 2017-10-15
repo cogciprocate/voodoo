@@ -2,7 +2,7 @@
 name = "voodoo_winit"
 version = "0.1.0"
 authors = ["Nick Sanders <cogciprocate@gmail.com>"]
-description = "Voodoo - winit glue"
+description = "Voodoo - Winit glue"
 documentation = "https://docs.rs/voodoo_winit"
 homepage = "https://github.com/cogciprocate/voodoo/voodoo_winit"
 repository = "https://github.com/cogciprocate/voodoo/voodoo_winit"
@@ -14,5 +14,5 @@ categories = ["rendering::graphics-api"]
 
 [dependencies]
 winit = "0.8"
-voodoo = { version = "0.2.0", path = ".." }
-# voodoo = "0.1"
+# voodoo = { version = "0.2.0", path = ".." }
+voodoo = "0.2"
