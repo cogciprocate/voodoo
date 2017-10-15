@@ -1,19 +1,9 @@
 [root]
-name = "voodoo"
-version = "0.2.0"
+name = "voodoo_winit"
+version = "0.1.0"
 dependencies = [
- "bitflags 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "cgmath 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "enum-primitive-derive 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "image 0.16.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "libc 0.2.32 (registry+https://github.com/rust-lang/crates.io-index)",
- "libloading 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "num-traits 0.1.40 (registry+https://github.com/rust-lang/crates.io-index)",
- "ordered-float 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "smallvec 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "tobj 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "vks 0.21.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "voodoo_winit 0.1.0",
+ "voodoo 0.2.0",
+ "winit 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -604,11 +594,21 @@ version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
-name = "voodoo_winit"
-version = "0.1.0"
+name = "voodoo"
+version = "0.2.0"
 dependencies = [
- "voodoo 0.2.0",
- "winit 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bitflags 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "cgmath 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "enum-primitive-derive 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "image 0.16.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.32 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libloading 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "num-traits 0.1.40 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ordered-float 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "smallvec 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tobj 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "vks 0.21.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "voodoo_winit 0.1.0",
 ]
 
 [[package]]

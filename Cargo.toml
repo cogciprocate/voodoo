@@ -34,5 +34,10 @@ bitflags = "1.0"
 enum-primitive-derive = "0.1"
 num-traits = "0.1"
 
-# [dev-dependencies]
-# voodoo_winit = { path = "voodoo_winit" }
+[dev-dependencies]
+# voodoo_winit = "0.1"
+voodoo_winit = { version = "0.1", path = "voodoo_winit" }
+
+
+[workspace]
+members = ["voodoo_winit"]

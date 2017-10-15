@@ -1,5 +1,5 @@
 pub extern crate winit;
-extern crate voodoo;
+pub extern crate voodoo;
 
 use winit::Window as WinitWindow;
 use voodoo::{Result as VdResult, Instance, SurfaceKhr};
