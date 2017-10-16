@@ -58,7 +58,6 @@ impl<'m, T> DerefMut for MemoryMapping<'m, T> {
 }
 
 
-
 #[derive(Debug)]
 struct Inner {
     handle: DeviceMemoryHandle,
@@ -126,7 +125,15 @@ impl DeviceMemory {
     /// parts.
     ///
     /// The `flags` argument is reserved for future use and is ignored.
-    pub fn map<'m, T>(&'m self, offset_bytes: u64, size_bytes: u64, flags: MemoryMapFlags)
+    ///
+    /// ## Safety
+    ///
+    /// The caller must ensure that care is taken when mapping a buffer
+    /// multiple times simultaneously. Use an appropriate synchronization
+    /// mechanism such as a `std::sync::atomic::AtomicBool` to help coordinate
+    /// this.
+    ///
+    pub unsafe fn map<'m, T>(&'m self, offset_bytes: u64, size_bytes: u64, flags: MemoryMapFlags)
             -> VdResult<MemoryMapping<'m, T>> {
         let ptr = unsafe { self.map_to_ptr(offset_bytes, size_bytes, flags)? };
         let len = size_bytes as usize / mem::size_of::<T>();
