@@ -1,5 +1,10 @@
-## Voodoo - A high-performance Vulkan® API for Rust
+Voodoo - A high-performance Vulkan® API for Rust
+================================================
 
+#### [Documentation](http://docs.rs/voodoo) | [Change Log](https://github.com/cogciprocate/voodoo/blob/master/RELEASES.md)
+
+[![](http://meritbadge.herokuapp.com/voodoo)](https://crates.io/crates/voodoo) [![](https://docs.rs/voodoo/badge.svg)](https://docs.rs/voodoo)
+[![Supported platforms](https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux%20%7C%20bsd-orange.svg)](https://en.wikipedia.org/wiki/Cross-platform)
 
 ### Features:
 
@@ -13,7 +18,6 @@
 * A minimum of boilerplate
 * Non-opinionated and nothing hidden
 * Complete API coverage
-
 
 ### Getting Started
 
@@ -29,7 +33,6 @@ And add the following to your crate root (lib.rs or main.rs):
 ```rust
 extern crate voodoo;
 ```
-
 
 ### Example
 
@@ -69,24 +72,21 @@ fn main() {
 See [`hello.rs`] for a complete, working example adapted from
 [https://vulkan-tutorial.com/](https://vulkan-tutorial.com/).
 
-
 ### Status
 
 * API coverage:
   * Core: 100%
   * Extensions: 70%
-* Documentation: 5%
-* Stability: 90%
-
-
-
+* Documentation: 30%
+* Stability: 97%
 
 #### Other Vulkan libraries in Rust
 
-For a higher level, more opinionated Vulkan API (that does more for you) see
-the [Vulkano] project.
+For a higher level, more opinionated, easier to use Vulkan API that does more
+for you see the [Vulkano] project.
 
-Other similar libraries include [dacite] and [ash].
+Other low-ish level Rust libraries include [dacite] and [ash]. See [vks] for a
+direct ffi interface.
 
 [`hello.rs`]: https://github.com/cogciprocate/voodoo/blob/master/examples/hello.rs
 [Vulkano]: https://github.com/vulkano-rs/vulkano
