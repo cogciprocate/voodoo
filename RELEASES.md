@@ -1,3 +1,9 @@
+Version 0.2.1 (2017-10-16)
+==========================
+
+* Create a workspace, update readme, and other tweaks.
+
+
 Version 0.2.0 (2017-10-14)
 ==========================
 
