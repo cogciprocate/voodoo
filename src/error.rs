@@ -117,12 +117,6 @@ impl StdError for self::Error {
     }
 }
 
-// impl From<i32> for self::Error {
-//     fn from(res: i32) -> Self {
-//         Error { kind: self::ErrorKind::ApiCall(res.into()), cause: None }
-//     }
-// }
-
 impl From<()> for self::Error {
     fn from(_: ()) -> Self {
         Error { kind: self::ErrorKind::Void, cause: None }

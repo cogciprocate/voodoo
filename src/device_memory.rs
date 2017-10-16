@@ -130,8 +130,8 @@ impl DeviceMemory {
     ///
     /// The caller must ensure that care is taken when mapping a buffer
     /// multiple times simultaneously. Use an appropriate synchronization
-    /// mechanism such as a `std::sync::atomic::AtomicBool` to help coordinate
-    /// this.
+    /// mechanism such as a `std::sync::atomic::AtomicBool` (in the simplest
+    /// case) to help coordinate this.
     ///
     pub unsafe fn map<'m, T>(&'m self, offset_bytes: u64, size_bytes: u64, flags: MemoryMapFlags)
             -> VdResult<MemoryMapping<'m, T>> {

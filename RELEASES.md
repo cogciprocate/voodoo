@@ -1,3 +1,11 @@
+Version       (UNRELEASED)
+==========================
+
+Breaking Changes
+----------------
+* `DeviceMemory::map` is now marked `unsafe`.
+
+
 Version 0.2.1 (2017-10-16)
 ==========================
 

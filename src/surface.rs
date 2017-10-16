@@ -1,8 +1,5 @@
-// use libc::c_void;
-// use std::ptr;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
-// use winit;
 use vks;
 use ::{VdResult, Instance, Handle, XlibSurfaceCreateInfoKhr, XcbSurfaceCreateInfoKhr,
     WaylandSurfaceCreateInfoKhr, MirSurfaceCreateInfoKhr, Win32SurfaceCreateInfoKhr,
@@ -111,7 +108,6 @@ impl<'b> SurfaceKhrBuilder<'b> {
     pub fn new() -> SurfaceKhrBuilder<'b> {
         SurfaceKhrBuilder {
             create_info: CreateInfo::None,
-            // _p: PhantomData,
         }
     }
 

@@ -9,7 +9,6 @@ extern crate bitflags as bitflags_;
 #[macro_use]
 extern crate enum_primitive_derive;
 extern crate num_traits;
-// pub extern crate winit;
 
 mod error;
 mod version;
@@ -40,7 +39,6 @@ mod bitflags;
 mod event;
 mod fence;
 mod device;
-// pub mod voodoo_winit;
 pub mod util;
 
 pub mod vks {
@@ -591,9 +589,6 @@ unsafe impl<'h> Handle for &'h QueryPool {
 }
 
 
-
-
-
 #[derive(Clone, Debug)]
 pub struct DisplayModeKhr(DisplayModeKhrHandle);
 
@@ -658,7 +653,6 @@ pub type xcb_connection_t = vks::xcb_connection_t;
 pub type xcb_window_t = vks::xcb_window_t;
 #[allow(non_camel_case_types)]
 pub type xcb_visualid_t = vks::xcb_visualid_t;
-
 #[allow(non_camel_case_types)]
 pub type HANDLE = vks::HANDLE;
 #[allow(non_camel_case_types)]
@@ -671,9 +665,7 @@ pub type CommandPoolTrimFlagsKhr = vks::VkCommandPoolTrimFlagsKHR;
 
 
 
-
 //////////////////////////////////////
-
 
 
 

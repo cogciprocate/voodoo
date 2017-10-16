@@ -1,6 +1,4 @@
-
 use std::sync::Arc;
-// use std::ptr;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
@@ -78,26 +76,11 @@ impl Drop for Inner {
 
 
 /// A builder for `Framebuffer`.
-//
-// typedef struct VkFramebufferCreateInfo {
-//     VkStructureType             sType;
-//     const void*                 pNext;
-//     VkFramebufferCreateFlags    flags;
-//     VkRenderPass                renderPass;
-//     uint32_t                    attachmentCount;
-//     const VkImageView*          pAttachments;
-//     uint32_t                    width;
-//     uint32_t                    height;
-//     uint32_t                    layers;
-// } VkFramebufferCreateInfo;
-//
-//
 #[derive(Debug, Clone)]
 pub struct FramebufferBuilder<'b> {
     create_info: FramebufferCreateInfo<'b>,
     render_pass: Option<&'b RenderPass>,
     attachments: Option<&'b [&'b ImageView]>,
-    // attachment_handles: Option<SmallVec<ImageViewHandle>>,
     _p: PhantomData<&'b ()>,
 }
 
@@ -108,7 +91,6 @@ impl<'b> FramebufferBuilder<'b> {
             create_info: FramebufferCreateInfo::default(),
             render_pass: None,
             attachments: None,
-            // attachment_handles: None,
             _p: PhantomData,
         }
     }
@@ -125,7 +107,6 @@ impl<'b> FramebufferBuilder<'b> {
     pub fn render_pass<'s, 'p>(&'s mut self, render_pass: &'p RenderPass)
             -> &'s mut FramebufferBuilder<'b>
             where 'p: 'b {
-        // self.create_info.renderPass = render_pass.handle().0;
         self.create_info.set_render_pass(render_pass.handle());
         self.render_pass = Some(render_pass);
         self
@@ -136,15 +117,6 @@ impl<'b> FramebufferBuilder<'b> {
     pub fn attachments<'s, 'p>(&'s mut self, attachments: &'p [&'p ImageView])
             -> &'s mut FramebufferBuilder<'b>
             where 'p: 'b {
-        // self.attachment_handles = Some(attachments.iter().map(|att| att.handle()).collect());
-        // if let Some(ref att_hnd) = self.attachment_handles {
-        //     self.create_info.attachmentCount = att_hnd.len() as u32;
-        //     self.create_info.pAttachments = att_hnd.as_ptr() as *const vks::VkImageView;
-        // }
-        // self.attachments = Some(attachments);
-        // if let Some(ref att_hnd) = self.attachment_handles {
-        //     self.create_info.set_attachments(att_hnd);
-        // }
         self.attachments = Some(attachments);
         self
     }

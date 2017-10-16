@@ -1,6 +1,4 @@
-
 use std::sync::Arc;
-// use std::ptr;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use vks;
@@ -112,8 +110,6 @@ unsafe impl<'h> Handle for &'h CommandPool {
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().vk.vkDestroyCommandPool(self.device.handle().0,
-            //     self.handle.0, ptr::null());
             self.device.destroy_command_pool(self.handle, None);
         }
     }
@@ -156,17 +152,10 @@ impl<'b> CommandPoolBuilder<'b> {
 
     /// Creates and returns a new `CommandPool`
     pub fn build(&self, device: Device) -> VdResult<CommandPool> {
-        // let mut handle = 0;
-        // unsafe {
-        //     ::check(device.proc_addr_loader().vk.vkCreateCommandPool(device.handle().0,
-        //         self.create_info.as_raw(), ptr::null(), &mut handle));
-        // }
-
         let handle = unsafe { device.create_command_pool(&self.create_info, None)? };
 
         Ok(CommandPool {
             inner: Arc::new(Inner {
-                // handle: CommandPoolHandle(handle),
                 handle,
                 device,
             })

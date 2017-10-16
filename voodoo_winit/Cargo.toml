@@ -14,4 +14,4 @@ categories = ["rendering::graphics-api"]
 
 [dependencies]
 winit = "0.8"
-voodoo = { version = "0.2", path = ".." }
+voodoo = { version = "~0.2.1", path = ".." }

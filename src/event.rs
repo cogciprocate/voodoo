@@ -1,4 +1,3 @@
-
 use std::sync::Arc;
 use vks;
 use ::{VdResult, CallResult, Handle, Device, EventCreateFlags, EventCreateInfo};
@@ -96,7 +95,7 @@ impl Event {
     /// Sets this event to signaled state.
     ///
     /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkSetEvent.html
-    //
+    ///
     pub fn set(&self) -> VdResult<()> {
         unsafe { self.inner.device.set_event(self.handle()) }
     }
@@ -104,7 +103,7 @@ impl Event {
     /// Resets this event to non-signaled state.
     ///
     /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkResetEvent.html
-    //
+    ///
     pub fn reset(&self) -> VdResult<()> {
         unsafe { self.inner.device.reset_event(self.handle()) }
     }
@@ -112,7 +111,7 @@ impl Event {
     /// Retrieves the status of this event object.
     ///
     /// https://www.khronos.org/registry/vulkan/specs/1.0/man/html/vkGetEventStatus.html
-    //
+    ///
     pub fn status(&self) -> VdResult<EventStatus> {
         unsafe { Ok(self.inner.device.get_event_status(self.handle())?.into()) }
     }

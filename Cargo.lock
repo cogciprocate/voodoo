@@ -2,7 +2,7 @@
 name = "voodoo_winit"
 version = "0.1.0"
 dependencies = [
- "voodoo 0.2.0",
+ "voodoo 0.2.1",
  "winit 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -595,7 +595,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "voodoo"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "bitflags 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "cgmath 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",

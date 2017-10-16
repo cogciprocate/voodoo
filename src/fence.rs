@@ -1,4 +1,3 @@
-
 use std::sync::Arc;
 use vks;
 use ::{VdResult, CallResult, Handle, Device, FenceCreateFlags, FenceCreateInfo};

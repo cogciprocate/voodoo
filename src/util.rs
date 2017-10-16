@@ -175,7 +175,6 @@ pub fn read_file<P: AsRef<Path>>(file: P) -> VdResult<Vec<u8>> {
 }
 
 pub fn file_reader<P: AsRef<Path>>(file: P) -> VdResult<BufReader<File>> {
-    // let file_name = file.as_ref().display().to_string();
     let f = File::open(file).expect("file not found");
     // let file_bytes = f.metadata().unwrap().len() as usize;
     // let mut contents = Vec::<u8>::with_capacity(file_bytes);
@@ -237,50 +236,3 @@ pub fn view_matrix(position: &[f32; 3], direction: &[f32; 3], up: &[f32; 3]) -> 
 }
 
 
-
-
-
-        // ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f),
-        //     glm::vec3(0.0f, 0.0f, 1.0f));
-
-        // let axis = Unit::new_normalize(Vector3::new(0.0, 0.0, 1.0f32));
-        // debug_assert_eq!(Unit::new_normalize(Vector3::z()), axis);
-        // let angle = (time * (90.0f32)).to_radians();
-        // let rotation = Rotation3::from_axis_angle(&axis, angle);
-        // let rotation_matrix = Matrix4::<f32>::from_scaled_axis(rotation.scaled_axis());
-        // let rotation_matrix_2 = Matrix4::<f32>::new_rotation(rotation.scaled_axis());
-        // let rotation_matrix_3 = rotation.to_homogeneous();
-        // let identity_matrix = Matrix4::<f32>::identity();
-        // debug_assert_eq!(rotation_matrix, rotation_matrix_2);
-        // debug_assert_eq!(rotation_matrix, rotation_matrix_3);
-        // debug_assert_eq!(rotation_matrix * identity_matrix, rotation_matrix);
-
-
-        // let model_rotation_angle = (time * (90.0f32)).to_radians();
-        // // let model_rotation_angle = ((90.0f32)).to_radians();
-        // let model_rotation_axis = Vector3::z();
-        // let model_rotation_vector = model_rotation_angle * model_rotation_axis;
-        // let model_translation_vector = nalgebra::zero::<Vector3<f32>>();
-        // let model_isometry = Isometry3::new(model_translation_vector,
-        //     model_rotation_vector);
-        // let model_transformation_matrix: Matrix4<_> = model_isometry.to_homogeneous();
-
-        // let eye = Point3::new(2.0, 2.0, 2.0f32);
-        // let target = Point3::new(0.0, 0.0, 0.0);
-        // let up = Vector3::y();
-        // let view_isometry = Isometry3::look_at_rh(&eye, &target, &up);
-        // let view_transformation_matrix = view_isometry.to_homogeneous();
-
-        // let extent = self.swapchain.as_ref().unwrap().extent().clone();
-        // debug_assert_eq!(PI / 4.0, 45.0f32.to_radians());
-        // let projection_perspective = Perspective3::new(PI / 4.,
-        //     extent.width as f32 / extent.height as f32, 0.1, 10.0f32);
-        // let mut projection_matrix = projection_perspective.to_homogeneous();
-        // // Flip sign because y is inverted in Vulkan.
-        // projection_matrix[(1, 1)] *= -1.0;
-
-        // let ubo = vkc::UniformBufferObject {
-        //     model: model_transformation_matrix.into(),
-        //     view: view_transformation_matrix.into(),
-        //     proj: projection_matrix.into(),
-        // };

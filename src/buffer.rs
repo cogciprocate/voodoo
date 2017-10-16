@@ -1,4 +1,3 @@
-
 use std::sync::Arc;
 use std::marker::PhantomData;
 use vks;
@@ -28,7 +27,6 @@ unsafe impl Handle for BufferHandle {
 #[derive(Debug)]
 struct Inner {
     handle: BufferHandle,
-    // device_memory: DeviceMemory,
     memory_requirements: ::MemoryRequirements,
     device: Device,
 }
@@ -90,18 +88,6 @@ impl Drop for Inner {
 
 
 /// A builder for `Buffer`.
-//
-// typedef struct VkBufferCreateInfo {
-//     VkStructureType        sType;
-//     const void*            pNext;
-//     VkBufferCreateFlags    flags;
-//     VkDeviceSize           size;
-//     VkBufferUsageFlags     usage;
-//     VkSharingMode          sharingMode;
-//     uint32_t               queueFamilyIndexCount;
-//     const uint32_t*        pQueueFamilyIndices;
-// } VkBufferCreateInfo;
-//
 #[derive(Debug, Clone)]
 pub struct BufferBuilder<'b> {
     create_info: ::BufferCreateInfo<'b>,
@@ -151,7 +137,6 @@ impl<'b> BufferBuilder<'b> {
     pub fn queue_family_indices<'s, 'p>(&'s mut self, queue_family_indices: &'p [u32])
             -> &'s mut BufferBuilder<'b>
             where 'p: 'b {
-        // self.create_info.queueFamilyIndexCount(queue_family_indices.len() as u32;
         self.create_info.set_queue_family_indices(queue_family_indices);
         self
     }

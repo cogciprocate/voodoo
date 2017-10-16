@@ -1,4 +1,3 @@
-
 use vks;
 use num_traits::FromPrimitive;
 
@@ -6,7 +5,6 @@ use num_traits::FromPrimitive;
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Primitive, Hash)]
 pub enum PipelineCacheHeaderVersion {
     PipelineCacheHeaderVersionOne = vks::VK_PIPELINE_CACHE_HEADER_VERSION_ONE as i32,
-    // PipelineCacheHeaderVersionMaxEnum = vks::VK_PIPELINE_CACHE_HEADER_VERSION_MAX_ENUM as i32,
 }
 
 #[repr(i32)]

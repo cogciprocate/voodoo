@@ -1,10 +1,8 @@
-
 use std::sync::Arc;
 use std::marker::PhantomData;
 use smallvec::SmallVec;
 use ::{VdResult, Device, PipelineLayoutHandle, PipelineHandle, RenderPassHandle,
     Handle, GraphicsPipelineCreateInfo};
-
 
 
 #[derive(Debug)]
@@ -30,10 +28,8 @@ impl GraphicsPipeline {
             -> VdResult<SmallVec<[GraphicsPipeline; 8]>>
             where Gpb: AsRef<::GraphicsPipelineCreateInfo<'b>> {
         let mut create_infos = SmallVec::<[GraphicsPipelineCreateInfo; 8]>::new();
-        // let mut pipeline_handles = SmallVec::<[PipelineHandle; 8]>::new();
         let mut pipelines = SmallVec::<[GraphicsPipeline; 8]>::new();
         create_infos.reserve_exact(builders.len());
-        // pipeline_handles.reserve_exact(builders.len());
         pipelines.reserve_exact(builders.len());
 
         for builder in builders {
@@ -75,21 +71,9 @@ unsafe impl<'g> Handle for &'g GraphicsPipeline {
     }
 }
 
-// impl<'g> AnyPipelineHandle for &'g GraphicsPipeline {
-//     type Target = PipelineHandle;
-
-//     fn handle(&self) -> Self::Target {
-//         self.inner.handle
-//     }
-// }
-// unsafe impl<'g> AnyPipelineHandle for &'g GraphicsPipeline {}
-
-
 impl Drop for Inner {
     fn drop(&mut self) {
         unsafe {
-            // self.device.proc_addr_loader().vk.vkDestroyPipeline(self.device.handle().0,
-            //     self.handle.0, ptr::null());
             self.device.destroy_pipeline(self.handle, None);
         }
     }
