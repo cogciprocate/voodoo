@@ -72,7 +72,7 @@ fn main() {
 See [`hello.rs`] for a complete, working example adapted from
 [https://vulkan-tutorial.com/](https://vulkan-tutorial.com/).
 
-Screenshot:
+[`hello.rs`] screenshot:
 
 ![hello_example_screenshot.jpg][hello_example_screenshot]
 
