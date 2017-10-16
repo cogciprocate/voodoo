@@ -976,7 +976,9 @@ fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &
         memory_type_index)?;
     staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
 
-    let mut data = staging_buffer_memory.map(0, buffer_bytes, MemoryMapFlags::empty())?;
+    let mut data = unsafe {
+        staging_buffer_memory.map(0, buffer_bytes, MemoryMapFlags::empty())?
+    };
     data.copy_from_slice(vertices);
     staging_buffer_memory.unmap(data);
 
@@ -1015,7 +1017,9 @@ fn create_index_buffer<T: Copy>(device: &Device, command_pool: &CommandPool, ind
         memory_type_index)?;
     staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
 
-    let mut data = staging_buffer_memory.map(0, buffer_bytes, MemoryMapFlags::empty())?;
+    let mut data = unsafe {
+        staging_buffer_memory.map(0, buffer_bytes, MemoryMapFlags::empty())?
+    };
     data.copy_from_slice(indices);
     staging_buffer_memory.unmap(data);
 
@@ -1124,7 +1128,9 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool)
         memory_type_index)?;
     staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
 
-    let mut data = staging_buffer_memory.map(0, image_bytes, MemoryMapFlags::empty())?;
+    let mut data = unsafe {
+        staging_buffer_memory.map(0, image_bytes, MemoryMapFlags::empty())?
+    };
     data.copy_from_slice(&pixels);
     staging_buffer_memory.unmap(data);
 
@@ -1458,16 +1464,18 @@ impl App {
         proj[1][1] *= -1.0;
         let rotation = Matrix3::from_angle_z(cgmath::Rad(time)) *
             Matrix3::from_angle_x(cgmath::Rad(time / 2.0));
-        let model = Matrix4::from(rotation).into();
+        let model = Matrix4::from(rotation);
 
         let ubo = UniformBufferObject {
-            model: model,
+            model: model.into(),
             view: (view * scale).into(),
             proj: proj.into(),
         };
 
-        let mut data = self.uniform_buffer_memory.map(0,
-            mem::size_of::<UniformBufferObject>() as u64, MemoryMapFlags::empty())?;
+        let mut data = unsafe {
+            self.uniform_buffer_memory.map(0, mem::size_of::<UniformBufferObject>() as u64,
+                MemoryMapFlags::empty())?
+        };
         data.copy_from_slice(&[ubo]);
         self.uniform_buffer_memory.unmap(data);
 

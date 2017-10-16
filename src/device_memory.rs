@@ -135,7 +135,7 @@ impl DeviceMemory {
     ///
     pub unsafe fn map<'m, T>(&'m self, offset_bytes: u64, size_bytes: u64, flags: MemoryMapFlags)
             -> VdResult<MemoryMapping<'m, T>> {
-        let ptr = unsafe { self.map_to_ptr(offset_bytes, size_bytes, flags)? };
+        let ptr = self.map_to_ptr(offset_bytes, size_bytes, flags)?;
         let len = size_bytes as usize / mem::size_of::<T>();
         Ok(MemoryMapping::new(ptr, len, self.inner.handle))
     }
