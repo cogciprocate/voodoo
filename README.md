@@ -72,6 +72,10 @@ fn main() {
 See [`hello.rs`] for a complete, working example adapted from
 [https://vulkan-tutorial.com/](https://vulkan-tutorial.com/).
 
+Screenshot:
+
+![hello_example_screenshot.jpg][hello_example_screenshot]
+
 ### Status
 
 * API coverage:
@@ -89,6 +93,7 @@ Other low-ish level Rust libraries include [dacite] and [ash]. See [vks] for a
 direct ffi interface.
 
 [`hello.rs`]: https://github.com/cogciprocate/voodoo/blob/master/examples/hello.rs
+[hello_example_screenshot]: https://github.com/cogciprocate/voodoo/blob/master/examples/hello_example_screenshot.jpg
 [Vulkano]: https://github.com/vulkano-rs/vulkano
 [dacite]: https://gitlab.com/dennis-hamester/dacite/tree/master/dacite
 [vks]: https://gitlab.com/dennis-hamester/vks
