@@ -56,11 +56,15 @@ impl Buffer {
     /// region of memory which is to be bound. The number of bytes returned in
     /// the VkMemoryRequirements::size member in memory, starting from
     /// memoryOffset bytes, will be bound to the specified buffer.
-    pub fn bind_memory(&self, memory: &DeviceMemory, offset: ::DeviceSize)
+    ///
+    /// ## Safety
+    ///
+    /// The caller must ensure that the bound memory is not in use when it is
+    /// dropped.
+    ///
+    pub unsafe fn bind_memory(&self, memory: &DeviceMemory, offset: ::DeviceSize)
             -> VdResult<()> {
-        unsafe {
-            self.inner.device.bind_buffer_memory(self.inner.handle, memory.handle(), offset)
-        }
+        self.inner.device.bind_buffer_memory(self.inner.handle, memory.handle(), offset)
     }
 
     /// Returns a reference to the associated device.

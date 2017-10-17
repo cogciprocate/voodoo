@@ -974,7 +974,9 @@ fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &
         MemoryPropertyFlags::HOST_VISIBLE | MemoryPropertyFlags::HOST_COHERENT)?;
     let staging_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
-    staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
+    unsafe {
+        staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
+    }
 
     let mut data = unsafe {
         staging_buffer_memory.map(0, buffer_bytes, MemoryMapFlags::empty())?
@@ -993,7 +995,9 @@ fn create_vertex_buffer(device: &Device, command_pool: &CommandPool, vertices: &
         MemoryPropertyFlags::DEVICE_LOCAL)?;
     let vertex_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
-    vertex_buffer.bind_memory(&vertex_buffer_memory, 0)?;
+    unsafe {
+        vertex_buffer.bind_memory(&vertex_buffer_memory, 0)?;
+    }
 
     copy_buffer(device, command_pool, &staging_buffer, &vertex_buffer, buffer_bytes)?;
 
@@ -1015,7 +1019,9 @@ fn create_index_buffer<T: Copy>(device: &Device, command_pool: &CommandPool, ind
         MemoryPropertyFlags::HOST_VISIBLE)?;
     let staging_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
-    staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
+    unsafe {
+        staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
+    }
 
     let mut data = unsafe {
         staging_buffer_memory.map(0, buffer_bytes, MemoryMapFlags::empty())?
@@ -1034,7 +1040,9 @@ fn create_index_buffer<T: Copy>(device: &Device, command_pool: &CommandPool, ind
         MemoryPropertyFlags::DEVICE_LOCAL)?;
     let index_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
-    index_buffer.bind_memory(&index_buffer_memory, 0)?;
+    unsafe {
+        index_buffer.bind_memory(&index_buffer_memory, 0)?;
+    }
 
     copy_buffer(device, command_pool, &staging_buffer, &index_buffer, buffer_bytes)?;
 
@@ -1055,7 +1063,9 @@ fn create_uniform_buffer(device: &Device, _command_pool: &CommandPool, _extent: 
         MemoryPropertyFlags::HOST_VISIBLE | MemoryPropertyFlags::HOST_COHERENT)?;
     let uniform_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
-    uniform_buffer.bind_memory(&uniform_buffer_memory, 0)?;
+    unsafe {
+        uniform_buffer.bind_memory(&uniform_buffer_memory, 0)?;
+    }
 
     Ok((uniform_buffer, uniform_buffer_memory))
 }
@@ -1087,7 +1097,9 @@ fn create_depth_resources(device: &Device, command_pool: &CommandPool,
         MemoryPropertyFlags::DEVICE_LOCAL)?;
     let depth_image_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
-    depth_image.bind_memory(&depth_image_memory, 0)?;
+    unsafe {
+        depth_image.bind_memory(&depth_image_memory, 0)?;
+    }
 
     let depth_image_view = ImageView::builder()
         .image(depth_image.handle())
@@ -1126,7 +1138,9 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool)
         MemoryPropertyFlags::HOST_VISIBLE | MemoryPropertyFlags::HOST_COHERENT)?;
     let staging_buffer_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
-    staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
+    unsafe {
+        staging_buffer.bind_memory(&staging_buffer_memory, 0)?;
+    }
 
     let mut data = unsafe {
         staging_buffer_memory.map(0, image_bytes, MemoryMapFlags::empty())?
@@ -1155,7 +1169,9 @@ fn create_texture_image(device: &Device, command_pool: &CommandPool)
         MemoryPropertyFlags::DEVICE_LOCAL)?;
     let texture_image_memory = DeviceMemory::new(device.clone(), memory_requirements.size(),
         memory_type_index)?;
-    texture_image.bind_memory(&texture_image_memory, 0)?;
+    unsafe {
+        texture_image.bind_memory(&texture_image_memory, 0)?;
+    }
 
     transition_image_layout(device, command_pool, &texture_image, Format::R8G8B8A8Unorm,
         ImageLayout::Undefined, ImageLayout::TransferDstOptimal)?;

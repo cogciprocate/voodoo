@@ -72,11 +72,15 @@ impl Image {
     /// region of memory which is to be bound. The number of bytes returned in
     /// the VkMemoryRequirements::size member in memory, starting from
     /// memoryOffset bytes, will be bound to the specified image.
-    pub fn bind_memory(&self, memory: &DeviceMemory, offset: ::DeviceSize)
+    ///
+    /// ## Safety
+    ///
+    /// The caller must ensure that the bound memory is not in use when it is
+    /// dropped.
+    ///
+    pub unsafe fn bind_memory(&self, memory: &DeviceMemory, offset_bytes: ::DeviceSize)
             -> VdResult<()> {
-        unsafe {
-            self.inner.device.bind_image_memory(self.inner.handle, memory.handle(), offset)
-        }
+        self.inner.device.bind_image_memory(self.inner.handle, memory.handle(), offset_bytes)
     }
 
     /// Returns a reference to the associated device.

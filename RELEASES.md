@@ -1,9 +1,10 @@
-Version       (UNRELEASED)
+Version 0.3.0 (UNRELEASED)
 ==========================
 
 Breaking Changes
 ----------------
-* `DeviceMemory::map` is now marked `unsafe`.
+* `DeviceMemory::map` is now `unsafe`.
+* `Buffer::bind_memory` and `Image::bind_memory` are now unsafe.
 
 
 Version 0.2.1 (2017-10-16)
