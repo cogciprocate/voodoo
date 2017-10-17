@@ -77,7 +77,9 @@ impl DeviceMemory {
         DeviceMemoryBuilder::new()
     }
 
-    pub fn new(device: Device, allocation_size: u64, memory_type_index: u32) -> VdResult<DeviceMemory> {
+    /// Returns a new `DeviceMemory`.
+    pub fn new(device: Device, allocation_size: u64, memory_type_index: u32)
+            -> VdResult<DeviceMemory> {
         DeviceMemoryBuilder::new()
             .allocation_size(allocation_size)
             .memory_type_index(memory_type_index)
@@ -132,6 +134,13 @@ impl DeviceMemory {
     /// multiple times simultaneously. Use an appropriate synchronization
     /// mechanism such as a `std::sync::atomic::AtomicBool` (in the simplest
     /// case) to help coordinate this.
+    ///
+    /// The caller must also ensure that:
+    ///
+    /// * `offset_bytes` plus `size_bytes` is less than the size of this
+    ///   region of memory.
+    /// * This memory region has been created with the
+    ///   `MemoryPropertyFlags::HOST_VISIBLE` flag.
     ///
     pub unsafe fn map<'m, T>(&'m self, offset_bytes: u64, size_bytes: u64, flags: MemoryMapFlags)
             -> VdResult<MemoryMapping<'m, T>> {
