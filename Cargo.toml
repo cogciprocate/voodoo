@@ -25,7 +25,7 @@ libloading = "0.4"
 smallvec = "0.4"
 vks = "0.21"
 libc = "0.2"
-bitflags = "1.0"
+bitflags = "~1.0"
 enum-primitive-derive = "0.1"
 num-traits = "0.1"
 
@@ -38,4 +38,4 @@ tobj = "0.1"
 ordered-float = "0.5"
 
 [workspace]
-members = ["voodoo_winit"]
+members = ["voodoo_winit", "codegen"]
