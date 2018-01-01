@@ -663,16 +663,3 @@ pub type DWORD = vks::DWORD;
 pub type LPCWSTR = vks::LPCWSTR;
 pub type CommandPoolTrimFlagsKhr = vks::VkCommandPoolTrimFlagsKHR;
 
-
-
-//////////////////////////////////////
-
-
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-
-    }
-}
