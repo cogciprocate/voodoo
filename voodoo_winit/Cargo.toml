@@ -13,5 +13,5 @@ keywords = ["vulkan", "gpu", "gpgpu", "graphics"]
 categories = ["rendering::graphics-api"]
 
 [dependencies]
-winit = "0.8"
-voodoo = { version = "~0.2.1", path = ".." }
+winit = "0.10"
+voodoo = { version = "0.3", path = ".." }
