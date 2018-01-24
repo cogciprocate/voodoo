@@ -204,7 +204,7 @@ impl Loader {
     //
     // *PFN_vkDestroyInstance)(VkInstance instance, const
     // VkAllocationCallbacks* pAllocator);
-    pub fn destroy_instance(&self, instance: InstanceHandle,
+    pub (crate) fn destroy_instance(&self, instance: InstanceHandle,
             allocator: Option<*const vks::VkAllocationCallbacks>) {
         let allocator = allocator.unwrap_or(ptr::null());
         unsafe { self.instance_proc_addr_loader().vk
