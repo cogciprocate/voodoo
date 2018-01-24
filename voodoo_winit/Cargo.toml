@@ -1,6 +1,6 @@
 [package]
 name = "voodoo_winit"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Nick Sanders <cogciprocate@gmail.com>"]
 description = "Voodoo - Winit glue"
 documentation = "https://docs.rs/voodoo_winit"
