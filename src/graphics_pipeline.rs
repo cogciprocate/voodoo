@@ -89,7 +89,7 @@ pub struct GraphicsPipelineBuilder<'b> {
 }
 
 impl<'b> GraphicsPipelineBuilder<'b> {
-    /// Returns a new render pass builder.
+    /// Returns a new graphics pipeline builder.
     pub fn new() -> GraphicsPipelineBuilder<'b> {
         GraphicsPipelineBuilder {
             create_info: GraphicsPipelineCreateInfo::default(),
