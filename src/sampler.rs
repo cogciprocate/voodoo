@@ -32,6 +32,23 @@ struct Inner {
     device: Device,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            self.device.destroy_sampler(self.handle, None);
+        }
+    }
+}
+
+
+/// A sampler.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `Sampler` will cause `Device::destroy_sampler` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct Sampler {
     inner: Arc<Inner>,
@@ -60,14 +77,6 @@ unsafe impl<'h> Handle for &'h Sampler {
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            self.device.destroy_sampler(self.handle, None);
-        }
     }
 }
 

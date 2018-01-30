@@ -35,6 +35,22 @@ struct Inner {
     device: Device,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            self.device.destroy_descriptor_pool(self.handle, None);
+        }
+    }
+}
+
+/// A descriptor pool.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `DescriptorPool` will cause `Device::destroy_descriptor_pool` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct DescriptorPool {
     inner: Arc<Inner>,
@@ -95,15 +111,6 @@ unsafe impl<'d> Handle for &'d DescriptorPool {
         self.inner.handle
     }
 }
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            self.device.destroy_descriptor_pool(self.handle, None);
-        }
-    }
-}
-
 
 
 /// A builder for `DescriptorPool`.

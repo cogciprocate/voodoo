@@ -34,6 +34,25 @@ struct Inner {
     attachments: SmallVec<[ImageView; 8]>,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            // self.device.proc_addr_loader().vk.vkDestroyFramebuffer(self.device.handle().0,
+            //     self.handle.0, ptr::null());
+            self.device.destroy_framebuffer(self.handle, None);
+        }
+    }
+}
+
+
+/// A framebuffer.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `Framebuffer` will cause `Device::destroy_framebuffer` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct Framebuffer {
     inner: Arc<Inner>,
@@ -61,16 +80,6 @@ unsafe impl<'h> Handle for &'h Framebuffer {
 
     fn handle(&self) -> Self::Target {
         self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            // self.device.proc_addr_loader().vk.vkDestroyFramebuffer(self.device.handle().0,
-            //     self.handle.0, ptr::null());
-            self.device.destroy_framebuffer(self.handle, None);
-        }
     }
 }
 

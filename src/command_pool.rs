@@ -33,6 +33,23 @@ struct Inner {
     device: Device,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            self.device.destroy_command_pool(self.handle, None);
+        }
+    }
+}
+
+
+/// A command pool.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `CommandPool` will cause `Device::destroy_command_pool` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct CommandPool {
     inner: Arc<Inner>,
@@ -104,14 +121,6 @@ unsafe impl<'h> Handle for &'h CommandPool {
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            self.device.destroy_command_pool(self.handle, None);
-        }
     }
 }
 

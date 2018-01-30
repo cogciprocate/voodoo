@@ -31,6 +31,23 @@ struct Inner {
     device: Device,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            self.device.destroy_descriptor_set_layout(self.handle, None);
+        }
+    }
+}
+
+
+/// A descriptor set layout.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `DescriptorSetLayout` will cause `Device::destroy_descriptor_set_layout` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct DescriptorSetLayout {
     inner: Arc<Inner>,
@@ -59,14 +76,6 @@ unsafe impl<'h> Handle for &'h DescriptorSetLayout {
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            self.device.destroy_descriptor_set_layout(self.handle, None);
-        }
     }
 }
 

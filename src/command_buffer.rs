@@ -37,6 +37,24 @@ struct Inner {
     command_pool: CommandPool,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            self.command_pool.device().free_command_buffers(self.command_pool.handle(),
+                &[self.handle]);
+        }
+    }
+}
+
+
+/// A command buffer.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `CommandBuffer` will cause `Device::free_command_buffers` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct CommandBuffer {
     inner: Arc<Inner>,
@@ -590,14 +608,5 @@ unsafe impl<'h> Handle for &'h CommandBuffer {
     #[inline]
     fn handle(&self) -> Self::Target {
         self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            self.command_pool.device().free_command_buffers(self.command_pool.handle(),
-                &[self.handle]);
-        }
     }
 }

@@ -34,6 +34,25 @@ struct Inner {
     is_swapchain_image: bool,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            if !self.is_swapchain_image {
+                self.device.destroy_image(self.handle, None);
+            }
+        }
+    }
+}
+
+
+/// An image.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `Image` will cause `Device::destroy_image` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct Image {
     inner: Arc<Inner>,
@@ -95,16 +114,6 @@ unsafe impl<'i> Handle for &'i Image {
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            if !self.is_swapchain_image {
-                self.device.destroy_image(self.handle, None);
-            }
-        }
     }
 }
 

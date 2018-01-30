@@ -66,6 +66,21 @@ struct Inner {
     memory_type_index: u32,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe { self.device.free_memory(self.handle, None); }
+    }
+}
+
+
+/// A region of device memory.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `DeviceMemory` will cause `Device::free_memory` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct DeviceMemory {
     inner: Arc<Inner>,
@@ -172,12 +187,6 @@ unsafe impl<'h> Handle for &'h DeviceMemory {
 
     fn handle(&self) -> Self::Target {
         self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe { self.device.free_memory(self.handle, None); }
     }
 }
 

@@ -32,6 +32,23 @@ pub struct Inner {
     swapchain: Option<SwapchainKhr>,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            self.device.destroy_image_view(self.handle, None);
+        }
+    }
+}
+
+
+/// An image view.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `ImageView` will cause `Device::destroy_image_view` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct ImageView {
     inner: Arc<Inner>,
@@ -63,13 +80,6 @@ unsafe impl<'i> Handle for &'i ImageView {
     }
 }
 
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            self.device.destroy_image_view(self.handle, None);
-        }
-    }
-}
 
 /// A builder for an `ImageView`.
 #[derive(Debug, Clone)]

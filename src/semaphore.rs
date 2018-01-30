@@ -3,7 +3,6 @@ use vks;
 use ::{VdResult, Device, Handle, SemaphoreCreateFlags, SemaphoreCreateInfo};
 
 
-
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
 pub struct SemaphoreHandle(pub(crate) vks::VkSemaphore);
@@ -32,6 +31,23 @@ struct Inner {
     device: Device,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            self.device.destroy_semaphore(self.handle, None);
+        }
+    }
+}
+
+
+/// A semaphore.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `Semaphore` will cause `Device::destroy_semaphore` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct Semaphore {
     inner: Arc<Inner>,
@@ -74,11 +90,4 @@ unsafe impl<'h> Handle for &'h Semaphore {
     }
 }
 
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            self.device.destroy_semaphore(self.handle, None);
-        }
-    }
-}
 

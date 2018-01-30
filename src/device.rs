@@ -94,8 +94,24 @@ struct Inner {
     loader: vks::DeviceProcAddrLoader,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        if PRINT { println!("Destroying device..."); }
+        unsafe {
+            self.instance.destroy_device(self.handle, None);
+        }
+    }
+}
+
+
 /// A logical device.
-//
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `Device` will cause `Instance::destroy_device` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct Device {
     inner: Arc<Inner>,
@@ -2802,15 +2818,6 @@ unsafe impl<'h> Handle for &'h Device {
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        if PRINT { println!("Destroying device..."); }
-        unsafe {
-            self.instance.destroy_device(self.handle, None);
-        }
     }
 }
 

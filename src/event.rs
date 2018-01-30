@@ -61,6 +61,14 @@ impl Drop for Inner {
 }
 
 
+/// An event.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `Event` will cause `Device::destroy_event` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct Event {
     inner: Arc<Inner>,

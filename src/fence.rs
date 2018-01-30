@@ -61,6 +61,14 @@ impl Drop for Inner {
 }
 
 
+/// A fence.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `Fence` will cause `Device::destroy_fence` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct Fence {
     inner: Arc<Inner>,

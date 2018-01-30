@@ -31,6 +31,23 @@ struct Inner {
     device: Device,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            self.device.destroy_buffer(self.handle, None);
+        }
+    }
+}
+
+
+/// A buffer.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `Buffer` will cause `Device::destroy_buffer` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct Buffer {
     inner: Arc<Inner>,
@@ -79,14 +96,6 @@ unsafe impl<'b> Handle for &'b Buffer {
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            self.device.destroy_buffer(self.handle, None);
-        }
     }
 }
 

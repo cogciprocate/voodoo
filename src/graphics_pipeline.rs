@@ -11,6 +11,23 @@ struct Inner {
     device: Device,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            self.device.destroy_pipeline(self.handle, None);
+        }
+    }
+}
+
+
+/// A graphics pipeline.
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `GraphicsPipeline` will cause `Device::destroy_pipeline` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct GraphicsPipeline {
     inner: Arc<Inner>,
@@ -68,14 +85,6 @@ unsafe impl<'g> Handle for &'g GraphicsPipeline {
 
     fn handle(&self) -> Self::Target {
         self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            self.device.destroy_pipeline(self.handle, None);
-        }
     }
 }
 

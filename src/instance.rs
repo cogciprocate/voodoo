@@ -77,9 +77,31 @@ struct Inner {
     // physical_devices: SmallVec<[PhysicalDevice; 16]>,
 }
 
+impl Drop for Inner {
+    fn drop(&mut self) {
+        unsafe {
+            if PRINT { println!("Destroying debug callback..."); }
+            if let Some(callback) = self.debug_callback {
+                self.loader.instance_proc_addr_loader().ext_debug_report
+                    .vkDestroyDebugReportCallbackEXT(self.handle.0,
+                    callback.to_raw(), ptr::null());
+            }
+
+            if PRINT { println!("Destroying instance..."); }
+            self.loader.destroy_instance(self.handle, None);
+        }
+    }
+}
+
 
 /// A Vulkan instance.
-//
+///
+///
+/// ### Destruction
+/// 
+/// Dropping this `Instance` will cause `Loader::destroy_instance` to be called, 
+/// automatically releasing any resources associated with it.
+///
 #[derive(Debug, Clone)]
 pub struct Instance {
     inner: Arc<Inner>,
@@ -1298,22 +1320,6 @@ unsafe impl<'h> Handle for &'h Instance {
     #[inline(always)]
     fn handle(&self) -> Self::Target {
         self.inner.handle
-    }
-}
-
-impl Drop for Inner {
-    fn drop(&mut self) {
-        unsafe {
-            if PRINT { println!("Destroying debug callback..."); }
-            if let Some(callback) = self.debug_callback {
-                self.loader.instance_proc_addr_loader().ext_debug_report
-                    .vkDestroyDebugReportCallbackEXT(self.handle.0,
-                    callback.to_raw(), ptr::null());
-            }
-
-            if PRINT { println!("Destroying instance..."); }
-            self.loader.destroy_instance(self.handle, None);
-        }
     }
 }
 
