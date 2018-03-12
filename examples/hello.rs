@@ -1506,7 +1506,7 @@ impl App {
             Err(res) => {
                 if let ErrorKind::ApiCall(call_res, _fn_name) = res.kind {
                     if call_res == CallResult::ErrorOutOfDateKhr {
-                        let dims = self.window.get_inner_size_pixels().unwrap();
+                        let dims = self.window.get_inner_size().unwrap();
                         self.recreate_swapchain(Extent2d::builder()
                             .height(dims.0).width(dims.1).build())?;
                         return Ok(());
