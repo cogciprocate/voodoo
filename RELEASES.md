@@ -1,4 +1,10 @@
-Version 0.3.0 (UNRELEASED)
+Version 0.3.1 (2018-03-11)
+==========================
+
+* Minor documentation updates.
+
+
+Version 0.3.0 (2018-01-23)
 ==========================
 
 Breaking Changes

@@ -1,7 +1,7 @@
 [package]
 name = "voodoo"
 # [Reminder] Increment `README.md`.
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Nick Sanders <cogciprocate@gmail.com>"]
 description = "An intuitive, idiomatic, unopinionated, zero-overhead Vulkan API"
 documentation = "https://docs.rs/voodoo"

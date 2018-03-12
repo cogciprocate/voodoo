@@ -26,7 +26,7 @@ your project's Cargo.toml:
 
 ```toml
 [dependencies]
-voodoo = "0.3"
+voodoo = "0.3.1"
 ```
 
 And add the following to your crate root (lib.rs or main.rs):
