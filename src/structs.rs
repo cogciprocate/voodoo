@@ -2290,12 +2290,9 @@ impl PhysicalDeviceMemoryProperties {
         PhysicalDeviceMemoryProperties { raw, }
     }
 
-    pub fn memory_type_count<'a>(&'a self) -> u32 {
-        self.raw.memoryTypeCount.into()
-    }
-
     pub fn memory_types<'a>(&'a self) -> &[MemoryType] {
-        unsafe { slice::from_raw_parts(&self.raw.memoryTypes as *const vks::VkMemoryType as *const _, vks::VK_MAX_MEMORY_TYPES as usize) }
+        let count = self.raw.memoryTypeCount as usize;
+        unsafe { std::mem::transmute(&self.raw.memoryTypes[..count]) }
     }
 
     pub fn memory_heap_count<'a>(&'a self) -> u32 {
@@ -2303,7 +2300,8 @@ impl PhysicalDeviceMemoryProperties {
     }
 
     pub fn memory_heaps<'a>(&'a self) -> &[MemoryHeap] {
-        unsafe { slice::from_raw_parts(&self.raw.memoryHeaps as *const vks::VkMemoryHeap as *const _, vks::VK_MAX_MEMORY_HEAPS as usize) }
+        let count = self.raw.memoryHeapCount as usize;
+        unsafe { std::mem::transmute(&self.raw.memoryHeaps[..count]) }
     }
 
     pub fn set_memory_type_count<'m>(&mut self, memory_type_count: u32) {
