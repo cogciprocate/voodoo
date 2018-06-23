@@ -993,7 +993,9 @@ impl MemberSig {
                 sig.return_type.push_str("&'a [*const c_char]");
                 sig.convert_return_to_slice = true;
             }
-        } else if m.voodoo_type == "u32" && m.orig_name.contains("Version") {
+        } else if m.voodoo_type == "u32" && m.orig_name.contains("Version")
+            // Physical device river version are driver-specific.
+            && !m.orig_name.contains("driver") {
             sig.convert_arg = true;
             sig.convert_arg_twice = true;
             sig.convert_return = true;

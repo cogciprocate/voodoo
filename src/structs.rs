@@ -911,7 +911,7 @@ impl PhysicalDeviceProperties {
         self.raw.apiVersion.into()
     }
 
-    pub fn driver_version<'a>(&'a self) -> Version {
+    pub fn driver_version<'a>(&'a self) -> u32 {
         self.raw.driverVersion.into()
     }
 
@@ -956,9 +956,8 @@ impl PhysicalDeviceProperties {
         self.raw.apiVersion = api_version.into().into();
     }
 
-    pub fn set_driver_version<'m, T>(&mut self, driver_version: T)
-            where T: Into<Version> {
-        self.raw.driverVersion = driver_version.into().into();
+    pub fn set_driver_version<'m>(&mut self, driver_version: u32) {
+        self.raw.driverVersion = driver_version.into();
     }
 
     pub fn set_vendor_id<'m>(&mut self, vendor_id: u32) {
@@ -1022,9 +1021,8 @@ impl PhysicalDevicePropertiesBuilder {
         self
     }
 
-    pub fn driver_version<'m, T>(mut self, driver_version: T) -> PhysicalDevicePropertiesBuilder
-            where T: Into<Version> {
-        self.raw.driverVersion = driver_version.into().into();
+    pub fn driver_version<'m>(mut self, driver_version: u32) -> PhysicalDevicePropertiesBuilder {
+        self.raw.driverVersion = driver_version.into();
         self
     }
 
@@ -1067,7 +1065,7 @@ impl PhysicalDevicePropertiesBuilder {
         self.raw.apiVersion.into()
     }
 
-    pub fn get_driver_version<'a>(&'a self) -> Version {
+    pub fn get_driver_version<'a>(&'a self) -> u32 {
         self.raw.driverVersion.into()
     }
 
