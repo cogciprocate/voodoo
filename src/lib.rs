@@ -176,7 +176,7 @@ pub use semaphore::{SemaphoreHandle, Semaphore};
 pub use buffer::{BufferHandle, Buffer, BufferBuilder};
 pub use image::{ImageHandle, Image, ImageBuilder};
 pub use sampler::{SamplerHandle, Sampler, SamplerBuilder};
-pub use device_memory::{DeviceMemoryHandle, DeviceMemory, DeviceMemoryBuilder};
+pub use device_memory::{DeviceMemoryHandle, DeviceMemory, DeviceMemoryBuilder, MemoryMapping};
 pub use descriptor_set_layout::{DescriptorSetLayoutHandle, DescriptorSetLayout,
     DescriptorSetLayoutBuilder};
 pub use descriptor_pool::{DescriptorPoolHandle, DescriptorPool, DescriptorPoolBuilder};
