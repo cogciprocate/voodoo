@@ -1,6 +1,6 @@
+extern crate libc;
 pub extern crate winit;
 pub extern crate voodoo;
-
 use winit::Window as WinitWindow;
 use voodoo::{Result as VdResult, Instance, SurfaceKhr};
 
@@ -49,6 +49,10 @@ pub fn create_surface(instance: Instance, window: &WinitWindow) -> VdResult<Surf
 #[cfg(target_os = "macos")]
 pub fn create_surface(instance: Instance, window: &WinitWindow) -> VdResult<SurfaceKhr> {
     use winit::os::macos::WindowExt;
-
-    unimplemented!();
+    unsafe {
+        let view = window.get_nsview();
+        SurfaceKhr::builder()
+            .macos(view as *mut libc::c_void)
+            .build(instance)
+    }
 }

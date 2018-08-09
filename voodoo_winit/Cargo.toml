@@ -15,3 +15,4 @@ categories = ["rendering::graphics-api"]
 [dependencies]
 winit = "0.10"
 voodoo = { version = "0.3", path = ".." }
+libc = "0.2"
