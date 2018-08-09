@@ -5,6 +5,19 @@ use ::{VdResult, Instance, Handle, XlibSurfaceCreateInfoKhr, XcbSurfaceCreateInf
     WaylandSurfaceCreateInfoKhr, MirSurfaceCreateInfoKhr, Win32SurfaceCreateInfoKhr,
     AndroidSurfaceCreateInfoKhr, IosSurfaceCreateInfoMvk, MacOsSurfaceCreateInfoMvk,
     ViSurfaceCreateInfoNn};
+use libc::c_void;
+
+#[cfg(target_os = "macos")]
+use cocoa::appkit::{NSView};
+#[cfg(target_os = "macos")]
+use cocoa::base::id as cocoa_id;
+#[cfg(target_os = "macos")]
+use metal::CoreAnimationLayer;
+#[cfg(target_os = "macos")]
+use objc::runtime::YES;
+
+#[cfg(target_os = "macos")]
+use std::mem;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(C)]
@@ -173,19 +186,40 @@ impl<'b> SurfaceKhrBuilder<'b> {
     }
 
     #[cfg(target_os = "macos")]
-    pub unsafe fn ios<'s>(&'s mut self, view: *const c_void)
+    pub unsafe fn ios<'s>(&'s mut self, view: *mut c_void)
             -> &'s mut SurfaceKhrBuilder<'b> {
-        let mut ci = IOSSurfaceCreateInfoMVK::default();
+        let metal_enabled_layer = CoreAnimationLayer::new();
+        metal_enabled_layer.set_edge_antialiasing_mask(0);
+        metal_enabled_layer.set_presents_with_transaction(false);
+        metal_enabled_layer.remove_all_animations();
+
+        let metal_enabled_view: cocoa_id = mem::transmute(view);
+        metal_enabled_view.setLayer(
+            mem::transmute(metal_enabled_layer.as_ref()));
+        metal_enabled_view.setWantsLayer(YES);
+
+        let mut ci = IosSurfaceCreateInfoMvk::default();
+
         ci.set_view(view);
         self.create_info = CreateInfo::Ios(ci);
         self
     }
 
     #[cfg(target_os = "macos")]
-    pub unsafe fn macos<'s>(&'s mut self, view: *const c_void)
+    pub unsafe fn macos<'s>(&'s mut self, view: *mut c_void)
             -> &'s mut SurfaceKhrBuilder<'b> {
-        let mut ci = MacOSSurfaceCreateInfoMVK::default();
-        ci.set_view(view);
+        let metal_enabled_layer = CoreAnimationLayer::new();
+        metal_enabled_layer.set_edge_antialiasing_mask(0);
+        metal_enabled_layer.set_presents_with_transaction(false);
+        metal_enabled_layer.remove_all_animations();
+
+        let metal_enabled_view: cocoa_id = mem::transmute(view);
+        metal_enabled_view.setLayer(
+            mem::transmute(metal_enabled_layer.as_ref()));
+        metal_enabled_view.setWantsLayer(YES);
+
+        let mut ci = MacOsSurfaceCreateInfoMvk::default();
+        ci.set_view(metal_enabled_view as *mut c_void);
         self.create_info = CreateInfo::MacOs(ci);
         self
     }

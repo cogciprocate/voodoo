@@ -28,7 +28,7 @@ impl Loader {
             else if cfg!(windows) { "vulkan-1.dll" }
             else { unimplemented!("unknown operating system") }
         } else {
-            unimplemented!("macos not implemented");
+            "libMoltenVK.dylib"
         };
         let vk_lib = lib::Library::new(lib_filename).unwrap();
 

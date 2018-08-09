@@ -10,6 +10,13 @@ extern crate bitflags as bitflags_;
 extern crate enum_primitive_derive;
 extern crate num_traits;
 
+#[cfg(target_os = "macos")]
+extern crate objc;
+#[cfg(target_os = "macos")]
+extern crate cocoa;
+#[cfg(target_os = "macos")]
+extern crate metal_rs as metal;
+
 mod error;
 mod version;
 mod loader;
