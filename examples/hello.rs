@@ -1508,7 +1508,9 @@ impl App {
                     if call_res == CallResult::ErrorOutOfDateKhr {
                         let dims = self.window.get_inner_size().unwrap();
                         self.recreate_swapchain(Extent2d::builder()
-                            .height(dims.0).width(dims.1).build())?;
+                            .height(dims.height as u32)
+                            .width(dims.width as u32)
+                            .build())?;
                         return Ok(());
                     } else {
                         panic!("Unable to present swap chain image");
@@ -1558,11 +1560,14 @@ impl App {
         loop {
             self.events_loop.poll_events(|event| {
                 match event {
-                    Event::WindowEvent { event: WindowEvent::Resized(w, h), .. } => {
-                        current_extent = Extent2d::builder().width(w).height(h).build();
+                    Event::WindowEvent { event: WindowEvent::Resized(logical_size), .. } => {
+                        current_extent = Extent2d::builder()
+                        .width(logical_size.width as u32)
+                        .height(logical_size.height as u32)
+                        .build();
                         recreate_swap = true;
                     },
-                    Event::WindowEvent { event: WindowEvent::Closed, .. } => {
+                    Event::WindowEvent { event: WindowEvent::CloseRequested, .. } => {
                         exit = true;
                     },
                     _ => ()
