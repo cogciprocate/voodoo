@@ -1,3 +1,13 @@
+Version 0.4.0 (UNRELEASED)
+==========================
+
+Breaking Changes
+----------------
+
+* https://github.com/cogciprocate/voodoo/pull/18
+* https://github.com/cogciprocate/voodoo/pull/11
+
+ 
 Version 0.3.1 (2018-03-11)
 ==========================
 
