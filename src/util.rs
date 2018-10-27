@@ -149,7 +149,7 @@ pub fn read_spir_v_file<P: AsRef<Path>>(file: P) -> VdResult<Vec<u32>> {
     // TODO: Add some sort of basic verification that the file is actually
     // spir-v.
     unsafe {
-        let ptr = contents.as_mut_ptr() as *mut u32;
+        let ptr = contents.as_ptr() as *const u32;
         let new_len = contents.len() / 4;
         mem::forget(contents);
         let code = Vec::from_raw_parts(ptr, new_len, new_len);
