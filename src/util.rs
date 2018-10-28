@@ -161,7 +161,7 @@ pub fn read_spir_v_file<P: AsRef<Path>>(file: P) -> VdResult<Vec<u32>> {
 /// Reads a file into a byte Vec.
 pub fn read_file<P: AsRef<Path>>(file: P) -> VdResult<Vec<u8>> {
     let file_name = file.as_ref().display().to_string();
-    let f = File::open(file).expect("shader file not found");
+    let f = File::open(file).expect(&format!("shader file '{}' not found", file_name));
     let file_bytes = f.metadata().unwrap().len() as usize;
     let mut contents = Vec::<u8>::with_capacity(file_bytes);
     let mut reader = BufReader::new(f);
