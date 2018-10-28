@@ -144,7 +144,7 @@ impl <'cs, 'p, 'q> From<&'p [&'q str]> for CharStrs<'cs> where 'q: 'p, 'p: 'cs, 
 
 /// Reads a SPIR-V file into a word Vec.
 pub fn read_spir_v_file<P: AsRef<Path>>(file: P) -> VdResult<Vec<u32>> {
-    let mut contents = read_file(file)?;
+    let contents = read_file(file)?;
     assert!(contents.len() % 4 == 0);
     assert!(mem::size_of_val(&contents[0]) == 1);
     // TODO: Add some sort of basic verification that the file is actually
