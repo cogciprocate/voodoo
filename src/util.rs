@@ -151,9 +151,9 @@ pub fn read_spir_v_file<P: AsRef<Path>>(file: P) -> VdResult<Vec<u32>> {
     unsafe {
         let ptr = contents.as_ptr() as *const u32;
         let new_len = contents.len() / 4;
-        mem::forget(contents);
-        let code = Vec::from_raw_parts(ptr, new_len, new_len);
-        Ok(code)
+        let slice: &[u32] = slice::from_raw_parts(ptr, new_len);
+        let vec = slice.to_vec();
+        Ok(vec)
     }
 }
 
