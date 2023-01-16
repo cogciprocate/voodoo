@@ -72,6 +72,10 @@ fn main() {
 See [`hello.rs`] for a complete, working example adapted from
 [https://vulkan-tutorial.com/](https://vulkan-tutorial.com/).
 
+To run the example, clone this repo
+(`git clone https://github.com/cogciprocate/voodoo.git`, `cd voodoo`,
+then `cargo run --example hello --release`.
+
 [`hello.rs`] screenshot:
 
 ![hello_example_screenshot.jpg][hello_example_screenshot]
