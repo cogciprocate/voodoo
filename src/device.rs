@@ -177,12 +177,13 @@ impl Device {
     pub fn memory_type_index(&self, type_filter: u32, properties: ::MemoryPropertyFlags)
             -> VdResult<u32> {
         let mem_props = self.physical_device().memory_properties();
+        let mem_types = mem_props.memory_types();
 
-        for i in 0..mem_props.memory_type_count() {
+        for (i, mem_type) in mem_types.iter().enumerate() {
             if (type_filter & (1 << i)) != 0 &&
-                (mem_props.memory_types()[i as usize].property_flags() & properties) == properties
+                (mem_type.property_flags() & properties) == properties
             {
-                return Ok(i);
+                return Ok(i as u32);
             }
         }
         panic!("failed to find suitable memory type index with: type_filter: '{}', properties: '{:?}'",
